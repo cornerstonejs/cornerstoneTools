@@ -127,87 +127,65 @@ function renderSegmentation(
   labelmap2D,
   isActiveLabelMap
 ) {
-  if (configuration.renderFill) {
-    renderFill(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
+  if (shouldRenderFill(isActiveLabelMap)) {
+    const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+    renderFill(evt, rects, labelmapIndex, isActiveLabelMap);
   }
 
-  if (configuration.renderOutline) {
-    renderOutline(evt, labelmap3D, labelmapIndex, labelmap2D, isActiveLabelMap);
+  if (shouldRenderOutline(isActiveLabelMap)) {
+    const outline = getOutline(
+      evt,
+      labelmap3D,
+      labelmap2D,
+      configuration.outlineWidth
+    );
+
+    renderOutline(evt, outline, labelmapIndex, isActiveLabelMap);
   }
 }
 
 /**
+ * ShouldRenderFill - Returns true if `configuration.renderFill`
+ * is true , and if the global alpha is not zero.
+ *
+ * @param  {boolean} isActiveLabelMap
+ * @returns  {boolean} True if the segmentation should be filled.
+ */
+function shouldRenderFill(isActiveLabelMap) {
+  return (
+    configuration.renderFill &&
+    ((isActiveLabelMap && configuration.fillAlpha !== 0) ||
+      (!isActiveLabelMap && configuration.fillAlphaInactive !== 0))
+  );
+}
+
+/**
+ * ShouldRenderOutline - Returns true if `configuration.renderOutline`
+ * is true , and if the global alpha is not zero.
+ *
+ * @param  {boolean} isActiveLabelMap
+ * @returns  {boolean} True if the segmentation should be outlined.
+ */
+function shouldRenderOutline(isActiveLabelMap) {
+  return (
+    configuration.renderOutline &&
+    ((isActiveLabelMap && configuration.outlineAlpha !== 0) ||
+      (!isActiveLabelMap && configuration.outlineAlphaInactive !== 0))
+  );
+}
+
+/**
  * RenderFill - Renders the filled region of each segment in the segmentation.
- * @param  {Object} evt                 The cornerstone event.
- * @param  {Labelmap3D} labelmap3D  The `Labelmap3D` object.
- * @param  {number} labelmapIndex The index of the active label map.
+ * @param  {Object} evt   The cornerstone event.
+ * @param  {Object} rects The rects to fill for each segment index.
  * @param  {Labelmap2D} labelmap2D The `Labelmap2D` object to render.
  * @param  {boolean} isActiveLabelMap Whether or not the labelmap is active.
  * @returns {null}
  */
-function renderFill(
-  evt,
-  labelmap3D,
-  labelmapIndex,
-  labelmap2D,
-  isActiveLabelMap
-) {
-  // Don't bother rendering a whole labelmap with full transparency!
-  if (isActiveLabelMap && configuration.fillAlpha === 0) {
-    return;
-  } else if (!isActiveLabelMap && configuration.fillAlphaInactive === 0) {
-    return;
-  }
-
+function renderFill(evt, rects, labelmapIndex, isActiveLabelMap) {
   const eventData = evt.detail;
-  const { element, image, canvasContext } = eventData;
-  const cols = image.width;
-  const rows = image.height;
-
-  const pixelData = labelmap2D.pixelData;
-  const activeSegmentIndex = labelmap3D.activeSegmentIndex;
-  const rects = [];
-
-  labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
-    rects[segmentIndex] = [];
-  });
-
-  if (!rects[activeSegmentIndex]) {
-    rects[activeSegmentIndex] = [];
-  }
-
-  // Scan through each row.
-  for (let y = 0; y < rows; y++) {
-    // Start at the first pixel, and traverse until you hit a pixel of a different segment.
-    let segmentIndex = pixelData[y * rows];
-    let start = { x: 0, y };
-
-    for (let x = 1; x < cols; x++) {
-      const newSegmentIndex = pixelData[y * rows + x];
-
-      if (newSegmentIndex !== segmentIndex) {
-        // Hit new segment, save rect.
-        if (segmentIndex !== 0) {
-          rects[segmentIndex].push({
-            start,
-            end: { x: x - 1, y },
-          });
-        }
-
-        // Start scanning rect of index newSegmentIndex.
-        start = { x, y };
-        segmentIndex = newSegmentIndex;
-      }
-    }
-
-    // Close off final rect (its fine if start and end are the same value).
-    if (segmentIndex !== 0) {
-      rects[segmentIndex].push({
-        start,
-        end: { x: cols - 1, y },
-      });
-    }
-  }
+  const { element, canvasContext } = eventData;
 
   const context = getNewContext(canvasContext.canvas);
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
@@ -225,11 +203,7 @@ function renderFill(
   for (let i = 0; i < rects.length; i++) {
     const rectsI = rects[i];
 
-    const visible =
-      labelmap3D.segmentsVisible[i] ||
-      labelmap3D.segmentsVisible[i] === undefined;
-
-    if (rectsI && visible) {
+    if (rectsI) {
       const color = colorLutTable[i];
 
       const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]}`;
@@ -242,6 +216,77 @@ function renderFill(
 
   context.globalAlpha = previousAlpha;
   context.imageSmoothingEnabled = previousImageSmoothingEnabled;
+}
+
+export function getRectsToFill(evt, labelmap3D, labelmap2D) {
+  const eventData = evt.detail;
+  const { image } = eventData;
+  const cols = image.width;
+  const rows = image.height;
+
+  const { segmentsVisible } = labelmap3D;
+
+  const pixelData = labelmap2D.pixelData;
+  const activeSegmentIndex = labelmap3D.activeSegmentIndex;
+  const rects = [];
+
+  labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
+    const visible =
+      segmentsVisible[segmentIndex] ||
+      segmentsVisible[segmentIndex] === undefined;
+
+    if (visible) {
+      rects[segmentIndex] = [];
+    }
+  });
+
+  if (!rects[activeSegmentIndex]) {
+    rects[activeSegmentIndex] = [];
+  }
+
+  // Scan through each row.
+  for (let y = 0; y < rows; y++) {
+    // Start at the first pixel, and traverse until you hit a pixel of a different segment.
+    let segmentIndex = pixelData[y * rows];
+    let start = { x: 0, y };
+
+    for (let x = 1; x < cols; x++) {
+      const newSegmentIndex = pixelData[y * rows + x];
+
+      if (newSegmentIndex !== segmentIndex) {
+        // Hit new segment, save rect.
+
+        const visible =
+          segmentsVisible[segmentIndex] ||
+          segmentsVisible[segmentIndex] === undefined;
+
+        if (segmentIndex !== 0 && visible) {
+          rects[segmentIndex].push({
+            start,
+            end: { x: x - 1, y },
+          });
+        }
+
+        // Start scanning rect of index newSegmentIndex.
+        start = { x, y };
+        segmentIndex = newSegmentIndex;
+      }
+    }
+
+    // Close off final rect (its fine if start and end are the same value).
+    const visible =
+      segmentsVisible[segmentIndex] ||
+      segmentsVisible[segmentIndex] === undefined;
+
+    if (segmentIndex !== 0 && visible) {
+      rects[segmentIndex].push({
+        start,
+        end: { x: cols - 1, y },
+      });
+    }
+  }
+
+  return rects;
 }
 
 /**
@@ -281,36 +326,21 @@ function fillRect(context, rect, fillStyle, element) {
  * RenderOutline - Renders the outlines of segments to the canvas.
  *
  * @param  {Object} evt             The cornerstone event.
- * @param  {Labelmap3D} labelmap3D     The `Labelmap3D` object.
- * @param  {number} labelmapIndex   The index of the labelmap.
- * @param  {Labelmap2D} labelmap2D     The `Labelmap2D` for this current image.
+ * @param  {Object} outline         The outline to render.
+ * @param  {number} labelmapIndex   The index of the labelmap..
  * @param  {number} isActiveLabelMap   Whether the labelmap is active.
  * @returns {null}
  */
-function renderOutline(
+export function renderOutline(
   evt,
-  labelmap3D,
+  outline,
   labelmapIndex,
-  labelmap2D,
   isActiveLabelMap = true
 ) {
-  // Don't bother rendering a whole labelmap with full transparency!
-  if (isActiveLabelMap && configuration.outlineAlpha === 0) {
-    return;
-  } else if (!isActiveLabelMap && configuration.outlineAlphaInactive === 0) {
-    return;
-  }
-
   const eventData = evt.detail;
   const { element, canvasContext } = eventData;
 
   const lineWidth = configuration.outlineWidth || 1;
-  const lineSegments = _getLineSegments(
-    eventData,
-    labelmap3D,
-    labelmap2D,
-    lineWidth
-  );
 
   const context = getNewContext(canvasContext.canvas);
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
@@ -324,18 +354,14 @@ function renderOutline(
 
   // Draw outlines.
   draw(context, context => {
-    for (let i = 0; i < lineSegments.length; i++) {
-      const visible =
-        labelmap3D.segmentsVisible[i] ||
-        labelmap3D.segmentsVisible[i] === undefined;
-
-      if (lineSegments[i] && visible) {
+    for (let i = 0; i < outline.length; i++) {
+      if (outline[i]) {
         const color = colorLutTable[i];
 
         drawLines(
           context,
           element,
-          lineSegments[i],
+          outline[i],
           {
             color: `rgba(${color[0]}, ${color[1]}, ${color[2]}, 1.0 )`,
             lineWidth,
@@ -350,32 +376,40 @@ function renderOutline(
 }
 
 /**
- * _getLineSegments - Returns an object containing all the line segments to be
+ * GetOutline - Returns an object containing all the line segments to be
  * drawn the canvas.
  *
- * @param  {Object} eventData The eventdata associated with the cornerstone event.
+ * @param  {Object} evt The cornerstone event.
  * @param  {Labelmap3D} labelmap3D The 3D labelmap.
  * @param  {Labelmap2D} labelmap2D The 2D labelmap for this current image.
- * @param  {number} lineWidth The width of the line segments.
+ * @param  {number} lineWidth The width of the outline in canvas pixels.
  *
  * @returns {Object[][]} An array of arrays of lines for each segment.
  */
-export function _getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
+export function getOutline(evt, labelmap3D, labelmap2D, lineWidth) {
+  const eventData = evt.detail;
   const { element, image, viewport } = eventData;
   const cols = image.width;
   const rows = image.height;
+
+  lineWidth = lineWidth || 1;
+
+  const segmentsVisible = labelmap3D.segmentsVisible;
 
   const pixelData = labelmap2D.pixelData;
   const activeSegmentIndex = labelmap3D.activeSegmentIndex;
   const lineSegments = [];
 
-  logger.warn(viewport);
-
   labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
-    lineSegments[segmentIndex] = [];
+    const visible =
+      segmentsVisible[segmentIndex] ||
+      segmentsVisible[segmentIndex] === undefined;
+
+    if (visible) {
+      lineSegments[segmentIndex] = [];
+    }
   });
 
-  // TEMP - Do this in a cleaner way.
   if (!lineSegments[activeSegmentIndex]) {
     lineSegments[activeSegmentIndex] = [];
   }
@@ -385,12 +419,20 @@ export function _getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
     y: Math.floor(pixelIndex / cols),
   });
 
-  const offset = _getOutlineOffset(viewport, lineWidth);
+  const offset = getOutlineOffset(viewport, lineWidth);
 
   for (let i = 0; i < pixelData.length; i++) {
     const segmentIndex = pixelData[i];
 
     if (segmentIndex === 0) {
+      continue;
+    }
+
+    const visible =
+      segmentsVisible[segmentIndex] ||
+      segmentsVisible[segmentIndex] === undefined;
+
+    if (!visible) {
       continue;
     }
 
@@ -468,14 +510,14 @@ export function _getLineSegments(eventData, labelmap3D, labelmap2D, lineWidth) {
 }
 
 /**
- * _getOutlineOffset - Returns the outline offset (half line width) in the
+ * GetOutlineOffset - Returns the outline offset (half line width) in the
  * i (column) and j (row) pixel directions in the viewport's rotated frame.
  * @param  {Object} viewport The cornerstone viewport.
  * @param  {number} lineWidth The width of the outline.
  * @returns {Object} Two vectors in the i and j pixel directions, with magnitude
  *                   lineWidth / 2
  */
-function _getOutlineOffset(viewport, lineWidth) {
+function getOutlineOffset(viewport, lineWidth) {
   const halfLineWidth = lineWidth / 2;
   let theta = viewport.rotation;
 

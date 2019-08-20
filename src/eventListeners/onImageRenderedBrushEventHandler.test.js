@@ -1,4 +1,7 @@
-import * as onImageRenderedBrushEventHandler from './onImageRenderedBrushEventHandler.js';
+import {
+  getOutline,
+  getRectsToFill,
+} from './onImageRenderedBrushEventHandler.js';
 import external from '../externalModules.js';
 
 jest.mock('../externalModules', () => ({
@@ -96,6 +99,7 @@ jest.mock('../externalModules', () => ({
 }));
 
 let eventData;
+let evt;
 let labelmap3D;
 let labelmap2D;
 let lineWidth;
@@ -139,6 +143,10 @@ function resetEvents() {
         height: canvasScale * width,
       },
     },
+  };
+
+  evt = {
+    detail: eventData,
   };
 
   labelmap3D = {
@@ -241,17 +249,43 @@ describe('onImageRenderedBrushEventHandler.js', () => {
     });
   });
 
-  describe('_getLineSegments', () => {
+  describe('getOutline', () => {
     it('Should produce two segment outlines with 9 and 24 lines.', () => {
-      const lineSegments = onImageRenderedBrushEventHandler._getLineSegments(
-        eventData,
-        labelmap3D,
-        labelmap2D,
-        lineWidth
-      );
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = lineSegments[1][0];
 
       expect(lineSegments[1].length).toBe(9);
       expect(lineSegments[2].length).toBe(24);
+    });
+
+    it('Should correctly scale the line segments to the canvas size whilst keeping thickness the same on canvas', () => {
+      setCanvasTransform({
+        scale: 4.0,
+      });
+
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = lineSegments[1][0];
+
+      expect(start.x).toBeCloseTo(256);
+      expect(start.y).toBeCloseTo(256.5);
+      expect(end.x).toBeCloseTo(260);
+      expect(end.y).toBeCloseTo(256.5);
+    });
+
+    it('Should correctly change the line thickness to 3 pixels, regardless of the canvas scale factor', () => {
+      setCanvasTransform({
+        scale: 4.0,
+      });
+
+      lineWidth = 2;
+
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = lineSegments[1][0];
+
+      expect(start.x).toBeCloseTo(256);
+      expect(start.y).toBeCloseTo(257);
+      expect(end.x).toBeCloseTo(260);
+      expect(end.y).toBeCloseTo(257);
     });
 
     it('Should correctly rotate the line segments to the canvas (90 degrees)', () => {
@@ -259,19 +293,10 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         rotation: 90,
       });
 
-      const lineSegments = onImageRenderedBrushEventHandler._getLineSegments(
-        eventData,
-        labelmap3D,
-        labelmap2D,
-        lineWidth
-      );
-
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
       const { start, end } = lineSegments[1][0];
 
-      // First horizontal line now vertical
-      //
-      // start = { x: 191.5, y: 64 }
-      // end = { x: 191.5, y: 65 }
+      // First horizontal line now vertical after rotation:
 
       expect(start.x).toBeCloseTo(191.5);
       expect(start.y).toBeCloseTo(64);
@@ -284,19 +309,10 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         hflip: true,
       });
 
-      const lineSegments = onImageRenderedBrushEventHandler._getLineSegments(
-        eventData,
-        labelmap3D,
-        labelmap2D,
-        lineWidth
-      );
-
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
       const { start, end } = lineSegments[1][0];
 
-      // First horizontal line now flipped:
-      //
-      // start: { x: 192, y: 64.5 }
-      // end: { x: 191, y: 64.5 }
+      // First horizontal line now flipped horrizontally:
 
       expect(start.x).toBeCloseTo(192);
       expect(start.y).toBeCloseTo(64.5);
@@ -309,27 +325,49 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         vflip: true,
       });
 
-      const lineSegments = onImageRenderedBrushEventHandler._getLineSegments(
-        eventData,
-        labelmap3D,
-        labelmap2D,
-        lineWidth
-      );
-
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
       const { start, end } = lineSegments[1][0];
 
-      // First horizontal line now flipped:
-      //
-      // start: { x: 192, y: 64.5 }
-      // end: { x: 191, y: 64.5 }
+      // First horrizontal line now flipped vertically (pushed inside pixel even though its flipped):
 
-      // TODO - Fix horrizontal and vertical flips!
-      // By pushing the line slightly inwards.
+      expect(start.x).toBeCloseTo(64);
+      expect(start.y).toBeCloseTo(191.5);
+      expect(end.x).toBeCloseTo(65);
+      expect(end.y).toBeCloseTo(191.5);
+    });
 
-      expect(start.x).toBeCloseTo(191.5);
-      expect(start.y).toBeCloseTo(64);
-      expect(end.x).toBeCloseTo(191.5);
-      expect(end.y).toBeCloseTo(65);
+    it('Should correctly translate the line segments with the canvas', () => {
+      setCanvasTransform({
+        translation: { x: 10, y: 10 },
+      });
+
+      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = lineSegments[1][0];
+
+      // First horrizontal line now translated (10,10) with canvas:
+
+      expect(start.x).toBeCloseTo(74);
+      expect(start.y).toBeCloseTo(74.5);
+      expect(end.x).toBeCloseTo(75);
+      expect(end.y).toBeCloseTo(74.5);
+    });
+  });
+
+  describe('getRectsToFill', () => {
+    it('Should generate 4 rects to fill in.', () => {
+      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+      expect(rects[1].length).toBe(2);
+      expect(rects[2].length).toBe(2);
+    });
+
+    it('Should not get rects of disabled segments.', () => {
+      labelmap3D.segmentsVisible[2] = false;
+
+      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+      expect(rects[1].length).toBe(2);
+      expect(rects[2]).toBe(undefined);
     });
   });
 });
