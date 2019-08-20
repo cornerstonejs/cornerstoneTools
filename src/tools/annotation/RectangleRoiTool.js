@@ -515,7 +515,7 @@ function _createTextBoxContent(
     }
   }
 
-  if (showDefaultContent) {
+  if (options.showDefaultContent) {
     textLines.push(_formatArea(area, hasPixelSpacing));
     otherLines.forEach(x => textLines.push(x));
   }

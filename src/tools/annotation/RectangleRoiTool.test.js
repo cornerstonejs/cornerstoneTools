@@ -55,6 +55,21 @@ describe('RectangleRoiTool.js', () => {
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
+
+    it('can be created with custom text content', () => {
+      const customTextConfiguration = {
+        configuration: {
+          showDefaultContent: false,
+          addToTextBoxContent: 'custom text content',
+        },
+      };
+      const instantiatedTool = new RectangleRoiTool(customTextConfiguration);
+
+      expect(instantiatedTool.configuration.showDefaultContent).toEqual(false);
+      expect(instantiatedTool.configuration.addToTextBoxContent).toEqual(
+        'custom text content'
+      );
+    });
   });
 
   describe('createNewMeasurement', () => {

@@ -478,6 +478,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
 
     function textBoxText(data) {
       const { meanStdDev, meanStdDevSUV, area } = data;
+      const options = this.configuration;
       // Define an array to store the rows of text for the textbox
       const textLines = [];
 
@@ -511,7 +512,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         }
 
         // Add these text lines to the array to be displayed in the textbox
-        if (showDefaultContent) {
+        if (options.showDefaultContent) {
           textLines.push(meanText);
           textLines.push(stdDevText);
         }
@@ -532,7 +533,7 @@ export default class FreehandMouseTool extends BaseAnnotationTool {
         const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
-        if (showDefaultContent) {
+        if (options.showDefaultContent) {
           textLines.push(areaText);
         }
       }
