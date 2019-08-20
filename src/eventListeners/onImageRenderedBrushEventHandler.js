@@ -200,7 +200,7 @@ function renderFill(evt, rects, labelmapIndex, isActiveLabelMap) {
   context.imageSmoothingEnabled = false;
 
   // Render rects
-  for (let i = 0; i < rects.length; i++) {
+  for (let i = 1; i < rects.length; i++) {
     const rectsI = rects[i];
 
     if (rectsI) {
@@ -354,7 +354,7 @@ export function renderOutline(
 
   // Draw outlines.
   draw(context, context => {
-    for (let i = 0; i < outline.length; i++) {
+    for (let i = 1; i < outline.length; i++) {
       if (outline[i]) {
         const color = colorLutTable[i];
 

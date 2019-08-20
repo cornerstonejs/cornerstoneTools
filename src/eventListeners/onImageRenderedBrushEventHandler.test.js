@@ -1,8 +1,25 @@
+import store from '../store/index.js';
 import {
   getOutline,
+  renderOutline,
   getRectsToFill,
 } from './onImageRenderedBrushEventHandler.js';
 import external from '../externalModules.js';
+
+import * as drawing from '../drawing/index.js';
+
+const { state } = store.modules.segmentation;
+
+jest.mock('../drawing/index.js', () => ({
+  getNewContext: () => ({
+    globalAlpha: 1.0,
+  }),
+  draw: (context, callback) => {
+    callback(context);
+  },
+  drawLines: jest.fn(),
+  drawJoinedLines: jest.fn(),
+}));
 
 jest.mock('../externalModules', () => ({
   cornerstone: {
@@ -251,11 +268,11 @@ describe('onImageRenderedBrushEventHandler.js', () => {
 
   describe('getOutline', () => {
     it('Should produce two segment outlines with 9 and 24 lines.', () => {
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
-      expect(lineSegments[1].length).toBe(9);
-      expect(lineSegments[2].length).toBe(24);
+      expect(outline[1].length).toBe(9);
+      expect(outline[2].length).toBe(24);
     });
 
     it('Should correctly scale the line segments to the canvas size whilst keeping thickness the same on canvas', () => {
@@ -263,8 +280,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         scale: 4.0,
       });
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       expect(start.x).toBeCloseTo(256);
       expect(start.y).toBeCloseTo(256.5);
@@ -279,8 +296,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
 
       lineWidth = 2;
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       expect(start.x).toBeCloseTo(256);
       expect(start.y).toBeCloseTo(257);
@@ -293,8 +310,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         rotation: 90,
       });
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       // First horizontal line now vertical after rotation:
 
@@ -309,8 +326,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         hflip: true,
       });
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       // First horizontal line now flipped horrizontally:
 
@@ -325,8 +342,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         vflip: true,
       });
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       // First horrizontal line now flipped vertically (pushed inside pixel even though its flipped):
 
@@ -341,8 +358,8 @@ describe('onImageRenderedBrushEventHandler.js', () => {
         translation: { x: 10, y: 10 },
       });
 
-      const lineSegments = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
-      const { start, end } = lineSegments[1][0];
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+      const { start, end } = outline[1][0];
 
       // First horrizontal line now translated (10,10) with canvas:
 
@@ -350,6 +367,23 @@ describe('onImageRenderedBrushEventHandler.js', () => {
       expect(start.y).toBeCloseTo(74.5);
       expect(end.x).toBeCloseTo(75);
       expect(end.y).toBeCloseTo(74.5);
+    });
+  });
+
+  describe('renderOutline', () => {
+    it('Should call drawLines twice', () => {
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+
+      // Fake colormap to stop renderOutline breaking.
+      state.colorLutTables[`${state.colorMapId}_${0}`] = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ];
+
+      renderOutline(evt, outline, 0, true);
+
+      expect(drawing.drawLines).toBeCalledTimes(2);
     });
   });
 
