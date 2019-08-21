@@ -201,7 +201,7 @@ const EVENTS = {
   /**
    *  @type {String}
    */
-  STACK_PREFETCH_IMAGE_DONE: 'cornerstonetoolsstackprefetchimagedone',
+  STACK_PREFETCH_IMAGE_LOADED: 'cornerstonetoolsstackprefetchimageloaded',
 
   /**
    *  @type {String}

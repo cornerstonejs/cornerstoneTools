@@ -5,7 +5,7 @@ import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 import { getLogger } from '../util/logger.js';
 import triggerEvent from '../util/triggerEvent';
-import { STACK_PREFETCH_DONE, STACK_PREFETCH_IMAGE_DONE } from '../events';
+import EVENTS from '../events.js';
 
 const logger = getLogger('stackTools:stackPrefetch');
 
@@ -156,7 +156,7 @@ function prefetch(element) {
 
     removeFromList(imageIdIndex);
 
-    triggerEvent(element, STACK_PREFETCH_IMAGE_DONE, {
+    triggerEvent(element, EVENTS.STACK_PREFETCH_IMAGE_LOADED, {
       element,
       imageId: image.imageId,
       imageIndex: imageIdIndex,
@@ -171,7 +171,7 @@ function prefetch(element) {
         stackPrefetch.indicesToRequest.length > 0
       )
     ) {
-      triggerEvent(element, STACK_PREFETCH_DONE, {
+      triggerEvent(element, EVENTS.STACK_PREFETCH_DONE, {
         element,
         stackPrefetch,
         stack,
