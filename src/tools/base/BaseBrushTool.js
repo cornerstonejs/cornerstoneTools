@@ -3,9 +3,6 @@ import EVENTS from './../../events.js';
 import BaseTool from './BaseTool.js';
 import isToolActive from './../../store/isToolActive.js';
 import store from './../../store/index.js';
-import { getLogger } from '../../util/logger.js';
-
-const logger = getLogger('tools:BaseBrushTool');
 
 const { configuration, getters, setters } = store.modules.segmentation;
 
@@ -293,7 +290,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   // ===================================================================
-  // Segmentation API. This is effectively a wrapper around the store.
+  // Brush API. This is effectively a wrapper around the store.
   // ===================================================================
 
   /**
@@ -328,54 +325,6 @@ class BaseBrushTool extends BaseTool {
     const newRadius = Math.floor(oldRadius * 0.8);
 
     setters.radius(newRadius);
-  }
-
-  get fillAlpha() {
-    return configuration.fillAlpha;
-  }
-
-  set fillAlpha(value) {
-    const enabledElement = this._getEnabledElement();
-
-    configuration.fillAlpha = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  get fillAlphaInactive() {
-    return configuration.fillAlphaInactive;
-  }
-
-  set fillAlphaInactive(value) {
-    const enabledElement = this._getEnabledElement();
-
-    configuration.fillAlphaInactive = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  get outlineAlpha() {
-    return configuration.outlineAlpha;
-  }
-
-  set outlineAlpha(value) {
-    const enabledElement = this._getEnabledElement();
-
-    configuration.outlineAlpha = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  get outlineAlphaInactive() {
-    return configuration.outlineAlphaInactive;
-  }
-
-  set outlineAlphaInactive(value) {
-    const enabledElement = this._getEnabledElement();
-
-    configuration.outlineAlphaInactive = value;
-    external.cornerstone.updateImage(enabledElement.element);
-  }
-
-  _getEnabledElement() {
-    return external.cornerstone.getEnabledElement(this.element);
   }
 
   _isCtrlDown(eventData) {

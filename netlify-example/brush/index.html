@@ -528,7 +528,7 @@
     alphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.fillAlpha = normalisedAlpha;
+      brushTool.setFillAlpha(normalisedAlpha);
     });
 
     // Active Outline
@@ -540,7 +540,7 @@
     outlineAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.outlineAlpha = normalisedAlpha;
+      brushTool.setOutlineAlpha(normalisedAlpha);
     });
 
     // Inactive Fill
@@ -552,7 +552,7 @@
     inactiveAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.fillAlphaInactive = normalisedAlpha;
+      brushTool.setFillAlphaInactive(normalisedAlpha);
     });
 
     // Inactive Outline
@@ -566,7 +566,7 @@
     inactiveOutlineAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.outlineAlphaInactive = normalisedAlpha;
+      brushTool.setOutlineAlphaInactive(normalisedAlpha);
     });
 
     // Segmentation Tool API

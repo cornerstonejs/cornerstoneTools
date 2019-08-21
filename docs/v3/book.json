@@ -12,7 +12,7 @@
   ],
   "pluginsConfig": {
     "edit-link": {
-      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/v2",
+      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/latest",
       "label": "Edit This Page"
     },
     "github": {
@@ -22,19 +22,19 @@
       "token": "UA-110573590-1"
     },
     "sitemap": {
-      "hostname": "https://tools.cornerstonejs.org/history/v2"
+      "hostname": "https://tools.cornerstonejs.org"
     },
     "versions": {
       "gitbookConfigURL": "https://raw.githubusercontent.com/cornerstonejs/cornerstoneTools/master/docs/book.json",
       "options": [
         {
           "value": "https://tools.cornerstonejs.org/history/v2/",
-          "text": "Version 2.x",
-          "selected": true
+          "text": "Version 2.x"
         },
         {
           "value": "https://tools.cornerstonejs.org/history/v3/",
-          "text": "Version 3.x"
+          "text": "Version 3.x",
+          "selected": true
         },
         {
           "value": "https://tools.cornerstonejs.org/",
