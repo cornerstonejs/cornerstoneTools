@@ -3,6 +3,7 @@ import {
   getOutline,
   renderOutline,
   getRectsToFill,
+  renderFill,
 } from './onImageRenderedBrushEventHandler.js';
 import external from '../externalModules.js';
 
@@ -402,6 +403,23 @@ describe('onImageRenderedBrushEventHandler.js', () => {
 
       expect(rects[1].length).toBe(2);
       expect(rects[2]).toBe(undefined);
+    });
+  });
+
+  describe('renderFill', () => {
+    it('Should call fillRect 4 times', () => {
+      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+      // Fake colormap to stop renderOutline breaking.
+      state.colorLutTables[`${state.colorMapId}_${0}`] = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+      ];
+
+      renderFill(evt, rects, 0, true);
+
+      expect(drawing.drawJoinedLines).toBeCalledTimes(4);
     });
   });
 });

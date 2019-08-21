@@ -183,7 +183,7 @@ function shouldRenderOutline(isActiveLabelMap) {
  * @param  {boolean} isActiveLabelMap Whether or not the labelmap is active.
  * @returns {null}
  */
-function renderFill(evt, rects, labelmapIndex, isActiveLabelMap) {
+export function renderFill(evt, rects, labelmapIndex, isActiveLabelMap) {
   const eventData = evt.detail;
   const { element, canvasContext } = eventData;
 
