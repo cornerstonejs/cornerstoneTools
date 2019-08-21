@@ -99,7 +99,7 @@ module.exports = {
     'no-caller': 'warn',
     'no-catch-shadow': 'warn',
     'no-confusing-arrow': 'warn',
-    'no-console': 'error',
+    'no-console': 'off',
     'no-div-regex': 'warn',
     'no-duplicate-imports': 'warn',
     'no-else-return': 'warn',

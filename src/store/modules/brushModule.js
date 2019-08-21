@@ -12,6 +12,8 @@ const state = {
   visibleSegmentations: {},
   imageBitmapCache: {},
   segmentationMetadata: {},
+  //
+  invalidatedEnabledElements: [],
 };
 
 const setters = {
@@ -23,6 +25,15 @@ const setters = {
    */
   radius: radius => {
     state.radius = Math.min(Math.max(radius, state.minRadius), state.maxRadius);
+  },
+
+  forceUpdateImageForElement(element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const enabledElementUID = enabledElement.uuid;
+
+    if (!state.invalidatedEnabledElements.includes(enabledElementUID)) {
+      state.invalidatedEnabledElements.push(enabledElementUID);
+    }
   },
 
   /**
@@ -134,31 +145,6 @@ const getters = {
  */
 function enabledElementCallback(enabledElement) {
   setters.elementVisible(enabledElement);
-}
-
-/**
- * RemoveEnabledElementCallback - Element specific memory cleanup.
- * @public
- * @param  {Object} enabledElement  The element being removed.
- * @returns {void}
- */
-// TODO -> Test this before adding it to the module.
-function removeEnabledElementCallback(enabledElement) {
-  if (!external.cornerstone) {
-    return;
-  }
-
-  const cornerstoneEnabledElement = external.cornerstone.getEnabledElement(
-    enabledElement
-  );
-
-  const enabledElementUID = cornerstoneEnabledElement.uuid;
-  const colormap = external.cornerstone.colors.getColormap(state.colorMapId);
-  const numberOfColors = colormap.getNumberOfColors();
-
-  // Remove enabledElement specific data.
-  delete state.visibleSegmentations[enabledElementUID];
-  delete state.imageBitmapCache[enabledElementUID];
 }
 
 /**

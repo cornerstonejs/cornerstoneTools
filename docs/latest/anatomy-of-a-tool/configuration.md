@@ -4,19 +4,19 @@ While changing a Tool's [mode](index.md#modes), you also have the option of upda
 
 ```js
 // Set's the tool's configuration to `{ mouseButtonMask: 1 }`
-csTools.setToolActive('ToolName', { mouseButtonMask: 1 });
+cornerstoneTools.setToolActive('ToolName', { mouseButtonMask: 1 });
 
 // Tool's options are left "as-is"
-csTools.setToolActive('ToolName');
-csTools.setToolActive('ToolName', null);
-csTools.setToolActive('ToolName', undefined);
-csTools.setToolActive('ToolName', {});
+cornerstoneTools.setToolActive('ToolName');
+cornerstoneTools.setToolActive('ToolName', null);
+cornerstoneTools.setToolActive('ToolName', undefined);
+cornerstoneTools.setToolActive('ToolName', {});
 
 // A new key is added to the Tool's configuration
-csTools.setToolActive('ToolName', { isTouchActive: false });
+cornerstoneTools.setToolActive('ToolName', { isTouchActive: false });
 
 //  The previous `mouseButtonMask` configuration property's value is updated to `2`
-csTools.setToolActive('ToolName', { mouseButtonMask: 2 });
+cornerstoneTools.setToolActive('ToolName', { mouseButtonMask: 2 });
 ```
 
 ### Common Configuration Options

@@ -16,11 +16,9 @@ jest.mock('./../../externalModules.js', () => ({
     metaData: {
       get: jest.fn(),
     },
-    getPixels: () => {
-      return [100, 100, 100,
-        100, 4, 5,
-        100, 3, 6];
-    }
+    /* eslint-disable prettier/prettier */
+    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
+    /* eslint-enable prettier/prettier */
   },
 }));
 
@@ -39,7 +37,7 @@ const goodMouseEventData = {
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('EllipticalRoiTool.js', () => {
@@ -192,14 +190,15 @@ describe('EllipticalRoiTool.js', () => {
         handles: {
           start: {
             x: 0,
-            y: 0
+            y: 0,
           },
           end: {
             x: 3,
-            y: 3
-          }
+            y: 3,
+          },
         },
       };
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area.toFixed(2)).toEqual('5.71');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');

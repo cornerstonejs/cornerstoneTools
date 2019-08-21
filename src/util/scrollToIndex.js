@@ -44,9 +44,11 @@ export default function(element, newImageIdIndex) {
     newImageIdIndex += stackData.imageIds.length;
   }
 
-  const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(element);
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(element);
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
+    element
+  );
 
   function doneCallback(image) {
     if (stackData.currentImageIdIndex !== newImageIdIndex) {
