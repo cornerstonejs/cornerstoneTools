@@ -67,6 +67,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DRAG event.
    *
    * @override
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    */
@@ -86,6 +87,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DOWN event.
    *
    * @override
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    */
@@ -104,9 +106,9 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Initialise painting with baseBrushTool
+   * Initialise painting with BaseBrushTool.
    *
-   * @protected
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -132,6 +134,14 @@ class BaseBrushTool extends BaseTool {
     };
   }
 
+  /**
+   * End painting with BaseBrushTool.
+   *
+   * @virtual
+   * @event
+   * @param {Object} evt - The event.
+   * @returns {void}
+   */
   _endPainting(evt) {
     const {
       labelmap3D,
@@ -171,10 +181,15 @@ class BaseBrushTool extends BaseTool {
     }
   }
 
+  // ===================================================================
+  // Implementation interface
+  // ===================================================================
+
   /**
    * Event handler for MOUSE_MOVE event.
    *
    * @override
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    */
@@ -185,25 +200,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Event handler for switching mode to passive;
-   *
-   * @override
-   * @event
-   * @param {Object} evt - The event.
-   */
-  // eslint-disable-next-line no-unused-vars
-  passiveCallback(evt) {
-    try {
-      external.cornerstone.updateImage(this.element);
-    } catch (error) {
-      // It is possible that the image has not been loaded
-      // when this is called.
-      return;
-    }
-  }
-
-  /**
-   * Used to redraw the tool's annotation data per render.
+   * Used to redraw the tool's cursor per render.
    *
    * @override
    * @param {Object} evt - The event.
@@ -219,9 +216,23 @@ class BaseBrushTool extends BaseTool {
     }
   }
 
-  // ===================================================================
-  // Implementation interface
-  // ===================================================================
+  /**
+   * Event handler for switching mode to passive.
+   *
+   * @override
+   * @event
+   * @param {Object} evt - The event.
+   */
+  // eslint-disable-next-line no-unused-vars
+  passiveCallback(evt) {
+    try {
+      external.cornerstone.updateImage(this.element);
+    } catch (error) {
+      // It is possible that the image has not been loaded
+      // when this is called.
+      return;
+    }
+  }
 
   /**
    * Event handler for MOUSE_UP during the drawing event loop.

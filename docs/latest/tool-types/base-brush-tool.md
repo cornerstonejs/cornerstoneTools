@@ -5,3 +5,8 @@ The `BaseBrushTool` is an extension of `BaseTool` for Tools which edit the `brus
 - Abstract Methods:
   - `renderBrush`
   - `_paint`
+- Virtual Methods:
+  - `mouseDragCallback`
+  - `preMouseDownCallback`
+  - `_startPainting`
+  - `_endPainting`

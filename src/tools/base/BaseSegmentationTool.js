@@ -51,12 +51,11 @@ class BaseSegmentationTool extends BaseTool {
    *
    * @protected
    * @abstract
-   * @param  {string} toolName the name of the tool.
    * @param  {string} strategy the operation strategy.
    * @returns {MouseCursor}
    */
   // eslint-disable-next-line no-unused-vars
-  _getCursor(toolName, strategy) {
+  _getCursor(strategy) {
     throw new Error(`Method _getCursor not implemented for ${this.name}.`);
   }
 
@@ -111,14 +110,14 @@ class BaseSegmentationTool extends BaseTool {
   }
 
   /**
-   * Function responsible for changing the Cursor, according to the strategy
+   * Function responsible for changing the Cursor, according to the strategy.
    * @param {HTMLElement} element
    * @param {string} strategy The strategy to be used on Tool
    * @public
    * @returns {void}
    */
   changeCursor(element, strategy) {
-    // Necessary to avoid setToolCursor call without elements, what throws an error
+    // Necessary to avoid setToolCursor call without elements, which throws an error.
     if (!element) {
       return;
     }

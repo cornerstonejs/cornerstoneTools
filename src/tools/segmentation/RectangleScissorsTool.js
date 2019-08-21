@@ -6,6 +6,7 @@ import {
   eraseInsideBoundingBox,
 } from '../../util/segmentation/operations';
 import { segRectangleFillInsideCursor } from '../cursors';
+import { getCursor } from './../../util/segmentation';
 
 /**
  * @public
@@ -35,5 +36,15 @@ export default class RectangleScissorsTool extends BaseSegmentationTool {
     };
 
     super(props, defaultProps);
+  }
+
+  /**
+   * Gets The cursor according to strategy.
+   *
+   * @param  {string} strategy the operation strategy.
+   * @returns {MouseCursor}
+   */
+  _getCursor(strategy) {
+    return getCursor(`RectangleScissors`, strategy);
   }
 }

@@ -2,22 +2,8 @@ import { draw, drawCircle, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
 import store from '../../store';
-import { getCursor } from './../../util/segmentation';
 
 const { getters, setters } = store.modules.segmentation;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
 
 /**
  * Sets the start and end handle points to empty objects
@@ -162,7 +148,6 @@ function _applyStrategy(evt) {
  */
 export default {
   _applyStrategy,
-  _getCursor,
   renderToolData,
   _resetHandles,
   _setHandlesAndUpdate,

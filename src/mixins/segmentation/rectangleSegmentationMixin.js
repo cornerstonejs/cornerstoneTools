@@ -2,22 +2,8 @@ import { draw, drawRect, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
 import store from '../../store';
-import { getCursor } from '../../util/segmentation';
 
 const { getters, setters } = store.modules.segmentation;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
 
 /**
  * Render hook: draws the Scissors's outline, box, or circle
@@ -148,7 +134,6 @@ function _resetHandles() {
  */
 export default {
   _applyStrategy,
-  _getCursor,
   renderToolData,
   _resetHandles,
   _setHandlesAndUpdate,

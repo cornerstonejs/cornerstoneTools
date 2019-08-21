@@ -6,6 +6,7 @@ import {
   eraseInside,
 } from '../../util/segmentation/operations';
 import { BaseSegmentationTool } from '../base';
+import { getCursor } from './../../util/segmentation';
 
 /**
  * @public
@@ -35,5 +36,15 @@ export default class FreehandScissorsTool extends BaseSegmentationTool {
     };
 
     super(props, defaultProps);
+  }
+
+  /**
+   * Gets The cursor according to strategy.
+   *
+   * @param  {string} strategy the operation strategy.
+   * @returns {MouseCursor}
+   */
+  _getCursor(strategy) {
+    return getCursor(`FreehandScissors`, strategy);
   }
 }

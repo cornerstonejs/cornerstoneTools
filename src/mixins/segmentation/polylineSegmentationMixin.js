@@ -1,21 +1,7 @@
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
-import { getCursor } from '../../util/segmentation';
 import store from '../../store';
 
 const { getters } = store.modules.segmentation;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
 
 /**
  * Render hook: draws the FreehandScissors's outline
@@ -51,6 +37,5 @@ function renderToolData(evt) {
  * @memberof Mixins
  */
 export default {
-  _getCursor,
   renderToolData,
 };

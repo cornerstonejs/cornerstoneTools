@@ -2,24 +2,10 @@ import external from '../../externalModules.js';
 import store from '../../store';
 import { getLogger } from '../../util/logger.js';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
-import { getCursor } from '../../util/segmentation';
 
 const logger = getLogger('tools:ScissorsTool');
 
 const { getters, setters } = store.modules.segmentation;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
 
 /**
  * Render hook: draws the FreehandScissors's outline
@@ -188,7 +174,6 @@ function _addPoint(evt) {
 export default {
   _addPoint,
   _applyStrategy,
-  _getCursor,
   renderToolData,
   _resetHandles,
   _startOutliningRegion,
