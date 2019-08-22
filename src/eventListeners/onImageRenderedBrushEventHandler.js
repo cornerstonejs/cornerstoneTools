@@ -224,6 +224,8 @@ export function getRectsToFill(evt, labelmap3D, labelmap2D) {
   const cols = image.width;
   const rows = image.height;
 
+  // Debugger;
+
   const { segmentsVisible } = labelmap3D;
 
   const pixelData = labelmap2D.pixelData;
@@ -250,8 +252,9 @@ export function getRectsToFill(evt, labelmap3D, labelmap2D) {
     let segmentIndex = pixelData[y * rows];
     let start = { x: 0, y };
 
+    // Starts from 1 as checking the next element, up to the last element of the array.
     for (let x = 1; x < cols; x++) {
-      const newSegmentIndex = pixelData[y * rows + x];
+      const newSegmentIndex = pixelData[y * cols + x];
 
       if (newSegmentIndex !== segmentIndex) {
         // Hit new segment, save rect.

@@ -405,6 +405,91 @@ describe('onImageRenderedBrushEventHandler.js', () => {
       expect(rects[2]).toBe(undefined);
     });
   });
+  /*
+  Describe('getRectsToFill', () => {
+    it('Should generate 1 rects to fill in a nonsquare image.', () => {
+      const width = 27;
+      const height = 13;
+      const length = width * height;
+      const currentImageIdIndex = 0;
+
+      const canvasScale = 1.0;
+
+      lineWidth = 1;
+
+      eventData = {
+        element: null,
+        image: {
+          width: width,
+          height: height,
+        },
+        viewport: {
+          rotation: 0,
+          scale: canvasScale,
+          translation: { x: 0, y: 0 },
+          hflip: false,
+          vflip: false,
+          displayedArea: {
+            brhc: { x: 27, y: 13 },
+            tlhc: { x: 1, y: 1 },
+          },
+        },
+        canvasContext: {
+          canvas: {
+            width: canvasScale * width,
+            height: canvasScale * height,
+          },
+        },
+      };
+
+      evt = {
+        detail: eventData,
+      };
+
+      labelmap3D = {
+        buffer: new ArrayBuffer(length * 2),
+        labelmaps2D: [],
+        metadata: [],
+        activeSegmentIndex: 0,
+        segmentsVisible: [],
+      };
+
+      labelmap2D = {
+        pixelData: new Uint16Array(labelmap3D.buffer, 0, length),
+        segmentsOnLabelmap: [0, 1],
+        invalidated: true,
+      };
+
+      const pixelData = labelmap2D.pixelData;
+      const cols = eventData.image.width;
+
+      for (let x = 0; x < cols; x++) {
+        pixelData[x] = 1;
+      }
+
+      labelmap3D.labelmaps2D[currentImageIdIndex] = labelmap2D;
+
+      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+      console.log(rects);
+
+      for (let i = 0; i < rects.length; i++) {
+        console.log(rects[1][i].start, rects[1][i].end);
+      }
+
+      expect(rects[1].length).toBe(1);
+    });
+
+    it('Should not get rects of disabled segments.', () => {
+      labelmap3D.segmentsVisible[2] = false;
+
+      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
+
+      expect(rects[1].length).toBe(2);
+      expect(rects[2]).toBe(undefined);
+    });
+  });
+  */
 
   describe('renderFill', () => {
     it('Should call fillRect 4 times', () => {

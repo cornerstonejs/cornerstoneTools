@@ -1360,10 +1360,13 @@ function _changeActiveSegmentIndex(element, increaseOrDecrease = 'increase') {
  *
  * @param  {BrushStackState} brushStackState The labelmap state for a particular stack.
  * @param  {number} labelmapIndex   The labelmapIndex to set.
- * @param  {number} size            The size of the ArrayBuffer in bytes.
+ * @param  {number} size            The size of the ArrayBuffer in bytes/ 2.
  * @returns {null}
  */
 function _addLabelmap3D(brushStackState, labelmapIndex, size) {
+  logger.warn('hmm..');
+  logger.warn(size);
+
   // Buffer size is multiplied by 2 as we are using 2 bytes/voxel for 65536 segments.
   brushStackState.labelmaps3D[labelmapIndex] = {
     buffer: new ArrayBuffer(size * 2),
