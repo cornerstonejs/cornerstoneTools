@@ -26,7 +26,7 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
       defaultStrategy: 'CORRECTION',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: freehandFillInsideCursor,
-      mixins: ['freehandSegmentationMixin', 'polylineSegmentationMixin'],
+      mixins: ['freehandSegmentationMixin', 'freehandPolylineRenderOverride'],
     };
 
     super(props, defaultProps);

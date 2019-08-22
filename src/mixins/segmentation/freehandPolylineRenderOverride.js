@@ -34,7 +34,7 @@ function renderToolData(evt) {
 }
 
 /**
- * @mixin polylineSegmentationMixin - segmentation operations for corrections Polyline
+ * @mixin freehandPolylineRenderOverride - segmentation operations for corrections Polyline
  * @memberof Mixins
  */
 export default {

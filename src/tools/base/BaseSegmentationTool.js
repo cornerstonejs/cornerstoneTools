@@ -36,24 +36,6 @@ class BaseSegmentationTool extends BaseTool {
     );
   }
 
-  /**
-   * This function will update the handles and updateImage to force re-draw
-   *
-   * @private
-   * @method _setHandlesAndUpdate
-   * @param {Object} evt  Interaction event emitted by an enabledElement
-   * @returns {void}
-   */
-  /*
-  _setHandlesAndUpdate(evt) {
-    throw new Error(
-      `Method _setHandlesAndUpdate not implemented for ${
-        this.name
-      }, you must use a segmentation mixin.`
-    );
-  }
-  */
-
   // ===================================================================
   // Virtual Methods - Have default behavior but may be overridden.
   // ===================================================================
@@ -96,6 +78,14 @@ class BaseSegmentationTool extends BaseTool {
     }
   }
 
+  // ===================================================================
+  // Implementation interface
+  // ===================================================================
+
+  /**
+   * Returns the cursor for the given strategy name.
+   * @param  {string} strategy
+   */
   _getCursor(strategy) {
     return this._cursors[strategy];
   }

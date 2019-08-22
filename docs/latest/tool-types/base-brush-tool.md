@@ -1,4 +1,4 @@
-## Brush Tool {#base-brush-tool}
+## Base Brush Tool {#base-brush-tool}
 
 The `BaseBrushTool` is an extension of `BaseTool` for Tools which edit the segmentation module's `Labelmap3D` data by painting on the canvas. Used for creating and editing segmentations.
 

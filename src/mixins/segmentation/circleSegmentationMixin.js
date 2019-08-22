@@ -111,16 +111,16 @@ function _applyStrategy(evt) {
     element
   );
 
-  const points = [
-    {
+  const points = {
+    start: {
       x: this.handles.start.x,
       y: this.handles.start.y,
     },
-    {
+    end: {
       x: this.handles.end.x,
       y: this.handles.end.y,
     },
-  ];
+  };
 
   const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
@@ -144,7 +144,7 @@ function _applyStrategy(evt) {
 }
 
 /**
- * @mixin circleSegmentationMixin - segmentation operations for circles
+ * @mixin circleSegmentationMixin - Segmentation operations for circles.
  * @memberof Mixins
  */
 export default {
