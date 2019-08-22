@@ -1,5 +1,5 @@
-import store from './../store/index.js';
-import external from '../externalModules.js';
+import store from '../../store/index.js';
+import external from '../../externalModules.js';
 
 const { setters, getters, configuration } = store.modules.segmentation;
 
@@ -21,47 +21,82 @@ function getActiveLabelmap() {
 
 /**
  * Sets the active labelmap.
- * @param {number} labelMapIndex the index of the labelmap to set active.
+ * @param {number} labelMapIndex The index of the labelmap to set active.
  * @returns {null}
  */
 function setActiveLabelmap(labelMapIndex = 0) {
   setters.activeLabelmap(this.element, labelMapIndex);
 }
 
+/**
+ * Gets the fill alpha for the active labelmap.
+ * @returns {number}
+ */
 function getFillAlpha() {
   return configuration.fillAlpha;
 }
-
+/**
+ * Sets the fill alpha for the active labelmap.
+ * @param  {number} value The alpha betwen 0 and 1.
+ * @returns {null}
+ */
 function setFillAlpha(value) {
   configuration.fillAlpha = value;
 
   this._updateAllEnabledElements();
 }
 
+/**
+ * Gets the fill alpha for inactive labelmaps.
+ * @returns {number}
+ */
 function getFillAlphaInactive() {
   return configuration.fillAlphaInactive;
 }
 
+/**
+ * Sets the fill alpha for inactive labelmaps.
+ * @param  {number} value The alpha betwen 0 and 1.
+ * @returns {null}
+ */
 function setFillAlphaInactive(value) {
   configuration.fillAlphaInactive = value;
 
   this._updateAllEnabledElements();
 }
 
+/**
+ * Gets the outline alpha for the active labelmap.
+ * @returns {number}
+ */
 function getOutlineAlpha() {
   return configuration.outlineAlpha;
 }
 
+/**
+ * Sets the outline alpha for the active labelmap.
+ * @param  {number} value The alpha betwen 0 and 1.
+ * @returns {null}
+ */
 function setOutlineAlpha(value) {
   configuration.outlineAlpha = value;
 
   this._updateAllEnabledElements();
 }
 
+/**
+ * Gets the outline alpha for inactive labelmaps.
+ * @returns {number}
+ */
 function getOutlineAlphaInactive() {
   return configuration.outlineAlphaInactive;
 }
 
+/**
+ * Sets the outline alpha for inactive labelmaps.
+ * @param  {number} value The alpha betwen 0 and 1.
+ * @returns {null}
+ */
 function setOutlineAlphaInactive(value) {
   configuration.outlineAlphaInactive = value;
 
@@ -84,6 +119,10 @@ function previousSegment() {
   setters.decrementActiveSegmentIndex(this.element);
 }
 
+/**
+ * Update all enabled elements.
+ * @returns {null}
+ */
 function _updateAllEnabledElements() {
   elements.forEach(element => {
     external.cornerstone.updateImage(element);

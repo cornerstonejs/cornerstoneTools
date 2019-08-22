@@ -1,6 +1,6 @@
 import activeOrDisabledBinaryTool from './activeOrDisabledBinaryTool.js';
 import enabledOrDisabledBinaryTool from './enabledOrDisabledBinaryTool.js';
-import segmentationAPI from './segmentationAPI';
+import segmentationAPI from './segmentation/segmentationAPI';
 import circleSegmentationMixin from './segmentation/circleSegmentationMixin.js';
 import freehandPolylineRenderOverride from './segmentation/freehandPolylineRenderOverride.js';
 import freehandSegmentationMixin from './segmentation/freehandSegmentationMixin.js';

@@ -8,7 +8,7 @@ If at least one subclass of `BaseBrushTool` or `BaseSegmentationTool` is either 
 
 ### Abstract Methods:
 
-- \_applyStrategy(evt) - Applies the active segmentation strategy with the deliniation as input. Implemented by a [segmentation mixin](../tool-mixins/index.md#segmentation-tools).
+- \_applyStrategy(evt) - Applies the active segmentation strategy with the deliniation as input. Implemented by a [segmentation mixin](../tool-mixins/index.md#segmentation-mixins).
 
 ### Virtual Methods:
 
@@ -19,7 +19,7 @@ If at least one subclass of `BaseBrushTool` or `BaseSegmentationTool` is either 
 
 `SegmentationTool`s are comprised of a few components:
 
-- A [Segmentation Mixin](../tool-mixins/index.md#segmentation-tools) - A mixin which adds a deliniation mechanism, which allows the user to input a target region.
+- A [Segmentation Mixin](../tool-mixins/index.md#segmentation-mixins) - A mixin which adds a deliniation mechanism, which allows the user to input a target region.
 - One or more `strategies` to be called by thes segmentation mixin's `_applyStrategy` method.
 - A set of `cursors` for `strategies`.
 
@@ -110,4 +110,4 @@ mixins: ['circleSegmentationMixin'];
 // ...
 ```
 
-The `mixins` prop can be used as with `BaseTool`, but at least one [segmentation mixin](../tool-mixins/index.md#segmentation-tools) must be used. The job the segmentation mixin is to take user input through some means, implement `_applyStrategy`, and call the `strategy` with appropriate input. Segmentation mixins are described more [here](../tool-mixins/index.md#segmentation-tools)
+The `mixins` prop can be used as with `BaseTool`, but at least one [segmentation mixin](../tool-mixins/index.md#segmentation-mixins) must be used. The job the segmentation mixin is to take user input through some means, implement `_applyStrategy`, and call the `strategy` with appropriate input. Segmentation mixins are described more [here](../tool-mixins/index.md#segmentation-mixins)

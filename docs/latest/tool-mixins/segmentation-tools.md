@@ -1,4 +1,4 @@
-## Segmentation Tools {#segmentation-tools}
+## Segmentation Mixins {#segmentation-mixins}
 
 [Segmentation Tools](../tool-types/index.md#base-segmentation-tool) require a segmentation mixin to function. The role of a segmentation mixin is to provide a user input mechanism, which generates an `operationData` object which it attaches to the cornerstone event and sends to the tool's active strategy.
 
