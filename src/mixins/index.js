@@ -1,8 +1,8 @@
 import activeOrDisabledBinaryTool from './activeOrDisabledBinaryTool.js';
 import enabledOrDisabledBinaryTool from './enabledOrDisabledBinaryTool.js';
-import segmentationAPI from './segmentationAPI';
+import segmentationAPI from './segmentation/segmentationAPI';
 import circleSegmentationMixin from './segmentation/circleSegmentationMixin.js';
-import polylineSegmentationMixin from './segmentation/polylineSegmentationMixin.js';
+import freehandPolylineRenderOverride from './segmentation/freehandPolylineRenderOverride.js';
 import freehandSegmentationMixin from './segmentation/freehandSegmentationMixin.js';
 import rectangleSegmentationMixin from './segmentation/rectangleSegmentationMixin.js';
 
@@ -11,7 +11,7 @@ export default {
   enabledOrDisabledBinaryTool,
   segmentationAPI,
   circleSegmentationMixin,
-  polylineSegmentationMixin,
+  freehandPolylineRenderOverride,
   freehandSegmentationMixin,
   rectangleSegmentationMixin,
 };

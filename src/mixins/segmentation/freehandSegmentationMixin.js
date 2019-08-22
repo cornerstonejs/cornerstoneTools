@@ -2,25 +2,10 @@ import external from '../../externalModules.js';
 import store from '../../store';
 import { getLogger } from '../../util/logger.js';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
-import { getCursor } from '../../util/segmentation';
 
 const logger = getLogger('tools:ScissorsTool');
 
-const brushModule = store.modules.brush;
-const { getters } = brushModule;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
+const { getters, setters } = store.modules.segmentation;
 
 /**
  * Render hook: draws the FreehandScissors's outline
@@ -121,15 +106,20 @@ function _applyStrategy(evt) {
     points,
     pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
+    segmentationMixinType: `freehandSegmentationMixin`,
   };
 
   this.applyActiveStrategy(evt);
 
   // Invalidate the brush tool data so it is redrawn
-  labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;
+  const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+  labelmap2D.invalidated = true;
+
+  setters.updateSegmentsOnLabelmaps2D(labelmap2D);
+  external.cornerstone.updateImage(element);
 
   this._resetHandles();
-  external.cornerstone.updateImage(evt.detail.element);
 }
 
 /**
@@ -183,11 +173,17 @@ function _addPoint(evt) {
  * @memberof Mixins
  */
 export default {
-  _addPoint,
-  _applyStrategy,
-  _getCursor,
+  postTouchStartCallback: _startOutliningRegion,
+  postMouseDownCallback: _startOutliningRegion,
+  mouseClickCallback: _startOutliningRegion,
+  touchDragCallback: _setHandlesAndUpdate,
+  mouseDragCallback: _setHandlesAndUpdate,
+  mouseMoveCallback: _setHandlesAndUpdate,
+  touchEndCallback: _applyStrategy,
+  mouseUpCallback: _applyStrategy,
+  initializeSegmentationMixin: _resetHandles,
   renderToolData,
   _resetHandles,
-  _startOutliningRegion,
-  _setHandlesAndUpdate,
+  _addPoint,
+  _applyStrategy,
 };

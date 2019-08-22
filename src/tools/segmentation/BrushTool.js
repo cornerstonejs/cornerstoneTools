@@ -9,7 +9,7 @@ const logger = getLogger('tools:BrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
-const brushModule = store.modules.brush;
+const segmentationModule = store.modules.segmentation;
 
 /**
  * @public
@@ -64,10 +64,10 @@ export default class BrushTool extends BaseBrushTool {
     }
 
     // Draw the hover overlay on top of the pixel data
-    const radius = brushModule.state.radius;
+    const radius = segmentationModule.configuration.radius;
     const context = eventData.canvasContext;
     const element = eventData.element;
-    const color = brushModule.getters.brushColor(element, this._drawing);
+    const color = segmentationModule.getters.brushColor(element, this._drawing);
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -107,7 +107,7 @@ export default class BrushTool extends BaseBrushTool {
       return;
     }
 
-    const radius = brushModule.state.radius;
+    const radius = segmentationModule.configuration.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
     const {

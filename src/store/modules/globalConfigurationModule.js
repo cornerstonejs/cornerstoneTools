@@ -1,4 +1,4 @@
-const state = {
+const configuration = {
   mouseEnabled: true,
   touchEnabled: true,
   globalToolSyncEnabled: false,
@@ -6,6 +6,5 @@ const state = {
 };
 
 export default {
-  state,
-  setters: {},
+  configuration,
 };

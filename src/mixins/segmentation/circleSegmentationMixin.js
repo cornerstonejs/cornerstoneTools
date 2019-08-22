@@ -2,23 +2,8 @@ import { draw, drawCircle, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
 import store from '../../store';
-import { getCursor } from './../../util/segmentation';
 
-const brushModule = store.modules.brush;
-const { getters } = brushModule;
-
-/**
- * Gets The cursor according to strategy.
- *
- * @protected
- * @abstract
- * @param  {string} toolName the name of the tool.
- * @param  {string} strategy the operation strategy.
- * @returns {MouseCursor}
- */
-function _getCursor(toolName, strategy) {
-  return getCursor(toolName, strategy);
-}
+const { getters, setters } = store.modules.segmentation;
 
 /**
  * Sets the start and end handle points to empty objects
@@ -126,16 +111,16 @@ function _applyStrategy(evt) {
     element
   );
 
-  const points = [
-    {
+  const points = {
+    start: {
       x: this.handles.start.x,
       y: this.handles.start.y,
     },
-    {
+    end: {
       x: this.handles.end.x,
       y: this.handles.end.y,
     },
-  ];
+  };
 
   const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
@@ -143,28 +128,36 @@ function _applyStrategy(evt) {
     points,
     pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
+    segmentationMixinType: `circleSegmentationMixin`,
   };
 
   this.applyActiveStrategy(evt);
 
-  // TODO: Future: 3D propagation (unlimited, positive, negative, symmetric)
-
   // Invalidate the brush tool data so it is redrawn
-  labelmap3D.labelmaps2D[currentImageIdIndex].invalidated = true;
+  const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+
+  labelmap2D.invalidated = true;
+  setters.updateSegmentsOnLabelmaps2D(labelmap2D);
   external.cornerstone.updateImage(element);
 
   this._resetHandles();
 }
 
 /**
- * @mixin circleSegmentationMixin - segmentation operations for circles
+ * @mixin circleSegmentationMixin - Segmentation operations for circles.
  * @memberof Mixins
  */
 export default {
-  _applyStrategy,
-  _getCursor,
+  postTouchStartCallback: _startOutliningRegion,
+  postMouseDownCallback: _startOutliningRegion,
+  mouseClickCallback: _startOutliningRegion,
+  touchDragCallback: _setHandlesAndUpdate,
+  mouseDragCallback: _setHandlesAndUpdate,
+  mouseMoveCallback: _setHandlesAndUpdate,
+  touchEndCallback: _applyStrategy,
+  mouseUpCallback: _applyStrategy,
+  initializeSegmentationMixin: _resetHandles,
   renderToolData,
   _resetHandles,
-  _setHandlesAndUpdate,
-  _startOutliningRegion,
+  _applyStrategy,
 };

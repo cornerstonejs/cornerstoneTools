@@ -1,5 +1,5 @@
 // Modules
-import brush from './modules/brushModule.js';
+import segmentation from './modules/segmentationModule.js';
 import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
@@ -44,7 +44,7 @@ export const getters = {
 export const setters = {};
 
 export const modules = {
-  brush,
+  segmentation,
   cursor,
   globalConfiguration,
 };

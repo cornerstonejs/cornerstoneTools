@@ -62,6 +62,7 @@
           <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
           <li><a href="#" data-tool="Pan">Pan</a></li>
           <li><a href="#" data-tool="Zoom">Zoom</a></li>
+          <li><a href="#" data-tool="Rotate">Rotate</a></li>
         </ul>
 
         <!-- Our beautiful element targets -->
@@ -72,26 +73,44 @@
             oncontextmenu="return false"
           ></div>
           <div class="tool-help">
-            <h1>Brush Tool</h1>
+            <h2>Renderers</h2>
             <table>
               <tr>
-                <th>Mouse Input</th>
+                <td>Segmentation Outline</td>
                 <td>
-                  <table>
-                    <tr>
-                      <td>
-                        Click and drag to paint with the selected segment.
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>Release the mouse to stop painting.</td>
-                    </tr>
-                  </table>
+                  <input
+                    id="display-outline"
+                    type="checkbox"
+                    name="display-outline"
+                    checked
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Segmentation Fill</td>
+                <td>
+                  <input
+                    id="display-fill"
+                    type="checkbox"
+                    name="display-fill"
+                    checked
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td>Inactive Labelmaps</td>
+                <td>
+                  <input
+                    id="display-inactive"
+                    type="checkbox"
+                    name="display-inactive"
+                    checked
+                  />
                 </td>
               </tr>
             </table>
 
-            <h2>Brush Tool API</h2>
+            <h2>Active Segmentation</h2>
             <table>
               <tr>
                 <th>
@@ -124,20 +143,67 @@
                 </td>
               </tr>
               <tr>
+                <th>
+                  <button type="button" api-call="toggle-segment-1">
+                    Toggle Segment 1 visibility
+                  </button>
+                </th>
+                <td id="toggle-segment-1-label">
+                  visible
+                </td>
+              </tr>
+            </table>
+
+            <h2>Active Labelmap</h2>
+            <table>
+              <tr>
                 <td>
-                  <input type="range" id="alpha" min="0" max="255" />
+                  <input type="range" id="fill-alpha" min="0" max="255" />
                 </td>
                 <td>
-                  alpha - The transparency of the active segmentation.
+                  fillAlpha - Opacity of the active segmentation.
                 </td>
               </tr>
               <tr>
                 <td>
-                  <input type="range" id="alpha-inactive" min="0" max="255" />
+                  <input type="range" id="outline-alpha" min="0" max="255" />
                 </td>
                 <td>
-                  alphaOfInactiveLabelmap - The transparency of inactive
-                  segmentations.
+                  outlineAlpha - Opacity of the active segmentation outline.
+                </td>
+              </tr>
+            </table>
+
+            <h2>
+              Inactive Labelmap
+            </h2>
+
+            <table>
+              <tr>
+                <td>
+                  <input
+                    type="range"
+                    id="fill-alpha-inactive"
+                    min="0"
+                    max="255"
+                  />
+                </td>
+                <td>
+                  fillAlphaInactive - Opacity of inactive segmentations.
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <input
+                    type="range"
+                    id="outline-alpha-inactive"
+                    min="0"
+                    max="255"
+                  />
+                </td>
+                <td>
+                  outlineAlphaInactive - Opacity of inactive segmentation
+                  outlines.
                 </td>
               </tr>
             </table>
@@ -155,6 +221,8 @@
   <!-- include the cornerstone library -->
   <script src="https://unpkg.com/cornerstone-core@2.2.6/dist/cornerstone.js"></script>
   <script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.js"></script>
+  <script src="https://unpkg.com/cornerstone-wado-image-loader@3.0.0/dist/cornerstoneWADOImageLoader.js"></script>
+  <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.js"></script>
   <script src="../../dist/cornerstoneTools.js"></script>
   <script>
     window.cornerstoneTools ||
@@ -168,7 +236,14 @@
   <script src="../metaDataProvider.js"></script>
 
   <script>
-    cornerstoneTools.init();
+    cornerstoneTools.init({ showSVGCursors: true });
+
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+
+    //const baseUrl = window.location.origin;
+    //const imageId = `dicomweb:${baseUrl}/examples/assets/dicom/exotic/1.dcm`;
+    //const imageId = 'example://1';
+
     const imageIds = ['example://1', 'example://2'];
     const stack = {
       currentImageIdIndex: 0,
@@ -180,6 +255,8 @@
 
     cornerstone.enable(element);
 
+    const enabledElement = cornerstone.getEnabledElement(element);
+
     element.tabIndex = 0;
     element.focus();
 
@@ -187,6 +264,10 @@
       cornerstoneTools.addStackStateManager(element, ['stack']);
       cornerstoneTools.addToolState(element, 'stack', stack);
       cornerstone.displayImage(element, image);
+
+      console.log(enabledElement);
+
+      enabledElement.viewport.pixelReplication = true;
     });
 
     function setAllToolsPassive() {
@@ -389,7 +470,7 @@
             activeLabelmap = 0;
           }
 
-          cornerstoneTools.store.modules.brush.setters.activeLabelmap(
+          cornerstoneTools.store.modules.segmentation.setters.activeLabelmap(
             element,
             activeLabelmap
           );
@@ -397,31 +478,104 @@
           const label = document.getElementById('active-label-map-label');
           label.innerHTML = 'Active Labelmap: ' + activeLabelmap;
 
+          cornerstone.updateImage(element);
+
+          break;
+
+        case 'toggle-segment-1':
+          const visible = cornerstoneTools.store.modules.segmentation.setters.toggleSegmentVisibility(
+            element,
+            1
+          );
+
+          console.log(visible);
+
+          const visibilityLabel = document.getElementById(
+            'toggle-segment-1-label'
+          );
+          visibilityLabel.innerHTML = visible ? 'visible' : 'hidden';
+
+          cornerstone.updateImage(element);
           break;
         default:
           return;
       }
     }
 
-    // API Sliders
-    const alphaSlider = document.getElementById('alpha');
+    const configuration =
+      cornerstoneTools.store.modules.segmentation.configuration;
 
-    alphaSlider.defaultValue = Math.floor(0.6 * 255);
+    // Display Outline
+    const outlineDisplay = document.getElementById('display-outline');
+
+    outlineDisplay.addEventListener('input', event => {
+      configuration.renderOutline = event.target.checked;
+      cornerstone.updateImage(element);
+    });
+
+    // Display Fill
+    const fillDisplay = document.getElementById('display-fill');
+
+    fillDisplay.addEventListener('input', event => {
+      configuration.renderFill = event.target.checked;
+      cornerstone.updateImage(element);
+    });
+
+    // Display Inactive
+    const inactiveDisplay = document.getElementById('display-inactive');
+
+    inactiveDisplay.addEventListener('input', event => {
+      configuration.renderInactiveLabelmaps = event.target.checked;
+      cornerstone.updateImage(element);
+    });
+
+    // API Sliders
+    // Active Fill
+    const alphaSlider = document.getElementById('fill-alpha');
+
+    alphaSlider.defaultValue = Math.floor(configuration.fillAlpha * 255);
     alphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.alpha = normalisedAlpha;
+      brushTool.setFillAlpha(normalisedAlpha);
     });
 
-    const alphaOfInactiveLabelmapSlider = document.getElementById(
-      'alpha-inactive'
-    );
+    // Active Outline
+    const outlineAlphaSlider = document.getElementById('outline-alpha');
 
-    alphaOfInactiveLabelmapSlider.defaultValue = Math.floor(0.0);
-    alphaOfInactiveLabelmapSlider.addEventListener('input', event => {
+    outlineAlphaSlider.defaultValue = Math.floor(
+      configuration.outlineAlpha * 255
+    );
+    outlineAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.alphaOfInactiveLabelmap = normalisedAlpha;
+      brushTool.setOutlineAlpha(normalisedAlpha);
+    });
+
+    // Inactive Fill
+    const inactiveAlphaSlider = document.getElementById('fill-alpha-inactive');
+
+    inactiveAlphaSlider.defaultValue = Math.floor(
+      configuration.fillAlphaInactive * 255
+    );
+    inactiveAlphaSlider.addEventListener('input', event => {
+      const normalisedAlpha = event.target.value / 255.0;
+
+      brushTool.setFillAlphaInactive(normalisedAlpha);
+    });
+
+    // Inactive Outline
+    const inactiveOutlineAlphaSlider = document.getElementById(
+      'outline-alpha-inactive'
+    );
+
+    inactiveOutlineAlphaSlider.defaultValue = Math.floor(
+      configuration.outlineAlphaInactive * 255
+    );
+    inactiveOutlineAlphaSlider.addEventListener('input', event => {
+      const normalisedAlpha = event.target.value / 255.0;
+
+      brushTool.setOutlineAlphaInactive(normalisedAlpha);
     });
 
     // Segmentation Tool API
@@ -442,32 +596,30 @@
       'change-scissor-strategy'
     );
 
-    console.log(changeScissorStrategyElement);
-
     changeScissorStrategyElement.value = 'fillInside';
 
     function changeScissorStrategy(value) {
       console.log(value);
       switch (value) {
         case 'fillInside':
-          freehandScissorsTool.setActiveStrategy('FILL_INSIDE');
-          rectangleScissorsTool.setActiveStrategy('FILL_INSIDE');
-          circleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          freehandScissorsTool.changeStrategy('FILL_INSIDE');
+          rectangleScissorsTool.changeStrategy('FILL_INSIDE');
+          circleScissorsTool.changeStrategy('FILL_INSIDE');
           break;
         case 'eraseInside':
-          freehandScissorsTool.setActiveStrategy('ERASE_INSIDE');
-          rectangleScissorsTool.setActiveStrategy('ERASE_INSIDE');
-          circleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          freehandScissorsTool.changeStrategy('ERASE_INSIDE');
+          rectangleScissorsTool.changeStrategy('ERASE_INSIDE');
+          circleScissorsTool.changeStrategy('ERASE_INSIDE');
           break;
         case 'fillOutside':
-          freehandScissorsTool.setActiveStrategy('FILL_OUTSIDE');
-          rectangleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
-          circleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          freehandScissorsTool.changeStrategy('FILL_OUTSIDE');
+          rectangleScissorsTool.changeStrategy('FILL_OUTSIDE');
+          circleScissorsTool.changeStrategy('FILL_OUTSIDE');
           break;
         case 'eraseOutside':
-          freehandScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
-          rectangleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
-          circleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          freehandScissorsTool.changeStrategy('ERASE_OUTSIDE');
+          rectangleScissorsTool.changeStrategy('ERASE_OUTSIDE');
+          circleScissorsTool.changeStrategy('ERASE_OUTSIDE');
           break;
       }
     }

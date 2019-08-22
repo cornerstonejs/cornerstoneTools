@@ -8,38 +8,12 @@ class BaseSegmentationTool extends BaseTool {
     defaultProps.mixins.push('segmentationAPI');
     super(props, defaultProps);
 
-    //
-    // Touch
-    //
-    /** @inheritdoc */
-    this.postTouchStartCallback = this._startOutliningRegion.bind(this);
+    // If the mixin has an initalisation step, call it.
+    if (typeof this.initializeSegmentationMixin === 'function') {
+      this.initializeSegmentationMixin();
+    }
 
-    /** @inheritdoc */
-    this.touchDragCallback = this._setHandlesAndUpdate.bind(this);
-
-    /** @inheritdoc */
-    this.touchEndCallback = this._applyStrategy.bind(this);
-
-    //
-    // MOUSE
-    //
-    /** @inheritdoc */
-    this.postMouseDownCallback = this._startOutliningRegion.bind(this);
-
-    /** @inheritdoc */
-    this.mouseClickCallback = this._startOutliningRegion.bind(this);
-
-    /** @inheritdoc */
-    this.mouseDragCallback = this._setHandlesAndUpdate.bind(this);
-
-    /** @inheritdoc */
-    this.mouseMoveCallback = this._setHandlesAndUpdate.bind(this);
-
-    /** @inheritdoc */
-    this.mouseUpCallback = this._applyStrategy.bind(this);
-
-    this.changeStrategy = this.changeStrategy.bind(this);
-    this._resetHandles();
+    this._cursors = Object.assign({}, defaultProps.cursors, props.cursors);
   }
 
   // ===================================================================
@@ -47,45 +21,16 @@ class BaseSegmentationTool extends BaseTool {
   // ===================================================================
 
   /**
-   * Gets The cursor according to strategy.
+   * Applies the active segmentation strategy.
    *
    * @protected
    * @abstract
-   * @param  {string} toolName the name of the tool.
-   * @param  {string} strategy the operation strategy.
-   * @returns {MouseCursor}
-   */
-  // eslint-disable-next-line no-unused-vars
-  _getCursor(toolName, strategy) {
-    throw new Error(`Method _getCursor not implemented for ${this.name}.`);
-  }
-
-  /**
-   * Sets the start handle point and claims the eventDispatcher event
-   *
-   * @private
-   * @param {Object} evt // mousedown, touchstart, click
-   * @returns {void|null}
-   */
-  _startOutliningRegion(evt) {
-    throw new Error(
-      `Method _startOutliningRegion not implemented for ${
-        this.name
-      }, you must use a segmentation mixin.`
-    );
-  }
-
-  /**
-   * This function will update the handles and updateImage to force re-draw
-   *
-   * @private
-   * @method _setHandlesAndUpdate
-   * @param {Object} evt  Interaction event emitted by an enabledElement
+   * @param {Object} evt
    * @returns {void}
    */
-  _setHandlesAndUpdate(evt) {
+  _applyStrategy(evt) {
     throw new Error(
-      `Method _setHandlesAndUpdate not implemented for ${
+      `Method _applyStrategy not implemented for ${
         this.name
       }, you must use a segmentation mixin.`
     );
@@ -111,20 +56,38 @@ class BaseSegmentationTool extends BaseTool {
   }
 
   /**
-   * Function responsible for changing the Cursor, according to the strategy
+   * Function responsible for changing the Cursor, according to the strategy.
    * @param {HTMLElement} element
    * @param {string} strategy The strategy to be used on Tool
    * @public
    * @returns {void}
    */
   changeCursor(element, strategy) {
-    // Necessary to avoid setToolCursor call without elements, what throws an error
+    // Necessary to avoid setToolCursor call without elements, which throws an error.
     if (!element) {
       return;
     }
 
-    setToolCursor(element, this._getCursor(this.name, strategy));
-    external.cornerstone.updateImage(element);
+    const cursor = this._getCursor(strategy);
+
+    this.svgCursor = cursor;
+
+    if (this.mode === 'active') {
+      setToolCursor(element, cursor);
+      external.cornerstone.updateImage(element);
+    }
+  }
+
+  // ===================================================================
+  // Implementation interface
+  // ===================================================================
+
+  /**
+   * Returns the cursor for the given strategy name.
+   * @param  {string} strategy
+   */
+  _getCursor(strategy) {
+    return this._cursors[strategy];
   }
 }
 

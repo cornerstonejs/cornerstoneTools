@@ -24,6 +24,7 @@ export default function(context, options = {}, fn) {
 
   context.beginPath();
   context.strokeStyle = color || context.strokeStyle;
+
   context.lineWidth =
     lineWidth ||
     (lineWidth === undefined && toolStyle.getToolWidth()) ||
@@ -38,7 +39,11 @@ export default function(context, options = {}, fn) {
     context.fillStyle = fillStyle;
     context.fill();
   }
-  context.stroke();
+
+  if (lineWidth !== null) {
+    context.stroke();
+  }
+
   if (lineDash) {
     context.setLineDash([]);
   }

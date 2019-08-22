@@ -10,7 +10,7 @@ const logger = getLogger('tools:SphericalBrushTool');
 
 const { drawBrushPixels, getCircle } = brushUtils;
 
-const brushModule = store.modules.brush;
+const { getters, setters, configuration } = store.modules.segmentation;
 
 /**
  * @public
@@ -46,7 +46,7 @@ export default class SphericalBrushTool extends BrushTool {
     const image = eventData.image;
     const { rows, columns } = image;
     const { x, y } = eventData.currentPoints.image;
-    const radius = brushModule.state.radius;
+    const radius = configuration.radius;
 
     const pixelSpacing = Math.max(
       image.rowPixelSpacing,
@@ -92,10 +92,11 @@ export default class SphericalBrushTool extends BrushTool {
       ];
     }
 
-    const {
-      labelmap3D,
-      activeLabelmapIndex,
-    } = brushModule.getters.getAndCacheLabelmap2D(element);
+    this._imagesInRange = imagesInRange;
+
+    const { labelmap3D, activeLabelmapIndex } = getters.getAndCacheLabelmap2D(
+      element
+    );
 
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
@@ -105,12 +106,7 @@ export default class SphericalBrushTool extends BrushTool {
       const pointerArray = getCircle(radiusOnImage, rows, columns, x, y);
 
       // Cache the view on this image if its not present.
-      brushModule.setters.cacheLabelMap2DView(
-        labelmap3D,
-        imageIdIndex,
-        rows,
-        columns
-      );
+      setters.cacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns);
 
       // Draw / Erase the active color.
       drawBrushPixels(
@@ -240,5 +236,46 @@ export default class SphericalBrushTool extends BrushTool {
     return Math.floor(
       Math.sqrt(Math.pow(radiusInMM, 2) - Math.pow(distance, 2)) / pixelSpacing
     );
+  }
+
+  _endPainting(evt) {
+    const { labelmap3D, shouldErase } = this.paintEventData;
+
+    const imagesInRange = this._imagesInRange;
+
+    for (let i = 0; i < imagesInRange.length; i++) {
+      const { imageIdIndex } = imagesInRange[i];
+      const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
+
+      // Grab the labels on the slice.
+      const segmentSet = new Set(labelmap2D.pixelData);
+      const iterator = segmentSet.values();
+
+      const segmentsOnLabelmap = [];
+      let done = false;
+
+      while (!done) {
+        const next = iterator.next();
+
+        done = next.done;
+
+        if (!done) {
+          segmentsOnLabelmap.push(next.value);
+        }
+      }
+
+      logger.warn(segmentsOnLabelmap);
+
+      labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
+
+      // If labelmap2D now empty, delete it.
+      if (
+        shouldErase &&
+        labelmap2D.segmentsOnLabelmap.length === 1 &&
+        labelmap2D.segmentsOnLabelmap[0] === 0
+      ) {
+        delete labelmap3D.labelmaps2D[imageIdIndex];
+      }
+    }
   }
 }

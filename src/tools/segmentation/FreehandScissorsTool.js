@@ -1,4 +1,9 @@
-import { freehandFillInsideCursor } from '../cursors';
+import {
+  freehandFillInsideCursor,
+  freehandFillOutsideCursor,
+  freehandEraseOutsideCursor,
+  freehandEraseInsideCursor,
+} from '../cursors';
 import {
   fillInside,
   fillOutside,
@@ -27,6 +32,12 @@ export default class FreehandScissorsTool extends BaseSegmentationTool {
         FILL_OUTSIDE: fillOutside,
         ERASE_OUTSIDE: eraseOutside,
         ERASE_INSIDE: eraseInside,
+      },
+      cursors: {
+        FILL_INSIDE: freehandFillInsideCursor,
+        FILL_OUTSIDE: freehandFillOutsideCursor,
+        ERASE_OUTSIDE: freehandEraseOutsideCursor,
+        ERASE_INSIDE: freehandEraseInsideCursor,
       },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],

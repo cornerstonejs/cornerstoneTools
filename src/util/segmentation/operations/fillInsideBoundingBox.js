@@ -1,5 +1,7 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 
+import { getLogger } from '../../logger';
+
 /**
  * FillInsideBoundingBox - Fill all pixels in the region defined by
  * evt.operationData.points with the activeSegmentIndex value.

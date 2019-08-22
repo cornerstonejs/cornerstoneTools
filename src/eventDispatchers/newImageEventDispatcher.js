@@ -1,6 +1,4 @@
 import { state } from './../store/index.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
-import onNewImageBrushEventHandler from '../eventListeners/onNewImageBrushEventHandler.js';
 import external from './../externalModules.js';
 
 const onNewImage = function(evt) {
@@ -27,13 +25,6 @@ const onNewImage = function(evt) {
       tool.newImageCallback(evt);
     }
   });
-
-  // Check if any brush tools are present.
-  const brushTools = tools.filter(tool => tool instanceof BaseBrushTool);
-
-  if (brushTools.length > 0) {
-    onNewImageBrushEventHandler(evt);
-  }
 };
 
 const enable = function(element) {

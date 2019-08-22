@@ -2,6 +2,10 @@ import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 import { fillOutsideBoundingBox } from './index';
 
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:operations:fillOutside');
+
 /**
  * FillOutside - Fill all pixels outside of the region defined by
  * evt.operationData.points with the activeSegmentIndex value.
@@ -13,6 +17,17 @@ import { fillOutsideBoundingBox } from './index';
 export default function fillOutside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `fillOutside operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask

@@ -1,11 +1,16 @@
 import { BaseSegmentationTool } from '../base';
 import {
-  fillInsideBoundingBox,
+  fillInsideRectangle,
   fillOutsideRectangle,
   eraseOutsideRectangle,
-  eraseInsideBoundingBox,
+  eraseInsideRectangle,
 } from '../../util/segmentation/operations';
-import { segRectangleFillInsideCursor } from '../cursors';
+import {
+  segRectangleFillInsideCursor,
+  segRectangleFillOutsideCursor,
+  segRectangleEraseInsideCursor,
+  segRectangleEraseOutsideCursor,
+} from '../cursors';
 
 /**
  * @public
@@ -23,10 +28,16 @@ export default class RectangleScissorsTool extends BaseSegmentationTool {
         referencedToolData: 'segmentation',
       },
       strategies: {
-        FILL_INSIDE: fillInsideBoundingBox,
+        FILL_INSIDE: fillInsideRectangle,
         FILL_OUTSIDE: fillOutsideRectangle,
         ERASE_OUTSIDE: eraseOutsideRectangle,
-        ERASE_INSIDE: eraseInsideBoundingBox,
+        ERASE_INSIDE: eraseInsideRectangle,
+      },
+      cursors: {
+        FILL_INSIDE: segRectangleFillInsideCursor,
+        FILL_OUTSIDE: segRectangleFillOutsideCursor,
+        ERASE_OUTSIDE: segRectangleEraseOutsideCursor,
+        ERASE_INSIDE: segRectangleEraseInsideCursor,
       },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],

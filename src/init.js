@@ -22,9 +22,9 @@ export default function(configuration = {}) {
   windowResizeHandler.enable();
 
   // Apply global configuration
-  store.modules.globalConfiguration.state = Object.assign(
+  store.modules.globalConfiguration.configuration = Object.assign(
     {},
-    store.modules.globalConfiguration.state,
+    store.modules.globalConfiguration.configuration,
     configuration
   );
 }

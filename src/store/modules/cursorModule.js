@@ -1,4 +1,4 @@
-const state = {
+const configuration = {
   iconSize: 16,
   viewBox: {
     x: 16,
@@ -16,12 +16,12 @@ const state = {
 
 const setters = {
   defaultOptions: newOptions => {
-    Object.assign(state, newOptions);
+    Object.assign(configuration, newOptions);
   },
 };
 
 const getters = {
-  defaultOptions: () => state,
+  defaultOptions: () => configuration,
 };
 
 export default {

@@ -413,14 +413,14 @@ export const freehandFillInsideCursor = new MouseCursor(
 );
 
 export const freehandEraseOutsideCursor = new MouseCursor(
-  `${scissorIcon} ${minusRect('red')}`,
+  `${scissorIcon} ${minusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }
 );
 
 export const freehandFillOutsideCursor = new MouseCursor(
-  `${scissorIcon} ${plusRect('red')}`,
+  `${scissorIcon} ${plusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }
@@ -441,14 +441,14 @@ export const segRectangleFillInsideCursor = new MouseCursor(
 );
 
 export const segRectangleEraseOutsideCursor = new MouseCursor(
-  `${rectangleIcon} ${minusRect('red')}`,
+  `${rectangleIcon} ${minusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }
 );
 
 export const segRectangleFillOutsideCursor = new MouseCursor(
-  `${rectangleIcon} ${plusRect('red')}`,
+  `${rectangleIcon} ${plusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }
@@ -469,14 +469,14 @@ export const segCircleFillInsideCursor = new MouseCursor(
 );
 
 export const segCircleEraseOutsideCursor = new MouseCursor(
-  `${circleIcon} ${minusRect('red')}`,
+  `${circleIcon} ${minusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }
 );
 
 export const segCircleFillOutsideCursor = new MouseCursor(
-  `${circleIcon} ${plusRect('red')}`,
+  `${circleIcon} ${plusRect()}`,
   {
     viewBox: segToolCursorBoundaries,
   }

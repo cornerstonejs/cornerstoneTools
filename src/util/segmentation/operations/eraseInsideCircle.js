@@ -1,6 +1,9 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
+import { getLogger } from '../../logger.js';
+
+const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
 
 /**
  * EraseInsideCircle - Erase all pixels labeled with the activeSegmentIndex,
@@ -13,6 +16,17 @@ import getCircleCoords from '../../getCircleCoords';
 export default function eraseInsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+    logger.error(
+      `eraseInsideCircle operation requires circleSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex } = operationData;
 
   const { image } = eventData;

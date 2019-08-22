@@ -67,7 +67,7 @@ const setToolActiveForElement = function(
     });
 
     if (
-      globalConfiguration.state.showSVGCursors &&
+      globalConfiguration.configuration.showSVGCursors &&
       tool.supportedInteractionTypes.includes('Mouse')
     ) {
       _setToolCursorIfPrimary(element, options, tool);
@@ -517,7 +517,7 @@ function _resolveGenericInputConflicts(interactionType, tool, element) {
 }
 
 function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 

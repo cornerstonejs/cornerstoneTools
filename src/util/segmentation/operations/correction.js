@@ -1,4 +1,4 @@
-import { fillInside } from '.';
+import { fillInside, eraseInside } from './index.js';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import clip from '../../clip';
 import pointInImage from '../../pointInImage';
@@ -20,6 +20,17 @@ const logger = getLogger('util:segmentation:operations:correction');
  */
 export default function correction(evt) {
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `correction operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex } = operationData;
 
   const nodes = snapPointsToGrid(evt);
@@ -116,9 +127,8 @@ function simpleScissorOperation(nodes, evt, segmentIndex) {
 
     return true;
   } else if (allInside) {
-    // TODO - Erase inside?
     logger.warn('The line is only ever inside the segment.');
-    fillInside(evt);
+    eraseInside(evt);
 
     return true;
   }

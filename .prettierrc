@@ -3,5 +3,13 @@
   "tabWidth": 2,
   "semi": true,
   "singleQuote": true,
-  "printWidth": 80
+  "printWidth": 80,
+  "editor.formatOnSave": true,
+  "eslint.autoFixOnSave": true,
+  "eslint.run": "onSave",
+  "eslint.validate": [
+    { "language": "javascript", "autoFix": true },
+  ],
+  "prettier.disableLanguages": [],
+  "prettier.endOfLine": "lf",
 }

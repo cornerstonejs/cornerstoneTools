@@ -5,7 +5,12 @@ import {
   eraseOutsideCircle,
   eraseInsideCircle,
 } from '../../util/segmentation/operations';
-import { segCircleFillInsideCursor } from '../cursors';
+import {
+  segCircleFillInsideCursor,
+  segCircleFillOutsideCursor,
+  segCircleEraseOutsideCursor,
+  segCircleEraseInsideCursor,
+} from '../cursors';
 
 /**
  * @public
@@ -27,6 +32,12 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
         FILL_OUTSIDE: fillOutsideCircle,
         ERASE_OUTSIDE: eraseOutsideCircle,
         ERASE_INSIDE: eraseInsideCircle,
+      },
+      cursors: {
+        FILL_INSIDE: segCircleFillInsideCursor,
+        FILL_OUTSIDE: segCircleFillOutsideCursor,
+        ERASE_OUTSIDE: segCircleEraseOutsideCursor,
+        ERASE_INSIDE: segCircleEraseInsideCursor,
       },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
