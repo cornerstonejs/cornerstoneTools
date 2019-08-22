@@ -1,4 +1,9 @@
-import { freehandFillInsideCursor } from '../cursors';
+import {
+  freehandFillInsideCursor,
+  freehandFillOutsideCursor,
+  freehandEraseOutsideCursor,
+  freehandEraseInsideCursor,
+} from '../cursors';
 import {
   fillInside,
   fillOutside,
@@ -6,7 +11,6 @@ import {
   eraseInside,
 } from '../../util/segmentation/operations';
 import { BaseSegmentationTool } from '../base';
-import { getCursor } from './../../util/segmentation';
 
 /**
  * @public
@@ -29,6 +33,12 @@ export default class FreehandScissorsTool extends BaseSegmentationTool {
         ERASE_OUTSIDE: eraseOutside,
         ERASE_INSIDE: eraseInside,
       },
+      cursors: {
+        FILL_INSIDE: freehandFillInsideCursor,
+        FILL_OUTSIDE: freehandFillOutsideCursor,
+        ERASE_OUTSIDE: freehandEraseOutsideCursor,
+        ERASE_INSIDE: freehandEraseInsideCursor,
+      },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: freehandFillInsideCursor,
@@ -36,15 +46,5 @@ export default class FreehandScissorsTool extends BaseSegmentationTool {
     };
 
     super(props, defaultProps);
-  }
-
-  /**
-   * Gets The cursor according to strategy.
-   *
-   * @param  {string} strategy the operation strategy.
-   * @returns {MouseCursor}
-   */
-  _getCursor(strategy) {
-    return getCursor(`FreehandScissors`, strategy);
   }
 }

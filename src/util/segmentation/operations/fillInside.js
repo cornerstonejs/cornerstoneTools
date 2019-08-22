@@ -1,6 +1,10 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:operations:fillInside');
+
 /**
  * FillInside - Fill all pixels in the region defined by
  * evt.operationData.points with the activeSegmentIndex value.
@@ -12,6 +16,17 @@ import pointInPolygon from '../../pointInPolygon';
 export default function fillInside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `fillInside operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask

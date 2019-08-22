@@ -4,11 +4,12 @@ import store from '../../store';
 const { getters } = store.modules.segmentation;
 
 /**
- * Render hook: draws the FreehandScissors's outline
+ * Override for `freehandSegmentationMixin`'s `renderToolData` method to render a polyline instead
+ * of a freehand region with the first and last point connected. Apply after the `freehandSegmentationMixin`.
  *
- * @param {Object} evt Cornerstone.event#cornerstoneimagerendered > cornerstoneimagerendered event
- * @memberof Tools.CorrectionTool
- * @returns {void}
+ * @override
+ * @param {Object} evt The cornerstone render event.
+ * @returns {null}
  */
 function renderToolData(evt) {
   const eventData = evt.detail;

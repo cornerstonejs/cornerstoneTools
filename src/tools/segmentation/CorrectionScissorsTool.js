@@ -1,7 +1,6 @@
 import { BaseSegmentationTool } from '../base';
 import { freehandFillInsideCursor } from '../cursors';
 import { correction } from '../../util/segmentation/operations';
-import { getCursor } from './../../util/segmentation';
 
 /**
  * @public
@@ -21,6 +20,9 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
       strategies: {
         CORRECTION: correction,
       },
+      cursors: {
+        CORRECTION: freehandFillInsideCursor,
+      },
       defaultStrategy: 'CORRECTION',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: freehandFillInsideCursor,
@@ -28,16 +30,5 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
     };
 
     super(props, defaultProps);
-  }
-
-  /**
-   * Gets The cursor according to strategy.
-   *
-   * @param  {string} strategy the operation strategy.
-   * @returns {MouseCursor}
-   */
-  _getCursor(strategy) {
-    // TODO: A unique cursor for the correction tool.
-    return getCursor(`FreehandScissors`, `default`);
   }
 }

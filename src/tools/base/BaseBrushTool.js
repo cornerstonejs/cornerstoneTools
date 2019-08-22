@@ -67,7 +67,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DRAG event.
    *
    * @override
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -87,7 +87,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_DOWN event.
    *
    * @override
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */
@@ -108,7 +108,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * Initialise painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -137,7 +137,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * End painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -189,7 +189,7 @@ class BaseBrushTool extends BaseTool {
    * Event handler for MOUSE_MOVE event.
    *
    * @override
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    */

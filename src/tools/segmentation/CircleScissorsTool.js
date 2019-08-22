@@ -5,8 +5,12 @@ import {
   eraseOutsideCircle,
   eraseInsideCircle,
 } from '../../util/segmentation/operations';
-import { segCircleFillInsideCursor } from '../cursors';
-import { getCursor } from './../../util/segmentation';
+import {
+  segCircleFillInsideCursor,
+  segCircleFillOutsideCursor,
+  segCircleEraseOutsideCursor,
+  segCircleEraseInsideCursor,
+} from '../cursors';
 
 /**
  * @public
@@ -29,6 +33,12 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
         ERASE_OUTSIDE: eraseOutsideCircle,
         ERASE_INSIDE: eraseInsideCircle,
       },
+      cursors: {
+        FILL_INSIDE: segCircleFillInsideCursor,
+        FILL_OUTSIDE: segCircleFillOutsideCursor,
+        ERASE_OUTSIDE: segCircleEraseOutsideCursor,
+        ERASE_INSIDE: segCircleEraseInsideCursor,
+      },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: segCircleFillInsideCursor,
@@ -36,15 +46,5 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
     };
 
     super(props, defaultProps);
-  }
-
-  /**
-   * Gets The cursor according to strategy.
-   *
-   * @param  {string} strategy the operation strategy.
-   * @returns {MouseCursor}
-   */
-  _getCursor(strategy) {
-    return getCursor(`CircleScissors`, strategy);
   }
 }

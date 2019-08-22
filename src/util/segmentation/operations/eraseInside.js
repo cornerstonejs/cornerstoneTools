@@ -1,6 +1,10 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:operations:eraseInside');
+
 /**
  * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
  * in the region defined by evt.operationData.points.
@@ -13,6 +17,16 @@ export default function eraseInside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
   const { pixelData, segmentIndex, points } = operationData;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `eraseInside operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
 
   // Loop through all pixels in the segmentation data mask
 

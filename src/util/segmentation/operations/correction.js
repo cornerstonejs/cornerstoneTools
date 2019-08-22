@@ -20,6 +20,17 @@ const logger = getLogger('util:segmentation:operations:correction');
  */
 export default function correction(evt) {
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `correction operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex } = operationData;
 
   const nodes = snapPointsToGrid(evt);

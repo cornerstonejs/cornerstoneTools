@@ -1,10 +1,12 @@
 export { default as correction } from './correction';
 export { default as fillInside } from './fillInside';
 export { default as eraseInside } from './eraseInside';
+export { default as eraseInsideRectangle } from './eraseInsideRectangle.js';
 export { default as eraseOutside } from './eraseOutside';
 export { default as fillOutside } from './fillOutside';
 export { default as fillOutsideRectangle } from './fillOutsideRectangle';
 export { default as fillOutsideBoundingBox } from './fillOutsideBoundingBox';
+export { default as fillInsideRectangle } from './fillInsideRectangle';
 export { default as eraseOutsideBoundingBox } from './eraseOutsideBoundingBox';
 export { default as eraseOutsideRectangle } from './eraseOutsideRectangle';
 export { default as eraseOutsideCircle } from './eraseOutsideCircle';

@@ -3,6 +3,10 @@ import { pointInEllipse } from '../../ellipse';
 import { eraseOutsideBoundingBox, eraseIfSegmentIndex } from './index';
 import getCircleCoords from '../../getCircleCoords';
 
+import { getLogger } from '../../logger.js';
+
+const logger = getLogger('util:segmentation:operations:eraseOutsideCircle');
+
 /**
  * EraseOutsideCircle - Erase all pixels labeled with the activeSegmentIndex,
  * outside the region defined by the circle.
@@ -14,6 +18,17 @@ import getCircleCoords from '../../getCircleCoords';
 export default function eraseOutsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+    logger.error(
+      `eraseOutsideCircle operation requires circleSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex } = operationData;
 
   const { image } = eventData;

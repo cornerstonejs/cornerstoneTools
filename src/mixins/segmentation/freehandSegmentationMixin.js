@@ -106,6 +106,7 @@ function _applyStrategy(evt) {
     points,
     pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
+    segmentationMixinType: `freehandSegmentationMixin`,
   };
 
   this.applyActiveStrategy(evt);
@@ -172,10 +173,17 @@ function _addPoint(evt) {
  * @memberof Mixins
  */
 export default {
-  _addPoint,
-  _applyStrategy,
+  postTouchStartCallback: _startOutliningRegion,
+  postMouseDownCallback: _startOutliningRegion,
+  mouseClickCallback: _startOutliningRegion,
+  touchDragCallback: _setHandlesAndUpdate,
+  mouseDragCallback: _setHandlesAndUpdate,
+  mouseMoveCallback: _setHandlesAndUpdate,
+  touchEndCallback: _applyStrategy,
+  mouseUpCallback: _applyStrategy,
+  initializeSegmentationMixin: _resetHandles,
   renderToolData,
   _resetHandles,
-  _startOutliningRegion,
-  _setHandlesAndUpdate,
+  _addPoint,
+  _applyStrategy,
 };

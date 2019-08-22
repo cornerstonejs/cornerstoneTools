@@ -100,6 +100,7 @@ function _applyStrategy(evt) {
     points,
     pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
+    segmentationMixinType: `rectangleSegmentationMixin`,
   };
 
   this.applyActiveStrategy(evt);
@@ -133,9 +134,16 @@ function _resetHandles() {
  * @memberof Mixins
  */
 export default {
-  _applyStrategy,
+  postTouchStartCallback: _startOutliningRegion,
+  postMouseDownCallback: _startOutliningRegion,
+  mouseClickCallback: _startOutliningRegion,
+  touchDragCallback: _setHandlesAndUpdate,
+  mouseDragCallback: _setHandlesAndUpdate,
+  mouseMoveCallback: _setHandlesAndUpdate,
+  touchEndCallback: _applyStrategy,
+  mouseUpCallback: _applyStrategy,
+  initializeSegmentationMixin: _resetHandles,
   renderToolData,
   _resetHandles,
-  _setHandlesAndUpdate,
-  _startOutliningRegion,
+  _applyStrategy,
 };

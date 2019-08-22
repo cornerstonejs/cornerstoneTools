@@ -2,6 +2,10 @@ import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
 
+import { getLogger } from '../../logger.js';
+
+const logger = getLogger('util:segmentation:operations:fillInsideCircle');
+
 /**
  * FillInsideCircle - Fill all pixels in the region defined
  * by the circle.
@@ -13,6 +17,17 @@ import getCircleCoords from '../../getCircleCoords';
 export default function fillInsideCircle(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+    logger.error(
+      `fillInsideCircle operation requires circleSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex } = operationData;
 
   const { image } = eventData;

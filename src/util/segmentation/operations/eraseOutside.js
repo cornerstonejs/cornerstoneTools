@@ -4,6 +4,10 @@ import { eraseOutsideBoundingBox } from './index';
 
 import { eraseIfSegmentIndex } from './index';
 
+import { getLogger } from '../../logger';
+
+const logger = getLogger('util:segmentation:operations:eraseOutside');
+
 /**
  * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
  * outside the region defined by evt.operationData.points.
@@ -15,6 +19,17 @@ import { eraseIfSegmentIndex } from './index';
 export default function eraseOutside(evt) {
   const eventData = evt.detail;
   const { operationData } = evt;
+
+  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+    logger.error(
+      `eraseOutside operation requires freehandSegmentationMixin operationData, recieved ${
+        operationData.segmentationMixinType
+      }`
+    );
+
+    return;
+  }
+
   const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask
