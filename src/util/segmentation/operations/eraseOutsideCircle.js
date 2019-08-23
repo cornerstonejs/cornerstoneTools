@@ -2,6 +2,7 @@ import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import { eraseOutsideBoundingBox, eraseIfSegmentIndex } from './index';
 import getCircleCoords from '../../getCircleCoords';
+import isSameSegment from './isSameSegment.js';
 
 import { getLogger } from '../../logger.js';
 
@@ -46,13 +47,16 @@ export default function eraseOutsideCircle(
 
   for (let x = xMin; x < xMax; x++) {
     for (let y = yMin; y < yMax; y++) {
-      const outside = !pointInEllipse(ellipse, {
-        x,
-        y,
-      });
+      const pixelIndex = y * width + x;
 
-      if (outside) {
-        eraseIfSegmentIndex(y * width + x, pixelData, segmentIndex);
+      if (
+        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
+        !pointInEllipse(ellipse, {
+          x,
+          y,
+        })
+      ) {
+        pixelData[pixelIndex] = 0;
       }
     }
   }

@@ -1,8 +1,7 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
 import { eraseOutsideBoundingBox } from './index';
-
-import { eraseIfSegmentIndex } from './index';
+import isSameSegment from './isSameSegment.js';
 
 import { getLogger } from '../../logger';
 
@@ -57,10 +56,15 @@ export default function eraseOutsideFreehand(
   // Loop through all of the points inside the bounding box
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
-      const outside = !pointInPolygon([i, j], vertices);
+      const pixelIndex = j * width + i;
 
-      if (outside) {
-        eraseIfSegmentIndex(j * width + i, pixelData, segmentIndex);
+      // If the pixel is the same segmentIndex and is inside the
+      // Region defined by the array of points, set their value to segmentIndex.
+      if (
+        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
+        !pointInPolygon([i, j], vertices)
+      ) {
+        pixelData[pixelIndex] = 0;
       }
     }
   }
