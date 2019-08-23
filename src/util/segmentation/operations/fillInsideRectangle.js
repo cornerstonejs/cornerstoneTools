@@ -1,4 +1,4 @@
-import fillInsideShape from '../helpers/fillInsideShape';
+import { fillInsideShape } from '../helpers/fillShape';
 import getBoundingBoxAroundPolygon from '../boundaries/getBoundingBoxAroundPolygon.js';
 import { getLogger } from '../../logger';
 

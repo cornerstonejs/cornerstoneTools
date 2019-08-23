@@ -26,8 +26,6 @@ const onImageRendered = function(evt) {
     onImageRenderedBrushEventHandler(evt);
   }
 
-  onImageRenderedBrushEventHandler(evt);
-
   toolsToRender.forEach(tool => {
     if (tool.renderToolData) {
       tool.renderToolData(evt);

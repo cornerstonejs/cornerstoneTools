@@ -5,7 +5,9 @@ export { default as eraseInsideRectangle } from './eraseInsideRectangle.js';
 export { default as eraseOutsideFreehand } from './eraseOutsideFreehand';
 export { default as fillOutsideFreehand } from './fillOutsideFreehand';
 export { default as fillOutsideRectangle } from './fillOutsideRectangle';
-export { default as fillOutsideBoundingBox } from './fillOutsideBoundingBox';
+export {
+  default as fillOutsideBoundingBox,
+} from '../helpers/fillOutsideBoundingBox';
 export { default as fillInsideRectangle } from './fillInsideRectangle';
 export {
   default as eraseOutsideBoundingBox,

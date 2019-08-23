@@ -2,7 +2,7 @@ import getCircleCoords from '../../getCircleCoords';
 
 export default function getBoundingBoxAroundCircle(evt) {
   const { handles } = evt.detail;
-  const { width, height } = evt.detail.image;
+  const { width: imageWidth, height: imageHeight } = evt.detail.image;
   const circleCoordinates = getCircleCoords(handles.start, handles.end);
 
   let xMax = circleCoordinates.width + circleCoordinates.left;
@@ -15,9 +15,9 @@ export default function getBoundingBoxAroundCircle(evt) {
   xMax = Math.round(xMax);
   yMax = Math.round(yMax);
 
-  xMax = Math.min(width, xMax);
+  xMax = Math.min(imageWidth, xMax);
   xMin = Math.max(0, xMin);
-  yMax = Math.min(height, yMax);
+  yMax = Math.min(imageHeight, yMax);
   yMin = Math.max(0, yMin);
 
   return [[xMin, yMin], [xMax, yMax]];

@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import eraseOutsideShape from '../helpers/eraseOutsideShape.js';
+import { eraseOutsideShape } from '../helpers/eraseShape.js';
 import getCircleCoords from '../../getCircleCoords';
 
 import { getLogger } from '../../logger.js';
@@ -41,9 +41,7 @@ export default function eraseOutsideCircle(
   eraseOutsideShape(
     evt,
     operationData,
-    point => {
-      return pointInEllipse(ellipse, point);
-    },
+    point => pointInEllipse(ellipse, point),
     topLeft,
     bottomRight
   );

@@ -1,7 +1,7 @@
 import { fillInsideFreehand, eraseInsideFreehand } from './index.js';
 import getPixelPathBetweenPixels from '../helpers/getPixelPathBetweenPixels';
 import clip from '../../clip';
-import pointInImage from '../../pointInImage';
+import isPointInImage from '../../isPointInImage';
 
 import { getLogger } from '../../logger';
 import floodFill from '../helpers/floodFill.js';
@@ -231,7 +231,7 @@ function performOperation(
     const leftPixel = leftPath[i];
     const leftValue = workingLabelMap[getPixelIndex(leftPixel)];
 
-    if (leftValue === shouldFillOver && pointInImage(leftPixel, rows, cols)) {
+    if (leftValue === shouldFillOver && isPointInImage(leftPixel, rows, cols)) {
       leftArea += fillFromPixel(leftPixel, 3, workingLabelMap, getter, cols);
     }
 
@@ -239,7 +239,10 @@ function performOperation(
     const rightPixel = rightPath[i];
     const rightValue = workingLabelMap[getPixelIndex(rightPixel)];
 
-    if (rightValue === shouldFillOver && pointInImage(rightPixel, rows, cols)) {
+    if (
+      rightValue === shouldFillOver &&
+      isPointInImage(rightPixel, rows, cols)
+    ) {
       rightArea += fillFromPixel(rightPixel, 4, workingLabelMap, getter, cols);
     }
   }

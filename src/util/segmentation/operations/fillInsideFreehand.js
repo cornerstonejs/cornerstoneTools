@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
-import pointInPolygon from '../../pointInPolygon';
-import fillInsideShape from '../helpers/fillInsideShape.js';
+import isPointInPolygon from '../../isPointInPolygon';
+import { fillInsideShape } from '../helpers/fillShape.js';
 
 import { getLogger } from '../../logger';
 
@@ -40,9 +40,7 @@ export default function fillInsideFreehand(
   fillInsideShape(
     evt,
     operationData,
-    point => {
-      return pointInPolygon([point.x, point.y], vertices);
-    },
+    point => isPointInPolygon([point.x, point.y], vertices),
     topLeft,
     bottomRight
   );

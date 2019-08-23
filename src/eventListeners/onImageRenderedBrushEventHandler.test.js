@@ -178,7 +178,6 @@ function resetEvents() {
   labelmap2D = {
     pixelData: new Uint16Array(labelmap3D.buffer, 0, length),
     segmentsOnLabelmap: [0, 1, 2],
-    invalidated: true,
   };
 
   const pixelData = labelmap2D.pixelData;
@@ -457,7 +456,6 @@ describe('onImageRenderedBrushEventHandler.js', () => {
       labelmap2D = {
         pixelData: new Uint16Array(labelmap3D.buffer, 0, length),
         segmentsOnLabelmap: [0, 1],
-        invalidated: true,
       };
 
       const pixelData = labelmap2D.pixelData;

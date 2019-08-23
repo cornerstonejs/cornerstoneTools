@@ -1,5 +1,6 @@
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
 import store from '../../store';
+import freehandSegmentationMixin from './freehandSegmentationMixin';
 
 const { getters } = store.modules.segmentation;
 
@@ -33,10 +34,12 @@ function renderToolData(evt) {
   });
 }
 
+const polylineSegmentationMixin = Object.assign({}, freehandSegmentationMixin, {
+  renderToolData,
+});
+
 /**
  * @mixin freehandPolylineRenderOverride - segmentation operations for corrections Polyline
  * @memberof Mixins
  */
-export default {
-  renderToolData,
-};
+export default polylineSegmentationMixin;

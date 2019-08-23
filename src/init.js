@@ -12,7 +12,7 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @method
  * @name init
  *
- * @param {Object} configuration
+ * @param {Object} [configuration = {}] The global configuration to apply.
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
 export default function(configuration = {}) {

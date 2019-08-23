@@ -12,98 +12,6 @@ const elements = store.state.enabledElements;
 // ===================================================================
 
 /**
- * gets the active labelmap.
- * @returns {number}
- */
-function getActiveLabelmap() {
-  return getters.activeLabelmapIndex(this.element);
-}
-
-/**
- * Sets the active labelmap.
- * @param {number} labelMapIndex The index of the labelmap to set active.
- * @returns {null}
- */
-function setActiveLabelmap(labelMapIndex = 0) {
-  setters.activeLabelmap(this.element, labelMapIndex);
-}
-
-/**
- * Gets the fill alpha for the active labelmap.
- * @returns {number}
- */
-function getFillAlpha() {
-  return configuration.fillAlpha;
-}
-/**
- * Sets the fill alpha for the active labelmap.
- * @param  {number} value The alpha betwen 0 and 1.
- * @returns {null}
- */
-function setFillAlpha(value) {
-  configuration.fillAlpha = value;
-
-  this._updateAllEnabledElements();
-}
-
-/**
- * Gets the fill alpha for inactive labelmaps.
- * @returns {number}
- */
-function getFillAlphaInactive() {
-  return configuration.fillAlphaInactive;
-}
-
-/**
- * Sets the fill alpha for inactive labelmaps.
- * @param  {number} value The alpha betwen 0 and 1.
- * @returns {null}
- */
-function setFillAlphaInactive(value) {
-  configuration.fillAlphaInactive = value;
-
-  this._updateAllEnabledElements();
-}
-
-/**
- * Gets the outline alpha for the active labelmap.
- * @returns {number}
- */
-function getOutlineAlpha() {
-  return configuration.outlineAlpha;
-}
-
-/**
- * Sets the outline alpha for the active labelmap.
- * @param  {number} value The alpha betwen 0 and 1.
- * @returns {null}
- */
-function setOutlineAlpha(value) {
-  configuration.outlineAlpha = value;
-
-  this._updateAllEnabledElements();
-}
-
-/**
- * Gets the outline alpha for inactive labelmaps.
- * @returns {number}
- */
-function getOutlineAlphaInactive() {
-  return configuration.outlineAlphaInactive;
-}
-
-/**
- * Sets the outline alpha for inactive labelmaps.
- * @param  {number} value The alpha betwen 0 and 1.
- * @returns {null}
- */
-function setOutlineAlphaInactive(value) {
-  configuration.outlineAlphaInactive = value;
-
-  this._updateAllEnabledElements();
-}
-
-/**
  * Switches to the next segment color.
  * @returns {null}
  */
@@ -134,20 +42,6 @@ function _updateAllEnabledElements() {
  * @memberof Mixins
  */
 export default {
-  // Getters
-  getActiveLabelmap,
-  getFillAlpha,
-  getFillAlphaInactive,
-  getOutlineAlpha,
-  getOutlineAlphaInactive,
-
-  // Setters
-  setActiveLabelmap,
-  setFillAlpha,
-  setFillAlphaInactive,
-  setOutlineAlpha,
-  setOutlineAlphaInactive,
-
   nextSegment,
   previousSegment,
 

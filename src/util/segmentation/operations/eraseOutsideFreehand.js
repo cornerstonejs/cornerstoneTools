@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
-import pointInPolygon from '../../pointInPolygon';
-import eraseOutsideShape from '../helpers/eraseOutsideShape';
+import isPointInPolygon from '../../isPointInPolygon';
+import { eraseOutsideShape } from '../helpers/eraseShape';
 
 import { getLogger } from '../../logger';
 
@@ -40,9 +40,7 @@ export default function eraseOutsideFreehand(
   eraseOutsideShape(
     evt,
     operationData,
-    point => {
-      return pointInPolygon([point.x, point.y], vertices);
-    },
+    point => isPointInPolygon([point.x, point.y], vertices),
     topLeft,
     bottomRight
   );

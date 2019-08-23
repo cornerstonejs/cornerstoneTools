@@ -1,6 +1,4 @@
-import external from '../../../externalModules.js';
-import EVENTS from '../../../events.js';
-import { draw, fillBox } from '../../../drawing';
+import eraseIfSegmentIndex from '../helpers/eraseIfSegmentIndex.js';
 
 /**
  * DrawBrushPixels - Adds or removes labels to a labelmap.
@@ -28,15 +26,11 @@ function drawBrushPixels(
     const spIndex = getPixelIndex(point[0], point[1]);
 
     if (shouldErase) {
-      if (pixelData[spIndex] === segmentIndex) {
-        pixelData[spIndex] = 0;
-      }
+      eraseIfSegmentIndex(spIndex, pixelData, segmentIndex);
     } else {
       pixelData[spIndex] = segmentIndex;
     }
   });
-
-  labelmap3D.labelmaps2D[imageIdIndex].invalidated = true;
 }
 
 export { drawBrushPixels };

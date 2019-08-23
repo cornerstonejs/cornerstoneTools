@@ -1,6 +1,6 @@
 import { getLogger } from '../../logger';
 import getBoundingBoxAroundPolygon from '../boundaries/getBoundingBoxAroundPolygon.js';
-import eraseInsideShape from '../helpers/eraseInsideShape';
+import { eraseInsideShape } from '../helpers/eraseShape';
 
 const logger = getLogger('util:segmentation:operations:eraseInsideRectangle');
 

@@ -1,7 +1,7 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
-import fillInsideShape from '../helpers/fillInsideShape.js';
+import { fillInsideShape } from '../helpers/fillShape.js';
 
 import { getLogger } from '../../logger.js';
 
@@ -41,9 +41,7 @@ export default function fillInsideCircle(
   fillInsideShape(
     evt,
     operationData,
-    point => {
-      return pointInEllipse(ellipse, point);
-    },
+    point => pointInEllipse(ellipse, point),
     topLeft,
     bottomRight
   );

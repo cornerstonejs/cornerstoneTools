@@ -19,23 +19,24 @@ function renderToolData(evt) {
   const { element } = eventData;
   const color = getters.brushColor(element, true);
   const context = getNewContext(eventData.canvasContext.canvas);
-  const handles = this.handles;
+  const points = this.handles.points;
+
+  if (points.length < 2) {
+    return;
+  }
 
   draw(context, context => {
-    if (handles.points.length > 1) {
-      for (let j = 0; j < handles.points.length; j++) {
-        const lines = [...handles.points[j].lines];
-        const points = handles.points;
+    for (let j = 0; j < points.length; j++) {
+      const lines = [...points[j].lines];
 
-        if (j === points.length - 1) {
-          // If it's still being actively drawn, keep the last line to
-          // The mouse location
-          lines.push(this.handles.points[0]);
-        }
-        drawJoinedLines(context, element, this.handles.points[j], lines, {
-          color,
-        });
+      if (j === points.length - 1) {
+        // If it's still being actively drawn, keep the last line to
+        // The mouse location
+        lines.push(points[0]);
       }
+      drawJoinedLines(context, element, points[j], lines, {
+        color,
+      });
     }
   });
 }
@@ -50,14 +51,15 @@ function renderToolData(evt) {
 function _startOutliningRegion(evt) {
   const element = evt.detail.element;
   const image = evt.detail.currentPoints.image;
+  const points = this.handles.points;
 
-  if (!this.handles.points.length) {
+  if (!points.length) {
     logger.warn('Something went wrong, empty handles detected.');
 
     return null;
   }
 
-  this.handles.points.push({
+  points.push({
     x: image.x,
     y: image.y,
     lines: [],
@@ -114,8 +116,6 @@ function _applyStrategy(evt) {
   // Invalidate the brush tool data so it is redrawn
   const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
-  labelmap2D.invalidated = true;
-
   setters.updateSegmentsOnLabelmaps2D(labelmap2D);
   external.cornerstone.updateImage(element);
 
@@ -145,9 +145,11 @@ function _resetHandles() {
  * @returns {void}
  */
 function _addPoint(evt) {
-  if (this.handles.points.length) {
+  const points = this.handles.points;
+
+  if (points.length) {
     // Add the line from the current handle to the new handle
-    this.handles.points[this.currentHandle - 1].lines.push({
+    points[this.currentHandle - 1].lines.push({
       x: evt.currentPoints.image.x,
       y: evt.currentPoints.image.y,
       lines: [],
@@ -155,7 +157,7 @@ function _addPoint(evt) {
   }
 
   // Add the new handle
-  this.handles.points.push({
+  points.push({
     x: evt.currentPoints.image.x,
     y: evt.currentPoints.image.y,
     lines: [],

@@ -7,7 +7,7 @@ import EVENTS from '../../events.js';
 import { getters as storeGetters } from '../index.js';
 
 import { getLogger } from '../../util/logger.js';
-import pointInImage from '../../util/pointInImage.js';
+import isPointInImage from '../../util/isPointInImage.js';
 
 const logger = getLogger('store:modules:segmentationModule');
 
@@ -65,8 +65,6 @@ const configuration = {
  * @typedef {Object} Labelmap2D An object defining a 2D view on a section of a `Labelmap3D`'s `buffer`.
  * @property {Uint16Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
  * @property {number[]} segmentsOnLabelmap An array of segments present in the `pixelData`.
- * @property {boolean} invalidated Whether the data has been changed recently, and a new `ImageBitmap` should be created
- *                                 for the segmentation fill should this `labelmap2D` be rendered.
  */
 
 /**
@@ -383,7 +381,6 @@ function setCacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns) {
   labelmap3D.labelmaps2D[imageIdIndex] = {
     pixelData,
     getSegmentIndexes: () => new Set(pixelData),
-    invalidated: true,
   };
 }
 
@@ -440,7 +437,7 @@ function getSegmentOfActiveLabelmapAtEvent(evt) {
   x = Math.floor(x);
   y = Math.floor(y);
 
-  if (pointInImage({ x, y }, rows, cols)) {
+  if (isPointInImage({ x, y }, rows, cols)) {
     const segmentIndex = pixelData[y * cols + x];
 
     if (segmentIndex === 0) {
@@ -844,7 +841,6 @@ function setLabelmap3DByFirstImageId(
       labelmaps2D[i] = {
         pixelData,
         segmentsOnLabelmap: [],
-        invalidated: true,
       };
     }
   }
@@ -916,7 +912,6 @@ function setDeleteSegment(
       );
 
       labelmap2D.segmentsOnLabelmap.splice(indexOfSegment, 1);
-      labelmap2D.invalidated = true;
 
       // Delete the label for this segment.
       for (let p = 0; p < pixelData.length; p++) {
@@ -1147,10 +1142,6 @@ function invalidateBrushOnEnabledElement(
   if (!labelmap3D) {
     return;
   }
-
-  labelmap3D.labelmaps2D.forEach(labelmap2D => {
-    labelmap2D.invalidated = true;
-  });
 
   external.cornerstone.updateImage(element, true);
 }
@@ -1402,6 +1393,5 @@ function _addLabelmap2DView(
   brushStackState.labelmaps3D[labelmapIndex].labelmaps2D[imageIdIndex] = {
     pixelData,
     segmentsOnLabelmap: [],
-    invalidated: true,
   };
 }
