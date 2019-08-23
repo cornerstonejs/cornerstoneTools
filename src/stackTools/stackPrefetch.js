@@ -4,6 +4,8 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 import { getLogger } from '../util/logger.js';
+import triggerEvent from '../util/triggerEvent';
+import EVENTS from '../events.js';
 
 const logger = getLogger('stackTools:stackPrefetch');
 
@@ -153,6 +155,28 @@ function prefetch(element) {
     const imageIdIndex = stack.imageIds.indexOf(image.imageId);
 
     removeFromList(imageIdIndex);
+
+    triggerEvent(element, EVENTS.STACK_PREFETCH_IMAGE_LOADED, {
+      element,
+      imageId: image.imageId,
+      imageIndex: imageIdIndex,
+      stackPrefetch,
+      stack,
+    });
+
+    // If there are no more images to fetch
+    if (
+      !(
+        stackPrefetch.indicesToRequest &&
+        stackPrefetch.indicesToRequest.length > 0
+      )
+    ) {
+      triggerEvent(element, EVENTS.STACK_PREFETCH_DONE, {
+        element,
+        stackPrefetch,
+        stack,
+      });
+    }
   }
 
   // Retrieve the errorLoadingHandler if one exists
