@@ -3,42 +3,47 @@ import pointInPolygon from '../../pointInPolygon';
 
 import { getLogger } from '../../logger';
 
-const logger = getLogger('util:segmentation:operations:fillInside');
+const logger = getLogger('util:segmentation:operations:fillInsideFreehand');
 
 /**
- * FillInside - Fill all pixels in the region defined by
+ * Fill all pixels in the region defined by
  * evt.operationData.points with the activeSegmentIndex value.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillInside(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function fillInsideFreehand(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const {
+    pixelData,
+    segmentIndex,
+    points,
+    segmentationMixinType,
+  } = operationData;
 
-  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+  if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
-      `fillInside operation requires freehandSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `fillInsideFreehand operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
-
-  const { pixelData, segmentIndex, points } = operationData;
 
   // Loop through all pixels in the segmentation data mask
 
   // Obtain the bounding box of the entire drawing so that
   // we can subset our search. Outside of the bounding box,
   // everything is outside of the polygon.
+  const eventData = evt.detail;
   const { image } = eventData;
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
-
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
 

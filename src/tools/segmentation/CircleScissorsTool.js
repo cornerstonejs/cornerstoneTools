@@ -24,9 +24,6 @@ export default class CircleScissorsTool extends BaseSegmentationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'CircleScissors',
-      configuration: {
-        referencedToolData: 'segmentation',
-      },
       strategies: {
         FILL_INSIDE: fillInsideCircle,
         FILL_OUTSIDE: fillOutsideCircle,

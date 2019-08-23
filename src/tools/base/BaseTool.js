@@ -144,11 +144,17 @@ class BaseTool {
    * @method applyActiveStrategy
    * @memberof Tools.Base.BaseTool
    *
-   * @param {*} evt The event that triggered the strategies application
+   * @param {Object} evt The event that triggered the strategies application
+   * @param {Object} operationData - An object containing extra data not present in the `evt`,
+   *                                 required to apply the strategy.
    * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
-  applyActiveStrategy(evt) {
-    return this.strategies[this.activeStrategy](evt, this.configuration);
+  applyActiveStrategy(evt, operationData) {
+    return this.strategies[this.activeStrategy](
+      evt,
+      this.configuration,
+      operationData
+    );
   }
 
   /**

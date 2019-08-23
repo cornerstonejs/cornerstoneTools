@@ -1,6 +1,6 @@
 ## Segmentation Mixins {#segmentation-mixins}
 
-[Segmentation Tools](../tool-types/index.md#base-segmentation-tool) require a segmentation mixin to function. The role of a segmentation mixin is to provide a user input mechanism, which generates an `operationData` object which it attaches to the cornerstone event and sends to the tool's active strategy.
+[Segmentation Tools](../tool-types/index.md#base-segmentation-tool) require a segmentation mixin to function. The role of a segmentation mixin is to provide a user input mechanism, which generates an `operationData` object which is passed to the active strategy alongside the cornerstone event.
 
 Examples of segmentation mixins could be:
 
@@ -45,14 +45,14 @@ The `_applyStrategy` calls the Tool's `activeStrategy` method with an augmented 
 //src/mixins/segmentation/circleSegmentationMixin.js
 
 // ...
-evt.operationData = {
+const operationData = {
   points,
   pixelData,
   segmentIndex: labelmap3D.activeSegmentIndex,
   segmentationMixinType: `circleSegmentationMixin`,
 };
 
-this.applyActiveStrategy(evt);
+this.applyActiveStrategy(evt, operationData);
 // ...
 ```
 
@@ -61,8 +61,6 @@ Here the `operationData` contains information about the users input. The `segmen
 ```js
 //src/util/segmentation/operations/fillInsideCircle.js
 
-// ...
-const { operationData } = evt;
 // ...
 if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
   logger.error(
@@ -85,7 +83,7 @@ Here are the segmentation mixins present in the core `cornerstoneTools` library.
 The `circleSegmentationMixin` allows the user to draw a circle on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool's `activeStrategy` with the following `operationData`:
 
 ```js
-evt.operationData = {
+const operationData = {
   points,
   pixelData,
   segmentIndex: labelmap3D.activeSegmentIndex,
@@ -105,7 +103,7 @@ Where:
 The `freehandSegmentationMixin` allows the user to draw a freehand polygon on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool's `activeStrategy` with the following `operationData`:
 
 ```js
-evt.operationData = {
+const operationData = {
   points,
   pixelData,
   segmentIndex: labelmap3D.activeSegmentIndex,
@@ -133,7 +131,7 @@ mixins: ['freehandSegmentationMixin', 'freehandPolylineRenderOverride'],
 The `rectangleSegmentationMixin` allows the user to draw a rectangle on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool's `activeStrategy` with the following `operationData`:
 
 ```js
-evt.operationData = {
+const operationData = {
   points,
   pixelData,
   segmentIndex: labelmap3D.activeSegmentIndex,

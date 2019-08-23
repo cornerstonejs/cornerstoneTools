@@ -66,7 +66,7 @@ export default function() {
 
 ### Modules
 
-`Module` are objects that store global data, which may be shared between multiple tools, effect multiple cornerstone elements, etc. Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). Here is a simple toy example of a module with state, setters and getters:
+`Module` are objects that store global data, which may be shared between multiple tools, effect multiple cornerstone elements, etc. Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). You can learn more about modules [here](../modules/index.md) Here is a simple toy example of a module with state, setters and getters:
 
 ```js
 const configuration = {

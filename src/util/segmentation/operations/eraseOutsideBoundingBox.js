@@ -1,18 +1,23 @@
 import { eraseIfSegmentIndex } from './index';
 
 /**
- * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
+ * EraseOutsideBoundingBox - Erase all pixels labeled with the activeSegmentIndex,
  * outside the bouding box defined by the `topLeft` and `topRight`.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
+ * @param {number[]} topLeft The top left of the bounding box.
+ * @param {number[]} bottomRight The bottom right of the bounding box.
  * @returns {null}
  */
-export default function eraseOutsideBoundingBox(evt, topLeft, bottomRight) {
+export default function eraseOutsideBoundingBox(
+  evt,
+  operationData,
+  topLeft,
+  bottomRight
+) {
   const eventData = evt.detail;
-  const { operationData } = evt;
   const { pixelData, segmentIndex } = operationData;
-
   const { image } = eventData;
   const { width, height } = image;
 

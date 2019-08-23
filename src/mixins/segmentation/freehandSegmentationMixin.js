@@ -102,14 +102,14 @@ function _applyStrategy(evt) {
 
   const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
-  evt.operationData = {
+  const operationData = {
     points,
     pixelData,
     segmentIndex: labelmap3D.activeSegmentIndex,
     segmentationMixinType: `freehandSegmentationMixin`,
   };
 
-  this.applyActiveStrategy(evt);
+  this.applyActiveStrategy(evt, operationData);
 
   // Invalidate the brush tool data so it is redrawn
   const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];

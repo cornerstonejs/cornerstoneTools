@@ -6,16 +6,13 @@ import { getLogger } from '../../logger';
  * FillInsideBoundingBox - Fill all pixels in the region defined by
  * evt.operationData.points with the activeSegmentIndex value.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillInsideBoundingBox(evt) {
+export default function fillInsideBoundingBox(evt, operationData) {
   const eventData = evt.detail;
-  const { operationData } = evt;
   const { points, pixelData, segmentIndex } = operationData;
-
-  // Loop through all pixels in the segmentation data mask
 
   // Obtain the bounding box of the entire drawing so that
   // we can subset our search.

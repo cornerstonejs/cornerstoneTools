@@ -1,9 +1,9 @@
 export { default as correction } from './correction';
-export { default as fillInside } from './fillInside';
-export { default as eraseInside } from './eraseInside';
+export { default as fillInsideFreehand } from './fillInsideFreehand';
+export { default as eraseInsideFreehand } from './eraseInsideFreehand';
 export { default as eraseInsideRectangle } from './eraseInsideRectangle.js';
-export { default as eraseOutside } from './eraseOutside';
-export { default as fillOutside } from './fillOutside';
+export { default as eraseOutsideFreehand } from './eraseOutsideFreehand';
+export { default as fillOutsideFreehand } from './fillOutsideFreehand';
 export { default as fillOutsideRectangle } from './fillOutsideRectangle';
 export { default as fillOutsideBoundingBox } from './fillOutsideBoundingBox';
 export { default as fillInsideRectangle } from './fillInsideRectangle';

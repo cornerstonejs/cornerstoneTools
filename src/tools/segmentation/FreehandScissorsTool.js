@@ -5,10 +5,10 @@ import {
   freehandEraseInsideCursor,
 } from '../cursors';
 import {
-  fillInside,
-  fillOutside,
-  eraseOutside,
-  eraseInside,
+  fillInsideFreehand,
+  fillOutsideFreehand,
+  eraseOutsideFreehand,
+  eraseInsideFreehand,
 } from '../../util/segmentation/operations';
 import { BaseSegmentationTool } from '../base';
 
@@ -24,14 +24,11 @@ export default class FreehandScissorsTool extends BaseSegmentationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'FreehandScissors',
-      configuration: {
-        referencedToolData: 'segmentation',
-      },
       strategies: {
-        FILL_INSIDE: fillInside,
-        FILL_OUTSIDE: fillOutside,
-        ERASE_OUTSIDE: eraseOutside,
-        ERASE_INSIDE: eraseInside,
+        FILL_INSIDE: fillInsideFreehand,
+        FILL_OUTSIDE: fillOutsideFreehand,
+        ERASE_OUTSIDE: eraseOutsideFreehand,
+        ERASE_INSIDE: eraseInsideFreehand,
       },
       cursors: {
         FILL_INSIDE: freehandFillInsideCursor,

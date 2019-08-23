@@ -3,7 +3,6 @@ import {
   getElementToolStateManager,
   setElementToolStateManager,
 } from './toolState.js';
-import BaseBrushTool from '../tools/base/BaseBrushTool.js';
 
 /**
  * Implements an Stack specific tool state management strategy. This means
@@ -97,7 +96,6 @@ function addStackStateManager(element, otherTools) {
     'referenceLines',
     'crosshairs',
     'stackRenderer',
-    BaseBrushTool.getReferencedToolDataName(),
   ];
 
   if (otherTools) {

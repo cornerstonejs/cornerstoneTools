@@ -10,26 +10,27 @@ const logger = getLogger('util:segmentation:operations:fillInsideCircle');
  * FillInsideCircle - Fill all pixels in the region defined
  * by the circle.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillInsideCircle(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function fillInsideCircle(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
 
-  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+  if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
-      `fillInsideCircle operation requires circleSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `fillInsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { pixelData, segmentIndex } = operationData;
-
+  const eventData = evt.detail;
   const { image } = eventData;
   const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);

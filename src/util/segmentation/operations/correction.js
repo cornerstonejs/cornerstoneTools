@@ -1,4 +1,4 @@
-import { fillInside, eraseInside } from './index.js';
+import { fillInsideFreehand, eraseInsideFreehand } from './index.js';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import clip from '../../clip';
 import pointInImage from '../../pointInImage';
@@ -9,40 +9,49 @@ import floodFill from './floodFill.js';
 const logger = getLogger('util:segmentation:operations:correction');
 
 /**
- * correction - Using the stroke given, determine which action(s) to perfom:
+ * Using the stroke given, determine which action(s) to perfom:
  * - Stroke starts and ends inside a segmentation: Behaves as an subtractive freehand scissors.
  * - Stroke starts and ends outside a segmentation: Behaves as an additive freehand scissors.
  * - Stroke out-in-out: Section is subtracted.
  * - Stroke in-out-in: Section is added.
  *
  * @param  {Object} evt The cornerstone event.
+ * @param  {object} toolConfiguration Configuration of the tool applying the strategy.
+ * @param  {} operationData An object containing the `pixelData` to
+ *                          modify, the `segmentIndex` and the `points` array.
+ *
  * @returns {null}
  */
-export default function correction(evt) {
-  const { operationData } = evt;
+export default function correction(evt, toolConfiguration, operationData) {
+  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
 
-  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+  if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
-      `correction operation requires freehandSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `correction operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { pixelData, segmentIndex } = operationData;
+  const nodes = snapPointsToGrid(evt, operationData);
 
-  const nodes = snapPointsToGrid(evt);
+  const scissorOperation = checkIfSimpleScissorOperation(nodes, segmentIndex);
 
-  if (simpleScissorOperation(nodes, evt, segmentIndex)) {
+  if (scissorOperation.isScissorOperation) {
+    if (scissorOperation.operation === 'fillInsideFreehand') {
+      logger.warn('The line never intersects a segment.');
+      fillInsideFreehand(evt, null, operationData);
+    } else if (scissorOperation.operation === 'eraseInsideFreehand') {
+      logger.warn('The line is only ever inside the segment.');
+      eraseInsideFreehand(evt, null, operationData);
+    }
+
     return;
   }
 
-  const operations = splitLineIntoSeperateOperations(nodes, segmentIndex);
-
   // Create binary labelmap with only this segment for calculations of each operation.
   const workingLabelMap = new Uint8Array(pixelData.length);
+  const operations = splitLineIntoSeperateOperations(nodes, segmentIndex);
 
   operations.forEach(operation => {
     performOperation(operation, pixelData, workingLabelMap, segmentIndex, evt);
@@ -50,15 +59,14 @@ export default function correction(evt) {
 }
 
 /**
- * SnapPointsToGrid - Snap the freehand points to the labelmap grid and attach a label for each node.
+ * Snap the freehand points to the labelmap grid and attach a label for each node.
  *
  * @param  {Object[]} points An array of points drawn by the user.
  * @param  {UInt16Array} pixelData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @returns {Object[]}
  */
-function snapPointsToGrid(evt) {
-  const { operationData } = evt;
+function snapPointsToGrid(evt, operationData) {
   const { pixelData, points } = operationData;
 
   const { image } = evt.detail;
@@ -94,16 +102,14 @@ function snapPointsToGrid(evt) {
   return nodes;
 }
 /**
- * SimpleScissorOperation - Check if the operation is a simple scissors
- * add/remove, and performs it if so.
+ * Check if the operation is a simple scissors add/remove.
  * @param  {Object[]} nodes - The nodes snapped to the grid.
- * @param  {Object} points - An array of points drawn by the user.
- * @param  {UInt16Array} pixelData The 2D labelmap.
- * @param  {Object} evt The cornerstone event.
  * @param  {number} segmentIndex
- * @returns {boolean} Returns true if the operation was simple.
+ * @returns {Object} Information about the operation.
+ *                   `isScissorOperation` is true if the operation is a simple scissor.
+ *                   If `isScissorOperation` is true, `operation` says which operation.
  */
-function simpleScissorOperation(nodes, evt, segmentIndex) {
+function checkIfSimpleScissorOperation(nodes, segmentIndex) {
   let allInside = true;
   let allOutside = true;
 
@@ -122,22 +128,16 @@ function simpleScissorOperation(nodes, evt, segmentIndex) {
   }
 
   if (allOutside) {
-    logger.warn('The line never intersects a segment.');
-    fillInside(evt);
-
-    return true;
+    return { isScissorOperation: true, operation: 'fillInsideFreehand' };
   } else if (allInside) {
-    logger.warn('The line is only ever inside the segment.');
-    eraseInside(evt);
-
-    return true;
+    return { isScissorOperation: true, operation: 'eraseInsideFreehand' };
   }
 
-  return false;
+  return { isScissorOperation: false };
 }
 
 /**
- * performOperation - Performs the given add/subtract operation using a modification of the Tobias Heimann Correction Algorithm:
+ * Performs the given add/subtract operation using a modification of the Tobias Heimann Correction Algorithm:
  * The algorithm is described in full length in Tobias Heimann's diploma thesis (MBI Technical Report 145, p. 37 - 40).
  *
  * @param  {Object} operation The operation.
@@ -153,13 +153,10 @@ function performOperation(
   segmentIndex,
   evt
 ) {
-  const eventData = evt.detail;
-  const { image } = eventData;
-  const cols = image.width;
-  const rows = image.height;
+  const { width: cols, height: rows } = evt.detail.image;
 
   const { nodes, additive } = operation;
-  const fillOver = additive ? 0 : 1;
+  const shouldFillOver = additive ? 0 : 1;
 
   // Local getters to swap from cornerstone vector notation and flattened array indicies.
   const getPixelIndex = pixelCoord => pixelCoord.y * cols + pixelCoord.x;
@@ -199,7 +196,8 @@ function performOperation(
     }
   }
 
-  // Set workingLabelmap pixelPath to 2 to form a boundary.
+  // Set workingLabelmap pixelPath to 2 to form a
+  // Boundary in the working labelmap to contain the flood fills.
   for (let i = 0; i < pixelPath.length; i++) {
     const pixel = pixelPath[i];
 
@@ -233,7 +231,7 @@ function performOperation(
     const leftPixel = leftPath[i];
     const leftValue = workingLabelMap[getPixelIndex(leftPixel)];
 
-    if (leftValue === fillOver && pointInImage(leftPixel, rows, cols)) {
+    if (leftValue === shouldFillOver && pointInImage(leftPixel, rows, cols)) {
       leftArea += fillFromPixel(leftPixel, 3, workingLabelMap, getter, cols);
     }
 
@@ -241,7 +239,7 @@ function performOperation(
     const rightPixel = rightPath[i];
     const rightValue = workingLabelMap[getPixelIndex(rightPixel)];
 
-    if (rightValue === fillOver && pointInImage(rightPixel, rows, cols)) {
+    if (rightValue === shouldFillOver && pointInImage(rightPixel, rows, cols)) {
       rightArea += fillFromPixel(rightPixel, 4, workingLabelMap, getter, cols);
     }
   }
@@ -281,7 +279,7 @@ function performOperation(
 }
 
 /**
- * ExpandBoudningBox - expands the bounding box if the pixel falls outside it.
+ * Expands the bounding box if the pixel falls outside it.
  *
  * @param  {Object} boundingBox The bounding box.
  * @param  {Object} pixel The pixel.
@@ -305,7 +303,7 @@ function expandBoundingBox(boundingBox, pixel) {
 }
 
 /**
- * ClipBoundingBox - Expands the bounding box by 2 px and then clips it to the image size.
+ * Expands the bounding box by 2 px and then clips it to the image size.
  * @param  {Object} boundingBox The bounding box.
  * @param  {number} rows The number of rows.
  * @param  {number} cols The number of columns.
@@ -322,7 +320,7 @@ function clipBoundingBox(boundingBox, rows, cols) {
 }
 
 /**
- * FillFromPixel - Performs a floodfill from the given pixel to the workingLabelMap.
+ * Performs a floodfill from the given pixel to the workingLabelMap.
  * @param  {Object} pixel The pixel.
  * @param  {number} fillValue The fill value.
  * @param  {UInt8Array} workingLabelMap The working labelmap.
@@ -345,7 +343,7 @@ function fillFromPixel(pixel, fillValue, workingLabelMap, getter, cols) {
 }
 
 /**
- * GetPixelPaths - Interpolates the pixelPath using an obstacleless path finding algorithm.
+ * Interpolates the pixelPath using an obstacleless path finding algorithm.
  * @param  {Object[]} nodes The nodes to interpolate between.
  * @returns {Object} The pixelPath, and the path to the left and right of it.
  */
@@ -381,7 +379,7 @@ function getPixelPaths(nodes) {
 }
 
 /**
- * GetNodesPerpendicularToPathPixel - Using the current and next pixel on the path, determine the adjacent pixels
+ * Using the current and next pixel on the path, determine the adjacent pixels
  * which are perpendicular to the path direction. (i.e. to the left and to the right).
  *
  * @param  {Object} pathPixel The pixel being queried.
@@ -460,12 +458,13 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
 }
 
 /**
- * SplitLineIntoSeperateOperations - Splits the path of nodes into
- * seperate add/remove operations.
+ * Splits the path of nodes into seperate add/remove operations.
  *
  * @param  {Object[]} nodes The array of nodes.
  * @param  {number} segmentIndex The label value to replace.
- * @returns {Object[]} An array of operations to perform.
+ * @returns {{additive: boolean, nodes: []}[]} An array of operations to perform,
+ *                                             whether they are `additive` and the
+ *                                             corresponding `nodes` of the operation.
  */
 function splitLineIntoSeperateOperations(nodes, segmentIndex) {
   // Check whether the first node is inside a segment of the appropriate label or not.

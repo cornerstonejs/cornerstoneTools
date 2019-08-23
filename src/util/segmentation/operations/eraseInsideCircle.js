@@ -1,6 +1,7 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
 import getCircleCoords from '../../getCircleCoords';
+import isSameSegment from './isSameSegment.js';
 import { getLogger } from '../../logger.js';
 
 const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
@@ -8,27 +9,28 @@ const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
 /**
  * EraseInsideCircle - Erase all pixels labeled with the activeSegmentIndex,
  * in the region defined by the circle.
- * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {Object} evt The Cornerstone event.
+ * @param  {Object} toolConfiguration Configuration of the tool applying the strategy.
+ * @param {Object}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function eraseInsideCircle(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function eraseInsideCircle(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
 
-  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+  if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
-      `eraseInsideCircle operation requires circleSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `eraseInsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { pixelData, segmentIndex } = operationData;
-
+  const eventData = evt.detail;
   const { image } = eventData;
   const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
@@ -41,17 +43,18 @@ export default function eraseInsideCircle(evt) {
 
   for (let x = xMin; x < xMax; x++) {
     for (let y = yMin; y < yMax; y++) {
-      const inside = pointInEllipse(ellipse, {
-        x,
-        y,
-      });
+      const pixelIndex = y * width + x;
 
-      if (inside) {
-        const pixelIndex = y * width + x;
-
-        if (pixelData[pixelIndex] === segmentIndex) {
-          pixelData[pixelIndex] = 0;
-        }
+      // If the pixel is the same segmentIndex and is inside the
+      // Region defined by the array of points, set their value to segmentIndex.
+      if (
+        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
+        pointInEllipse(ellipse, {
+          x,
+          y,
+        })
+      ) {
+        pixelData[pixelIndex] = 0;
       }
     }
   }

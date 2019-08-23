@@ -1,6 +1,7 @@
 ## Directories
 node_modules
 _book/
+build
 
 ## Files
 .npmrc
@@ -17,5 +18,3 @@ junit.xml
 
 ## Only track CI's lock
 yarn.lock
-
-Gemfile.lock

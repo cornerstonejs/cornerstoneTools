@@ -20,7 +20,6 @@ class BaseBrushTool extends BaseTool {
     if (!defaultProps.configuration) {
       defaultProps.configuration = { alwaysEraseOnClick: false };
     }
-    defaultProps.configuration.referencedToolData = 'brush';
     defaultProps.mixins = ['segmentationAPI'];
 
     super(props, defaultProps);
@@ -342,17 +341,6 @@ class BaseBrushTool extends BaseTool {
 
   _isCtrlDown(eventData) {
     return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
-  }
-
-  /**
-   * Returns the toolData type assoicated with this type of tool.
-   *
-   * @static
-   * @public
-   * @returns {String} The number of colors in the color map.
-   */
-  static getReferencedToolDataName() {
-    return 'brush';
   }
 }
 

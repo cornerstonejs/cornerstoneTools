@@ -14,9 +14,6 @@ export default class CorrectionScissorsTool extends BaseSegmentationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'CorrectionScissors',
-      configuration: {
-        referencedToolData: 'segmentation',
-      },
       strategies: {
         CORRECTION: correction,
       },

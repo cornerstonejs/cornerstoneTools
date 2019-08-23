@@ -1,51 +1,58 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
-import { fillOutsideBoundingBox } from './index';
+import { eraseOutsideBoundingBox } from './index';
+
+import { eraseIfSegmentIndex } from './index';
 
 import { getLogger } from '../../logger';
 
-const logger = getLogger('util:segmentation:operations:fillOutside');
+const logger = getLogger('util:segmentation:operations:eraseOutsideFreehand');
 
 /**
- * FillOutside - Fill all pixels outside of the region defined by
- * evt.operationData.points with the activeSegmentIndex value.
+ * Erase all pixels labeled with the activeSegmentIndex,
+ * outside the region defined by evt.operationData.points.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillOutside(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function eraseOutsideFreehand(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const {
+    pixelData,
+    segmentIndex,
+    points,
+    segmentationMixinType,
+  } = operationData;
 
-  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+  if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
-      `fillOutside operation requires freehandSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `eraseOutsideFreehand operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { pixelData, segmentIndex, points } = operationData;
-
   // Loop through all pixels in the segmentation data mask
   // If they are outside of the region defined by the array of points, set their value to segmentIndex
+  const eventData = evt.detail;
   const { image } = eventData;
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
+  const [xMin, yMin] = topLeft;
+  const [xMax, yMax] = bottomRight;
 
   // If we know exactly how big the polygon is,
   // we do not need to loop through the whole image.
   //
   // Outside of the polygon bounding box should definitely be filled
   // Inside of the polygon bounding box should be tested with pointInPolygon
-  fillOutsideBoundingBox(evt, topLeft, bottomRight);
-
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
+  eraseOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
 
   // Loop through all of the points inside the bounding box
   for (let i = xMin; i < xMax; i++) {
@@ -53,7 +60,7 @@ export default function fillOutside(evt) {
       const outside = !pointInPolygon([i, j], vertices);
 
       if (outside) {
-        pixelData[j * width + i] = segmentIndex;
+        eraseIfSegmentIndex(j * width + i, pixelData, segmentIndex);
       }
     }
   }

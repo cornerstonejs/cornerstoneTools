@@ -24,9 +24,6 @@ export default class RectangleScissorsTool extends BaseSegmentationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'RectangleScissors',
-      configuration: {
-        referencedToolData: 'segmentation',
-      },
       strategies: {
         FILL_INSIDE: fillInsideRectangle,
         FILL_OUTSIDE: fillOutsideRectangle,

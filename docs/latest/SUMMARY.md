@@ -44,10 +44,10 @@
   - [Cursor](modules/index.md#cursors)
   - [Segmentation](modules/index.md#segmentation)
 - [Third-Party Functionality](third-party-functionality/index.md)
-  - [Item Types](third-party-functionality/index.md#item-types.md)
-  - [Registration](third-party-functionality/index.md#registration.md)
-  - [Imports](third-party-functionality/index.md#imports.md)
-  - [Tools](third-party-functionality/index.md#tools.md)
+  - [Item Types](third-party-functionality/index.md#item-types)
+  - [Registration](third-party-functionality/index.md#registration)
+  - [Imports](third-party-functionality/index.md#imports)
+  - [Tools](third-party-functionality/index.md#tools)
 
 ## Migrating
 

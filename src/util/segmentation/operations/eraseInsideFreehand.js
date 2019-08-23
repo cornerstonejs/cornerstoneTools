@@ -1,28 +1,36 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
+import isSameSegment from './isSameSegment.js';
 
 import { getLogger } from '../../logger';
 
-const logger = getLogger('util:segmentation:operations:eraseInside');
+const logger = getLogger('util:segmentation:operations:eraseInsideFreehand');
 
 /**
- * EraseInside - Erase all pixels labeled with the activeSegmentIndex,
+ * Erase all pixels labeled with the activeSegmentIndex,
  * in the region defined by evt.operationData.points.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function eraseInside(evt) {
+export default function eraseInsideFreehand(
+  evt,
+  toolConfiguration,
+  operationData
+) {
   const eventData = evt.detail;
-  const { operationData } = evt;
-  const { pixelData, segmentIndex, points } = operationData;
+  const {
+    pixelData,
+    segmentIndex,
+    points,
+    segmentationMixinType,
+  } = operationData;
 
-  if (operationData.segmentationMixinType !== `freehandSegmentationMixin`) {
+  if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
-      `eraseInside operation requires freehandSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `eraseInsideFreehand operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
@@ -37,22 +45,21 @@ export default function eraseInside(evt) {
   const { width } = image;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
-
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
 
   // Loop through all of the points inside the bounding box
   for (let i = xMin; i < xMax; i++) {
     for (let j = yMin; j < yMax; j++) {
-      // If they are inside of the region defined by the array of points, set their value to segmentIndex
-      const inside = pointInPolygon([i, j], vertices);
+      const pixelIndex = j * width + i;
 
-      if (inside) {
-        const pixelIndex = j * width + i;
-
-        if (pixelData[pixelIndex] === segmentIndex) {
-          pixelData[pixelIndex] = 0;
-        }
+      // If the pixel is the same segmentIndex and is inside the
+      // Region defined by the array of points, set their value to segmentIndex.
+      if (
+        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
+        pointInPolygon([i, j], vertices)
+      ) {
+        pixelData[pixelIndex] = 0;
       }
     }
   }

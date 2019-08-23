@@ -9,30 +9,29 @@ const logger = getLogger('util:segmentation:operations:fillOutsideRectangle');
  * FillOutsideRectangle - Fill all pixels outside the region defined
  * by the rectangle.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillOutsideRectangle(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function fillOutsideRectangle(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const { points, segmentationMixinType } = operationData;
 
-  if (operationData.segmentationMixinType !== `rectangleSegmentationMixin`) {
+  if (segmentationMixinType !== `rectangleSegmentationMixin`) {
     logger.error(
-      `fillOutsideRectangle operation requires rectangleSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `fillOutsideRectangle operation requires rectangleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { points } = operationData;
-
-  const { image } = eventData;
-
+  const { image } = evt.detail;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
-  fillOutsideBoundingBox(evt, topLeft, bottomRight);
+  fillOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
 }

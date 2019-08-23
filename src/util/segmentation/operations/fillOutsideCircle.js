@@ -11,26 +11,27 @@ const logger = getLogger('util:segmentation:operations:fillOutsideCircle');
  * FillOutsideCircle - Fill all pixels outside the region defined
  * by the circle.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillOutsideCircle(evt) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function fillOutsideCircle(
+  evt,
+  toolConfiguration,
+  operationData
+) {
+  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
 
-  if (operationData.segmentationMixinType !== `circleSegmentationMixin`) {
+  if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
-      `fillOutsideCircle operation requires circleSegmentationMixin operationData, recieved ${
-        operationData.segmentationMixinType
-      }`
+      `fillOutsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  const { pixelData, segmentIndex } = operationData;
-
+  const eventData = evt.detail;
   const { image } = eventData;
   const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
@@ -41,7 +42,7 @@ export default function fillOutsideCircle(evt) {
     eventData.handles.end
   );
 
-  fillOutsideBoundingBox(evt, topLeft, bottomRight);
+  fillOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
 
   for (let x = xMin; x < xMax; x++) {
     for (let y = yMin; y < yMax; y++) {

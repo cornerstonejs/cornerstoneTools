@@ -2,17 +2,20 @@
  * EraseInside - fill all pixels labeled with the activeSegmentIndex,
  * outside the bouding box defined by the `topLeft` and `topRight`.
  * @param  {} evt The Cornerstone event.
- * @param {} evt.operationData An object containing the `pixelData` to
+ * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
+ * @param {number[]} topLeft The top left of the bounding box.
+ * @param {number[]} bottomRight The bottom right of the bounding box.
  * @returns {null}
  */
-export default function fillOutsideBoundingBox(evt, topLeft, bottomRight) {
-  const eventData = evt.detail;
-  const { operationData } = evt;
+export default function fillOutsideBoundingBox(
+  evt,
+  operationData,
+  topLeft,
+  bottomRight
+) {
   const { pixelData, segmentIndex } = operationData;
-
-  const { image } = eventData;
-  const { width, height } = image;
+  const { width, height } = evt.detail.image;
 
   // Loop until top of bounding box from top of image, color the entire row
   for (let i = 0; i < width; i++) {
