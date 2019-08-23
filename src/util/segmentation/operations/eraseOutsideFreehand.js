@@ -1,7 +1,6 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
-import { eraseOutsideBoundingBox } from './index';
-import isSameSegment from './isSameSegment.js';
+import eraseOutsideShape from '../helpers/eraseOutsideShape';
 
 import { getLogger } from '../../logger';
 
@@ -21,51 +20,30 @@ export default function eraseOutsideFreehand(
   toolConfiguration,
   operationData
 ) {
-  const {
-    pixelData,
-    segmentIndex,
-    points,
-    segmentationMixinType,
-  } = operationData;
+  const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
-      `eraseOutsideFreehand operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
+      `eraseInsideFreehand operation requires freehandSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  // Loop through all pixels in the segmentation data mask
-  // If they are outside of the region defined by the array of points, set their value to segmentIndex
-  const eventData = evt.detail;
-  const { image } = eventData;
-  const { width } = image;
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search. Outside of the bounding box,
+  // everything is outside of the polygon.
+  const { image } = evt.detail;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
 
-  // If we know exactly how big the polygon is,
-  // we do not need to loop through the whole image.
-  //
-  // Outside of the polygon bounding box should definitely be filled
-  // Inside of the polygon bounding box should be tested with pointInPolygon
-  eraseOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
-
-  // Loop through all of the points inside the bounding box
-  for (let i = xMin; i < xMax; i++) {
-    for (let j = yMin; j < yMax; j++) {
-      const pixelIndex = j * width + i;
-
-      // If the pixel is the same segmentIndex and is inside the
-      // Region defined by the array of points, set their value to segmentIndex.
-      if (
-        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
-        !pointInPolygon([i, j], vertices)
-      ) {
-        pixelData[pixelIndex] = 0;
-      }
-    }
-  }
+  eraseOutsideShape(
+    evt,
+    operationData,
+    point => {
+      return pointInPolygon([point.x, point.y], vertices);
+    },
+    topLeft,
+    bottomRight
+  );
 }

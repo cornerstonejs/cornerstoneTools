@@ -1,4 +1,4 @@
-import { eraseIfSegmentIndex } from './index';
+import { eraseIfSegmentIndex } from '../operations/index';
 
 /**
  * EraseOutsideBoundingBox - Erase all pixels labeled with the activeSegmentIndex,

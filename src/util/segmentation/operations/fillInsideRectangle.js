@@ -1,4 +1,5 @@
-import { fillInsideBoundingBox } from './index';
+import fillInsideShape from '../helpers/fillInsideShape';
+import getBoundingBoxAroundPolygon from '../boundaries/getBoundingBoxAroundPolygon.js';
 import { getLogger } from '../../logger';
 
 const logger = getLogger('util:segmentation:operations:fillInsideRectangle');
@@ -17,15 +18,23 @@ export default function fillInsideRectangle(
   toolConfiguration,
   operationData
 ) {
-  const { segmentationMixinType } = operationData;
+  const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `rectangleSegmentationMixin`) {
     logger.error(
-      `fillInsideRectangle operation requires rectangleSegmentationMixin operationData, recieved ${segmentationMixinType}`
+      `eraseInsideRectangle operation requires rectangleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
-  fillInsideBoundingBox(evt, operationData);
+  // Loop through all pixels in the segmentation data mask
+
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search.
+  const { image } = evt.detail;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
+
+  fillInsideShape(evt, operationData, () => true, topLeft, bottomRight);
 }

@@ -1,5 +1,6 @@
-import { eraseInsideBoundingBox } from './index';
 import { getLogger } from '../../logger';
+import getBoundingBoxAroundPolygon from '../boundaries/getBoundingBoxAroundPolygon.js';
+import eraseInsideShape from '../helpers/eraseInsideShape';
 
 const logger = getLogger('util:segmentation:operations:eraseInsideRectangle');
 
@@ -17,7 +18,7 @@ export default function eraseInsideRectangle(
   toolConfiguration,
   operationData
 ) {
-  const { segmentationMixinType } = operationData;
+  const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `rectangleSegmentationMixin`) {
     logger.error(
@@ -27,5 +28,15 @@ export default function eraseInsideRectangle(
     return;
   }
 
-  eraseInsideBoundingBox(evt, operationData);
+  const eventData = evt.detail;
+
+  // Loop through all pixels in the segmentation data mask
+
+  // Obtain the bounding box of the entire drawing so that
+  // we can subset our search.
+  const { image } = eventData;
+  const vertices = points.map(a => [a.x, a.y]);
+  const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
+
+  eraseInsideShape(evt, operationData, () => true, topLeft, bottomRight);
 }

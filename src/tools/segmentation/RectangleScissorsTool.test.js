@@ -1,7 +1,4 @@
 import RectangleScissorsTool from './RectangleScissorsTool';
-import store from '../../store';
-import mixins from '../../mixins';
-import mockEvt from '../../util/__mocks__/segmentationEvent.mock';
 
 jest.mock('./../../externalModules.js');
 

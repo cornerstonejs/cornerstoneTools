@@ -1,8 +1,8 @@
-import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import getCircleCoords from '../../getCircleCoords';
-import isSameSegment from './isSameSegment.js';
 import { getLogger } from '../../logger.js';
+import eraseInsideShape from '../helpers/eraseInsideShape';
+import getBoundingBoxAroundCircle from '../boundaries/getBoundingBoxAroundCircle.js';
+import getCircleCoords from '../../getCircleCoords.js';
 
 const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
 
@@ -20,7 +20,7 @@ export default function eraseInsideCircle(
   toolConfiguration,
   operationData
 ) {
-  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
+  const { segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
@@ -31,31 +31,19 @@ export default function eraseInsideCircle(
   }
 
   const eventData = evt.detail;
-  const { image } = eventData;
-  const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
   const ellipse = getCircleCoords(
-    evt.detail.handles.start,
-    evt.detail.handles.end
+    eventData.handles.start,
+    eventData.handles.end
   );
 
-  for (let x = xMin; x < xMax; x++) {
-    for (let y = yMin; y < yMax; y++) {
-      const pixelIndex = y * width + x;
-
-      // If the pixel is the same segmentIndex and is inside the
-      // Region defined by the array of points, set their value to segmentIndex.
-      if (
-        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
-        pointInEllipse(ellipse, {
-          x,
-          y,
-        })
-      ) {
-        pixelData[pixelIndex] = 0;
-      }
-    }
-  }
+  eraseInsideShape(
+    evt,
+    operationData,
+    point => {
+      return pointInEllipse(ellipse, point);
+    },
+    topLeft,
+    bottomRight
+  );
 }

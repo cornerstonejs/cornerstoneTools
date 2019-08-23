@@ -1,10 +1,10 @@
 import { fillInsideFreehand, eraseInsideFreehand } from './index.js';
-import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
+import getPixelPathBetweenPixels from '../helpers/getPixelPathBetweenPixels';
 import clip from '../../clip';
 import pointInImage from '../../pointInImage';
 
 import { getLogger } from '../../logger';
-import floodFill from './floodFill.js';
+import floodFill from '../helpers/floodFill.js';
 
 const logger = getLogger('util:segmentation:operations:correction');
 

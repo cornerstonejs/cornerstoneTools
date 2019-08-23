@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundPolygon } from '../boundaries';
 import pointInPolygon from '../../pointInPolygon';
-import isSameSegment from './isSameSegment.js';
+import eraseInsideShape from '../helpers/eraseInsideShape.js';
 
 import { getLogger } from '../../logger';
 
@@ -20,13 +20,7 @@ export default function eraseInsideFreehand(
   toolConfiguration,
   operationData
 ) {
-  const eventData = evt.detail;
-  const {
-    pixelData,
-    segmentIndex,
-    points,
-    segmentationMixinType,
-  } = operationData;
+  const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `freehandSegmentationMixin`) {
     logger.error(
@@ -36,31 +30,20 @@ export default function eraseInsideFreehand(
     return;
   }
 
-  // Loop through all pixels in the segmentation data mask
-
   // Obtain the bounding box of the entire drawing so that
   // we can subset our search. Outside of the bounding box,
   // everything is outside of the polygon.
-  const { image } = eventData;
-  const { width } = image;
+  const { image } = evt.detail;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
 
-  // Loop through all of the points inside the bounding box
-  for (let i = xMin; i < xMax; i++) {
-    for (let j = yMin; j < yMax; j++) {
-      const pixelIndex = j * width + i;
-
-      // If the pixel is the same segmentIndex and is inside the
-      // Region defined by the array of points, set their value to segmentIndex.
-      if (
-        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
-        pointInPolygon([i, j], vertices)
-      ) {
-        pixelData[pixelIndex] = 0;
-      }
-    }
-  }
+  eraseInsideShape(
+    evt,
+    operationData,
+    point => {
+      return pointInPolygon([point.x, point.y], vertices);
+    },
+    topLeft,
+    bottomRight
+  );
 }

@@ -1,8 +1,7 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import { eraseOutsideBoundingBox, eraseIfSegmentIndex } from './index';
+import eraseOutsideShape from '../helpers/eraseOutsideShape.js';
 import getCircleCoords from '../../getCircleCoords';
-import isSameSegment from './isSameSegment.js';
 
 import { getLogger } from '../../logger.js';
 
@@ -22,7 +21,7 @@ export default function eraseOutsideCircle(
   toolConfiguration,
   operationData
 ) {
-  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
+  const { segmentationMixinType } = operationData;
   const eventData = evt.detail;
 
   if (segmentationMixinType !== `circleSegmentationMixin`) {
@@ -33,31 +32,19 @@ export default function eraseOutsideCircle(
     return;
   }
 
-  const { image } = eventData;
-  const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
   const ellipse = getCircleCoords(
     eventData.handles.start,
     eventData.handles.end
   );
 
-  eraseOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
-
-  for (let x = xMin; x < xMax; x++) {
-    for (let y = yMin; y < yMax; y++) {
-      const pixelIndex = y * width + x;
-
-      if (
-        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
-        !pointInEllipse(ellipse, {
-          x,
-          y,
-        })
-      ) {
-        pixelData[pixelIndex] = 0;
-      }
-    }
-  }
+  eraseOutsideShape(
+    evt,
+    operationData,
+    point => {
+      return pointInEllipse(ellipse, point);
+    },
+    topLeft,
+    bottomRight
+  );
 }

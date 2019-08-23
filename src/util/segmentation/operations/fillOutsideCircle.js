@@ -1,6 +1,6 @@
 import { getBoundingBoxAroundCircle } from '../boundaries';
 import { pointInEllipse } from '../../ellipse';
-import fillOutsideBoundingBox from './fillOutsideBoundingBox';
+import fillOutsideShape from '../helpers/fillOutsideShape';
 import getCircleCoords from '../../getCircleCoords';
 
 import { getLogger } from '../../logger.js';
@@ -21,39 +21,30 @@ export default function fillOutsideCircle(
   toolConfiguration,
   operationData
 ) {
-  const { pixelData, segmentIndex, segmentationMixinType } = operationData;
+  const { segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
-      `fillOutsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
+      `fillInsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
   }
 
   const eventData = evt.detail;
-  const { image } = eventData;
-  const { width } = image;
   const [topLeft, bottomRight] = getBoundingBoxAroundCircle(evt);
-  const [xMin, yMin] = topLeft;
-  const [xMax, yMax] = bottomRight;
   const ellipse = getCircleCoords(
     eventData.handles.start,
     eventData.handles.end
   );
 
-  fillOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
-
-  for (let x = xMin; x < xMax; x++) {
-    for (let y = yMin; y < yMax; y++) {
-      const outside = !pointInEllipse(ellipse, {
-        x,
-        y,
-      });
-
-      if (outside) {
-        pixelData[y * width + x] = segmentIndex;
-      }
-    }
-  }
+  fillOutsideShape(
+    evt,
+    operationData,
+    point => {
+      return pointInEllipse(ellipse, point);
+    },
+    topLeft,
+    bottomRight
+  );
 }

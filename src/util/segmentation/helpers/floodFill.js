@@ -1,7 +1,3 @@
-import { getLogger } from '../../logger';
-
-const logger = getLogger('util:segmentation:operations:floodFill');
-
 /**
  * floodFill.js - Taken from MIT OSS lib - https://github.com/tuzz/n-dimensional-flood-fill
  * Refactored to ES6.

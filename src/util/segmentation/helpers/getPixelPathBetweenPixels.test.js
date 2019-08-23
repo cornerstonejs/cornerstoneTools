@@ -1,4 +1,4 @@
-import getPixelPathBetweenPixels from './getPixelPathBetweenPixels.js';
+import getPixelPathBetweenPixels from '../helpers/getPixelPathBetweenPixels.js';
 
 jest.mock('../../../externalModules.js', () => ({
   cornerstoneMath: {
