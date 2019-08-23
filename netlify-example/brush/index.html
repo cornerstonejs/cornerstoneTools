@@ -244,11 +244,11 @@
     //const imageId = `dicomweb:${baseUrl}/examples/assets/dicom/exotic/1.dcm`;
     //const imageId = 'example://1';
 
-    const imageId =
-      'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm';
-
     //const imageIds = ['example://1', 'example://2'];
-    const imageIds = [imageId];
+    const imageIds = [
+      'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm',
+      'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.12.dcm',
+    ];
     const stack = {
       currentImageIdIndex: 0,
       imageIds: imageIds,

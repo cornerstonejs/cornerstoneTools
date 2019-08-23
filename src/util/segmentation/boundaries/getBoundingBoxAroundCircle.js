@@ -10,10 +10,10 @@ export default function getBoundingBoxAroundCircle(evt) {
   let yMax = circleCoordinates.top + circleCoordinates.height;
   let yMin = circleCoordinates.top;
 
-  xMin = Math.round(xMin);
-  yMin = Math.round(yMin);
-  xMax = Math.round(xMax);
-  yMax = Math.round(yMax);
+  xMin = Math.floor(xMin);
+  yMin = Math.floor(yMin);
+  xMax = Math.floor(xMax);
+  yMax = Math.floor(yMax);
 
   xMax = Math.min(imageWidth, xMax);
   xMin = Math.max(0, xMin);

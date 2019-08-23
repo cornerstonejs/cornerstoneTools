@@ -101,9 +101,7 @@ export function fillOutsideShape(
   fillShape(
     evt,
     operationData,
-    point => {
-      return !pointInShape(point);
-    },
+    point => !pointInShape(point),
     topLeft,
     bottomRight,
     'outside'

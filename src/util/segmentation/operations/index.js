@@ -14,7 +14,6 @@ export {
 } from '../helpers/eraseOutsideBoundingBox';
 export { default as eraseOutsideRectangle } from './eraseOutsideRectangle';
 export { default as eraseOutsideCircle } from './eraseOutsideCircle';
-export { default as fillInsideCircle } from './fillInsideCircle';
+export { fillInsideCircle, fillOutsideCircle } from './fillCircle';
 export { default as eraseInsideCircle } from './eraseInsideCircle';
-export { default as fillOutsideCircle } from './fillOutsideCircle';
 export { default as eraseIfSegmentIndex } from '../helpers/eraseIfSegmentIndex';

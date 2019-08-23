@@ -476,8 +476,8 @@ function _getCirlceImageCoodinates(startHandle, endHandle) {
   const radius = _getDistance(startHandle, endHandle);
 
   return {
-    left: Math.round(Math.min(startHandle.x - radius, endHandle.x)),
-    top: Math.round(Math.min(startHandle.y - radius, endHandle.y)),
+    left: Math.floor(Math.min(startHandle.x - radius, endHandle.x)),
+    top: Math.floor(Math.min(startHandle.y - radius, endHandle.y)),
     width: radius * 2,
     height: radius * 2,
   };
