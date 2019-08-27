@@ -67,7 +67,7 @@ const configuration = {
  */
 
 /**
- * GetMetadata - Returns the metadata object for a partiular segment if
+ * GetMetadata - Returns the metadata object for a particular segment if
  * segmentIndex is specified, otherwise returns an array of all segment metadata
  * for the labelmap.
  *
@@ -80,7 +80,7 @@ const configuration = {
  *                                     metadata objects.
  */
 function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -99,9 +99,7 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -127,7 +125,7 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
  *                                the `activeLabelmapIndex` amd the `currentImageIdIndex`.
  */
 function getLabelmaps3D(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -165,7 +163,7 @@ function getLabelmaps3D(elementOrEnabledElementUID) {
  * @returns {Object}              The `Labelmap3D` and the currentImageIdIndex.
  */
 function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -191,11 +189,9 @@ function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
     activeLabelmapIndex = brushStackState.activeLabelmapIndex;
 
     if (!brushStackState.labelmaps3D[activeLabelmapIndex]) {
-      _addLabelmap3D(
-        brushStackState,
-        activeLabelmapIndex,
-        rows * columns * numberOfFrames
-      );
+      const size = rows * columns * numberOfFrames;
+
+      _addLabelmap3D(brushStackState, activeLabelmapIndex, size);
     }
 
     if (
@@ -221,11 +217,9 @@ function getAndCacheLabelmap2D(elementOrEnabledElementUID) {
 
     brushStackState = state.series[firstImageId];
 
-    _addLabelmap3D(
-      brushStackState,
-      activeLabelmapIndex,
-      rows * columns * numberOfFrames
-    );
+    const size = rows * columns * numberOfFrames;
+
+    _addLabelmap3D(brushStackState, activeLabelmapIndex, size);
 
     _addLabelmap2DView(
       brushStackState,
@@ -262,7 +256,7 @@ function getIsSegmentVisible(
     return;
   }
 
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -280,9 +274,7 @@ function getIsSegmentVisible(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -315,7 +307,7 @@ function setToggleSegmentVisibility(
     return;
   }
 
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -333,9 +325,7 @@ function setToggleSegmentVisibility(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -464,7 +454,7 @@ function getSegmentOfActiveLabelmapAtEvent(evt) {
  *                    the maximum pixel value, the mean and the standard deviation.
  */
 function getLabelmapStats(elementOrEnabledElementUID, segmentIndex) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -524,7 +514,7 @@ function getLabelmapStats(elementOrEnabledElementUID, segmentIndex) {
  * @returns {string}                    An rgba value as a string.
  */
 function getBrushColor(elementOrEnabledElementUID, drawing = false) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -572,7 +562,7 @@ function getBrushColor(elementOrEnabledElementUID, drawing = false) {
  * @returns {number}                                  The active segment index.
  */
 function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -585,9 +575,7 @@ function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
   const brushStackState = state.series[firstImageId];
 
   if (brushStackState) {
-    if (labelmapIndex === undefined) {
-      labelmapIndex = brushStackState.activeLabelmapIndex;
-    }
+    labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
 
     const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 
@@ -612,7 +600,7 @@ function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
  *
  */
 function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -662,7 +650,7 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
  *                        corresponding `buffer`.
  */
 function getActiveLabelmapBuffer(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -700,7 +688,7 @@ function setMetadata(
   segmentIndex,
   metadata
 ) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -728,12 +716,9 @@ function setMetadata(
     const currentImageIdIndex = stackData.currentImageIdIndex;
     const { rows, columns } = enabledElement.image;
     const numberOfFrames = stackData.imageIds.length;
+    const size = rows * columns * numberOfFrames;
 
-    _addLabelmap3D(
-      brushStackState,
-      labelmapIndex,
-      rows * columns * numberOfFrames
-    );
+    _addLabelmap3D(brushStackState, labelmapIndex, size);
   }
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
@@ -758,7 +743,7 @@ function setLabelmap3DForElement(
   labelmapIndex,
   metadata = []
 ) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -865,7 +850,7 @@ function setDeleteSegment(
     return;
   }
 
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -882,9 +867,7 @@ function setDeleteSegment(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 
@@ -932,7 +915,7 @@ function setDeleteSegment(
  * @returns {number} The index of the active `Labelmap3D`.
  */
 function getActiveLabelmapIndex(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -980,7 +963,7 @@ function getActiveCornerstoneColorMap(elementOrEnabledElementUID) {
  * @returns {null}
  */
 function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -992,6 +975,7 @@ function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
   const enabledElement = cornerstone.getEnabledElement(element);
   const { rows, columns } = enabledElement.image;
   const numberOfFrames = stackData.imageIds.length;
+  const size = rows * columns * numberOfFrames;
   const firstImageId = stackData.imageIds[0];
 
   let brushStackState = state.series[firstImageId];
@@ -1004,11 +988,7 @@ function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
     brushStackState.activeLabelmapIndex = labelmapIndex;
 
     if (!brushStackState.labelmaps3D[labelmapIndex]) {
-      _addLabelmap3D(
-        brushStackState,
-        labelmapIndex,
-        rows * columns * numberOfFrames
-      );
+      _addLabelmap3D(brushStackState, labelmapIndex, size);
     }
   } else {
     state.series[firstImageId] = {
@@ -1018,11 +998,7 @@ function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
 
     brushStackState = state.series[firstImageId];
 
-    _addLabelmap3D(
-      brushStackState,
-      labelmapIndex,
-      rows * columns * numberOfFrames
-    );
+    _addLabelmap3D(brushStackState, labelmapIndex, size);
   }
 
   cornerstone.updateImage(element);
@@ -1037,7 +1013,7 @@ function setActiveLabelmap(elementOrEnabledElementUID, labelmapIndex = 0) {
  * @returns {null}
  */
 function setIncrementActiveSegmentIndex(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -1055,7 +1031,7 @@ function setIncrementActiveSegmentIndex(elementOrEnabledElementUID) {
  * @returns {null}
  */
 function setDecrementActiveSegmentIndex(elementOrEnabledElementUID) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -1074,7 +1050,7 @@ function setDecrementActiveSegmentIndex(elementOrEnabledElementUID) {
  * @returns {null}
  */
 function setActiveSegmentIndex(elementOrEnabledElementUID, segmentIndex) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -1123,7 +1099,7 @@ function invalidateBrushOnEnabledElement(
   elementOrEnabledElementUID,
   labelmapIndex
 ) {
-  const element = _getEnabledElement(elementOrEnabledElementUID);
+  const element = _getElement(elementOrEnabledElementUID);
 
   if (!element) {
     return;
@@ -1264,14 +1240,14 @@ export default {
 };
 
 /**
- * _getEnabledElement - Returns the enabledElement given either the enabledElement
- *                      or its UUID.
+ * _getElement - Returns the cornerstone enabled element given either the element
+ *                      or its enabledElement UUID.
  *
  * @param  {string|HTMLElement} elementOrEnabledElementUID  The enabledElement
  *                                                          or its UUID.
  * @returns {HTMLElement}
  */
-function _getEnabledElement(elementOrEnabledElementUID) {
+function _getElement(elementOrEnabledElementUID) {
   if (elementOrEnabledElementUID instanceof HTMLElement) {
     return elementOrEnabledElementUID;
   }

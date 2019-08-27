@@ -48,7 +48,7 @@ class BaseBrushTool extends BaseTool {
   }
 
   /**
-   * Paints the data to the canvas.
+   * Paints the data to the labelmap.
    *
    * @protected
    * @abstract

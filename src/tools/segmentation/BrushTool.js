@@ -89,7 +89,7 @@ export default class BrushTool extends BaseBrushTool {
   }
 
   /**
-   * Paints the data to the canvas.
+   * Paints the data to the labelmap.
    *
    * @protected
    * @param  {Object} evt The data object associated with the event.

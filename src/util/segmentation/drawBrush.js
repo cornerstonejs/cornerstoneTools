@@ -1,4 +1,5 @@
 import eraseIfSegmentIndex from './eraseIfSegmentIndex.js';
+import external from '../../externalModules';
 
 /**
  * DrawBrushPixels - Adds or removes labels to a labelmap.

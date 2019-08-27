@@ -31,7 +31,7 @@ export default class SphericalBrushTool extends BrushTool {
   }
 
   /**
-   * Paints the data to the canvas.
+   * Paints the data to the labelmap.
    *
    * @private
    * @param  {Object} evt The data object associated with the event.
