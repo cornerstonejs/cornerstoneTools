@@ -17,7 +17,21 @@ jest.mock('./../../importInternal.js', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('../../externalModules.js');
+jest.mock('../../externalModules.js', () => ({
+  cornerstoneMath: {
+    point: {
+      distance: (from, to) => {
+        const distanceSquared =
+          Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2);
+
+        return Math.sqrt(distanceSquared);
+      },
+    },
+  },
+  cornerstone: {
+    pixelToCanvas: jest.fn(),
+  },
+}));
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {

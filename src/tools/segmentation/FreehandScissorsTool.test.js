@@ -1,17 +1,4 @@
 import FreehandScissorsTool from './FreehandScissorsTool';
-import store from '../../store';
-import mixins from '../../mixins';
-import mockEvt from '../../util/__mocks__/segmentationEvent.mock';
-
-jest.mock('./../../externalModules.js');
-
-jest.mock('../../mixins', () => ({
-  ...jest.requireActual('../../mixins').default,
-}));
-
-jest.mock('../../store', () => ({
-  ...jest.requireActual('../../store'),
-}));
 
 describe('FreehandScissorsTool.js', () => {
   describe('Initialization', () => {

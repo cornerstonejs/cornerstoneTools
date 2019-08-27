@@ -2,14 +2,6 @@ import RectangleScissorsTool from './RectangleScissorsTool';
 
 jest.mock('./../../externalModules.js');
 
-jest.mock('../../mixins', () => ({
-  ...jest.requireActual('../../mixins').default,
-}));
-
-jest.mock('../../store', () => ({
-  ...jest.requireActual('../../store'),
-}));
-
 describe('RectangleScissorsTool.js', () => {
   describe('Initialization', () => {
     it('Instantiate RectangleScissorsTool Correctly', () => {

@@ -1,5 +1,6 @@
 /**
- * GetNewColorLUT - Generates an array of RGB colors of length numberOfColors.
+ * GetNewColorLUT - Generates a new color LUT (Look up table) of length
+ * `numberOfColors`, which returns an RGBA color for each segment index.
  *
  * @param  {Number} numberOfColors = 255 The number of colors to generate
  * @returns {Number[][]}           The array of RGB values.

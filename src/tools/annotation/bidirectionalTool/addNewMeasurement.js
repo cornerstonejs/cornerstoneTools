@@ -6,9 +6,6 @@ import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
-import triggerEvent from '../../../util/triggerEvent.js';
-import getActiveTool from '../../../util/getActiveTool';
-import BaseAnnotationTool from '../../base/BaseAnnotationTool';
 import calculateLongestAndShortestDiameters from './utils/calculateLongestAndShortestDiameters.js';
 
 export default function(evt, interactionType) {
@@ -46,10 +43,10 @@ export default function(evt, interactionType) {
       const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
       const longestDiameterSize = parseFloat(longestDiameter) || 0;
       const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-      const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+      const isTooSmall = longestDiameterSize < 1 || shortestDiameterSize < 1;
       const isTooFast = new Date().getTime() - timestamp < 150;
 
-      if (hasHandlesOutside || isTooSmal || isTooFast) {
+      if (hasHandlesOutside || isTooSmall || isTooFast) {
         // Delete the measurement
         measurementData.cancelled = true;
         removeToolState(element, this.name, measurementData);
