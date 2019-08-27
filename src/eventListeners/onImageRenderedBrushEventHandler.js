@@ -205,8 +205,7 @@ export function renderFill(evt, rects, labelmapIndex, isActiveLabelMap) {
 
     if (rectsI) {
       const color = colorLutTable[i];
-
-      const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]}`;
+      const fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 
       for (let r = 0; r < rectsI.length; r++) {
         fillRect(context, rectsI[r], fillStyle, element);

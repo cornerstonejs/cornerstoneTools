@@ -98,9 +98,7 @@ function _applyStrategy(evt) {
   const points = this.handles.points;
   const { element } = evt.detail;
 
-  const { labelmap3D, currentImageIdIndex } = getters.getAndCacheLabelmap2D(
-    element
-  );
+  const { labelmap3D, currentImageIdIndex } = getters.labelmap2D(element);
 
   const pixelData = labelmap3D.labelmaps2D[currentImageIdIndex].pixelData;
 
@@ -116,7 +114,7 @@ function _applyStrategy(evt) {
   // Invalidate the brush tool data so it is redrawn
   const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
 
-  setters.updateSegmentsOnLabelmaps2D(labelmap2D);
+  setters.updateSegmentsOnLabelmap2D(labelmap2D);
   external.cornerstone.updateImage(element);
 
   this._resetHandles();

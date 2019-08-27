@@ -1,5 +1,5 @@
 // Modules
-import segmentation from './modules/segmentationModule.js';
+import segmentation from './modules/segmentationModule';
 import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';

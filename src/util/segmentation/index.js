@@ -8,11 +8,9 @@ import floodFill from './floodFill';
 import getBoundingBoxAroundCircle from './getBoundingBoxAroundCircle';
 import getBoundingBoxAroundPolygon from './getBoundingBoxAroundPolygon';
 import getCircle from './getCircle';
-import getNewColorLUT from './getNewColorLUT';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import isSameSegment from './isSameSegment';
-import labelmapStats from './labelmapStats';
-import triggerLabelMapModifiedEvent from './triggerLabelMapModifiedEvent';
+import triggerLabelmapModifiedEvent from './triggerLabelmapModifiedEvent';
 
 export {
   drawBrushPixels,
@@ -27,9 +25,7 @@ export {
   getBoundingBoxAroundCircle,
   getBoundingBoxAroundPolygon,
   getCircle,
-  getNewColorLUT,
   getPixelPathBetweenPixels,
   isSameSegment,
-  labelmapStats,
-  triggerLabelMapModifiedEvent,
+  triggerLabelmapModifiedEvent,
 };

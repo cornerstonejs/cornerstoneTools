@@ -122,7 +122,7 @@ class BaseBrushTool extends BaseTool {
       labelmap3D,
       currentImageIdIndex,
       activeLabelmapIndex,
-    } = getters.getAndCacheLabelmap2D(element);
+    } = getters.labelmap2D(element);
 
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;

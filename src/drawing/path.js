@@ -47,7 +47,7 @@ export default function(context, options = {}, fn) {
     context.fill();
   }
 
-  if (lineWidth !== null) {
+  if (shouldDrawLines) {
     context.stroke();
   }
 

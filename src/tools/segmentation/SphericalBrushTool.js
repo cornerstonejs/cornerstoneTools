@@ -4,7 +4,7 @@ import { getModule } from './../../store/index.js';
 import {
   drawBrushPixels,
   getCircle,
-  triggerLabelMapModifiedEvent,
+  triggerLabelmapModifiedEvent,
 } from './../../util/segmentation';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
@@ -95,7 +95,7 @@ export default class SphericalBrushTool extends BrushTool {
 
     this._imagesInRange = imagesInRange;
 
-    const { labelmap3D } = getters.getAndCacheLabelmap2D(element);
+    const { labelmap3D } = getters.labelmap2D(element);
 
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
@@ -105,7 +105,7 @@ export default class SphericalBrushTool extends BrushTool {
       const pointerArray = getCircle(radiusOnImage, rows, columns, x, y);
 
       // Cache the view on this image if its not present.
-      setters.cacheLabelMap2DView(labelmap3D, imageIdIndex, rows, columns);
+      setters.labelMap2DByImageIdIndex(labelmap3D, imageIdIndex, rows, columns);
 
       // Draw / Erase the active color.
       drawBrushPixels(
@@ -117,7 +117,7 @@ export default class SphericalBrushTool extends BrushTool {
       );
     }
 
-    triggerLabelMapModifiedEvent(element);
+    triggerLabelmapModifiedEvent(element);
 
     external.cornerstone.updateImage(evt.detail.element);
   }

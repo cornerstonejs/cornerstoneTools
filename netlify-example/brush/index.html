@@ -459,7 +459,7 @@
 
     const segmentationModule = cornerstoneTools.getModule('segmentation');
 
-    let activeLabelmap = 0;
+    let activeLabelmapIndex = 0;
 
     function brushApiCall(opperation) {
       switch (opperation) {
@@ -470,16 +470,19 @@
           brushTool.previousSegment();
           break;
         case 'switch-labelmap':
-          if (activeLabelmap === 0) {
-            activeLabelmap = 1;
+          if (activeLabelmapIndex === 0) {
+            activeLabelmapIndex = 1;
           } else {
-            activeLabelmap = 0;
+            activeLabelmapIndex = 0;
           }
 
-          segmentationModule.setters.activeLabelmap(element, activeLabelmap);
+          segmentationModule.setters.activeLabelmapIndex(
+            element,
+            activeLabelmapIndex
+          );
 
           const label = document.getElementById('active-label-map-label');
-          label.innerHTML = 'Active Labelmap: ' + activeLabelmap;
+          label.innerHTML = 'Active Labelmap: ' + activeLabelmapIndex;
 
           cornerstone.updateImage(element);
 
