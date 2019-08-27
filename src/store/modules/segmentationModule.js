@@ -99,7 +99,9 @@ function getMetadata(elementOrEnabledElementUID, labelmapIndex, segmentIndex) {
     return;
   }
 
-  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -274,7 +276,9 @@ function getIsSegmentVisible(
     return;
   }
 
-  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -325,7 +329,9 @@ function setToggleSegmentVisibility(
     return;
   }
 
-  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -575,7 +581,9 @@ function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
   const brushStackState = state.series[firstImageId];
 
   if (brushStackState) {
-    labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
+    if (labelmapIndex === undefined) {
+      labelmapIndex = brushStackState.activeLabelmapIndex;
+    }
 
     const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 
@@ -867,7 +875,9 @@ function setDeleteSegment(
     return;
   }
 
-  labelmapIndex = labelmapIndex || brushStackState.activeLabelmapIndex;
+  if (labelmapIndex === undefined) {
+    labelmapIndex = brushStackState.activeLabelmapIndex;
+  }
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 

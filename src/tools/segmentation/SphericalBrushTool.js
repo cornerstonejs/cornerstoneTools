@@ -1,8 +1,11 @@
 import external from './../../externalModules.js';
 import BrushTool from './BrushTool.js';
 import { getModule } from './../../store/index.js';
-import { drawBrushPixels, getCircle } from './../../util/segmentation';
-import EVENTS from '../../events.js';
+import {
+  drawBrushPixels,
+  getCircle,
+  triggerLabelMapModifiedEvent,
+} from './../../util/segmentation';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 
@@ -92,9 +95,7 @@ export default class SphericalBrushTool extends BrushTool {
 
     this._imagesInRange = imagesInRange;
 
-    const { labelmap3D, activeLabelmapIndex } = getters.getAndCacheLabelmap2D(
-      element
-    );
+    const { labelmap3D } = getters.getAndCacheLabelmap2D(element);
 
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
@@ -116,9 +117,7 @@ export default class SphericalBrushTool extends BrushTool {
       );
     }
 
-    external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
-      activeLabelmapIndex,
-    });
+    triggerLabelMapModifiedEvent(element);
 
     external.cornerstone.updateImage(evt.detail.element);
   }

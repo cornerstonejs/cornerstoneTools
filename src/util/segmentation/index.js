@@ -12,6 +12,7 @@ import getNewColorLUT from './getNewColorLUT';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import isSameSegment from './isSameSegment';
 import labelmapStats from './labelmapStats';
+import triggerLabelMapModifiedEvent from './triggerLabelMapModifiedEvent';
 
 export {
   drawBrushPixels,
@@ -30,4 +31,5 @@ export {
   getPixelPathBetweenPixels,
   isSameSegment,
   labelmapStats,
+  triggerLabelMapModifiedEvent,
 };
