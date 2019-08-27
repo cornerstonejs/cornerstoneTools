@@ -1,6 +1,6 @@
 import { BaseSegmentationTool } from '../base';
 import { freehandFillInsideCursor } from '../cursors';
-import { correction } from '../../util/segmentation/operations';
+import { correction } from './strategies';
 
 /**
  * @public

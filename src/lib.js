@@ -71,7 +71,7 @@ import MouseCursor from './tools/cursors/MouseCursor.js';
 
 import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
-import brushUtils from './util/segmentation/brush/index.js';
+import * as segmentationUtils from './util/segmentation';
 import zoomUtils from './util/zoom/index.js';
 import triggerEvent from './util/triggerEvent.js';
 import convertToVector3 from './util/convertToVector3.js';
@@ -144,6 +144,6 @@ export const lib = {
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
-  'util/brushUtils': brushUtils,
+  'util/segmentationUtils': segmentationUtils,
   'util/zoomUtils': zoomUtils,
 };

@@ -1,9 +1,11 @@
-import { getBoundingBoxAroundCircle } from '../boundaries';
-import { pointInEllipse } from '../../ellipse';
-import { eraseOutsideShape } from '../helpers/eraseShape.js';
-import getCircleCoords from '../../getCircleCoords';
+import {
+  getBoundingBoxAroundCircle,
+  eraseOutsideShape,
+} from '../../../util/segmentation';
+import { pointInEllipse } from '../../../util/ellipse';
+import getCircleCoords from '../../../util/getCircleCoords';
 
-import { getLogger } from '../../logger.js';
+import { getLogger } from '../../../util/logger';
 
 const logger = getLogger('util:segmentation:operations:eraseOutsideCircle');
 

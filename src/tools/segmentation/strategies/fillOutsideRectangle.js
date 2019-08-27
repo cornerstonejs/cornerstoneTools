@@ -1,7 +1,9 @@
-import { getBoundingBoxAroundPolygon } from '../boundaries';
-import { fillOutsideBoundingBox } from './index';
+import {
+  getBoundingBoxAroundPolygon,
+  fillOutsideBoundingBox,
+} from '../../../util/segmentation';
 
-import { getLogger } from '../../logger';
+import { getLogger } from '../../../util/logger';
 
 const logger = getLogger('util:segmentation:operations:fillOutsideRectangle');
 

@@ -1,8 +1,10 @@
-import { getBoundingBoxAroundPolygon } from '../boundaries';
-import isPointInPolygon from '../../isPointInPolygon';
-import { eraseOutsideShape } from '../helpers/eraseShape';
+import {
+  getBoundingBoxAroundPolygon,
+  eraseOutsideShape,
+} from '../../../util/segmentation';
+import isPointInPolygon from '../../../util/isPointInPolygon';
 
-import { getLogger } from '../../logger';
+import { getLogger } from '../../../util/logger';
 
 const logger = getLogger('util:segmentation:operations:eraseOutsideFreehand');
 

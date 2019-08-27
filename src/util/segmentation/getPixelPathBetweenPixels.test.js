@@ -1,6 +1,6 @@
-import getPixelPathBetweenPixels from '../helpers/getPixelPathBetweenPixels.js';
+import getPixelPathBetweenPixels from './getPixelPathBetweenPixels.js';
 
-jest.mock('../../../externalModules.js', () => ({
+jest.mock('../../externalModules.js', () => ({
   cornerstoneMath: {
     point: {
       distance: (p1, p2) =>

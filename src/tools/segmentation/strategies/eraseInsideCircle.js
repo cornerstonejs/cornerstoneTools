@@ -1,8 +1,10 @@
-import { pointInEllipse } from '../../ellipse';
-import { getLogger } from '../../logger.js';
-import { eraseInsideShape } from '../helpers/eraseShape';
-import getBoundingBoxAroundCircle from '../boundaries/getBoundingBoxAroundCircle.js';
-import getCircleCoords from '../../getCircleCoords.js';
+import { pointInEllipse } from '../../../util/ellipse';
+import { getLogger } from '../../../util/logger';
+import {
+  eraseInsideShape,
+  getBoundingBoxAroundCircle,
+} from '../../../util/segmentation';
+import getCircleCoords from '../../../util/getCircleCoords.js';
 
 const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
 

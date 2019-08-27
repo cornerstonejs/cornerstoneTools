@@ -1,4 +1,4 @@
-import getCircleCoords from '../../getCircleCoords';
+import getCircleCoords from '../getCircleCoords';
 
 export default function getBoundingBoxAroundCircle(evt) {
   const { handles } = evt.detail;

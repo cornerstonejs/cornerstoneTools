@@ -1,7 +1,9 @@
-import { getBoundingBoxAroundPolygon } from '../boundaries';
-import { eraseOutsideBoundingBox } from './index';
+import {
+  getBoundingBoxAroundPolygon,
+  eraseOutsideBoundingBox,
+} from '../../../util/segmentation';
 
-import { getLogger } from '../../logger';
+import { getLogger } from '../../../util/logger';
 
 const logger = getLogger('util:segmentation:operations:eraseOutsideRectangle');
 

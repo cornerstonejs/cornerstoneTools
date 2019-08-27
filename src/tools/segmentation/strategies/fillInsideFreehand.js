@@ -1,8 +1,10 @@
-import { getBoundingBoxAroundPolygon } from '../boundaries';
-import isPointInPolygon from '../../isPointInPolygon';
-import { fillInsideShape } from '../helpers/fillShape.js';
+import {
+  getBoundingBoxAroundPolygon,
+  fillInsideShape,
+} from '../../../util/segmentation';
+import isPointInPolygon from '../../../util/isPointInPolygon';
 
-import { getLogger } from '../../logger';
+import { getLogger } from '../../../util/logger';
 
 const logger = getLogger('util:segmentation:operations:fillInsideFreehand');
 

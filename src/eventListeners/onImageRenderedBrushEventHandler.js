@@ -319,7 +319,7 @@ function fillRect(context, rect, fillStyle, element) {
 
   drawJoinedLines(context, element, rect.start, points, {
     fillStyle,
-    lineWidth: null,
+    shouldDrawLines: false,
   });
 }
 

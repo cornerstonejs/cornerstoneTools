@@ -1,7 +1,6 @@
 import external from '../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
-import getNewColorLUT from '../../util/segmentation/brush/getNewColorLUT.js';
-import labelmapStats from '../../util/segmentation/brush/labelmapStats.js';
+import { getNewColorLUT, labelmapStats } from '../../util/segmentation';
 import EVENTS from '../../events.js';
 
 import { getters as storeGetters } from '../index.js';

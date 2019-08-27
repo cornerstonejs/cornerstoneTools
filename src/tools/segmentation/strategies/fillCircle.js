@@ -1,11 +1,14 @@
-import { getBoundingBoxAroundCircle } from '../boundaries';
-import { pointInEllipse } from '../../ellipse';
-import getCircleCoords from '../../getCircleCoords';
-import { fillInsideShape, fillOutsideShape } from '../helpers/fillShape.js';
+import {
+  getBoundingBoxAroundCircle,
+  fillInsideShape,
+  fillOutsideShape,
+} from '../../../util/segmentation';
+import { pointInEllipse } from '../../../util/ellipse';
+import getCircleCoords from '../../../util/getCircleCoords';
 
-import { getLogger } from '../../logger.js';
+import { getLogger } from '../../../util/logger';
 
-const logger = getLogger('util:segmentation:operations:fillInsideCircle');
+const logger = getLogger('util:segmentation:operations:fillCircle');
 
 /**
  * Fill all pixels inside/outside the region defined by the circle.

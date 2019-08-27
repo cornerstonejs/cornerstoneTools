@@ -1,11 +1,12 @@
-import { fillOutsideBoundingBox } from '../operations/index';
+import eraseOutsideBoundingBox from './eraseOutsideBoundingBox';
+import isSameSegment from './isSameSegment.js';
 
-import { getLogger } from '../../logger.js';
+import { getLogger } from '../logger.js';
 
-const logger = getLogger('util:segmentation:operations:helpers:fillShape');
+const logger = getLogger('util:segmentation:operations:eraseOutsideCircle');
 
 /**
- * Fill all pixels labeled with the activeSegmentIndex,
+ * Erase all pixels labeled with the activeSegmentIndex,
  * inside/outside the region defined by the shape.
  * @param  {Object} evt The Cornerstone event.
  * @param {Object}  operationData An object containing the `pixelData` to
@@ -15,7 +16,7 @@ const logger = getLogger('util:segmentation:operations:helpers:fillShape');
  * @param {number[]} bottomRight The bottom right of the bounding box.
  * @returns {null}
  */
-function fillShape(
+function eraseShape(
   evt,
   operationData,
   pointInShape,
@@ -23,22 +24,13 @@ function fillShape(
   bottomRight,
   insideOrOutside = 'inside'
 ) {
-  const { pixelData, segmentIndex } = operationData;
-
-  if (pixelData === undefined || segmentIndex === undefined) {
-    logger.error(
-      `fillInsideShape requires operationData to contain pixelData and segmentIndex`
-    );
-
-    return;
-  }
-
   const { width } = evt.detail.image;
+  const { pixelData, segmentIndex } = operationData;
   const [xMin, yMin] = topLeft;
   const [xMax, yMax] = bottomRight;
 
   if (insideOrOutside === 'outside') {
-    fillOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
+    eraseOutsideBoundingBox(evt, operationData, topLeft, bottomRight);
   }
 
   for (let x = xMin; x < xMax; x++) {
@@ -48,19 +40,20 @@ function fillShape(
       // If the pixel is the same segmentIndex and is inside the
       // Region defined by the array of points, set their value to segmentIndex.
       if (
+        isSameSegment(pixelIndex, pixelData, segmentIndex) &&
         pointInShape({
           x,
           y,
         })
       ) {
-        pixelData[pixelIndex] = segmentIndex;
+        pixelData[pixelIndex] = 0;
       }
     }
   }
 }
 
 /**
- * Fill all pixels labeled with the activeSegmentIndex,
+ * Erase all pixels labeled with the activeSegmentIndex,
  * inside the region defined by the shape.
  * @param  {Object} evt The Cornerstone event.
  * @param {Object}  operationData An object containing the `pixelData` to
@@ -70,18 +63,18 @@ function fillShape(
  * @param {number[]} bottomRight The bottom right of the bounding box.
  * @returns {null}
  */
-export function fillInsideShape(
+export function eraseInsideShape(
   evt,
   operationData,
   pointInShape,
   topLeft,
   bottomRight
 ) {
-  fillShape(evt, operationData, pointInShape, topLeft, bottomRight, 'inside');
+  eraseShape(evt, operationData, pointInShape, topLeft, bottomRight, 'inside');
 }
 
 /**
- * Fill all pixels labeled with the activeSegmentIndex,
+ * Erase all pixels labeled with the activeSegmentIndex,
  * outside the region defined by the shape.
  * @param  {Object} evt The Cornerstone event.
  * @param {Object}  operationData An object containing the `pixelData` to
@@ -91,14 +84,14 @@ export function fillInsideShape(
  * @param {number[]} bottomRight The bottom right of the bounding box.
  * @returns {null}
  */
-export function fillOutsideShape(
+export function eraseOutsideShape(
   evt,
   operationData,
   pointInShape,
   topLeft,
   bottomRight
 ) {
-  fillShape(
+  eraseShape(
     evt,
     operationData,
     point => !pointInShape(point),

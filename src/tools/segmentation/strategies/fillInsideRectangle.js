@@ -1,19 +1,21 @@
-import { getLogger } from '../../logger';
-import getBoundingBoxAroundPolygon from '../boundaries/getBoundingBoxAroundPolygon.js';
-import { eraseInsideShape } from '../helpers/eraseShape';
+import {
+  fillInsideShape,
+  getBoundingBoxAroundPolygon,
+} from '../../../util/segmentation';
+import { getLogger } from '../../../util/logger';
 
-const logger = getLogger('util:segmentation:operations:eraseInsideRectangle');
+const logger = getLogger('util:segmentation:operations:fillInsideRectangle');
 
 /**
- * EraseInsideRectangle - Erase all pixels inside the region defined
+ * FillInsideRectangle - Fill all pixels inside the region defined
  * by the rectangle.
- * @param  {Object} evt The Cornerstone event.
- * @param  {Object} toolConfiguration Configuration of the tool applying the strategy.
- * @param  {Object} operationData An object containing the `pixelData` to
+ * @param  {} evt The Cornerstone event.
+ * @param  {} toolConfiguration Configuration of the tool applying the strategy.
+ * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function eraseInsideRectangle(
+export default function fillInsideRectangle(
   evt,
   toolConfiguration,
   operationData
@@ -28,15 +30,13 @@ export default function eraseInsideRectangle(
     return;
   }
 
-  const eventData = evt.detail;
-
   // Loop through all pixels in the segmentation data mask
 
   // Obtain the bounding box of the entire drawing so that
   // we can subset our search.
-  const { image } = eventData;
+  const { image } = evt.detail;
   const vertices = points.map(a => [a.x, a.y]);
   const [topLeft, bottomRight] = getBoundingBoxAroundPolygon(vertices, image);
 
-  eraseInsideShape(evt, operationData, () => true, topLeft, bottomRight);
+  fillInsideShape(evt, operationData, () => true, topLeft, bottomRight);
 }

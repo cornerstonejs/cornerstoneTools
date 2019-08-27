@@ -9,7 +9,7 @@ import {
   fillOutsideFreehand,
   eraseOutsideFreehand,
   eraseInsideFreehand,
-} from '../../util/segmentation/operations';
+} from './strategies';
 import { BaseSegmentationTool } from '../base';
 
 /**

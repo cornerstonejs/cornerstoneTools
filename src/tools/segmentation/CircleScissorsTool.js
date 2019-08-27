@@ -4,7 +4,7 @@ import {
   fillOutsideCircle,
   eraseOutsideCircle,
   eraseInsideCircle,
-} from '../../util/segmentation/operations';
+} from './strategies';
 import {
   segCircleFillInsideCursor,
   segCircleFillOutsideCursor,

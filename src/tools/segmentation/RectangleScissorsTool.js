@@ -4,7 +4,7 @@ import {
   fillOutsideRectangle,
   eraseOutsideRectangle,
   eraseInsideRectangle,
-} from '../../util/segmentation/operations';
+} from './strategies';
 import {
   segRectangleFillInsideCursor,
   segRectangleFillOutsideCursor,

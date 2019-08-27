@@ -1,14 +1,12 @@
 import external from './../../externalModules.js';
 import BrushTool from './BrushTool.js';
 import store from './../../store/index.js';
-import brushUtils from './../../util/segmentation/brush/index.js';
+import { drawBrushPixels, getCircle } from './../../util/segmentation';
 import EVENTS from '../../events.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:SphericalBrushTool');
-
-const { drawBrushPixels, getCircle } = brushUtils;
 
 const { getters, setters, configuration } = store.modules.segmentation;
 

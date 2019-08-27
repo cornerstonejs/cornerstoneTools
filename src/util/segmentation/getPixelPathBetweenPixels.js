@@ -1,4 +1,4 @@
-import external from '../../../externalModules.js';
+import external from '../../externalModules.js';
 
 const oneOverRoot2 = 1 / Math.sqrt(2); // Cache this to avoid repeated computation.
 
