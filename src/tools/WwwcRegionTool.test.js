@@ -1,9 +1,5 @@
 import WwwcRegionTool from './WwwcRegionTool.js';
 
-jest.mock('../importInternal.js', () => ({
-  default: jest.fn(),
-}));
-
 describe('WwwcRegionTool.js', () => {
   describe('default values', () => {
     it('has a default name of "WwwcRegion"', () => {

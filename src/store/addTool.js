@@ -64,6 +64,7 @@ const addTool = function(ApiTool, props) {
  */
 const _addToolGlobally = function(ApiTool, props) {
   const { configuration } = getModule('globalConfiguration');
+
   if (!configuration.globalToolSyncEnabled) {
     return;
   }
