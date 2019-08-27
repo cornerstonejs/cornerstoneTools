@@ -1,9 +1,9 @@
 import { draw, drawRect, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
-import store from '../../store';
+import { getModule } from '../../store';
 
-const { getters, setters } = store.modules.segmentation;
+const { getters, setters } = getModule('segmentation');
 
 /**
  * Render hook: draws the Scissors's outline, box, or circle

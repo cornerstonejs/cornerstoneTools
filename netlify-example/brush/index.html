@@ -457,6 +457,8 @@
 
     const brushTool = cornerstoneTools.getToolForElement(element, 'Brush');
 
+    const segmentationModule = cornerstoneTools.getModule('segmentation');
+
     let activeLabelmap = 0;
 
     function brushApiCall(opperation) {
@@ -474,10 +476,7 @@
             activeLabelmap = 0;
           }
 
-          cornerstoneTools.store.modules.segmentation.setters.activeLabelmap(
-            element,
-            activeLabelmap
-          );
+          segmentationModule.setters.activeLabelmap(element, activeLabelmap);
 
           const label = document.getElementById('active-label-map-label');
           label.innerHTML = 'Active Labelmap: ' + activeLabelmap;
@@ -487,7 +486,7 @@
           break;
 
         case 'toggle-segment-1':
-          const visible = cornerstoneTools.store.modules.segmentation.setters.toggleSegmentVisibility(
+          const visible = segmentationModule.setters.toggleSegmentVisibility(
             element,
             1
           );
@@ -506,8 +505,7 @@
       }
     }
 
-    const configuration =
-      cornerstoneTools.store.modules.segmentation.configuration;
+    const configuration = segmentationModule.configuration;
 
     // Display Outline
     const outlineDisplay = document.getElementById('display-outline');

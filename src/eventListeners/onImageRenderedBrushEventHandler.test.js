@@ -1,4 +1,4 @@
-import store from '../store/index.js';
+import { getModule } from '../store/index.js';
 import {
   getOutline,
   renderOutline,
@@ -9,7 +9,7 @@ import external from '../externalModules.js';
 
 import * as drawing from '../drawing/index.js';
 
-const { state } = store.modules.segmentation;
+const { state } = getModule('segmentation');
 
 jest.mock('../drawing/index.js', () => ({
   getNewContext: () => ({

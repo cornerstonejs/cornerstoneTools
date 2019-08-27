@@ -1,15 +1,15 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
-import store from './../store/index.js';
 import {
   setToolCursor,
   resetToolCursor,
   hideToolCursor,
 } from './setToolCursor.js';
 import { getLogger } from '../util/logger.js';
+import store, { getModule } from './index.js';
 
-const globalConfiguration = store.modules.globalConfiguration;
+const globalConfiguration = getModule('globalConfiguration');
 const logger = getLogger('store:setToolMode');
 
 /**
@@ -517,7 +517,7 @@ function _resolveGenericInputConflicts(interactionType, tool, element) {
 }
 
 function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
-  if (!store.modules.globalConfiguration.configuration.globalToolSyncEnabled) {
+  if (!globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 

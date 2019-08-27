@@ -9,7 +9,7 @@ For our Tool we want to log to the console on mouse click. `BaseTool` has two ap
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.importInternalModule('base/BaseTool');
+const BaseTool = csTools.import('base/BaseTool');
 
 export default class HelloWorldTool extends BaseTool {
   constructor(name = 'HelloWorld') {

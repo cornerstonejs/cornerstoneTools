@@ -23,7 +23,7 @@ function drawBrushPixels(
   const pixelData = labelmap3D.labelmaps2D[imageIdIndex].pixelData;
 
   pointerArray.forEach(point => {
-    const spIndex = getPixelIndex(point[0], point[1]);
+    const spIndex = getPixelIndex(...point);
 
     if (shouldErase) {
       eraseIfSegmentIndex(spIndex, pixelData, segmentIndex);

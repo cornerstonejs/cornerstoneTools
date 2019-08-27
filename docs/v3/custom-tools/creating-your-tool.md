@@ -9,7 +9,7 @@ For example we shall call our wonderful tool `HelloWorldTool`:
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.importInternalModule('base/BaseTool');
+const BaseTool = csTools.import('base/BaseTool');
 // NOTE: if you're creating a tool inside the CornerstoneTools repository
 // you can import BaseTool directly from `src/tools/base`.
 

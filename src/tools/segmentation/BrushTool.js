@@ -1,13 +1,13 @@
 import external from './../../externalModules.js';
 import { BaseBrushTool } from '../base';
-import store from './../../store/index.js';
+import store, { getModule } from './../../store/index.js';
 import { drawBrushPixels, getCircle } from '../../util/segmentation/index.js';
 import EVENTS from '../../events.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BrushTool');
 
-const segmentationModule = store.modules.segmentation;
+const segmentationModule = getModule('segmentation');
 
 /**
  * @public

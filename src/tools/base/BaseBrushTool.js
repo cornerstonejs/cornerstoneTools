@@ -4,9 +4,9 @@ import external from './../../externalModules.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 import isToolActive from './../../store/isToolActive.js';
-import store from './../../store/index.js';
+import { getModule } from './../../store/index.js';
 
-const { configuration, getters, setters } = store.modules.segmentation;
+const { configuration, getters, setters } = getModule('segmentation');
 
 /**
  * @abstract

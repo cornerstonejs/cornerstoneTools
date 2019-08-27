@@ -1,5 +1,5 @@
 import external from './externalModules.js';
-import store from './store/index.js';
+import store, { getModule } from './store/index.js';
 import addEnabledElement from './store/internals/addEnabledElement.js';
 import removeEnabledElement from './store/internals/removeEnabledElement.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
@@ -17,14 +17,15 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  */
 export default function(configuration = {}) {
   _addCornerstoneEventListeners();
-
   _initModules();
   windowResizeHandler.enable();
 
   // Apply global configuration
-  store.modules.globalConfiguration.configuration = Object.assign(
+  const globalConfigurationModule = getModule('globalConfiguration');
+
+  globalConfigurationModule.configuration = Object.assign(
     {},
-    store.modules.globalConfiguration.configuration,
+    globalConfigurationModule.configuration,
     configuration
   );
 }

@@ -1,64 +1,64 @@
-import EllipticalRoiTool from "./EllipticalRoiTool.js";
-import { getToolState } from "./../../stateManagement/toolState.js";
-import { getLogger } from "../../util/logger.js";
+import EllipticalRoiTool from './EllipticalRoiTool.js';
+import { getToolState } from './../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
-jest.mock("../../util/logger.js");
-jest.mock("./../../stateManagement/toolState.js", () => ({
-  getToolState: jest.fn()
+jest.mock('../../util/logger.js');
+jest.mock('./../../stateManagement/toolState.js', () => ({
+  getToolState: jest.fn(),
 }));
 
-jest.mock("./../../importInternalModule.js", () => ({
-  default: jest.fn()
+jest.mock('./../../importInternal.js', () => ({
+  default: jest.fn(),
 }));
 
-jest.mock("./../../externalModules.js", () => ({
+jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     metaData: {
-      get: jest.fn()
+      get: jest.fn(),
     },
     /* eslint-disable prettier/prettier */
-    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6]
+    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
     /* eslint-enable prettier/prettier */
-  }
+  },
 }));
 
-const badMouseEventData = "hello world";
+const badMouseEventData = 'hello world';
 const goodMouseEventData = {
   currentPoints: {
     image: {
       x: 0,
-      y: 0
-    }
+      y: 0,
+    },
   },
   viewport: {
-    rotation: 0
-  }
+    rotation: 0,
+  },
 };
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375
+  columnPixelSpacing: 0.8984375,
 };
 
-describe("EllipticalRoiTool.js", () => {
-  describe("default values", () => {
+describe('EllipticalRoiTool.js', () => {
+  describe('default values', () => {
     it('has a default name of "EllipticalRoi"', () => {
-      const defaultName = "EllipticalRoi";
+      const defaultName = 'EllipticalRoi';
       const instantiatedTool = new EllipticalRoiTool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
-    it("can be created with a custom tool name", () => {
-      const customToolName = { name: "customToolName" };
+    it('can be created with a custom tool name', () => {
+      const customToolName = { name: 'customToolName' };
       const instantiatedTool = new EllipticalRoiTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
   });
 
-  describe("createNewMeasurement", () => {
-    it("emits console error if required eventData is not provided", () => {
+  describe('createNewMeasurement', () => {
+    it('emits console error if required eventData is not provided', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const logger = getLogger();
 
@@ -66,12 +66,12 @@ describe("EllipticalRoiTool.js", () => {
 
       expect(logger.error).toHaveBeenCalled();
       expect(logger.error.mock.calls[0][0]).toContain(
-        "required eventData not supplied to tool"
+        'required eventData not supplied to tool'
       );
     });
 
     // Todo: create a more formal definition of a tool measurement object
-    it("returns a tool measurement object", () => {
+    it('returns a tool measurement object', () => {
       const instantiatedTool = new EllipticalRoiTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
@@ -89,11 +89,11 @@ describe("EllipticalRoiTool.js", () => {
       );
       const startHandle = {
         x: toolMeasurement.handles.start.x,
-        y: toolMeasurement.handles.start.y
+        y: toolMeasurement.handles.start.y,
       };
       const endHandle = {
         x: toolMeasurement.handles.end.x,
-        y: toolMeasurement.handles.end.y
+        y: toolMeasurement.handles.end.y,
       };
 
       expect(startHandle.x).toBe(goodMouseEventData.currentPoints.image.x);
@@ -102,7 +102,7 @@ describe("EllipticalRoiTool.js", () => {
       expect(endHandle.y).toBe(goodMouseEventData.currentPoints.image.y);
     });
 
-    it("returns a measurement with a initial rotation", () => {
+    it('returns a measurement with a initial rotation', () => {
       const instantiatedTool = new EllipticalRoiTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
@@ -114,7 +114,7 @@ describe("EllipticalRoiTool.js", () => {
       expect(initialRotation).toBe(goodMouseEventData.viewport.rotation);
     });
 
-    it("returns a measurement with a textBox handle", () => {
+    it('returns a measurement with a textBox handle', () => {
       const instantiatedTool = new EllipticalRoiTool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
@@ -125,7 +125,7 @@ describe("EllipticalRoiTool.js", () => {
     });
   });
 
-  describe("pointNearTool", () => {
+  describe('pointNearTool', () => {
     let element, coords;
 
     beforeEach(() => {
@@ -134,20 +134,20 @@ describe("EllipticalRoiTool.js", () => {
     });
 
     // Todo: Not sure we want all of our methods to check for valid params.
-    it("emits a console warning when measurementData without start/end handles are supplied", () => {
+    it('emits a console warning when measurementData without start/end handles are supplied', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const noHandlesMeasurementData = {
-        handles: {}
+        handles: {},
       };
       const logger = getLogger();
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
       expect(logger.warn).toHaveBeenCalled();
-      expect(logger.warn.mock.calls[0][0]).toContain("invalid parameters");
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
-    it("returns false when measurement data is null or undefined", () => {
+    it('returns false when measurement data is null or undefined', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const nullMeasurementData = null;
 
@@ -160,10 +160,10 @@ describe("EllipticalRoiTool.js", () => {
       expect(isPointNearTool).toBe(false);
     });
 
-    it("returns false when measurement data is not visible", () => {
+    it('returns false when measurement data is not visible', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const notVisibleMeasurementData = {
-        visible: false
+        visible: false,
       };
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -176,33 +176,33 @@ describe("EllipticalRoiTool.js", () => {
     });
   });
 
-  describe("updateCachedStats", () => {
+  describe('updateCachedStats', () => {
     let element;
 
     beforeEach(() => {
       element = jest.fn();
     });
 
-    it("should calculate and update annotation values", () => {
+    it('should calculate and update annotation values', () => {
       const instantiatedTool = new EllipticalRoiTool();
 
       const data = {
         handles: {
           start: {
             x: 0,
-            y: 0
+            y: 0,
           },
           end: {
             x: 3,
-            y: 3
-          }
-        }
+            y: 3,
+          },
+        },
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual("5.71");
-      expect(data.cachedStats.mean.toFixed(2)).toEqual("4.50");
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual("1.12");
+      expect(data.cachedStats.area.toFixed(2)).toEqual('5.71');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('1.12');
 
       data.handles.start.x = 0;
       data.handles.start.y = 0;
@@ -210,18 +210,18 @@ describe("EllipticalRoiTool.js", () => {
       data.handles.end.y = 2;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual("3.80");
-      expect(data.cachedStats.mean.toFixed(2)).toEqual("36.33");
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual("45.02");
+      expect(data.cachedStats.area.toFixed(2)).toEqual('3.80');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('36.33');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
     });
   });
 
-  describe("renderToolData", () => {
-    it("returns undefined when no toolData exists for the tool", () => {
+  describe('renderToolData', () => {
+    it('returns undefined when no toolData exists for the tool', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const mockEvent = {
         detail: undefined,
-        currentTarget: undefined
+        currentTarget: undefined,
       };
 
       getToolState.mockReturnValueOnce(undefined);

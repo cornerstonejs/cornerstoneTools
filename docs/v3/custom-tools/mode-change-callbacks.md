@@ -13,7 +13,7 @@ For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.importInternalModule('base/BaseTool');
+const BaseTool = csTools.import('base/BaseTool');
 
 export default class HelloWorldTool extends BaseTool {
   constructor(name = 'HelloWorld') {

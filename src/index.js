@@ -128,6 +128,8 @@ import { playClip, stopClip } from './stackTools/playClip.js';
 
 // ~~~~~~ STATE MANAGEMENT ~~~~~ //
 import { default as store } from './store/index.js';
+import { getModule } from './store/index.js';
+
 import { default as getToolForElement } from './store/getToolForElement.js';
 import { addTool, addToolForElement } from './store/addTool.js';
 import { removeTool, removeToolForElement } from './store/removeTool.js';
@@ -204,7 +206,7 @@ import { default as external } from './externalModules.js';
 import { default as EVENTS } from './events.js';
 import { default as version } from './version.js';
 
-import importInternalModule from './importInternalModule.js';
+import importInternal from './importInternal.js';
 
 const cornerstoneTools = {
   // ~~~ TOOLS
@@ -253,6 +255,7 @@ const cornerstoneTools = {
   playClip,
   stopClip,
   store,
+  getModule,
   getToolForElement,
   addTool,
   addToolForElement,
@@ -291,8 +294,7 @@ const cornerstoneTools = {
   SaveAs,
   enableLogger,
   disableLogger,
-  importInternalModule,
-  import: importInternalModule,
+  importInternal,
   register,
   registerSome,
   wwwcSynchronizer,
@@ -358,6 +360,7 @@ export {
   playClip,
   stopClip,
   store,
+  getModule,
   getToolForElement,
   addTool,
   addToolForElement,
@@ -407,12 +410,10 @@ export {
   stackImageIndexSynchronizer,
   panZoomSynchronizer,
   requestPoolManager,
-  importInternalModule,
+  importInternal,
   external,
   EVENTS,
   version,
 };
-
-export { default as import } from './importInternalModule.js';
 
 export default cornerstoneTools;

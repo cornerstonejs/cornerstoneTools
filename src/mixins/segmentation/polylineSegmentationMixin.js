@@ -1,8 +1,8 @@
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
-import store from '../../store';
+import { getModule } from '../../store';
 import freehandSegmentationMixin from './freehandSegmentationMixin';
 
-const { getters } = store.modules.segmentation;
+const { getters } = getModule('segmentation');
 
 /**
  * Override for `freehandSegmentationMixin`'s `renderToolData` method to render a polyline instead

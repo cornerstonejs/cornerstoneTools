@@ -5,17 +5,17 @@ Third-party tools may be easily created by `import`ing the required base tool Ty
 For instance, if we wanted to package the `HelloWorldTool` we made in the [Custom Tools](custom-tools/index.md) section into a third-party tool:
 
 ```js
-const BaseTool = cornerstoneTools.importInternalModule('base/BaseTool');
+const BaseTool = cornerstoneTools.import('base/BaseTool');
 
 export default class HelloWorldTool extends BaseTool {
-  constructor (name = 'HelloWorld') {
+  constructor(name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['mouse'],
       mixins: [
         'activeOrDisabledBinaryTool', // Mixin from cornerstoneTools source.
-        'evenMoreHelloWorld' // Mixin from the plugin.
-      ]
+        'evenMoreHelloWorld', // Mixin from the plugin.
+      ],
     });
 
     // Use a module from the plugin. It should be first accessed in constructor.

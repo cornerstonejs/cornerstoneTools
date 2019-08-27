@@ -1,11 +1,11 @@
 import external from '../../externalModules.js';
-import store from '../../store';
+import { getModule } from '../../store';
 import { getLogger } from '../../util/logger.js';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
 
 const logger = getLogger('tools:ScissorsTool');
 
-const { getters, setters } = store.modules.segmentation;
+const { getters, setters } = getModule('segmentation');
 
 /**
  * Render hook: draws the FreehandScissors's outline

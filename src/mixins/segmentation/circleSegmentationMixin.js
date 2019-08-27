@@ -1,9 +1,9 @@
 import { draw, drawCircle, getNewContext } from '../../drawing';
 import external from '../../externalModules';
 import _isEmptyObject from '../../util/isEmptyObject';
-import store from '../../store';
+import { getModule } from '../../store';
 
-const { getters, setters } = store.modules.segmentation;
+const { getters, setters } = getModule('segmentation');
 
 /**
  * Sets the start and end handle points to empty objects

@@ -1,3 +1,5 @@
+import { getModule } from '../store/index.js';
+import external from '../externalModules.js';
 import {
   getNewContext,
   draw,
@@ -9,7 +11,7 @@ import { getLogger } from '../util/logger.js';
 
 const logger = getLogger('eventListeners:onImageRenderedBrushEventHandler');
 
-const { state, configuration, getters } = store.modules.segmentation;
+const { state, configuration, getters } = getModule('segmentation');
 
 /**
  * Renders segmentation labelmap data associated with this element, with

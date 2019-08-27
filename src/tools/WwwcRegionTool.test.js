@@ -1,6 +1,6 @@
 import WwwcRegionTool from './WwwcRegionTool.js';
 
-jest.mock('../importInternalModule.js', () => ({
+jest.mock('../importInternal.js', () => ({
   default: jest.fn(),
 }));
 

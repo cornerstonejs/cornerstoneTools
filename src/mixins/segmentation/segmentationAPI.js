@@ -1,8 +1,7 @@
-import store from '../../store/index.js';
+import store, { getModule } from '../../store/index.js';
 import external from '../../externalModules.js';
 
-const { setters, getters, configuration } = store.modules.segmentation;
-
+const { setters } = getModule('segmentation');
 const elements = store.state.enabledElements;
 
 // ===================================================================

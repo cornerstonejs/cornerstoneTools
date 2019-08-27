@@ -8,8 +8,8 @@ By convention the class name should be in PascalCase, and suffixed with `Tool`.
 For example we shall call our wonderful tool `HelloWorldTool`:
 
 ```js
-import cornerstoneTools from 'cornerstone-tools';
-const BaseTool = cornerstoneTools.import('base/BaseTool');
+import csTools from 'cornerstone-tools';
+const BaseTool = csTools.importInternal('base/BaseTool');
 // NOTE: if you're creating a tool inside the CornerstoneTools repository
 // you can import BaseTool directly from `src/tools/base`.
 
