@@ -28,16 +28,14 @@ export default {
   mouseMoveCallback: _setHandlesAndUpdate,
   touchEndCallback: _applyStrategy,
   mouseUpCallback: _applyStrategy,
-  initializeSegmentationMixin: _resetHandles,
+  initializeMixin: _resetHandles,
   renderToolData,
-  _resetHandles,
-  _applyStrategy,
 };
 ```
 
 This mixin implements a "drag-to-define-a-circle" deliniation mechanism, and as such plugs its methods into `BaseTool` API for dealing with appropriate interactions such as down/touch, drag and release for both mouse and touch interactions.
 
-The `renderToolData` renders the circle to the canvas whilst dilineation is in process. `BaseSegmentationTool` calls a mixin's `initializeSegmentationMixin` method in its constructor, if present.
+The `renderToolData` renders the circle to the canvas whilst dilineation is in process. `BaseSegmentationTool` calls a mixin's `initializeMixin` method in its constructor, if present.
 
 The `_applyStrategy` calls the Tool's `activeStrategy` method with an augmented cornerstone event with an additional `operationData` property:
 

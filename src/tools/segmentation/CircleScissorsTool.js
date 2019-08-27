@@ -1,4 +1,4 @@
-import { BaseSegmentationTool } from '../base';
+import { BaseTool } from '../base';
 import {
   fillInsideCircle,
   fillOutsideCircle,
@@ -17,9 +17,9 @@ import {
  * @class CircleScissorsTool
  * @memberof Tools
  * @classdesc Tool for slicing brush pixel data within a rectangle shape
- * @extends Tools.Base.BaseSegmentationTool
+ * @extends Tools.Base.BaseTool
  */
-export default class CircleScissorsTool extends BaseSegmentationTool {
+export default class CircleScissorsTool extends BaseTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {

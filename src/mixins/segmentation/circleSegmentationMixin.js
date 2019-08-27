@@ -153,7 +153,7 @@ export default {
   mouseMoveCallback: _setHandlesAndUpdate,
   touchEndCallback: _applyStrategy,
   mouseUpCallback: _applyStrategy,
-  initializeSegmentationMixin: _resetHandles,
+  initializeMixin: _resetHandles,
   renderToolData,
   _resetHandles,
   _applyStrategy,

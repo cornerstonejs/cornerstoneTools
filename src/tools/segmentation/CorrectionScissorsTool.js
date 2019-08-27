@@ -1,4 +1,4 @@
-import { BaseSegmentationTool } from '../base';
+import { BaseTool } from '../base';
 import { freehandFillInsideCursor } from '../cursors';
 import { correction } from './strategies';
 
@@ -7,9 +7,9 @@ import { correction } from './strategies';
  * @class CorrectionScissorsTool
  * @memberof Tools
  * @classdesc Tool for slicing brush pixel data
- * @extends Tools.Base.BaseSegmentationTool
+ * @extends Tools.Base.BaseTool
  */
-export default class CorrectionScissorsTool extends BaseSegmentationTool {
+export default class CorrectionScissorsTool extends BaseTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {

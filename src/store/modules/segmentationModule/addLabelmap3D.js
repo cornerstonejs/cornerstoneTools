@@ -1,5 +1,5 @@
 /**
- * addLabelmap3D - Adds a `Labelmap3D` object to the `BrushStackState` object.
+ * AddLabelmap3D - Adds a `Labelmap3D` object to the `BrushStackState` object.
  *
  * @param  {BrushStackState} brushStackState The labelmap state for a particular stack.
  * @param  {number} labelmapIndex   The labelmapIndex to set.

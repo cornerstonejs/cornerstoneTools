@@ -1,6 +1,7 @@
 import mixins from './../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
 import deepmerge from './../../util/deepmerge.js';
+import { setToolCursor } from '../../store/setToolCursor.js';
 
 const logger = getLogger('tools:base:BaseTool');
 
@@ -77,6 +78,8 @@ class BaseTool {
     if (mixins && mixins.length) {
       this._applyMixins(mixins);
     }
+
+    this._cursors = Object.assign({}, this.initialConfiguration.cursors);
   }
 
   //
@@ -172,9 +175,19 @@ class BaseTool {
 
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
+
+        if (typeof this.initializeMixin === 'function') {
+          // Run the mixin's initialisation process.
+          this.initializeMixin();
+        }
       } else {
         logger.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
       }
+    }
+
+    // Don't keep initialiseMixin from last mixin.
+    if (this.initializeMixin === 'function') {
+      delete this.initializeMixin;
     }
   }
 
@@ -188,6 +201,37 @@ class BaseTool {
    */
   setActiveStrategy(strategy) {
     this.activeStrategy = strategy;
+
+    // TODO -> Why did they do this? test.
+    setTimeout(() => {
+      this.changeCursor(this.element, strategy);
+    }, 50);
+  }
+
+  /**
+   * Function responsible for changing the Cursor, according to the strategy.
+   * @param {HTMLElement} element
+   * @param {string} strategy The strategy to be used on Tool
+   * @public
+   * @returns {void}
+   */
+  changeCursor(element, strategy) {
+    // Necessary to avoid setToolCursor call without elements, which throws an error.
+    if (!element) {
+      return;
+    }
+
+    // If there are cursors set per strategy, change the cursor.
+    const cursor = this._cursors[strategy];
+
+    if (cursor) {
+      this.svgCursor = cursor;
+
+      if (this.mode === 'active') {
+        setToolCursor(element, cursor);
+        //external.cornerstone.updateImage(element);
+      }
+    }
   }
 
   // ===================================================================

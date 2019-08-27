@@ -607,24 +607,24 @@
       console.log(value);
       switch (value) {
         case 'fillInside':
-          freehandScissorsTool.changeStrategy('FILL_INSIDE');
-          rectangleScissorsTool.changeStrategy('FILL_INSIDE');
-          circleScissorsTool.changeStrategy('FILL_INSIDE');
+          freehandScissorsTool.setActiveStrategy('FILL_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_INSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_INSIDE');
           break;
         case 'eraseInside':
-          freehandScissorsTool.changeStrategy('ERASE_INSIDE');
-          rectangleScissorsTool.changeStrategy('ERASE_INSIDE');
-          circleScissorsTool.changeStrategy('ERASE_INSIDE');
+          freehandScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_INSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_INSIDE');
           break;
         case 'fillOutside':
-          freehandScissorsTool.changeStrategy('FILL_OUTSIDE');
-          rectangleScissorsTool.changeStrategy('FILL_OUTSIDE');
-          circleScissorsTool.changeStrategy('FILL_OUTSIDE');
+          freehandScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('FILL_OUTSIDE');
           break;
         case 'eraseOutside':
-          freehandScissorsTool.changeStrategy('ERASE_OUTSIDE');
-          rectangleScissorsTool.changeStrategy('ERASE_OUTSIDE');
-          circleScissorsTool.changeStrategy('ERASE_OUTSIDE');
+          freehandScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          rectangleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
+          circleScissorsTool.setActiveStrategy('ERASE_OUTSIDE');
           break;
       }
     }

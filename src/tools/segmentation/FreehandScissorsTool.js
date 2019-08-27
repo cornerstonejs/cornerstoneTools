@@ -10,16 +10,16 @@ import {
   eraseOutsideFreehand,
   eraseInsideFreehand,
 } from './strategies';
-import { BaseSegmentationTool } from '../base';
+import { BaseTool } from '../base';
 
 /**
  * @public
  * @class FreehandScissorsTool
  * @memberof Tools
  * @classdesc Tool for slicing brush pixel data
- * @extends Tools.Base.BaseSegmentationTool
+ * @extends Tools.Base.BaseTool
  */
-export default class FreehandScissorsTool extends BaseSegmentationTool {
+export default class FreehandScissorsTool extends BaseTool {
   /** @inheritdoc */
   constructor(props = {}) {
     const defaultProps = {
