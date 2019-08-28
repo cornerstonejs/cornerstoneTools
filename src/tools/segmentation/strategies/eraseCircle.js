@@ -1,28 +1,28 @@
-import {
-  getBoundingBoxAroundCircle,
-  fillInsideShape,
-  fillOutsideShape,
-} from '../../../util/segmentation';
 import { pointInEllipse } from '../../../util/ellipse';
-import getCircleCoords from '../../../util/getCircleCoords';
-
 import { getLogger } from '../../../util/logger';
+import {
+  eraseInsideShape,
+  eraseOutsideShape,
+  getBoundingBoxAroundCircle,
+} from '../../../util/segmentation';
+import getCircleCoords from '../../../util/getCircleCoords.js';
 
-const logger = getLogger('util:segmentation:operations:fillCircle');
+const logger = getLogger('util:segmentation:operations:eraseInsideCircle');
 
 /**
- * Fill all pixels inside/outside the region defined by the circle.
- * @param  {} evt The Cornerstone event.
- * @param {}  operationData An object containing the `pixelData` to
+ * EraseInsideCircle - Erase all pixels labeled with the activeSegmentIndex,
+ * in the region defined by the circle.
+ * @param  {Object} evt The Cornerstone event.
+ * @param {Object}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-function fillCircle(evt, operationData, inside = true) {
+function eraseCircle(evt, operationData, inside = true) {
   const { segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `circleSegmentationMixin`) {
     logger.error(
-      `fillInsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
+      `eraseInsideCircle operation requires circleSegmentationMixin operationData, recieved ${segmentationMixinType}`
     );
 
     return;
@@ -36,14 +36,14 @@ function fillCircle(evt, operationData, inside = true) {
   );
 
   inside
-    ? fillInsideShape(
+    ? eraseInsideShape(
         evt,
         operationData,
         point => pointInEllipse(ellipse, point),
         topLeft,
         bottomRight
       )
-    : fillOutsideShape(
+    : eraseOutsideShape(
         evt,
         operationData,
         point => pointInEllipse(ellipse, point),
@@ -53,23 +53,23 @@ function fillCircle(evt, operationData, inside = true) {
 }
 
 /**
- * Fill all pixels inside/outside the region defined by the circle.
+ * Erase all pixels inside/outside the region defined by the circle.
  * @param  {} evt The Cornerstone event.
  * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export function fillInsideCircle(evt, operationData) {
-  fillCircle(evt, operationData, true);
+export function eraseInsideCircle(evt, operationData) {
+  eraseCircle(evt, operationData, true);
 }
 
 /**
- * Fill all pixels outside the region defined by the circle.
+ * Erase all pixels outside the region defined by the circle.
  * @param  {} evt The Cornerstone event.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export function fillOutsideCircle(evt, operationData) {
-  fillCircle(evt, operationData, false);
+export function eraseOutsideCircle(evt, operationData) {
+  eraseCircle(evt, operationData, false);
 }
