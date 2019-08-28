@@ -2,7 +2,7 @@
 const configuration = {
   renderOutline: true,
   renderFill: true,
-  renderInactiveLabelmaps: true,
+  shouldRenderInactiveLabelmaps: true,
   radius: 10,
   minRadius: 1,
   maxRadius: 50,

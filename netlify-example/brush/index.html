@@ -240,15 +240,18 @@
 
     cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
 
-    //const baseUrl = window.location.origin;
-    //const imageId = `dicomweb:${baseUrl}/examples/assets/dicom/exotic/1.dcm`;
-    //const imageId = 'example://1';
+    // THE DUCK - Still suffers on Outline, would require optimisation of the renderOutline function.
+    /*
+    const baseUrl = window.location.origin;
+    const imageId = `dicomweb:${baseUrl}/examples/assets/dicom/exotic/1.dcm`;
+    const imageIds = [imageId];
+    */
 
-    //const imageIds = ['example://1', 'example://2'];
     const imageIds = [
       'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm',
       'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.12.dcm',
     ];
+
     const stack = {
       currentImageIdIndex: 0,
       imageIds: imageIds,
@@ -268,8 +271,6 @@
       cornerstoneTools.addStackStateManager(element, ['stack']);
       cornerstoneTools.addToolState(element, 'stack', stack);
       cornerstone.displayImage(element, image);
-
-      console.log(enabledElement);
 
       enabledElement.viewport.pixelReplication = true;
     });
@@ -453,21 +454,23 @@
       return 0;
     };
 
-    // BRUSH TOOL API //
+    // Segmentation Module API //
 
-    const brushTool = cornerstoneTools.getToolForElement(element, 'Brush');
-
-    const segmentationModule = cornerstoneTools.getModule('segmentation');
+    const { configuration, getters, setters } = cornerstoneTools.getModule(
+      'segmentation'
+    );
 
     let activeLabelmapIndex = 0;
 
     function brushApiCall(opperation) {
       switch (opperation) {
         case 'next-segment':
-          brushTool.nextSegment();
+          setters.incrementActiveSegmentIndex(element);
+          cornerstone.updateImage(element);
           break;
         case 'previous-segment':
-          brushTool.previousSegment();
+          setters.decrementActiveSegmentIndex(element);
+          cornerstone.updateImage(element);
           break;
         case 'switch-labelmap':
           if (activeLabelmapIndex === 0) {
@@ -476,10 +479,7 @@
             activeLabelmapIndex = 0;
           }
 
-          segmentationModule.setters.activeLabelmapIndex(
-            element,
-            activeLabelmapIndex
-          );
+          setters.activeLabelmapIndex(element, activeLabelmapIndex);
 
           const label = document.getElementById('active-label-map-label');
           label.innerHTML = 'Active Labelmap: ' + activeLabelmapIndex;
@@ -489,10 +489,7 @@
           break;
 
         case 'toggle-segment-1':
-          const visible = segmentationModule.setters.toggleSegmentVisibility(
-            element,
-            1
-          );
+          const visible = setters.toggleSegmentVisibility(element, 1);
 
           console.log(visible);
 
@@ -507,8 +504,6 @@
           return;
       }
     }
-
-    const configuration = segmentationModule.configuration;
 
     // Display Outline
     const outlineDisplay = document.getElementById('display-outline');
@@ -530,7 +525,7 @@
     const inactiveDisplay = document.getElementById('display-inactive');
 
     inactiveDisplay.addEventListener('input', event => {
-      configuration.renderInactiveLabelmaps = event.target.checked;
+      configuration.shouldRenderInactiveLabelmaps = event.target.checked;
       cornerstone.updateImage(element);
     });
 
@@ -542,7 +537,8 @@
     alphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.setFillAlpha(normalisedAlpha);
+      configuration.fillAlpha = normalisedAlpha;
+      cornerstone.updateImage(element);
     });
 
     // Active Outline
@@ -554,7 +550,8 @@
     outlineAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.setOutlineAlpha(normalisedAlpha);
+      configuration.outlineAlpha = normalisedAlpha;
+      cornerstone.updateImage(element);
     });
 
     // Inactive Fill
@@ -566,7 +563,8 @@
     inactiveAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.setFillAlphaInactive(normalisedAlpha);
+      configuration.fillAlphaInactive = normalisedAlpha;
+      cornerstone.updateImage(element);
     });
 
     // Inactive Outline
@@ -580,7 +578,8 @@
     inactiveOutlineAlphaSlider.addEventListener('input', event => {
       const normalisedAlpha = event.target.value / 255.0;
 
-      brushTool.setOutlineAlphaInactive(normalisedAlpha);
+      configuration.outlineAlphaInactive = normalisedAlpha;
+      cornerstone.updateImage(element);
     });
 
     // Segmentation Tool API

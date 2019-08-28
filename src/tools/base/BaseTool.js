@@ -229,7 +229,7 @@ class BaseTool {
 
       if (this.mode === 'active') {
         setToolCursor(element, cursor);
-        //external.cornerstone.updateImage(element);
+        // External.cornerstone.updateImage(element);
       }
     }
   }

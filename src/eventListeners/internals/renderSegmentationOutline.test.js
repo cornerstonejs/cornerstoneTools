@@ -1,17 +1,11 @@
-import { getModule } from '../store/index.js';
-import {
-  getOutline,
-  renderOutline,
-  getRectsToFill,
-  renderFill,
-} from './onImageRenderedBrushEventHandler.js';
-import external from '../externalModules.js';
-
-import * as drawing from '../drawing/index.js';
+import { getModule } from '../../store/index.js';
+import { getOutline, renderOutline } from './renderSegmentationOutline.js';
+import external from '../../externalModules.js';
+import * as drawing from '../../drawing/index.js';
 
 const { state } = getModule('segmentation');
 
-jest.mock('../drawing/index.js', () => ({
+jest.mock('../../drawing/index.js', () => ({
   getNewContext: () => ({
     globalAlpha: 1.0,
   }),
@@ -22,7 +16,7 @@ jest.mock('../drawing/index.js', () => ({
   drawJoinedLines: jest.fn(),
 }));
 
-jest.mock('../externalModules', () => ({
+jest.mock('../../externalModules', () => ({
   cornerstone: {
     pixelToCanvas: (element, imageCoord) => {
       // Mock some transformation.
@@ -229,7 +223,7 @@ function setCanvasTransform(options = {}) {
   }
 }
 
-describe('onImageRenderedBrushEventHandler.js', () => {
+describe('renderSegmentationOutline.js', () => {
   beforeEach(() => {
     resetEvents();
   });
@@ -384,125 +378,6 @@ describe('onImageRenderedBrushEventHandler.js', () => {
       renderOutline(evt, outline, 0, true);
 
       expect(drawing.drawLines).toBeCalledTimes(2);
-    });
-  });
-
-  describe('getRectsToFill', () => {
-    it('Should generate 4 rects to fill in.', () => {
-      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
-
-      expect(rects[1].length).toBe(2);
-      expect(rects[2].length).toBe(2);
-    });
-
-    it('Should not get rects of disabled segments.', () => {
-      labelmap3D.segmentsVisible[2] = false;
-
-      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
-
-      expect(rects[1].length).toBe(2);
-      expect(rects[2]).toBe(undefined);
-    });
-  });
-  /*
-  Describe('getRectsToFill', () => {
-    it('Should generate 1 rects to fill in a nonsquare image.', () => {
-      const width = 27;
-      const height = 13;
-      const length = width * height;
-      const currentImageIdIndex = 0;
-
-      const canvasScale = 1.0;
-
-      lineWidth = 1;
-
-      eventData = {
-        element: null,
-        image: {
-          width: width,
-          height: height,
-        },
-        viewport: {
-          rotation: 0,
-          scale: canvasScale,
-          translation: { x: 0, y: 0 },
-          hflip: false,
-          vflip: false,
-          displayedArea: {
-            brhc: { x: 27, y: 13 },
-            tlhc: { x: 1, y: 1 },
-          },
-        },
-        canvasContext: {
-          canvas: {
-            width: canvasScale * width,
-            height: canvasScale * height,
-          },
-        },
-      };
-
-      evt = {
-        detail: eventData,
-      };
-
-      labelmap3D = {
-        buffer: new ArrayBuffer(length * 2),
-        labelmaps2D: [],
-        metadata: [],
-        activeSegmentIndex: 0,
-        segmentsVisible: [],
-      };
-
-      labelmap2D = {
-        pixelData: new Uint16Array(labelmap3D.buffer, 0, length),
-        segmentsOnLabelmap: [0, 1],
-      };
-
-      const pixelData = labelmap2D.pixelData;
-      const cols = eventData.image.width;
-
-      for (let x = 0; x < cols; x++) {
-        pixelData[x] = 1;
-      }
-
-      labelmap3D.labelmaps2D[currentImageIdIndex] = labelmap2D;
-
-      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
-
-      console.log(rects);
-
-      for (let i = 0; i < rects.length; i++) {
-        console.log(rects[1][i].start, rects[1][i].end);
-      }
-
-      expect(rects[1].length).toBe(1);
-    });
-
-    it('Should not get rects of disabled segments.', () => {
-      labelmap3D.segmentsVisible[2] = false;
-
-      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
-
-      expect(rects[1].length).toBe(2);
-      expect(rects[2]).toBe(undefined);
-    });
-  });
-  */
-
-  describe('renderFill', () => {
-    it('Should call fillRect 4 times', () => {
-      const rects = getRectsToFill(evt, labelmap3D, labelmap2D);
-
-      // Fake colormap to stop renderOutline breaking.
-      state.colorLutTables[`${state.colorMapId}_${0}`] = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ];
-
-      renderFill(evt, rects, 0, true);
-
-      expect(drawing.drawJoinedLines).toBeCalledTimes(4);
     });
   });
 });

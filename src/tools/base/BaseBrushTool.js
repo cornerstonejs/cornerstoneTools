@@ -20,7 +20,6 @@ class BaseBrushTool extends BaseTool {
     if (!defaultProps.configuration) {
       defaultProps.configuration = { alwaysEraseOnClick: false };
     }
-    defaultProps.mixins = ['segmentationAPI'];
 
     super(props, defaultProps);
 
