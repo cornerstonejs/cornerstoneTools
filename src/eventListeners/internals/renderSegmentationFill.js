@@ -70,7 +70,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
           segmentsVisible[segmentIndex] === undefined;
 
         if (segmentIndex !== 0 && visible) {
-          // have start and end, putImageData.
+          // Have start and end, putImageData.
           const length = x - start.x;
           const imageData = new ImageData(length, 1);
           const data = imageData.data;
@@ -101,7 +101,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
       segmentsVisible[segmentIndex] === undefined;
 
     if (segmentIndex !== 0 && visible) {
-      // have start and end, putImageData.
+      // Have start and end, putImageData.
       const length = cols - start.x;
       const imageData = new ImageData(length, 1);
       const data = imageData.data;
