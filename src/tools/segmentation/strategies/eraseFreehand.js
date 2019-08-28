@@ -49,7 +49,7 @@ function eraseFreehand(evt, operationData, inside = true) {
 }
 
 /**
- * Erase all pixels inside/outside the region defined by the freehand.
+ * Erase all pixels inside/outside the region defined by `operationData.points`.
  * @param  {} evt The Cornerstone event.
  * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
@@ -60,7 +60,7 @@ export function eraseInsideFreehand(evt, operationData) {
 }
 
 /**
- * Erase all pixels outside the region defined by the freehand.
+ * Erase all pixels outside the region defined by `operationData.points`.
  * @param  {} evt The Cornerstone event.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.

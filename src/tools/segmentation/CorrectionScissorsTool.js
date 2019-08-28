@@ -6,7 +6,7 @@ import { correction } from './strategies';
  * @public
  * @class CorrectionScissorsTool
  * @memberof Tools
- * @classdesc Tool for slicing brush pixel data
+ * @classdesc Tool for correcting segments on a labelmap.
  * @extends Tools.Base.BaseTool
  */
 export default class CorrectionScissorsTool extends BaseTool {

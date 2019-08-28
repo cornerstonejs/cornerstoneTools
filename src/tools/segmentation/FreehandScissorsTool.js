@@ -16,7 +16,7 @@ import { BaseTool } from '../base';
  * @public
  * @class FreehandScissorsTool
  * @memberof Tools
- * @classdesc Tool for slicing brush pixel data
+ * @classdesc Tool for manipulating labelmap data by drawing a freehand polygon.
  * @extends Tools.Base.BaseTool
  */
 export default class FreehandScissorsTool extends BaseTool {

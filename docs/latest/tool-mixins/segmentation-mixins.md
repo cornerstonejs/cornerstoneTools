@@ -1,6 +1,8 @@
 ## Segmentation Mixins {#segmentation-mixins}
 
-[Segmentation Tools](../tool-types/index.md#base-segmentation-tool) require a segmentation mixin to function. The role of a segmentation mixin is to provide a user input mechanism, which generates an `operationData` object which is passed to the active strategy alongside the cornerstone event.
+["Segmentation Tools"](../tool-types/index.md#segmentation-tool) are `BaseTool`s that implement a segmentation mixin.
+
+The role of a segmentation mixin is to provide a deliniation mechanism, which generates an `operationData` object which is passed to the active strategy alongside the cornerstone event.
 
 Examples of segmentation mixins could be:
 
@@ -8,9 +10,9 @@ Examples of segmentation mixins could be:
 - User clicks one or more seed points as input on one frame.
 - User clicks at the top and bottom of a region of interest (on different frames) in an axial series.
 
-Although segmentation tools may have very specific uses (e.g. the last example above could be used as seeds for an AI-powered spine segmentation, by providing the spine's extent), segmentation mixins themselves are intended to be reusable in many contexts. For example the `freehandSegmentationMixin` is used in the core library in both the `FreehandScissorsTool` and `CorrectionScissorsTool`s. Other than their intended use case, segmentation mixins are functionally just mixins in the context of `cornerstoneTools`, so can be [injected by plugins like any other mixin](../third-party-functionality/index.md).
+Although segmentation tools may have very specific uses (e.g. the last example above could be used as seeds for an AI-powered spine segmentation, by providing the spine's extent), segmentation mixins themselves are intended to be reusable in many contexts. Other than their intended use case, segmentation mixins are functionally just mixins in the context of `cornerstoneTools`, so can be [injected by plugins like any other mixin](../third-party-functionality/index.md).
 
-As the input mechanisms can vary from simple to complex, segmentation mixins only have one required method, `_applyStrategy`.
+As the deliniation mechanisms can vary from simple to complex, the only requirement of a segmentation mixin is that it must call `BaseTool`'s `this.applyActiveStrategy(evt, operationData)` with the `operationData` it produces at the end of the delination cycle.
 
 Taking the `circleSegmentationMixin` as an example:
 
@@ -33,11 +35,11 @@ export default {
 };
 ```
 
-This mixin implements a "drag-to-define-a-circle" deliniation mechanism, and as such plugs its methods into `BaseTool` API for dealing with appropriate interactions such as down/touch, drag and release for both mouse and touch interactions.
+This mixin implements a "drag-to-define-a-circle" deliniation mechanism, and as such plugs its methods into `BaseTool` API for dealing with appropriate user input such as down/touch, drag and release for both mouse and touch interactions.
 
-The `renderToolData` renders the circle to the canvas whilst dilineation is in process. `BaseSegmentationTool` calls a mixin's `initializeMixin` method in its constructor, if present.
+The `renderToolData` function renders the circle to the canvas whilst dilineation is in process.
 
-The `_applyStrategy` calls the Tool's `activeStrategy` method with an augmented cornerstone event with an additional `operationData` property:
+The `_applyStrategy` function here calls `BaseTool`'s `applyActiveStrategy` method:
 
 ```js
 //src/mixins/segmentation/circleSegmentationMixin.js
@@ -54,7 +56,7 @@ this.applyActiveStrategy(evt, operationData);
 // ...
 ```
 
-Here the `operationData` contains information about the users input. The `segmentationMixinType` property just defines a key that tells the strategy what sort of `operationData` it is recieving, so that it knows what to process, or can throw if it can't process operations from that mixin. E.g.:
+Here the `operationData` contains information about the deliniation. The `segmentationMixinType` property just defines a key that tells the strategy what sort of `operationData` it is recieving, so that it knows what to process, or can throw if it can't process operations from that mixin. E.g.:
 
 ```js
 //src/util/segmentation/operations/fillInsideCircle.js
@@ -96,7 +98,7 @@ Where:
 - The `segmentIndex` to apply the operation to.
 - `segmentationMixinType` - The mixin identifier.
 
-#### freehandSegmentationMixin
+#### freehandSegmentationMixin / polylineSegmentationMixin
 
 The `freehandSegmentationMixin` allows the user to draw a freehand polygon on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool's `activeStrategy` with the following `operationData`:
 
@@ -116,13 +118,7 @@ Where:
 - The `segmentIndex` to apply the operation to.
 - `segmentationMixinType` - The mixin identifier.
 
-The `freehandSegmentationMixin`'s `renderTooldata` method connects the first and last point whilst drawing, signifying a closed polygon to the user. If you wish to just display the open polyline for a Tool when deliniating, just add the `freehandPolylineRenderOverride` mixin after the `freehandSegmentationMixin`:
-
-```js
-// ...
-mixins: ['freehandSegmentationMixin', 'freehandPolylineRenderOverride'],
-// ...
-```
+The `freehandSegmentationMixin`'s `renderTooldata` method connects the first and last point whilst drawing, signifying a closed polygon to the user. If you wish to display just the open polyline for a Tool whilst deliniating, use the `polylineSegmentationMixin` instead, which implements the `freehandSegmentationMixin` but overrides its `renderToolData` method to display just the line.
 
 #### rectangleSegmentationMixin
 

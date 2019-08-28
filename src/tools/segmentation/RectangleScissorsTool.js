@@ -16,7 +16,7 @@ import {
  * @public
  * @class RectangleScissorsTool
  * @memberof Tools
- * @classdesc Tool for slicing brush pixel data within a rectangle shape
+ * @classdesc Tool for manipulating labelmap data by drawing a rectangle.
  * @extends Tools.Base.BaseTool
  */
 export default class RectangleScissorsTool extends BaseTool {
@@ -38,7 +38,6 @@ export default class RectangleScissorsTool extends BaseTool {
       },
       defaultStrategy: 'FILL_INSIDE',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: segRectangleFillInsideCursor,
       mixins: ['rectangleSegmentationMixin'],
     };
 

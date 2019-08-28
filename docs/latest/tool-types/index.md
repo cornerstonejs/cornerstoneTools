@@ -15,4 +15,4 @@ Check the [`api` docs](https://tools.cornerstonejs.org/api/) for full documentat
 
 {% include "./base-brush-tool.md" %}
 
-{% include "./base-segmentation-tool.md" %}
+{% include "./segmentation-tool.md" %}

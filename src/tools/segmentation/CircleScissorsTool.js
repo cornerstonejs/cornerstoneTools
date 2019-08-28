@@ -16,7 +16,7 @@ import {
  * @public
  * @class CircleScissorsTool
  * @memberof Tools
- * @classdesc Tool for slicing brush pixel data within a rectangle shape
+ * @classdesc Tool for manipulating labelmap data by drawing a circle.
  * @extends Tools.Base.BaseTool
  */
 export default class CircleScissorsTool extends BaseTool {

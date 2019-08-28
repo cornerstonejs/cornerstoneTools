@@ -2,8 +2,11 @@ import mixins from './../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
 import deepmerge from './../../util/deepmerge.js';
 import { setToolCursor } from '../../store/setToolCursor.js';
+import { getModule } from '../../store';
 
 const logger = getLogger('tools:base:BaseTool');
+
+const globalConfigurationModule = getModule('globalConfiguration');
 
 /**
  * @typedef ToolConfiguration
@@ -80,6 +83,13 @@ class BaseTool {
     }
 
     this._cursors = Object.assign({}, this.initialConfiguration.cursors);
+
+    const defaultCursor =
+      this.defaultStrategy && this._cursors[this.activeStrategy];
+
+    if (defaultCursor) {
+      this.svgCursor = defaultCursor;
+    }
   }
 
   //
@@ -198,10 +208,9 @@ class BaseTool {
   setActiveStrategy(strategy) {
     this.activeStrategy = strategy;
 
-    // TODO -> Why did they do this? test.
-    setTimeout(() => {
+    if (globalConfigurationModule.configuration.showSVGCursors) {
       this.changeCursor(this.element, strategy);
-    }, 50);
+    }
   }
 
   /**
