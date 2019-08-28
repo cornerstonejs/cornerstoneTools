@@ -166,7 +166,7 @@ function resetEvents() {
     labelmaps2D: [],
     metadata: [],
     activeSegmentIndex: 0,
-    segmentsVisible: [],
+    segmentsHidden: [],
   };
 
   labelmap2D = {

@@ -65,7 +65,8 @@ const dragCallback = function(evt) {
  * @param {*} { invert, maxScale, minScale }
  * @returns {void}
  */
-function defaultStrategy(evt, { invert, maxScale, minScale }) {
+function defaultStrategy(evt) {
+  const { invert, maxScale, minScale } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const { element, viewport } = evt.detail;
@@ -104,10 +105,13 @@ function defaultStrategy(evt, { invert, maxScale, minScale }) {
   viewport.translation.y -= shift.y;
 }
 
-function translateStrategy(
-  evt,
-  { invert, preventZoomOutsideImage, maxScale, minScale }
-) {
+function translateStrategy(evt) {
+  const {
+    invert,
+    preventZoomOutsideImage,
+    maxScale,
+    minScale,
+  } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const image = evt.detail.image;
@@ -207,7 +211,8 @@ function translateStrategy(
   updatedViewport.translation.y -= shift.y;
 }
 
-function zoomToCenterStrategy(evt, { invert, maxScale, minScale }) {
+function zoomToCenterStrategy(evt) {
+  const { invert, maxScale, minScale } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const viewport = evt.detail.viewport;

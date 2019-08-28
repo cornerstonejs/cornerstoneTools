@@ -18,13 +18,12 @@ const logger = getLogger('util:segmentation:operations:correction');
  * - Stroke in-out-in: Section is added.
  *
  * @param  {Object} evt The cornerstone event.
- * @param  {object} toolConfiguration Configuration of the tool applying the strategy.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  *
  * @returns {null}
  */
-export default function correction(evt, toolConfiguration, operationData) {
+export default function correction(evt, operationData) {
   const { pixelData, segmentIndex, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `freehandSegmentationMixin`) {
@@ -42,10 +41,10 @@ export default function correction(evt, toolConfiguration, operationData) {
   if (scissorOperation.isScissorOperation) {
     if (scissorOperation.operation === 'fillInsideFreehand') {
       logger.warn('The line never intersects a segment.');
-      fillInsideFreehand(evt, null, operationData);
+      fillInsideFreehand(evt, operationData);
     } else if (scissorOperation.operation === 'eraseInsideFreehand') {
       logger.warn('The line is only ever inside the segment.');
-      eraseInsideFreehand(evt, null, operationData);
+      eraseInsideFreehand(evt, operationData);
     }
 
     return;

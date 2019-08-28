@@ -12,16 +12,11 @@ const logger = getLogger('util:segmentation:operations:eraseOutsideFreehand');
  * Erase all pixels labeled with the activeSegmentIndex,
  * outside the region defined by evt.operationData.points.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function eraseOutsideFreehand(
-  evt,
-  toolConfiguration,
-  operationData
-) {
+export default function eraseOutsideFreehand(evt, operationData) {
   const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `freehandSegmentationMixin`) {

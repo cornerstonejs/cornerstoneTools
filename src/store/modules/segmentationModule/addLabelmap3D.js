@@ -13,6 +13,6 @@ export default function addLabelmap3D(brushStackState, labelmapIndex, size) {
     labelmaps2D: [],
     metadata: [],
     activeSegmentIndex: 1,
-    segmentsVisible: [],
+    segmentsHidden: [],
   };
 }

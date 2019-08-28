@@ -93,16 +93,14 @@ export function getOutline(evt, labelmap3D, labelmap2D, lineWidth) {
 
   lineWidth = lineWidth || 1;
 
-  const segmentsVisible = labelmap3D.segmentsVisible;
+  const { segmentsHidden } = labelmap3D;
 
   const pixelData = labelmap2D.pixelData;
   const activeSegmentIndex = labelmap3D.activeSegmentIndex;
   const lineSegments = [];
 
   labelmap2D.segmentsOnLabelmap.forEach(segmentIndex => {
-    const visible =
-      segmentsVisible[segmentIndex] ||
-      segmentsVisible[segmentIndex] === undefined;
+    const visible = !segmentsHidden[segmentIndex];
 
     if (visible) {
       lineSegments[segmentIndex] = [];
@@ -127,9 +125,7 @@ export function getOutline(evt, labelmap3D, labelmap2D, lineWidth) {
       continue;
     }
 
-    const visible =
-      segmentsVisible[segmentIndex] ||
-      segmentsVisible[segmentIndex] === undefined;
+    const visible = !segmentsHidden[segmentIndex];
 
     if (!visible) {
       continue;

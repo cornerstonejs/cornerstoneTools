@@ -153,11 +153,7 @@ class BaseTool {
    * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
   applyActiveStrategy(evt, operationData) {
-    return this.strategies[this.activeStrategy](
-      evt,
-      this.configuration,
-      operationData
-    );
+    return this.strategies[this.activeStrategy].call(this, evt, operationData);
   }
 
   /**

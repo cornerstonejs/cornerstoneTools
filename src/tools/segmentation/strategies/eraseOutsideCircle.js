@@ -13,16 +13,11 @@ const logger = getLogger('util:segmentation:operations:eraseOutsideCircle');
  * EraseOutsideCircle - Erase all pixels labeled with the activeSegmentIndex,
  * outside the region defined by the circle.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function eraseOutsideCircle(
-  evt,
-  toolConfiguration,
-  operationData
-) {
+export default function eraseOutsideCircle(evt, operationData) {
   const { segmentationMixinType } = operationData;
   const eventData = evt.detail;
 

@@ -41,7 +41,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
   const { image } = eventData;
   const cols = image.width;
   const rows = image.height;
-  const { segmentsVisible } = labelmap3D;
+  const { segmentsHidden } = labelmap3D;
   const pixelData = labelmap2D.pixelData;
   const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
   const colorLutTable = state.colorLutTables[colorMapId];
@@ -64,10 +64,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
 
       if (newSegmentIndex !== segmentIndex) {
         // Hit new segment, save rect.
-
-        const visible =
-          segmentsVisible[segmentIndex] ||
-          segmentsVisible[segmentIndex] === undefined;
+        const visible = !segmentsHidden[segmentIndex];
 
         if (segmentIndex !== 0 && visible) {
           // Have start and end, putImageData.
@@ -96,9 +93,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
     }
 
     // Close off final rect (its fine if start and end are the same value).
-    const visible =
-      segmentsVisible[segmentIndex] ||
-      segmentsVisible[segmentIndex] === undefined;
+    const visible = !segmentsHidden[segmentIndex];
 
     if (segmentIndex !== 0 && visible) {
       // Have start and end, putImageData.

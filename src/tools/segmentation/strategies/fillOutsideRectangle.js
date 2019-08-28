@@ -11,16 +11,11 @@ const logger = getLogger('util:segmentation:operations:fillOutsideRectangle');
  * FillOutsideRectangle - Fill all pixels outside the region defined
  * by the rectangle.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillOutsideRectangle(
-  evt,
-  toolConfiguration,
-  operationData
-) {
+export default function fillOutsideRectangle(evt, operationData) {
   const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `rectangleSegmentationMixin`) {

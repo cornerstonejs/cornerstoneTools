@@ -12,16 +12,11 @@ const logger = getLogger('util:segmentation:operations:fillOutsideFreehand');
  * Fill all pixels outside of the region defined by
  * evt.operationData.points with the activeSegmentIndex value.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export default function fillOutsideFreehand(
-  evt,
-  toolConfiguration,
-  operationData
-) {
+export default function fillOutsideFreehand(evt, operationData) {
   const { points, segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `freehandSegmentationMixin`) {

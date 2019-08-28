@@ -57,8 +57,8 @@ import configuration from './configuration';
  * @property {Object[]} metadata An array of metadata per segment. Metadata is optional and its form is
  *                               application specific.
  * @property {number} activeSegmentIndex The index of the active segment for this `Labelmap3D`.
- * @property {boolean[]} segmentsVisible The visibility of segments on this labelmap.
- *                                       If an element is undefined, the visibility of that defaults to true.
+ * @property {boolean[]} segmentsHidden The visibility of segments on this labelmap.
+ * If an element is `true`, the element is hidden. If it `false|undefined`, the segment is visible.
  */
 
 /**

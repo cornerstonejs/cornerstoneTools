@@ -48,7 +48,8 @@ export default class WwwcTool extends BaseTool {
  * @param {Object} { orienttion }
  * @returns {void}
  */
-function basicLevelingStrategy(evt, { orientation }) {
+function basicLevelingStrategy(evt) {
+  const { orientation } = this.configuration;
   const eventData = evt.detail;
 
   const maxVOI =

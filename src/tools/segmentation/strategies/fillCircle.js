@@ -13,12 +13,11 @@ const logger = getLogger('util:segmentation:operations:fillCircle');
 /**
  * Fill all pixels inside/outside the region defined by the circle.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-function fillCircle(evt, toolConfiguration, operationData, inside = true) {
+function fillCircle(evt, operationData, inside = true) {
   const { segmentationMixinType } = operationData;
 
   if (segmentationMixinType !== `circleSegmentationMixin`) {
@@ -56,24 +55,22 @@ function fillCircle(evt, toolConfiguration, operationData, inside = true) {
 /**
  * Fill all pixels inside/outside the region defined by the circle.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param {}  operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export function fillInsideCircle(evt, toolConfiguration, operationData) {
-  fillCircle(evt, toolConfiguration, operationData, true);
+export function fillInsideCircle(evt, operationData) {
+  fillCircle(evt, operationData, true);
 }
 
 /**
  * FillOutsideCircle - Fill all pixels outside the region defined
  * by the circle.
  * @param  {} evt The Cornerstone event.
- * @param  {} toolConfiguration Configuration of the tool applying the strategy.
  * @param  {} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  * @returns {null}
  */
-export function fillOutsideCircle(evt, toolConfiguration, operationData) {
-  fillCircle(evt, toolConfiguration, operationData, false);
+export function fillOutsideCircle(evt, operationData) {
+  fillCircle(evt, operationData, false);
 }

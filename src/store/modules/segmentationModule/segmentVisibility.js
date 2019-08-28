@@ -54,9 +54,9 @@ function isSegmentVisible(
   }
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
-  const visible = labelmap3D.segmentsVisible[segmentIndex];
+  const visible = !labelmap3D.segmentsHidden[segmentIndex];
 
-  return visible || visible === undefined;
+  return visible;
 }
 
 /**
@@ -107,17 +107,11 @@ function toggleSegmentVisibility(
   }
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
-  const segmentsVisible = labelmap3D.segmentsVisible;
+  const segmentsHidden = labelmap3D.segmentsHidden;
 
-  const visible = segmentsVisible[segmentIndex];
+  segmentsHidden[segmentIndex] = !segmentsHidden[segmentIndex];
 
-  if (visible || visible === undefined) {
-    segmentsVisible[segmentIndex] = false;
-  } else {
-    segmentsVisible[segmentIndex] = true;
-  }
-
-  return segmentsVisible[segmentIndex];
+  return !segmentsHidden[segmentIndex];
 }
 
 export { isSegmentVisible, toggleSegmentVisibility };
