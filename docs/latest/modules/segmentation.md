@@ -30,6 +30,7 @@ A `Labelmap3D` is a single, non-overlapping labelmap with the following properti
 - `labelmaps2D`: An array of `labelmap2D` views on the `buffer`, indexed by in-stack `imageIdIndex`. The `labelmaps2D` array is initially empty, and each view is defined only if data is added to it, and should be removed if set empty (all zero labels). This makes it easy for the segmentation renderer, I/O libraries such as [`dcmjs`](https://github.com/dcmjs-org/dcmjs), and tools to localise the extent of segments without having to scan through every label in the stack.
 - `metadata`: An array of metadata objects per segment. Metadata is optional and its form is application specific. You may want a simple name for your label in your UI, or you may want more complex objects referencing standard libraries for anatomical region. The metadata is not used internally for `cornerstoneTools`, but acts a logical place to keep such data for your application.
 - `activeSegmentIndex`: The index of the segment to be created/modified when using `BaseBrushTool`s or segmentation tools, when th labelmap is active.
+- `colorLUTIndex`: The index of the colorLUT to use when rendering the labelmap.
 - `segmentsHidden`: An array of segments to hide from the canvas. Initially empty to save space, set an index to `true` to hide the corresponding segment.
 
 #### Labelmap2D
@@ -122,37 +123,40 @@ Upon finishing an operation on a `Labelmap2D`, the tool/operation should call `s
 
 This is not done automatically, because the end of an operationn might depend on the task. E.g. after one use of the `CircleScissorsTool`, we'll call `updateSegmentsOnLabelmap2D`, however we only do it at the _end_ of `BrushTool` stroke. You may have a more complicated procedure whereby you perform a series of iterative growcuts with human intervention, and only want to update the labelmap occupancy at the end.
 
-### Usage by application UI
+### Usage by application
 
-The parent application can retrieve information about the labelmaps by querying the API, a list of some useful functions is given here (this list isn't exhaustive, however. For a complete list of segmentation API, check the API docs and the `segmentationModule` itself):
+The parent application can retrieve information about the labelmaps by querying the API. From `metadata`, to `colorLUT`s per `Labelmap3D`.
 
-```js
-getters: {
-  metadata,
-  labelmaps3D,
-  activeLabelmapIndex,
-  activeSegmentIndex,
-  isSegmentVisible,
-  labelmapStats: getLabelmapStats,
-},
-setters: {
-  metadata: setMetadata,
-  incrementActiveSegmentIndex,
-  decrementActiveSegmentIndex,
-  activeSegmentIndex,,
-  toggleSegmentVisibility,
-  deleteSegment,
-  colorLUT,
-  activeLabelmapIndex,
-  radius,
-}
-```
+The most useful getter function is probably `getLabelmaps3D(elementOrEnabledElementUID)`, which when given a cornerstone `element`, or a cornerstone `enabledElement`'s UUID, returns a list of `Labelmap3D` objects, which can be parsed in order to generate UI.
+
+A set of `setters` can be linked to UI components to change the active segment, set segment color, etc, refer to the API documentation for a full list of helpers.
 
 ### Usage by third party libraries.
 
-### Backdoor (Here be dragons)
+You may wish to access one or more `Labelmap3D` `buffers` from outside `cornerstoneTools`, in order to either export them to persistent storage, or display them in another framwork, such as [`vtkjs`](https://kitware.github.io/vtk-js/).
 
-Note that appart from these API, you can always access the global `series` object:
+To retrieve the ArrayBuffer for the activeLabelmap on an `element`, from outside of `cornerstoneTools`:
+
+```js
+const { getters } = cornerstoneTools.getModule('segmentation');
+
+// Active buffer:
+const { buffer, labelmapIndex, colorLUT } = getters.activeLabelmapBuffer(
+  element
+);
+
+// All labelmap buffers:
+const bufferInfoArray = getters.labelmapBuffers(element);
+
+// A specific buffer:
+const { buffer7, colorLUT7 } = getters.labelmapBuffers(element, 3);
+```
+
+These functions also return the `colorLUT` (not just its index), so that you can map another renderer to the same color scheme. Note these are just helper functions, and you can indeed fetch all the `Labelmap3D` objects with `getters.labelmaps3D`, and extract this/more information if you desire.
+
+### Backdoor
+
+Note that other than from the API, you can always access the global `series` object:
 
 ```js
 const { state } = getModule('segmentation');

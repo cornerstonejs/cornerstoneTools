@@ -62,7 +62,7 @@ mixins: ['circleSegmentationMixin'];
 // ...
 ```
 
-The `mixins` prop can be used as with `BaseTool`, but at least one [segmentation mixin](../tool-mixins/index.md#segmentation-mixins) must be used. The job the segmentation mixin is to take user input through some means, implement `_applyStrategy`, and call the `strategy` with appropriate input. Segmentation mixins are described more [here](../tool-mixins/index.md#segmentation-mixins)
+The `mixins` prop can be used as with `BaseTool`, but at least one [segmentation mixin](../tool-mixins/index.md#segmentation-mixins) must be used. The job the segmentation mixin is to take user input through some means, implement `_applyStrategy`, and call the `strategy` with appropriate input.
 
 #### Mixin-aware Strategies
 

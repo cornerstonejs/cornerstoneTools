@@ -11,8 +11,8 @@ import state from './state';
  * @param  {HTMLElement|string} elementOrEnabledElementUID   The cornerstone enabled
  *                                                    element or its UUID.
  * @param {type} [labelmapIndex] Optional filtering to only return one labelmap.
- * @returns {Object|Object[]} An array of objects containing the `labelmapIndex` and
- *                        corresponding `buffer`. Only one object if `labelmapIndex` was specified.
+ * @returns {Object|Object[]} An array of objects containing the `labelmapIndex`, and the corresponding buffer and `colorLUT`.
+ * Only one object if `labelmapIndex` was specified.
  *
  */
 function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
@@ -28,12 +28,17 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
     return [];
   }
 
+  const colorLutTables = state.colorLutTables;
+
   if (labelmapIndex !== undefined) {
-    if (labelmaps3D[labelmapIndex]) {
+    const labelmap3D = labelmaps3D[labelmapIndex];
+
+    if (labelmap3D) {
       return {
         labelmapIndex,
         bytesPerVoxel: 2,
-        buffer: labelmaps3D[labelmapIndex].buffer,
+        buffer: labelmap3D.buffer,
+        colorLUT: colorLutTables[labelmap3D.colorLUTIndex],
       };
     }
 
@@ -43,11 +48,14 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
   const labelmapBuffers = [];
 
   for (let i = 0; i < labelmaps3D.length; i++) {
-    if (labelmaps3D[i]) {
+    const labelmap3D = labelmaps3D[i];
+
+    if (labelmap3D) {
       labelmapBuffers.push({
         labelmapIndex: i,
         bytesPerVoxel: 2,
-        buffer: labelmaps3D[i].buffer,
+        buffer: labelmap3D.buffer,
+        colorLUT: colorLutTables[labelmap3D.colorLUTIndex],
       });
     }
   }
