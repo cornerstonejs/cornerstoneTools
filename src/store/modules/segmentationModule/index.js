@@ -23,7 +23,7 @@ import {
 } from './setLabelmap3D.js';
 import getLabelmapStats from './getLabelmapStats';
 import getLabelmaps3D from './getLabelmaps3D';
-import getLabelmap2D, { labelMap2DByImageIdIndex } from './getLabelmap2D';
+import getLabelmap2D, { getLabelmap2DByImageIdIndex } from './getLabelmap2D';
 import getSegmentOfActiveLabelmapAtEvent from './getSegmentOfActiveLabelmapAtEvent';
 import setColorLUT from './setColorLUT';
 import getBrushColor from './getBrushColor';
@@ -43,12 +43,12 @@ import configuration from './configuration';
 /**
  * @typedef {Object} BrushStackState An object defining a set of 3D labelmaps
  *    associated with a specific cornerstone stack.
- * @property {string} activeLabelmapIndex The index of the active `Labelmap3D`.
+ * @property {number} activeLabelmapIndex The index of the active `Labelmap3D`.
  * @property {Labelmap3D[]} labelmaps3D An array of `Labelmap3D` objects.
  */
 
 /**
- * An
+ * A 3D labelmap object which stores the labelmap data for an entire stack of cornerstone images.
  *
  * @typedef {Object} Labelmap3D An object defining a 3D labelmap.
  * @property {ArrayBuffer}  buffer An array buffer to store the pixel data of the `Labelmap3D` (2 bytes/voxel).
@@ -62,6 +62,8 @@ import configuration from './configuration';
  */
 
 /**
+ * A 2D labelmap object which accesses only one frame's worth of data from its parent `Labelmap3D`.
+ *
  * @typedef {Object} Labelmap2D An object defining a 2D view on a section of a `Labelmap3D`'s `buffer`.
  * @property {Uint16Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
  * @property {number[]} segmentsOnLabelmap An array of segments present in the `pixelData`.
@@ -88,6 +90,7 @@ export default {
     activeSegmentIndex: getActiveSegmentIndex,
     isSegmentVisible,
     labelmap2D: getLabelmap2D,
+    labelmap2DByImageIdIndex: getLabelmap2DByImageIdIndex,
     labelmapStats: getLabelmapStats,
     segmentOfActiveLabelmapAtEvent: getSegmentOfActiveLabelmapAtEvent,
     brushColor: getBrushColor,
@@ -100,7 +103,6 @@ export default {
     labelmap3DByFirstImageId: setLabelmap3DByFirstImageId,
     incrementActiveSegmentIndex,
     decrementActiveSegmentIndex,
-    labelMap2DByImageIdIndex,
     activeSegmentIndex: setActiveSegmentIndex,
     toggleSegmentVisibility,
     updateSegmentsOnLabelmap2D: labelmap2D => {

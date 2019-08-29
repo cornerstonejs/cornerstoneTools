@@ -11,7 +11,7 @@ import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:SphericalBrushTool');
 
-const { getters, setters, configuration } = getModule('segmentation');
+const { getters, configuration } = getModule('segmentation');
 
 /**
  * @public
@@ -41,7 +41,7 @@ export default class SphericalBrushTool extends BrushTool {
    * @returns {void}
    */
   _paint(evt) {
-    const { cornerstone, cornerstoneMath } = external;
+    const { cornerstone } = external;
     const eventData = evt.detail;
     const element = eventData.element;
     const image = eventData.image;
@@ -95,8 +95,7 @@ export default class SphericalBrushTool extends BrushTool {
 
     this._imagesInRange = imagesInRange;
 
-    const { labelmap3D } = getters.labelmap2D(element);
-
+    const { labelmap3D } = this.paintEventData;
     const shouldErase =
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
 
@@ -105,13 +104,18 @@ export default class SphericalBrushTool extends BrushTool {
       const pointerArray = getCircle(radiusOnImage, rows, columns, x, y);
 
       // Cache the view on this image if its not present.
-      setters.labelMap2DByImageIdIndex(labelmap3D, imageIdIndex, rows, columns);
+      const labelmap2DForImageIdIndex = getters.labelmap2DByImageIdIndex(
+        labelmap3D,
+        imageIdIndex,
+        rows,
+        columns
+      );
 
       // Draw / Erase the active color.
       drawBrushPixels(
         pointerArray,
-        labelmap3D,
-        imageIdIndex,
+        labelmap2DForImageIdIndex,
+        labelmap3D.activeSegmentIndex,
         columns,
         shouldErase
       );
@@ -260,8 +264,6 @@ export default class SphericalBrushTool extends BrushTool {
           segmentsOnLabelmap.push(next.value);
         }
       }
-
-      logger.warn(segmentsOnLabelmap);
 
       labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
 

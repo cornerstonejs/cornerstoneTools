@@ -118,6 +118,7 @@ class BaseBrushTool extends BaseTool {
     const element = eventData.element;
 
     const {
+      labelmap2D,
       labelmap3D,
       currentImageIdIndex,
       activeLabelmapIndex,
@@ -127,6 +128,7 @@ class BaseBrushTool extends BaseTool {
       this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
 
     this.paintEventData = {
+      labelmap2D,
       labelmap3D,
       currentImageIdIndex,
       activeLabelmapIndex,

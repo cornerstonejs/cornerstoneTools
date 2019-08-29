@@ -12,7 +12,7 @@ import state from './state';
  *
  * @param  {HTMLElement|string} elementOrEnabledElementUID   The cornerstone enabled
  *                                                    element or its UUID.
- * @returns {Object}              The `Labelmap3D` and the currentImageIdIndex.
+ * @returns {Object} The `Labelmap2D`, `Labelmap3D`, `activeLabelmapIndex` and `currentImageIdIndex`.
  */
 export default function getLabelmap2D(elementOrEnabledElementUID) {
   const element = getElement(elementOrEnabledElementUID);
@@ -82,8 +82,11 @@ export default function getLabelmap2D(elementOrEnabledElementUID) {
     );
   }
 
+  const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
+
   return {
-    labelmap3D: brushStackState.labelmaps3D[activeLabelmapIndex],
+    labelmap2D: labelmap3D.labelmaps2D[currentImageIdIndex],
+    labelmap3D,
     currentImageIdIndex,
     activeLabelmapIndex,
   };
@@ -99,7 +102,7 @@ export default function getLabelmap2D(elementOrEnabledElementUID) {
  * @param  {number} columns      The number of columns.
  * @returns {null}
  */
-export function labelMap2DByImageIdIndex(
+export function getLabelmap2DByImageIdIndex(
   labelmap3D,
   imageIdIndex,
   rows,

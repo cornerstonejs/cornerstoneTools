@@ -111,17 +111,13 @@ export default class BrushTool extends BaseBrushTool {
     const radius = segmentationModule.configuration.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
-    const {
-      labelmap3D,
-      currentImageIdIndex,
-      shouldErase,
-    } = this.paintEventData;
+    const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
 
     // Draw / Erase the active color.
     drawBrushPixels(
       pointerArray,
-      labelmap3D,
-      currentImageIdIndex,
+      labelmap2D,
+      labelmap3D.activeSegmentIndex,
       columns,
       shouldErase
     );
