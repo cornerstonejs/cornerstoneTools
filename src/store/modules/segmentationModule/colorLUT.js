@@ -69,6 +69,7 @@ export function getColorLUT(labelmap3DOrColorLUTIndex) {
   if (typeof labelmap3DOrColorLUTIndex === 'number') {
     return state.colorLutTables[labelmap3DOrColorLUTIndex];
   }
+
   return state.colorLutTables[labelmap3DOrColorLUTIndex.colorLUTIndex];
 }
 
