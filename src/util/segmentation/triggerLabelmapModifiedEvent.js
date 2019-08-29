@@ -11,9 +11,10 @@ import { getModule } from '../../store';
 export default function triggerLabelmapModifiedEvent(element, labelmapIndex) {
   const { getters } = getModule('segmentation');
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = getters.activeLabelmapIndex(element);
-  }
+  labelmapIndex =
+    labelmapIndex === undefined
+      ? getters.activeLabelmapIndex(element)
+      : labelmapIndex;
 
   external.cornerstone.triggerEvent(element, EVENTS.LABELMAP_MODIFIED, {
     labelmapIndex,

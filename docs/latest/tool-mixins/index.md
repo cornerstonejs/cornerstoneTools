@@ -1,6 +1,6 @@
 # Tool Mixins
 
-Tool Mixins are ways to construct tools via composition using reusable components. In a mixin may include a set of methods which are applied to the class upon instantiation. You can register a mixin by its name in your tool without needing to import it (as this is dealt with inside `BaseTool`). For example:
+Tool Mixins provide a way to construct tools via composition using reusable components. A mixin may include a set of methods which are applied to the class upon instantiation. You can register a mixin by its name in your tool without needing to import it (as this is dealt with inside `BaseTool`). For example:
 
 ```js
 export default class FreehandRoiSculptorTool extends BaseTool {

@@ -37,9 +37,10 @@ export default function deleteSegment(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex =
+    labelmapIndex === undefined
+      ? brushStackState.activeLabelmapIndex
+      : labelmapIndex;
 
   const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 

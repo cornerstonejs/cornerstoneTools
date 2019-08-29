@@ -8,7 +8,7 @@ Segmentation Tools are more of a modular design pattern rather than a tool type,
 
 `SegmentationTool`s are comprised of a few components:
 
-- A [Segmentation Mixin](../tool-mixins/index.md#segmentation-mixins) - The role of a segmentation mixin is to provide a deliniation mechanism, which generates an `operationData` object which is passed to the active strategy alongside the cornerstone event.
+- A [Segmentation Mixin](../tool-mixins/index.md#segmentation-mixins) - The role of a segmentation mixin is to provide a delineation mechanism, which generates an `operationData` object which is passed to the active strategy alongside the cornerstone event.
 - One or more `strategies` to be called when the segmentation mixin calls `this.applyActiveStrategy(evt, operationData)`.
 - An (optional) set of `cursors` for `strategies`.
 
@@ -79,4 +79,4 @@ defaultStrategy: 'FILL_INSIDE',
 // ...
 ```
 
-The `strategies` prop defines a set of operations that can be executed at the end of deliniation. The strategies implemented should expect `operationData` of the form provided by the segmentation mixin implemented by the Tool.
+The `strategies` prop defines a set of operations that can be executed at the end of delineation. The strategies implemented should expect `operationData` of the form provided by the segmentation mixin implemented by the Tool.

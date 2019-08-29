@@ -25,9 +25,10 @@ function getActiveSegmentIndex(elementOrEnabledElementUID, labelmapIndex) {
   const brushStackState = state.series[firstImageId];
 
   if (brushStackState) {
-    if (labelmapIndex === undefined) {
-      labelmapIndex = brushStackState.activeLabelmapIndex;
-    }
+    labelmapIndex =
+      labelmapIndex === undefined
+        ? brushStackState.activeLabelmapIndex
+        : labelmapIndex;
 
     const labelmap3D = brushStackState.labelmaps3D[labelmapIndex];
 

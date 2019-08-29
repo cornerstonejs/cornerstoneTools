@@ -43,9 +43,10 @@ function isSegmentVisible(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex =
+    labelmapIndex === undefined
+      ? brushStackState.activeLabelmapIndex
+      : labelmapIndex;
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
@@ -96,9 +97,10 @@ function toggleSegmentVisibility(
     return;
   }
 
-  if (labelmapIndex === undefined) {
-    labelmapIndex = brushStackState.activeLabelmapIndex;
-  }
+  labelmapIndex =
+    labelmapIndex === undefined
+      ? brushStackState.activeLabelmapIndex
+      : labelmapIndex;
 
   if (!brushStackState.labelmaps3D[labelmapIndex]) {
     logger.warn(`No labelmap3D of labelmap index ${labelmapIndex} on stack.`);
