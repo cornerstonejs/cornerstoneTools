@@ -33,19 +33,12 @@ export default function getBrushColor(
     const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
     const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
 
-    if (labelmap3D) {
-      const activeSegmentIndex = labelmap3D.activeSegmentIndex;
+    const activeSegmentIndex = labelmap3D.activeSegmentIndex;
 
-      color =
-        state.colorLutTables[`${state.colorMapId}_${activeLabelmapIndex}`][
-          activeSegmentIndex
-        ];
-    } else {
-      // Just set to new labelmap index
-    }
+    color = state.colorLutTables[labelmap3D.colorLUTIndex][activeSegmentIndex];
   } else {
     // No data yet, make brush the default color of colormap 0.
-    color = state.colorLutTables[`${state.colorMapId}_0`][1];
+    color = state.colorLutTables[0][1];
   }
 
   return drawing

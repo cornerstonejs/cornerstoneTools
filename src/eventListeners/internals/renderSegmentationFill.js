@@ -15,12 +15,7 @@ export default function renderSegmentationFill(
   labelmapIndex,
   isActiveLabelMap
 ) {
-  const labelmapCanvas = getLabelmapCanvas(
-    evt,
-    labelmap3D,
-    labelmap2D,
-    labelmapIndex
-  );
+  const labelmapCanvas = getLabelmapCanvas(evt, labelmap3D, labelmap2D);
 
   renderFill(evt, labelmapCanvas, isActiveLabelMap);
 }
@@ -33,18 +28,16 @@ export default function renderSegmentationFill(
  * @param {Object} evt The cornerstone event.
  * @param {Labelmap3D} labelmap3D The `Labelmap3D` object.
  * @param {Labelmap2D} labelmap2D The `Labelmap2D` object containing the pixelData to render.
- * @param {number} labelmapIndex The index of the `Labelmap3D` object.
  * @returns {HTMLCanvasElement}
  */
-export function getLabelmapCanvas(evt, labelmap3D, labelmap2D, labelmapIndex) {
+export function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
   const eventData = evt.detail;
   const { image } = eventData;
   const cols = image.width;
   const rows = image.height;
   const { segmentsHidden } = labelmap3D;
   const pixelData = labelmap2D.pixelData;
-  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
-  const colorLutTable = state.colorLutTables[colorMapId];
+  const colorLutTable = state.colorLutTables[labelmap3D.colorLUTIndex];
   const canvasElement = document.createElement('canvas');
 
   canvasElement.width = cols;

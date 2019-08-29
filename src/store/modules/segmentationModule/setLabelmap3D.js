@@ -20,7 +20,8 @@ function setLabelmap3DForElement(
   elementOrEnabledElementUID,
   buffer,
   labelmapIndex,
-  metadata = []
+  metadata = [],
+  colorLUTIndex = 0
 ) {
   const element = getElement(elementOrEnabledElementUID);
 
@@ -37,7 +38,8 @@ function setLabelmap3DForElement(
     buffer,
     labelmapIndex,
     metadata,
-    numberOfFrames
+    numberOfFrames,
+    colorLUTIndex
   );
 
   triggerLabelmapModifiedEvent(element, labelmapIndex);
@@ -61,7 +63,8 @@ function setLabelmap3DByFirstImageId(
   buffer,
   labelmapIndex,
   metadata = [],
-  numberOfFrames
+  numberOfFrames,
+  colorLUTIndex = 0
 ) {
   let brushStackState = state.series[firstImageId];
 
@@ -79,6 +82,7 @@ function setLabelmap3DByFirstImageId(
     labelmaps2D: [],
     metadata,
     activeSegmentIndex: 1,
+    colorLUTIndex: 0,
     segmentsHidden: [],
   };
 

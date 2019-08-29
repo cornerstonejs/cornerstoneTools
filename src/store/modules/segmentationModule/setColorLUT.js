@@ -12,63 +12,57 @@ const logger = getLogger('store:modules:segmentationModule:setColorLUT');
  * @param  {number[][]} [colorLUT]    An array of The colorLUT to set.
  * @returns {null}
  */
-export default function setColorLUT(labelmapIndex, colorLUT) {
-  const colorMapId = `${state.colorMapId}_${labelmapIndex}`;
-  const colormap = external.cornerstone.colors.getColormap(colorMapId);
+export default function setColorLUT(colorLUTIndex, colorLUT = []) {
   const segmentsPerLabelmap = configuration.segmentsPerLabelmap;
 
-  if (!_validColorLUTLength(colorLUT, segmentsPerLabelmap)) {
-    return;
+  if (colorLUT) {
+    _checkColorLUTLength(colorLUT, segmentsPerLabelmap);
+
+    if (colorLUT.length < segmentsPerLabelmap) {
+      colorLUT = [
+        ...colorLUT,
+        ..._generateNewColorLUT(segmentsPerLabelmap - colorLUT.length),
+      ];
+    }
+  } else {
+    // Autogenerate colorLUT.
+    colorLUT = colorLUT || _generateNewColorLUT(segmentsPerLabelmap);
   }
-
-  if (colorLUT && colorLUT.length !== segmentsPerLabelmap) {
-    logger.warn('The labelmap being set is not the same');
-  }
-
-  colormap.setNumberOfColors(segmentsPerLabelmap + 1);
-
-  colorLUT = colorLUT || _generateNewColorLUT(segmentsPerLabelmap);
 
   // Apppend the "zero" (no label) color to the front of the LUT.
-  colorLUT = [[0, 0, 0, 0], ...colorLUT];
+  colorLUT.unshift([0, 0, 0, 0]);
 
-  for (let i = 0; i <= segmentsPerLabelmap; i++) {
-    colormap.setColor(i, colorLUT[i]);
-  }
+  state.colorLutTables[colorLUTIndex] = colorLUT;
+}
 
-  state.colorLutTables[colorMapId] = colorLUT;
+export function setColorLUTIndexForLabelmap3D(labelmap3D, colorLUTIndex) {
+  labelmap3D.colorLUTIndex = colorLUTIndex;
 }
 
 /**
- * Checks if the length of the colorLUT is sufficient.
+ * Checks the length of `colorLUT` compared to `segmnetsPerLabelmap` and flags up any warnings.
  * @param  {number[][]} colorLUT
  * @param  {number} segmentsPerLabelmap
  * @returns {boolean} Whether the length is valid.
  */
-function _validColorLUTLength(colorLUT, segmentsPerLabelmap) {
-  if (colorLUT) {
-    if (colorLUT.length < segmentsPerLabelmap) {
-      logger.error(
-        `The provided colorLUT only provides ${
-          colorLUT.length
-        } labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}.`
-      );
-
-      return false;
-    } else if (colorLUT.length > segmentsPerLabelmap) {
-      logger.warn(
-        `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${
-          colorLUT.length
-        }. Using the first ${segmentsPerLabelmap} colors from the LUT.`
-      );
-    }
+function _checkColorLUTLength(colorLUT, segmentsPerLabelmap) {
+  if (colorLUT.length < segmentsPerLabelmap) {
+    logger.warn(
+      `The provided colorLUT only provides ${
+        colorLUT.length
+      } labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}. Autogenerating the rest.`
+    );
+  } else if (colorLUT.length > segmentsPerLabelmap) {
+    logger.warn(
+      `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${
+        colorLUT.length
+      }. Using the first ${segmentsPerLabelmap} colors from the LUT.`
+    );
   }
-
-  return true;
 }
 
 /**
- * Generates a new color LUT (Look up table) of length `numberOfColors`,
+ * Generates a new color LUT (Look Up Table) of length `numberOfColors`,
  * which returns an RGBA color for each segment index.
  *
  * @param  {Number} numberOfColors = 255 The number of colors to generate

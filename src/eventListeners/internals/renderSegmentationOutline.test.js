@@ -369,11 +369,7 @@ describe('renderSegmentationOutline.js', () => {
       const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
 
       // Fake colormap to stop renderOutline breaking.
-      state.colorLutTables[`${state.colorMapId}_${0}`] = [
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-        [0, 0, 0, 0],
-      ];
+      state.colorLutTables[0] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
 
       renderOutline(evt, outline, 0, true);
 

@@ -1,7 +1,6 @@
 import getElement from './getElement';
 import { getToolState } from '../../../stateManagement/toolState.js';
 import addLabelmap3D from './addLabelmap3D';
-import setColorLUT from './setColorLUT';
 import state from './state';
 import external from '../../../externalModules';
 
@@ -58,10 +57,6 @@ function setActiveLabelmapIndex(elementOrEnabledElementUID, labelmapIndex = 0) {
   const firstImageId = stackData.imageIds[0];
 
   let brushStackState = state.series[firstImageId];
-
-  if (!state.colorLutTables[`${state.colorMapId}_${labelmapIndex}`]) {
-    setColorLUT(labelmapIndex);
-  }
 
   if (brushStackState) {
     brushStackState.activeLabelmapIndex = labelmapIndex;

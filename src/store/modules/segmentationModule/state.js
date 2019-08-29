@@ -1,8 +1,7 @@
 // Internal state of the brush module.
 const state = {
-  colorMapId: 'BrushColorMap',
   series: {},
-  colorLutTables: {},
+  colorLutTables: [],
 };
 
 export default state;

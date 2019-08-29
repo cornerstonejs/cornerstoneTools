@@ -25,7 +25,7 @@ import getLabelmapStats from './getLabelmapStats';
 import getLabelmaps3D from './getLabelmaps3D';
 import getLabelmap2D, { getLabelmap2DByImageIdIndex } from './getLabelmap2D';
 import getSegmentOfActiveLabelmapAtEvent from './getSegmentOfActiveLabelmapAtEvent';
-import setColorLUT from './setColorLUT';
+import setColorLUT, { setColorLUTIndexForLabelmap3D } from './setColorLUT';
 import getBrushColor from './getBrushColor';
 import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import deleteSegment from './deleteSegment';
@@ -70,8 +70,7 @@ import configuration from './configuration';
  */
 
 /**
- * OnRegisterCallback - Initialise a single default colorLUT when cornerstone
- * is initialised.
+ * OnRegisterCallback - Initialise a single default colorLUT when cornerstoneTools is initialised.
  *
  * @returns {null}
  */
@@ -112,6 +111,7 @@ export default {
     },
     deleteSegment,
     colorLUT: setColorLUT,
+    colorLUTIndexForLabelmap3D: setColorLUTIndexForLabelmap3D,
     activeLabelmapIndex: setActiveLabelmapIndex,
     radius: newRadius => {
       configuration.radius = Math.min(
