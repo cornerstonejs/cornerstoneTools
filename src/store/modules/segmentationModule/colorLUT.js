@@ -39,6 +39,39 @@ export function setColorLUTIndexForLabelmap3D(labelmap3D, colorLUTIndex) {
   labelmap3D.colorLUTIndex = colorLUTIndex;
 }
 
+export function getColorForSegmentIndexColorLUT(
+  labelmap3DOrColorLUTIndex,
+  segmentIndex
+) {
+  const colorLUT = getColorLUT(labelmap3DOrColorLUTIndex);
+
+  return colorLUT[segmentIndex];
+}
+
+/**
+ * Sets a single color of a colorLUT.
+ *
+ * @param {Object|number} labelmap3DOrColorLUTIndex Either a `Labelmap3D` object (who's referenced colorLUT will be changed), or a colorLUTIndex.
+ * @param {number} segmentIndex The segmentIndex color to change.
+ * @param {[number,number,number,number]} colorArray The color values in RGBA array format.
+ */
+export function setColorForSegmentIndexOfColorLUT(
+  labelmap3DOrColorLUTIndex,
+  segmentIndex,
+  colorArray
+) {
+  const colorLUT = getColorLUT(labelmap3DOrColorLUTIndex);
+
+  colorLUT[segmentIndex] = colorArray;
+}
+
+export function getColorLUT(labelmap3DOrColorLUTIndex) {
+  if (typeof labelmap3DOrColorLUTIndex === 'number') {
+    return state.colorLutTables[labelmap3DOrColorLUTIndex];
+  }
+  return state.colorLutTables[labelmap3DOrColorLUTIndex.colorLUTIndex];
+}
+
 /**
  * Checks the length of `colorLUT` compared to `segmnetsPerLabelmap` and flags up any warnings.
  * @param  {number[][]} colorLUT

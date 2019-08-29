@@ -25,7 +25,12 @@ import getLabelmapStats from './getLabelmapStats';
 import getLabelmaps3D from './getLabelmaps3D';
 import getLabelmap2D, { getLabelmap2DByImageIdIndex } from './getLabelmap2D';
 import getSegmentOfActiveLabelmapAtEvent from './getSegmentOfActiveLabelmapAtEvent';
-import setColorLUT, { setColorLUTIndexForLabelmap3D } from './setColorLUT';
+import setColorLUT, {
+  getColorLUT,
+  getColorForSegmentIndexColorLUT,
+  setColorLUTIndexForLabelmap3D,
+  setColorForSegmentIndexOfColorLUT,
+} from './colorLUT';
 import getBrushColor from './getBrushColor';
 import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import deleteSegment from './deleteSegment';
@@ -95,6 +100,8 @@ export default {
     brushColor: getBrushColor,
     labelmapBuffers: getLabelmapBuffers,
     activeLabelmapBuffer: getActiveLabelmapBuffer,
+    colorLUT: getColorLUT,
+    colorForSegmentIndexColorLUT: getColorForSegmentIndexColorLUT,
   },
   setters: {
     metadata: setMetadata,
@@ -112,6 +119,7 @@ export default {
     deleteSegment,
     colorLUT: setColorLUT,
     colorLUTIndexForLabelmap3D: setColorLUTIndexForLabelmap3D,
+    colorForSegmentIndexOfColorLUT: setColorForSegmentIndexOfColorLUT,
     activeLabelmapIndex: setActiveLabelmapIndex,
     radius: newRadius => {
       configuration.radius = Math.min(
