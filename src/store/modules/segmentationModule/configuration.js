@@ -3,7 +3,7 @@ const configuration = {
   renderOutline: true,
   renderFill: true,
   shouldRenderInactiveLabelmaps: true,
-  radius: 100,
+  radius: 10,
   minRadius: 1,
   maxRadius: 50,
   segmentsPerLabelmap: 65535, // Max is 65535 due to using 16-bit Unsigned ints.
