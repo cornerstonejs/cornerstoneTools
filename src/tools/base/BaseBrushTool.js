@@ -1,8 +1,6 @@
 import BaseTool from './BaseTool.js';
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
-import { getToolState } from '../../stateManagement/toolState.js';
-import { globalImageIdSpecificToolStateManager } from '../../stateManagement/imageIdSpecificStateManager.js';
 import isToolActive from './../../store/isToolActive.js';
 import { getModule } from './../../store/index.js';
 
@@ -343,29 +341,6 @@ class BaseBrushTool extends BaseTool {
   _isCtrlDown(eventData) {
     return (eventData.event && eventData.event.ctrlKey) || eventData.ctrlKey;
   }
-}
-
-function _isSegmentationVisibleForElement(
-  element,
-  segmentationIndex,
-  toolData
-) {
-  const enabledElement = external.cornerstone.getEnabledElement(element);
-  const visibleSegmentationsForElement = getters.visibleSegmentationsForElement(
-    enabledElement.uuid
-  );
-
-  return (
-    // Global alpha for active segmentation
-    state.alpha > 0.001 &&
-    // Master isVisible toggle per seg + element
-    // TODO: If false, should we check the secondary alpha that's applied to segmentions that aren't visible?
-    visibleSegmentationsForElement[segmentationIndex] === true &&
-    // Does not have alpha, or alpha is > 1 (0 to 255)
-    (toolData[segmentationIndex] === undefined ||
-      toolData[segmentationIndex].alpha === undefined ||
-      toolData[segmentationIndex].alpha > 0.001)
-  );
 }
 
 export default BaseBrushTool;

@@ -18,7 +18,7 @@ export default function(evt) {
     activeLabelmapIndex,
     labelmaps3D,
     currentImageIdIndex,
-  } = brushModule.getters.labelmaps3D(element);
+  } = getters.labelmaps3D(element);
 
   if (!labelmaps3D) {
     return;
