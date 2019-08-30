@@ -6,7 +6,9 @@ import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
-import calculateLongestAndShortestDiameters from './utils/calculateLongestAndShortestDiameters.js';
+import triggerEvent from '../../../util/triggerEvent.js';
+import getActiveTool from '../../../util/getActiveTool';
+import BaseAnnotationTool from '../../base/BaseAnnotationTool';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
@@ -36,48 +38,52 @@ export default function(evt, interactionType) {
     this.name,
     measurementData,
     end,
-    this.options,
-    interactionType,
-    () => {
-      const { handles, longestDiameter, shortestDiameter } = measurementData;
-      const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
-      const longestDiameterSize = parseFloat(longestDiameter) || 0;
-      const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-      const isTooSmall = longestDiameterSize < 1 || shortestDiameterSize < 1;
-      const isTooFast = new Date().getTime() - timestamp < 150;
+    {
+      doneMovingCallback: () => {
+        const { handles, longestDiameter, shortestDiameter } = measurementData;
+        const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
+        const longestDiameterSize = parseFloat(longestDiameter) || 0;
+        const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
+        const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+        const isTooFast = new Date().getTime() - timestamp < 150;
 
-      if (hasHandlesOutside || isTooSmall || isTooFast) {
-        // Delete the measurement
-        measurementData.cancelled = true;
-        removeToolState(element, this.name, measurementData);
-      } else {
-        // Set lesionMeasurementData Session
-        config.getMeasurementLocationCallback(
+        if (hasHandlesOutside || isTooSmal || isTooFast) {
+          // Delete the measurement
+          measurementData.cancelled = true;
+          removeToolState(element, this.name, measurementData);
+        } else {
+          // Set lesionMeasurementData Session
+          config.getMeasurementLocationCallback(
+            measurementData,
+            eventData,
+            doneCallback
+          );
+        }
+
+        // Perpendicular line is not connected to long-line
+        perpendicularStart.locked = false;
+
+        measurementData.invalidated = true;
+
+        external.cornerstone.updateImage(element);
+
+        const activeTool = getActiveTool(element, buttons, interactionType);
+
+        if (activeTool instanceof BaseAnnotationTool) {
+          activeTool.updateCachedStats(image, element, measurementData);
+        }
+
+        const modifiedEventData = {
+          toolType: this.name,
+          element,
           measurementData,
-          eventData,
-          doneCallback
-        );
-      }
+        };
 
-      // Perpendicular line is not connected to long-line
-      perpendicularStart.locked = false;
-
-      external.cornerstone.updateImage(element);
-
-      const modifiedEventData = {
-        toolType: this.name,
-        element,
-        measurementData,
-      };
-
-      calculateLongestAndShortestDiameters(eventData, measurementData);
-
-      external.cornerstone.triggerEvent(
-        element,
-        EVENTS.MEASUREMENT_MODIFIED,
-        modifiedEventData
-      );
-    }
+        triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
+        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
+      },
+    },
+    interactionType
   );
 }
 
