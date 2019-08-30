@@ -161,13 +161,13 @@ function formatArgs(args) {
     return;
   }
 
-  var c = 'color: ' + this.color;
+  let c = 'color: ' + this.color;
   args.splice(1, 0, c, 'color: inherit'); // The final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
   // figure out the correct index to insert the CSS into
 
-  var index = 0;
-  var lastC = 0;
+  let index = 0;
+  let lastC = 0;
   args[0].replace(/%[a-zA-Z%]/g, function(match) {
     if (match === '%%') {
       return;
@@ -220,11 +220,13 @@ function save(namespaces) {
  */
 
 function load() {
-  var r;
+  let r;
 
   try {
     r = exports.storage.getItem('debug');
-  } catch (error) {} // Swallow
+  } catch (error) {
+    console.warn(error);
+  } // Swallow
   // XXX (@Qix-) should we be logging these?
   // If debug isn't set in LS, and we're in Electron, try to load $DEBUG
 
@@ -257,7 +259,7 @@ function localstorage() {
 }
 
 module.exports = require('./common')(exports);
-var formatters = module.exports.formatters;
+let formatters = module.exports.formatters;
 /**
  * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
  */
