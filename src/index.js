@@ -295,6 +295,7 @@ const cornerstoneTools = {
   enableLogger,
   disableLogger,
   importInternal,
+  import: importInternal,
   register,
   registerSome,
   wwwcSynchronizer,
