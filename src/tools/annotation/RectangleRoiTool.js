@@ -43,6 +43,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true
+        showDefaultContent: true,
+        addToTextBoxContent: '',
       },
       svgCursor: rectangleRoiCursor,
     };
@@ -513,8 +515,12 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
-  otherLines.forEach(x => textLines.push(x));
+  if (options.showDefaultContent) {
+    textLines.push(_formatArea(area, hasPixelSpacing));
+    otherLines.forEach(x => textLines.push(x));
+  }
+
+  if (options.addToTextBoxContent) textLines.push(options.addToTextBoxContent);
 
   return textLines;
 }

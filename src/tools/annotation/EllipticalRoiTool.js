@@ -47,6 +47,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
+        showDefaultContent: true,
+        addToTextBoxContent: '',
       },
       svgCursor: ellipticalRoiCursor,
     };
@@ -387,8 +389,12 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
-  otherLines.forEach(x => textLines.push(x));
+  if (options.showDefaultContent) {
+    textLines.push(_formatArea(area, hasPixelSpacing));
+    otherLines.forEach(x => textLines.push(x));
+  }
+
+  if (options.addToTextBoxContent) textLines.push(options.addToTextBoxContent);
 
   return textLines;
 }

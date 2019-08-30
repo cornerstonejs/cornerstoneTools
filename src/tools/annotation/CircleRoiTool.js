@@ -41,6 +41,10 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        showDefaultContent: true,
+        addToTextBoxContent: '',
+      },
       svgCursor: circleRoiCursor,
     };
 
@@ -384,8 +388,12 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
-  otherLines.forEach(x => textLines.push(x));
+  if (options.showDefaultContent) {
+    textLines.push(_formatArea(area, hasPixelSpacing));
+    otherLines.forEach(x => textLines.push(x));
+  }
+
+  if (options.addToTextBoxContent) textLines.push(options.addToTextBoxContent);
 
   return textLines;
 }

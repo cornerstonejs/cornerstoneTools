@@ -307,6 +307,16 @@
       "contributions": [
         "doc"
       ]
+    },
+    {
+      "login": "ejkim1996",
+      "name": "EJ (Eui Joon) Kim",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/16628240?v=4",
+      "profile": "https://github.com/ejkim1996",
+      "contributions": [
+        "code",
+        "tool"
+      ]
     }
   ],
   "contributorsPerLine": 7
