@@ -83,7 +83,7 @@
     "prettier": "1.18.x",
     "semantic-release": "^15.13.24",
     "shx": "^0.3.2",
-    "uglifyjs-webpack-plugin": "1.2.5",
+    "terser-webpack-plugin": "^1.4.1",
     "webpack": "^4.35.2",
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2"
