@@ -128,8 +128,8 @@
   },
   "browserslist": [
     "> 1%",
-    "not dead",
     "IE 11",
+    "not dead",
     "not IE < 11",
     "not op_mini all"
   ]
