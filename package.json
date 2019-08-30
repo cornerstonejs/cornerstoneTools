@@ -3,7 +3,6 @@
   "version": "3.0.1",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
-  "module": "./dist/cornerstoneTools.js",
   "keywords": [
     "DICOM",
     "medical",
@@ -128,9 +127,10 @@
     }
   },
   "browserslist": [
-    ">0.2%",
+    "> 1%",
     "not dead",
-    "not ie <= 11",
+    "IE 11",
+    "not IE < 11",
     "not op_mini all"
   ]
 }
