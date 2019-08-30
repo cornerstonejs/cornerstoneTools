@@ -276,4 +276,4 @@ formatters.j = function(v) {
   }
 };
 
-export default debugLib;
+export default setupDebug;
