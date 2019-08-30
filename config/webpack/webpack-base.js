@@ -43,9 +43,7 @@ module.exports = {
       },
       {
         test: /\.m?js$/,
-        // Debug's `main` entry is `src/index.js` and does not share our browser target
-        // This allows us to transpile it to our target.
-        exclude: excludeNodeModulesExcept['debug'],
+        exclude: /(node_modules)/,
         use: {
           loader: 'babel-loader',
           options: {
@@ -57,22 +55,3 @@ module.exports = {
   },
   plugins: [bannerPlugin()],
 };
-
-function excludeNodeModulesExcept(modules) {
-  var pathSep = path.sep;
-  if (pathSep == '\\')
-    // must be quoted for use in a regexp:
-    pathSep = '\\\\';
-  var moduleRegExps = modules.map(function(modName) {
-    return new RegExp('node_modules' + pathSep + modName);
-  });
-
-  return function(modulePath) {
-    if (/node_modules/.test(modulePath)) {
-      for (var i = 0; i < moduleRegExps.length; i++)
-        if (moduleRegExps[i].test(modulePath)) return false;
-      return true;
-    }
-    return false;
-  };
-}
