@@ -45,69 +45,26 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
 
   const ctx = getNewContext(canvasElement);
 
-  // Scan through each row.
-  for (let y = 0; y < rows; y++) {
-    // Start at the first pixel, and traverse until you hit a pixel of a different segment.
-    let segmentIndex = pixelData[y * rows];
-    let start = { x: 0, y };
+  // Image data initialized with all transparent black.
+  const imageData = new ImageData(cols, rows);
+  const data = imageData.data;
 
-    // Starts from 1 as checking the next element, up to the last element of the array.
-    for (let x = 1; x < cols; x++) {
-      const newSegmentIndex = pixelData[y * cols + x];
+  for (let i = 0; i < pixelData.length; i++) {
+    const segmentIndex = pixelData[i];
 
-      if (newSegmentIndex !== segmentIndex) {
-        // Hit new segment, save rect.
-        const visible = !segmentsHidden[segmentIndex];
+    if (segmentIndex !== 0 && !segmentsHidden[segmentIndex]) {
+      const color = colorLutTable[pixelData[i]];
 
-        if (segmentIndex !== 0 && visible) {
-          // Have start and end, putImageData.
-          const length = x - start.x;
-          const imageData = new ImageData(length, 1);
-          const data = imageData.data;
-
-          const color = colorLutTable[segmentIndex];
-
-          // Iterate through every pixel
-          for (let i = 0; i < data.length; i += 4) {
-            // Modify pixel data
-            data[i + 0] = color[0]; // R value
-            data[i + 1] = color[1]; // G value
-            data[i + 2] = color[2]; // B value
-            data[i + 3] = color[3]; // A value
-          }
-
-          ctx.putImageData(imageData, start.x, start.y);
-        }
-
-        // Start scanning rect of index newSegmentIndex.
-        start = { x, y };
-        segmentIndex = newSegmentIndex;
-      }
-    }
-
-    // Close off final rect (its fine if start and end are the same value).
-    const visible = !segmentsHidden[segmentIndex];
-
-    if (segmentIndex !== 0 && visible) {
-      // Have start and end, putImageData.
-      const length = cols - start.x;
-      const imageData = new ImageData(length, 1);
-      const data = imageData.data;
-
-      const color = colorLutTable[segmentIndex];
-
-      // Iterate through every pixel
-      for (let i = 0; i < data.length; i += 4) {
-        // Modify pixel data
-        data[i + 0] = color[0]; // R value
-        data[i + 1] = color[1]; // G value
-        data[i + 2] = color[2]; // B value
-        data[i + 3] = color[3]; // A value
-      }
-
-      ctx.putImageData(imageData, start.x, start.y);
+      // Modify ImageData.
+      data[4 * i] = color[0]; // R value
+      data[4 * i + 1] = color[1]; // G value
+      data[4 * i + 2] = color[2]; // B value
+      data[4 * i + 3] = color[3]; // A value
     }
   }
+
+  // Put this image data onto the labelmapCanvas.
+  ctx.putImageData(imageData, 0, 0);
 
   return canvasElement;
 }
