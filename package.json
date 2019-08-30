@@ -22,7 +22,7 @@
   "scripts": {
     "build": "npm run test && npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
-    "build:prod": "webpack --progress --config ./config/webpack/webpack-prod",
+    "build:prod": "webpack --config ./config/webpack/webpack-prod",
     "commit": "git-cz",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
