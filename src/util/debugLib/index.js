@@ -1,20 +1,24 @@
-'use strict';
-
 /* eslint-env browser */
+
+import setup from './common.js';
 
 /**
  * This is the web browser implementation of `debug()`.
  */
-exports.formatArgs = formatArgs;
-exports.save = save;
-exports.load = load;
-exports.useColors = useColors;
-exports.storage = localstorage();
+const storage = localstorage();
+
+let debugLib = {
+  formatArgs,
+  save,
+  load,
+  useColors,
+  storage,
+};
 /**
  * Colors.
  */
 
-exports.colors = [
+debugLib.colors = [
   '#0000CC',
   '#0000FF',
   '#0033CC',
@@ -155,7 +159,7 @@ function formatArgs(args) {
     args[0] +
     (this.useColors ? '%c ' : ' ') +
     '+' +
-    module.exports.humanize(this.diff);
+    debugLib.humanize(this.diff);
 
   if (!this.useColors) {
     return;
@@ -192,7 +196,7 @@ function formatArgs(args) {
  * @api public
  */
 
-exports.log = console.debug || console.log || function() {};
+debugLib.log = console.debug || console.log || function() {};
 /**
  * Save `namespaces`.
  *
@@ -203,9 +207,9 @@ exports.log = console.debug || console.log || function() {};
 function save(namespaces) {
   try {
     if (namespaces) {
-      exports.storage.setItem('debug', namespaces);
+      debugLib.storage.setItem('debug', namespaces);
     } else {
-      exports.storage.removeItem('debug');
+      debugLib.storage.removeItem('debug');
     }
   } catch (error) {
     // Swallow
@@ -223,7 +227,7 @@ function load() {
   let r;
 
   try {
-    r = exports.storage.getItem('debug');
+    r = debugLib.storage.getItem('debug');
   } catch (error) {
     console.warn(error);
   } // Swallow
@@ -258,8 +262,8 @@ function localstorage() {
   }
 }
 
-module.exports = require('./common')(exports);
-let formatters = module.exports.formatters;
+const setupDebug = setup(debugLib);
+let formatters = setupDebug.formatters;
 /**
  * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
  */
@@ -271,3 +275,5 @@ formatters.j = function(v) {
     return '[UnexpectedJSONParseError]: ' + error.message;
   }
 };
+
+export default debugLib;
