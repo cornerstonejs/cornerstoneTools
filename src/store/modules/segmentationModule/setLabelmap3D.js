@@ -56,6 +56,9 @@ function setLabelmap3DForElement(
  * @param  {Object[]} metadata = [] Any metadata about the segments.
  * @param  {number} numberOfFrames The number of frames, required to set up the
  *                                 relevant labelmap2D views.
+ * @param  {number[][]} [segmentsOnLabelmapArray] An array of array of segments on each imageIdIndex.
+ *                       If not present, is calculated.
+ * @param  {colorLUTIndex} [colorLUTIndex = 0] The index of the colorLUT to use to render the segmentation.
  * @returns {null}
  */
 function setLabelmap3DByFirstImageId(
@@ -64,13 +67,14 @@ function setLabelmap3DByFirstImageId(
   labelmapIndex,
   metadata = [],
   numberOfFrames,
+  segmentsOnLabelmapArray,
   colorLUTIndex = 0
 ) {
   let brushStackState = state.series[firstImageId];
 
   if (!brushStackState) {
     state.series[firstImageId] = {
-      labelmapIndex,
+      activeLabelmapIndex: labelmapIndex,
       labelmaps3D: [],
     };
 
@@ -87,8 +91,7 @@ function setLabelmap3DByFirstImageId(
   };
 
   const labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
-
-  const slicelengthInBytes = buffer / numberOfFrames;
+  const slicelengthInBytes = buffer.byteLength / numberOfFrames;
   const sliceLengthInUint16 = slicelengthInBytes / 2; // SliceLength in Uint16.
 
   for (let i = 0; i < numberOfFrames; i++) {
@@ -98,12 +101,14 @@ function setLabelmap3DByFirstImageId(
       sliceLengthInUint16
     );
 
-    const segmentsOnLabelmap = getSegmentsOnPixelData(pixelData);
+    const segmentsOnLabelmap = segmentsOnLabelmapArray
+      ? segmentsOnLabelmapArray[i]
+      : getSegmentsOnPixelData(pixelData);
 
-    if (segmentsOnLabelmap.some(segment => !segment)) {
+    if (segmentsOnLabelmap && segmentsOnLabelmap.some(segment => segment)) {
       labelmaps2D[i] = {
         pixelData,
-        segmentsOnLabelmap: [],
+        segmentsOnLabelmap,
       };
     }
   }

@@ -417,4 +417,6 @@ export {
   version,
 };
 
+export { default as import } from './importInternal.js';
+
 export default cornerstoneTools;

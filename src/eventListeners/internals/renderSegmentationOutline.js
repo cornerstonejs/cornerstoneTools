@@ -1,6 +1,7 @@
 import { getModule } from '../../store/index.js';
 import external from '../../externalModules.js';
 import { getNewContext, draw, drawLines } from '../../drawing/index.js';
+import { disableLogger } from '../../index.js';
 
 const { state, configuration } = getModule('segmentation');
 
