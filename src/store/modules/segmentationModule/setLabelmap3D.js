@@ -14,6 +14,9 @@ import { triggerLabelmapModifiedEvent } from '../../../util/segmentation';
  * @param  {ArrayBuffer} buffer
  * @param  {number} labelmapIndex The index to store the labelmap under.
  * @param  {Object[]} metadata = [] Any metadata about the segments.
+ * @param  {number[][]} [segmentsOnLabelmapArray] An array of array of segments on each imageIdIndex.
+ *                       If not present, is calculated.
+ * @param  {colorLUTIndex} [colorLUTIndex = 0] The index of the colorLUT to use to render the segmentation.
  * @returns {null}
  */
 function setLabelmap3DForElement(
@@ -21,6 +24,7 @@ function setLabelmap3DForElement(
   buffer,
   labelmapIndex,
   metadata = [],
+  segmentsOnLabelmapArray,
   colorLUTIndex = 0
 ) {
   const element = getElement(elementOrEnabledElementUID);
@@ -39,6 +43,7 @@ function setLabelmap3DForElement(
     labelmapIndex,
     metadata,
     numberOfFrames,
+    segmentsOnLabelmapArray,
     colorLUTIndex
   );
 
