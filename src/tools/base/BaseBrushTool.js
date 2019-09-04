@@ -3,6 +3,7 @@ import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import isToolActive from './../../store/isToolActive.js';
 import { getModule } from './../../store/index.js';
+import { getDiffBetweenPixelData } from '../../util/segmentation';
 
 const { configuration, getters, setters } = getModule('segmentation');
 
@@ -106,7 +107,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * Initialise painting with BaseBrushTool.
    *
-   * @abstract
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -132,25 +133,24 @@ class BaseBrushTool extends BaseTool {
       activeLabelmapIndex,
       shouldErase,
     };
+
+    if (configuration.storeHistory) {
+      const previousPixeldata = labelmap2D.pixelData.slice();
+
+      this.paintEventData.previousPixeldata = previousPixeldata;
+    }
   }
 
   /**
    * End painting with BaseBrushTool.
    *
-   * @abstract
+   * @virtual
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
    */
   _endPainting(evt) {
-    const {
-      labelmap3D,
-      currentImageIdIndex,
-      activeLabelmapIndex,
-      shouldErase,
-    } = this.paintEventData;
-
-    const labelmap2D = labelmap3D.labelmaps2D[currentImageIdIndex];
+    const { labelmap2D, currentImageIdIndex } = this.paintEventData;
 
     // Grab the labels on the slice.
     const segmentSet = new Set(labelmap2D.pixelData);
@@ -171,13 +171,15 @@ class BaseBrushTool extends BaseTool {
 
     labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
 
-    // If labelmap2D now empty, delete it.
-    if (
-      shouldErase &&
-      labelmap2D.segmentsOnLabelmap.length === 1 &&
-      labelmap2D.segmentsOnLabelmap[0] === 0
-    ) {
-      delete labelmap3D.labelmaps2D[currentImageIdIndex];
+    if (configuration.storeHistory) {
+      const { previousPixeldata } = this.paintEventData;
+      const newPixelData = labelmap2D.pixelData;
+      const operation = {
+        imageIdIndex: currentImageIdIndex,
+        diff: getDiffBetweenPixelData(previousPixeldata, newPixelData),
+      };
+
+      setters.pushState(this.element, [operation]);
     }
   }
 

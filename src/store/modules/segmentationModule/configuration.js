@@ -12,6 +12,7 @@ const configuration = {
   outlineAlpha: 0.7,
   outlineAlphaInactive: 0.35,
   outlineWidth: 3,
+  storeHistory: true,
 };
 
 export default configuration;

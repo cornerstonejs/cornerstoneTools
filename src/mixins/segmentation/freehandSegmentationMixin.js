@@ -2,6 +2,7 @@ import external from '../../externalModules.js';
 import { getModule } from '../../store';
 import { getLogger } from '../../util/logger.js';
 import { draw, drawJoinedLines, getNewContext } from '../../drawing';
+import { getDiffBetweenPixelData } from '../../util/segmentation';
 
 const logger = getLogger('tools:ScissorsTool');
 
@@ -98,9 +99,12 @@ function _applyStrategy(evt) {
   const points = this.handles.points;
   const { element } = evt.detail;
 
-  const { labelmap2D, labelmap3D } = getters.labelmap2D(element);
+  const { labelmap2D, labelmap3D, currentImageIdIndex } = getters.labelmap2D(
+    element
+  );
 
   const pixelData = labelmap2D.pixelData;
+  const previousPixeldata = pixelData.slice();
 
   const operationData = {
     points,
@@ -110,6 +114,13 @@ function _applyStrategy(evt) {
   };
 
   this.applyActiveStrategy(evt, operationData);
+
+  const operation = {
+    imageIdIndex: currentImageIdIndex,
+    diff: getDiffBetweenPixelData(previousPixeldata, pixelData),
+  };
+
+  setters.pushState(this.element, [operation]);
 
   // Invalidate the brush tool data so it is redrawn
   setters.updateSegmentsOnLabelmap2D(labelmap2D);
