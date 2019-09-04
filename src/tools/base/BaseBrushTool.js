@@ -135,9 +135,9 @@ class BaseBrushTool extends BaseTool {
     };
 
     if (configuration.storeHistory) {
-      const previousPixeldata = labelmap2D.pixelData.slice();
+      const previousPixelData = labelmap2D.pixelData.slice();
 
-      this.paintEventData.previousPixeldata = previousPixeldata;
+      this.paintEventData.previousPixelData = previousPixelData;
     }
   }
 
@@ -172,11 +172,11 @@ class BaseBrushTool extends BaseTool {
     labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
 
     if (configuration.storeHistory) {
-      const { previousPixeldata } = this.paintEventData;
+      const { previousPixelData } = this.paintEventData;
       const newPixelData = labelmap2D.pixelData;
       const operation = {
         imageIdIndex: currentImageIdIndex,
-        diff: getDiffBetweenPixelData(previousPixeldata, newPixelData),
+        diff: getDiffBetweenPixelData(previousPixelData, newPixelData),
       };
 
       setters.pushState(this.element, [operation]);
