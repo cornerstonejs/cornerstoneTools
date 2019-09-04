@@ -91,7 +91,7 @@ const shouldErase = false;
 // Imported from src/util/segmentation
 drawBrushPixels(
   pointerArray,
-  labelmap2D,
+  labelmap2D.pixelData,
   labelmap3D.activeSegmentIndex,
   columns,
   shouldErase

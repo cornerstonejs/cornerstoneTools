@@ -11,6 +11,7 @@ import getCircle from './getCircle';
 import getPixelPathBetweenPixels from './getPixelPathBetweenPixels';
 import isSameSegment from './isSameSegment';
 import triggerLabelmapModifiedEvent from './triggerLabelmapModifiedEvent';
+import getDiffBetweenPixelData from './getDiffBetweenPixelData';
 
 export {
   drawBrushPixels,
@@ -28,4 +29,5 @@ export {
   getPixelPathBetweenPixels,
   isSameSegment,
   triggerLabelmapModifiedEvent,
+  getDiffBetweenPixelData,
 };

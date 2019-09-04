@@ -8,10 +8,11 @@ import {
 } from './../../util/segmentation';
 import { getToolState } from '../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import { getDiffBetweenPixelData } from '../../util/segmentation';
 
 const logger = getLogger('tools:SphericalBrushTool');
 
-const { getters, configuration } = getModule('segmentation');
+const { getters, setters, configuration } = getModule('segmentation');
 
 /**
  * @public
@@ -34,38 +35,42 @@ export default class SphericalBrushTool extends BrushTool {
   }
 
   /**
-   * Paints the data to the labelmap.
+   * Initialise painting with BaseBrushTool.
    *
-   * @private
-   * @param  {Object} evt The data object associated with the event.
+   * @abstract
+   * @event
+   * @param {Object} evt - The event.
    * @returns {void}
    */
-  _paint(evt) {
-    const { cornerstone } = external;
+  _startPainting(evt) {
     const eventData = evt.detail;
-    const element = eventData.element;
-    const image = eventData.image;
-    const { rows, columns } = image;
-    const { x, y } = eventData.currentPoints.image;
+    const { element, image } = eventData;
+    const { cornerstone } = external;
     const radius = configuration.radius;
-
+    const { rows, columns } = image;
     const pixelSpacing = Math.max(
       image.rowPixelSpacing,
       image.columnPixelSpacing
     );
 
-    if (x < 0 || x > columns || y < 0 || y > rows) {
-      return;
-    }
+    const stackState = getToolState(element, 'stack');
+    const stackData = stackState.data[0];
+    const { imageIds } = stackData;
+
+    const {
+      labelmap2D,
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+    } = getters.labelmap2D(element);
+
+    const shouldErase =
+      this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
 
     const imagePlaneOfCurrentImage = cornerstone.metaData.get(
       'imagePlaneModule',
       image.imageId
     );
-
-    const stackState = getToolState(element, 'stack');
-    const stackData = stackState.data[0];
-    const { imageIds, currentImageIdIndex } = stackData;
 
     let imagesInRange;
 
@@ -93,11 +98,54 @@ export default class SphericalBrushTool extends BrushTool {
       ];
     }
 
-    this._imagesInRange = imagesInRange;
+    this.paintEventData = {
+      labelmap2D,
+      labelmap3D,
+      currentImageIdIndex,
+      activeLabelmapIndex,
+      shouldErase,
+      imagesInRange,
+    };
 
-    const { labelmap3D } = this.paintEventData;
-    const shouldErase =
-      this._isCtrlDown(eventData) || this.configuration.alwaysEraseOnClick;
+    if (configuration.storeHistory) {
+      const previousPixeldataForImagesInRange = [];
+
+      for (let i = 0; i < imagesInRange.length; i++) {
+        const { imageIdIndex } = imagesInRange[i];
+        const labelmap2DForImageIdIndex = getters.labelmap2DByImageIdIndex(
+          labelmap3D,
+          imageIdIndex,
+          rows,
+          columns
+        );
+
+        const previousPixeldata = labelmap2DForImageIdIndex.pixelData.slice();
+        previousPixeldataForImagesInRange.push(previousPixeldata);
+      }
+
+      this.paintEventData.previousPixeldataForImagesInRange = previousPixeldataForImagesInRange;
+    }
+  }
+
+  /**
+   * Paints the data to the labelmap.
+   *
+   * @private
+   * @param  {Object} evt The data object associated with the event.
+   * @returns {void}
+   */
+  _paint(evt) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const image = eventData.image;
+    const { rows, columns } = image;
+    const { x, y } = eventData.currentPoints.image;
+
+    if (x < 0 || x > columns || y < 0 || y > rows) {
+      return;
+    }
+
+    const { labelmap3D, imagesInRange, shouldErase } = this.paintEventData;
 
     for (let i = 0; i < imagesInRange.length; i++) {
       const { imageIdIndex, radiusOnImage } = imagesInRange[i];
@@ -114,7 +162,7 @@ export default class SphericalBrushTool extends BrushTool {
       // Draw / Erase the active color.
       drawBrushPixels(
         pointerArray,
-        labelmap2DForImageIdIndex,
+        labelmap2DForImageIdIndex.pixelData,
         labelmap3D.activeSegmentIndex,
         columns,
         shouldErase
@@ -240,9 +288,8 @@ export default class SphericalBrushTool extends BrushTool {
   }
 
   _endPainting(evt) {
-    const { labelmap3D, shouldErase } = this.paintEventData;
-
-    const imagesInRange = this._imagesInRange;
+    const { labelmap3D, imagesInRange } = this.paintEventData;
+    const operations = [];
 
     for (let i = 0; i < imagesInRange.length; i++) {
       const { imageIdIndex } = imagesInRange[i];
@@ -267,14 +314,19 @@ export default class SphericalBrushTool extends BrushTool {
 
       labelmap2D.segmentsOnLabelmap = segmentsOnLabelmap;
 
-      // If labelmap2D now empty, delete it.
-      if (
-        shouldErase &&
-        labelmap2D.segmentsOnLabelmap.length === 1 &&
-        labelmap2D.segmentsOnLabelmap[0] === 0
-      ) {
-        delete labelmap3D.labelmaps2D[imageIdIndex];
+      if (configuration.storeHistory) {
+        const { previousPixeldataForImagesInRange } = this.paintEventData;
+
+        const previousPixeldata = previousPixeldataForImagesInRange[i];
+        const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
+        const newPixelData = labelmap2D.pixelData;
+        operations.push({
+          imageIdIndex,
+          diff: getDiffBetweenPixelData(previousPixeldata, newPixelData),
+        });
       }
     }
+
+    setters.pushState(this.element, operations);
   }
 }

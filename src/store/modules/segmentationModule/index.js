@@ -22,7 +22,7 @@ import {
   setLabelmap3DForElement,
 } from './setLabelmap3D.js';
 import getLabelmapStats from './getLabelmapStats';
-import getLabelmaps3D from './getLabelmaps3D';
+import getLabelmaps3D, { getLabelmap3D } from './getLabelmaps3D';
 import getLabelmap2D, { getLabelmap2DByImageIdIndex } from './getLabelmap2D';
 import getSegmentOfActiveLabelmapAtEvent from './getSegmentOfActiveLabelmapAtEvent';
 import setColorLUT, {
@@ -37,6 +37,7 @@ import deleteSegment from './deleteSegment';
 
 import state from './state';
 import configuration from './configuration';
+import { pushState, undo, redo } from './history';
 
 /**
  * A map of `firstImageId` to associated `BrushStackState`, where
@@ -65,6 +66,9 @@ import configuration from './configuration';
  * @property {number} colorLUTIndex The index of the color LUT to use when displaying this `Labelmap3D`.
  * @property {boolean[]} segmentsHidden The visibility of segments on this labelmap.
  * If an element is `true`, the element is hidden. If it `false|undefined`, the segment is visible.
+ * @property {Object[]} undo A history of operations that can be reversed.
+ * @property {Object[]} redo A history of reverted operations, so that an undo can be reversed.
+ *                           Is cleared when changes are made to the labelmap.
  */
 
 /**
@@ -90,6 +94,7 @@ export default {
   onRegisterCallback,
   getters: {
     metadata: getMetadata,
+    labelmap3D: getLabelmap3D,
     labelmaps3D: getLabelmaps3D,
     activeLabelmapIndex: getActiveLabelmapIndex,
     activeSegmentIndex: getActiveSegmentIndex,
@@ -128,5 +133,8 @@ export default {
         configuration.maxRadius
       );
     },
+    pushState,
+    undo,
+    redo,
   },
 };

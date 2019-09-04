@@ -38,3 +38,24 @@ export default function getLabelmaps3D(elementOrEnabledElementUID) {
     currentImageIdIndex: stackData.currentImageIdIndex,
   };
 }
+
+/**
+ * Returns a single `Labelmap3D` object associated with the series displayed
+ * in the element.
+ *
+ * @param  {HTMLElement|string} elementOrEnabledElementUID   The cornerstone enabled
+ *                                                    element or its UUID.
+ * @param  {number} [labelmapIndex] The index of the `Labelmap3D` to retrieve. Defaults to
+ *                                  the `activeLabelmapIndex`.
+ * @returns {Object}              A `Labelmap3D` object.
+ */
+export function getLabelmap3D(elementOrEnabledElementUID, labelmapIndex) {
+  const { labelmaps3D, activeLabelmapIndex } = getLabelmaps3D(
+    elementOrEnabledElementUID
+  );
+
+  labelmapIndex =
+    labelmapIndex !== undefined ? labelmapIndex : activeLabelmapIndex;
+
+  return labelmaps3D[labelmapIndex];
+}

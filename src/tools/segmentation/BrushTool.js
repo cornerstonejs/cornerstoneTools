@@ -10,7 +10,7 @@ import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BrushTool');
 
-const segmentationModule = getModule('segmentation');
+const { getters, configuration, state } = getModule('segmentation');
 
 /**
  * @public
@@ -65,10 +65,10 @@ export default class BrushTool extends BaseBrushTool {
     }
 
     // Draw the hover overlay on top of the pixel data
-    const radius = segmentationModule.configuration.radius;
+    const radius = configuration.radius;
     const context = eventData.canvasContext;
     const element = eventData.element;
-    const color = segmentationModule.getters.brushColor(element, this._drawing);
+    const color = getters.brushColor(element, this._drawing);
 
     context.setTransform(1, 0, 0, 1, 0, 0);
 
@@ -108,7 +108,7 @@ export default class BrushTool extends BaseBrushTool {
       return;
     }
 
-    const radius = segmentationModule.configuration.radius;
+    const radius = configuration.radius;
     const pointerArray = getCircle(radius, rows, columns, x, y);
 
     const { labelmap2D, labelmap3D, shouldErase } = this.paintEventData;
@@ -116,7 +116,7 @@ export default class BrushTool extends BaseBrushTool {
     // Draw / Erase the active color.
     drawBrushPixels(
       pointerArray,
-      labelmap2D,
+      labelmap2D.pixelData,
       labelmap3D.activeSegmentIndex,
       columns,
       shouldErase
