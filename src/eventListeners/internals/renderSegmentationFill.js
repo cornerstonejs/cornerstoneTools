@@ -98,7 +98,7 @@ export function renderFill(evt, labelmapCanvas, isActiveLabelMap) {
     }
   );
 
-  const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
+  let cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
     canvasTopLeft,
     canvasTopRight
   );

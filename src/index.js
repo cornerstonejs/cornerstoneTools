@@ -225,6 +225,7 @@ const cornerstoneTools = {
   // ~ Segmentation Tools
   BrushTool,
   SphericalBrushTool,
+  RectangleScissorsTool,
   FreehandScissorsTool,
   CircleScissorsTool,
   CorrectionScissorsTool,
