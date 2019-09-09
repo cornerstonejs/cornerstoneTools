@@ -109,7 +109,17 @@ This library has `peerDependencies` listings for:
   - `cornerstone-web-image-loader` - JPEG/PNG images
   - `cornerstone-wado-image-loader` - DICOM images; also parses tags for tool use
 
-If you need to support the `IE11` Browser, you will need to provide polyfills as needed.
+If you need to support the `IE11` Browser, you will need to provide polyfills as needed. Our BrowserList target:
+
+```json
+  "browserslist": [
+    "> 1%",
+    "IE 11",
+    "not dead",
+    "not IE < 11",
+    "not op_mini all"
+  ]
+```
 
 **Setting up and configuring `cornerstone-tools`'s depency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.**
 
@@ -227,7 +237,6 @@ MIT
 <!--
 Links:
 -->
-
 
 <!-- prettier-ignore-start -->
 [build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg

@@ -1,4 +1,4 @@
-import debugLib from 'debug';
+import debugLib from './debugLib/index.js';
 
 const BASE_SCOPE = 'cornerstoneTools';
 const baseLogger = debugLib(BASE_SCOPE);
