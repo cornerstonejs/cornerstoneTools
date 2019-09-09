@@ -1,13 +1,17 @@
 ## Imports {#imports}
 
-Both core and registered functionality can be retrieved by the top-level `import` function, e.g.:
+Helpful internal library methods and utilities can be retrieved by the top-level `importInternal` function, e.g.:
 
 ```js
-const evenMoreHelloWorldMixin = cornerstoneTools.import('mixins/evenMoreHelloWorld');
+const evenMoreHelloWorldMixin = cornerstoneTools.importInternal(
+  'mixins/evenMoreHelloWorld'
+);
 ```
 
-And store modules may be retrieved from the modules object of cornerstoneTools:
+You can add to the list of methods and utilities that can be retrieved by [registering them](#registration).
+
+And store modules may be retrieved with the top-level `getModule` function:
 
 ```js
-const { helloWorldModule } = cornerstoneTools.store.modules;
+const { helloWorldModule } = cornerstoneTools.getModule('helloWorldModule);
 ```

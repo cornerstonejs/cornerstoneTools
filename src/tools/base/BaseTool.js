@@ -1,8 +1,12 @@
 import mixins from './../../mixins/index.js';
 import { getLogger } from '../../util/logger.js';
 import deepmerge from './../../util/deepmerge.js';
+import { setToolCursor } from '../../store/setToolCursor.js';
+import { getModule } from '../../store';
 
 const logger = getLogger('tools:base:BaseTool');
+
+const globalConfigurationModule = getModule('globalConfiguration');
 
 /**
  * @typedef ToolConfiguration
@@ -77,6 +81,15 @@ class BaseTool {
     if (mixins && mixins.length) {
       this._applyMixins(mixins);
     }
+
+    this._cursors = Object.assign({}, this.initialConfiguration.cursors);
+
+    const defaultCursor =
+      this.defaultStrategy && this._cursors[this.activeStrategy];
+
+    if (defaultCursor) {
+      this.svgCursor = defaultCursor;
+    }
   }
 
   //
@@ -144,11 +157,13 @@ class BaseTool {
    * @method applyActiveStrategy
    * @memberof Tools.Base.BaseTool
    *
-   * @param {*} evt The event that triggered the strategies application
+   * @param {Object} evt The event that triggered the strategies application
+   * @param {Object} operationData - An object containing extra data not present in the `evt`,
+   *                                 required to apply the strategy.
    * @returns {*} strategies vary widely; check each specific strategy to find expected return value
    */
-  applyActiveStrategy(evt) {
-    return this.strategies[this.activeStrategy](evt, this.configuration);
+  applyActiveStrategy(evt, operationData) {
+    return this.strategies[this.activeStrategy].call(this, evt, operationData);
   }
 
   /**
@@ -166,14 +181,66 @@ class BaseTool {
 
       if (typeof mixin === 'object') {
         Object.assign(this, mixin);
+
+        if (typeof this.initializeMixin === 'function') {
+          // Run the mixin's initialisation process.
+          this.initializeMixin();
+        }
       } else {
         logger.warn(`${this.name}: mixin ${mixins[i]} does not exist.`);
+      }
+    }
+
+    // Don't keep initialiseMixin from last mixin.
+    if (this.initializeMixin === 'function') {
+      delete this.initializeMixin;
+    }
+  }
+
+  /**
+   * Change the active strategy.
+   *
+   * @public
+   * @method setActiveStrategy
+   * @param  {string} strategy
+   * @returns {null}
+   */
+  setActiveStrategy(strategy) {
+    this.activeStrategy = strategy;
+
+    if (globalConfigurationModule.configuration.showSVGCursors) {
+      this.changeCursor(this.element, strategy);
+    }
+  }
+
+  /**
+   * Function responsible for changing the Cursor, according to the strategy.
+   * @param {HTMLElement} element
+   * @param {string} strategy The strategy to be used on Tool
+   * @public
+   * @returns {void}
+   */
+  changeCursor(element, strategy) {
+    // Necessary to avoid setToolCursor call without elements, which throws an error.
+    if (!element) {
+      return;
+    }
+
+    // If there are cursors set per strategy, change the cursor.
+    const cursor = this._cursors[strategy];
+
+    if (cursor) {
+      this.svgCursor = cursor;
+
+      if (this.mode === 'active') {
+        setToolCursor(element, cursor);
+        // External.cornerstone.updateImage(element);
       }
     }
   }
 
   // ===================================================================
-  // Virtual Methods - Have default behavior but may be overriden.
+  // Virtual Methods - Have default behavior but may be overridden.
   // ===================================================================
 
   //

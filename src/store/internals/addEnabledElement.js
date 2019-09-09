@@ -16,7 +16,7 @@ import {
   setToolEnabledForElement,
   setToolDisabledForElement,
 } from './../setToolMode.js';
-import store from '../index.js';
+import store, { getModule } from '../index.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('internals:addEnabledElement');
@@ -56,15 +56,17 @@ export default function(elementEnabledEvt) {
   imageRenderedEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
 
+  const { configuration } = getModule('globalConfiguration');
+
   // Mouse
-  if (store.modules.globalConfiguration.state.mouseEnabled) {
+  if (configuration.mouseEnabled) {
     mouseEventListeners.enable(enabledElement);
     wheelEventListener.enable(enabledElement);
     mouseToolEventDispatcher.enable(enabledElement);
   }
 
   // Touch
-  if (store.modules.globalConfiguration.state.touchEnabled) {
+  if (configuration.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
   }
@@ -115,7 +117,9 @@ function _initModulesOnElement(enabledElement) {
  * @returns {void}
  */
 function _addGlobalToolsToElement(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 
@@ -135,7 +139,9 @@ function _addGlobalToolsToElement(enabledElement) {
  * @returns {void}
  */
 function _repeatGlobalToolHistory(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 

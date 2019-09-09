@@ -1,6 +1,6 @@
 # Tool Types
 
-In order to make development of new Tools quick, easy and relatively boilerplate-free, all Tools `extend` one of three base classes, which provide the functionality required to integrate seamlessly into the Cornerstone Tools framework.
+In order to make development of new Tools quick, easy and relatively boilerplate-free, all Tools `extend` a base class, which provides the functionality required to integrate seamlessly into the `cornerstoneTools` framework.
 
 Base classes have two types of methods of interest to Tool developers:
 
@@ -14,3 +14,5 @@ Check the [`api` docs](https://tools.cornerstonejs.org/api/) for full documentat
 {% include "./base-annotation-tool.md" %}
 
 {% include "./base-brush-tool.md" %}
+
+{% include "./segmentation-tool.md" %}

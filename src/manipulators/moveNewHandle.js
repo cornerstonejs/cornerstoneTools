@@ -7,6 +7,9 @@ import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('manipulators:moveNewHandle');
 
 const _moveEvents = {
   mouse: [EVENTS.MOUSE_MOVE, EVENTS.MOUSE_DRAG],
@@ -30,10 +33,10 @@ const _moveEndEvents = {
  * @param {*} handle
  * @param {*} [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {function} [options.doneMovingCallback]
  * @param {Boolean}  [options.preventHandleOutsideImage]
- * @param {*} [interactionType=mouse]
- * @returns {undefined}
+ * @param {string} [interactionType=mouse]
+ * @param {function} [doneMovingCallback]
+ * @returns {void}
  */
 export default function(
   evtDetail,
@@ -41,7 +44,8 @@ export default function(
   annotation,
   handle,
   options,
-  interactionType = 'mouse'
+  interactionType = 'mouse',
+  doneMovingCallback
 ) {
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
@@ -84,7 +88,8 @@ export default function(
         moveHandler,
         moveEndHandler,
       },
-      evt
+      evt,
+      doneMovingCallback
     );
   }
 
@@ -152,7 +157,8 @@ function _moveEndHandler(
   options,
   interactionType,
   { moveHandler, moveEndHandler },
-  evt
+  evt,
+  doneMovingCallback
 ) {
   const { element, currentPoints } = evt.detail;
   const page = currentPoints.page;
@@ -186,7 +192,15 @@ function _moveEndHandler(
     handle.active = false;
     external.cornerstone.updateImage(element);
     if (typeof options.doneMovingCallback === 'function') {
+      logger.warn(
+        '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+      );
+
       options.doneMovingCallback();
+    }
+
+    if (typeof doneMovingCallback === 'function') {
+      doneMovingCallback();
     }
 
     return;
@@ -205,7 +219,15 @@ function _moveEndHandler(
   }
 
   if (typeof options.doneMovingCallback === 'function') {
+    logger.warn(
+      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+    );
+
     options.doneMovingCallback();
+  }
+
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
   }
 
   // Update Image

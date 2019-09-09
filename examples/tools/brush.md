@@ -1,8 +1,8 @@
 ---
-layout: stack-tool
+layout: segmentation-tool
 title: Brush Tool
 toolName: Brush
-toolType: brush
+toolType: segmentation
 ---
 
 <h3 class="title is-3">Setup</h3>

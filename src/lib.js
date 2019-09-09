@@ -35,6 +35,18 @@ import {
   fillBox,
   fillTextLines,
 } from './drawing/index.js';
+import { clip, clipToBox } from './util/clip.js';
+import debounce from './util/debounce';
+import deepmerge from './util/deepmerge';
+import getDefault from './util/getDefault';
+import getPixelSpacing from './util/getPixelSpacing';
+import isEmptyObject from './util/isEmptyObject';
+import isObject from './util/isObject';
+import isPointInImage from './util/isPointInImage';
+import isPointInPolygon from './util/isPointInPolygon';
+import throttle from './util/throttle';
+import { wait, waitForEnabledElementImageToLoad } from './util/wait';
+
 import drawTextBox, { textBoxWidth } from './drawing/drawTextBox.js';
 import drawArrow from './drawing/drawArrow.js';
 import drawLink from './drawing/drawLink.js';
@@ -54,6 +66,7 @@ import {
   planePlaneIntersection,
 } from './util/pointProjector.js';
 import lineSegDistance from './util/lineSegDistance.js';
+import { getLogger } from './util/logger';
 
 import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
 import makeUnselectable from './util/makeUnselectable.js';
@@ -65,13 +78,12 @@ import {
   isMobileDevice,
 } from './util/getMaxSimultaneousRequests.js';
 import angleBetweenPoints from './util/angleBetweenPoints.js';
-import getKeyFromKeyCode from './util/getKeyFromKeyCode.js';
 import numbersWithCommas from './util/numbersWithCommas.js';
 import MouseCursor from './tools/cursors/MouseCursor.js';
 
 import ellipseUtils from './util/ellipse/index.js';
 import freehandUtils from './util/freehand/index.js';
-import brushUtils from './util/brush/index.js';
+import * as segmentationUtils from './util/segmentation';
 import zoomUtils from './util/zoom/index.js';
 import triggerEvent from './util/triggerEvent.js';
 import convertToVector3 from './util/convertToVector3.js';
@@ -135,15 +147,28 @@ export const lib = {
   'util/getBrowserInfo': getBrowserInfo,
   'util/isMobileDevice': isMobileDevice,
   'util/angleBetweenPoints': angleBetweenPoints,
-  'util/getKeyFromKeyCode': getKeyFromKeyCode,
   'util/numbersWithCommas': numbersWithCommas,
   'util/lineSegDistance': lineSegDistance,
   'util/triggerEvent': triggerEvent,
-  'util/convertToVectro3': convertToVector3,
+  'util/convertToVector3': convertToVector3,
+  'util/clip': clip,
+  'util/clipToBox': clipToBox,
+  'util/debounce': debounce,
+  'util/deepmerge': deepmerge,
+  'util/getDefault': getDefault,
+  'util/getPixelSpacing': getPixelSpacing,
+  'util/isEmptyObject': isEmptyObject,
+  'util/isObject': isObject,
+  'util/isPointInImage': isPointInImage,
+  'util/isPointInPolygon': isPointInPolygon,
+  'util/getLogger': getLogger,
+  'util/throttle': throttle,
+  'util/wait': wait,
+  'util/waitForEnabledElementImageToLoad': waitForEnabledElementImageToLoad,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
   'util/freehandUtils': freehandUtils,
-  'util/brushUtils': brushUtils,
+  'util/segmentationUtils': segmentationUtils,
   'util/zoomUtils': zoomUtils,
 };

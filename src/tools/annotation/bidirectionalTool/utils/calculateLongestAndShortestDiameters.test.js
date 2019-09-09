@@ -5,10 +5,12 @@ let pixelSpacing = {};
 
 describe('CalculateLongestAndShortestDiameters.js', () => {
   beforeEach(() => {
+    /* eslint-disable no-console */
     console.error = jest.fn();
     console.error.mockClear();
     console.warn = jest.fn();
     console.warn.mockClear();
+    /* eslint-enable no-console */
 
     measurementData = {
       handles: {

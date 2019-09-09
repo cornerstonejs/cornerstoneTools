@@ -82,19 +82,26 @@ import {
   CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
-  FreehandMouseTool,
+  FreehandRoiTool,
   LengthTool,
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
 } from './tools/annotation/index.js';
-import { BrushTool } from './tools/brush/index.js';
+import {
+  BrushTool,
+  SphericalBrushTool,
+  FreehandScissorsTool,
+  RectangleScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
+} from './tools/segmentation/index.js';
 import {
   CrosshairsTool,
   DoubleTapFitToWindowTool,
   DragProbeTool,
   EraserTool,
-  FreehandSculpterMouseTool,
+  FreehandRoiSculptorTool,
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
@@ -112,8 +119,6 @@ import {
   ZoomTouchPinchTool,
 } from './tools/index.js';
 
-import { default as imp } from './import.js';
-
 import { default as init } from './init.js';
 
 // ~~~~~~ STACK TOOLS ~~~~~ //
@@ -123,6 +128,8 @@ import { playClip, stopClip } from './stackTools/playClip.js';
 
 // ~~~~~~ STATE MANAGEMENT ~~~~~ //
 import { default as store } from './store/index.js';
+import { getModule } from './store/index.js';
+
 import { default as getToolForElement } from './store/getToolForElement.js';
 import { addTool, addToolForElement } from './store/addTool.js';
 import { removeTool, removeToolForElement } from './store/removeTool.js';
@@ -199,6 +206,8 @@ import { default as external } from './externalModules.js';
 import { default as EVENTS } from './events.js';
 import { default as version } from './version.js';
 
+import importInternal from './importInternal.js';
+
 const cornerstoneTools = {
   // ~~~ TOOLS
   // ~ Annotation Tools
@@ -208,19 +217,24 @@ const cornerstoneTools = {
   CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
-  FreehandMouseTool,
+  FreehandRoiTool,
   LengthTool,
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
-  // ~ Brush Tools
+  // ~ Segmentation Tools
   BrushTool,
+  SphericalBrushTool,
+  RectangleScissorsTool,
+  FreehandScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
   DragProbeTool,
   EraserTool,
-  FreehandSculpterMouseTool,
+  FreehandRoiSculptorTool,
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
@@ -242,6 +256,7 @@ const cornerstoneTools = {
   playClip,
   stopClip,
   store,
+  getModule,
   getToolForElement,
   addTool,
   addToolForElement,
@@ -280,7 +295,8 @@ const cornerstoneTools = {
   SaveAs,
   enableLogger,
   disableLogger,
-  import: imp,
+  importInternal,
+  import: importInternal,
   register,
   registerSome,
   wwwcSynchronizer,
@@ -307,19 +323,24 @@ export {
   CircleRoiTool,
   CobbAngleTool,
   EllipticalRoiTool,
-  FreehandMouseTool,
+  FreehandRoiTool,
   LengthTool,
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
-  // ~ Brush Tools
+  // ~ Segmentation Tools
   BrushTool,
+  SphericalBrushTool,
+  RectangleScissorsTool,
+  FreehandScissorsTool,
+  CircleScissorsTool,
+  CorrectionScissorsTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
   DragProbeTool,
   EraserTool,
-  FreehandSculpterMouseTool,
+  FreehandRoiSculptorTool,
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
@@ -341,6 +362,7 @@ export {
   playClip,
   stopClip,
   store,
+  getModule,
   getToolForElement,
   addTool,
   addToolForElement,
@@ -390,12 +412,12 @@ export {
   stackImageIndexSynchronizer,
   panZoomSynchronizer,
   requestPoolManager,
+  importInternal,
   external,
   EVENTS,
   version,
 };
 
-// This has a weird name, so we can't just import it as 'import';
-export { default as import } from './import.js';
+export { default as import } from './importInternal.js';
 
 export default cornerstoneTools;

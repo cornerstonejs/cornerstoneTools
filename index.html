@@ -15,6 +15,225 @@
 		 * Note: The element wrapper needs `position: relative` for the positioning to work.
 		 */
 
+    <<<<<<< HEAD .magnifyTool {
+      border: 4px white solid;
+      box-shadow: 2px 2px 10px #1e1e1e;
+      border-radius: 50%;
+      display: none;
+      cursor: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="wrapper">
+      <!-- Select Tool Category -->
+      <ul class="tool-category-list">
+        <li>
+          <a class="active" data-category="annotation" href="#">Annotation</a>
+        </li>
+        <li>
+          <a data-category="segmentation" href="#">Segmentation</a>
+        </li>
+        <li><a data-category="drag" href="#">Drag</a></li>
+        <li>
+          <a data-category="multitouch-pinch" href="#">Multi-Touch / Pinch (touch only)</a>
+        </li>
+        <li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+        <li><a data-category="double-tap" href="#">DoubleTap</a></li>
+        <li><a data-category="overlay" href="#">Overlay</a></li>
+      </ul>
+
+      <!-- Select Active Tool -->
+      <ul class="tool-category active" data-tool-category="annotation">
+        <li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
+        <li><a href="#" data-tool="Angle">Angle</a></li>
+        <li><a href="#" data-tool="Bidirectional">Bidirectional</a></li>
+        <li><a href="#" data-tool="CircleRoi">CircleRoi</a></li>
+        <li><a href="#" data-tool="CobbAngle">Cobb Angle</a></li>
+        <li><a href="#" data-tool="EllipticalRoi">EllipticalRoi</a></li>
+        <li><a href="#" data-tool="Eraser">Eraser</a></li>
+        <li><a href="#" data-tool="FreehandRoi">FreehandRoi</a></li>
+        <li>
+          <a href="#" data-tool="FreehandRoiSculptor">FreehandRoiSculptor</a>
+        </li>
+        <li><a href="#" data-tool="TextMarker">TextMarker</a></li>
+        <li><a href="#" data-tool="Length">Length</a></li>
+        <li><a href="#" data-tool="Probe">Probe</a></li>
+        <li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
+      </ul>
+
+      <ul class="tool-category" data-tool-category="segmentation">
+        <li>
+          <a href="#" data-tool="Brush">BrushTool</a>
+        </li>
+        <li>
+          <a href="#" data-tool="SphericalBrush">SphericalBrushTool</a>
+        </li>
+        <li>
+          <a href="#" data-tool="FreehandScissors">FreehandScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="RectangleScissors">RectangleScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="CircleScissors">CircleScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="CorrectionScissors">CorrectionScissors</a>
+        </li>
+      </ul>
+
+      <ul class="tool-category" data-tool-category="drag">
+        <li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
+        <!-- <li><a href="#" data-tool="DragProbe">DragProbe</a></li> -->
+        <li><a href="#" data-tool="Magnify">Magnify</a></li>
+        <li><a href="#" data-tool="Pan">Pan</a></li>
+        <li><a href="#" data-tool="Rotate">Rotate</a></li>
+        <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
+        <li><a href="#" data-tool="Wwwc">WWWC</a></li>
+        <li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
+        <li><a href="#" data-tool="Zoom">Zoom</a></li>
+      </ul>
+      <ul class="tool-category" data-tool-category="double-tap">
+        <li>
+          <a href="#" data-tool="DoubleTapFitToWindow">DoubleTapFitToWindow</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="multitouch-pinch">
+        <li>
+          <a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="RotateTouch" data-tool-type="pinch">RotateTouch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="StackScrollMultiTouch" data-tool-type="multitouch">StackScrollMultiTouch</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="mousewheel">
+        <li>
+          <a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a>
+        </li>
+        <li>
+          <a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="overlay">
+        <li>
+          <label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
+            ScaleOverlay <label class="label-on"> ON</label>
+            <label class="label-off"> OFF</label>
+          </label>
+          <input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-type="none"
+            type="checkbox" />
+        </li>
+      </ul>
+
+      <!-- Our beautiful element targets -->
+      <div class="cornerstone-element-wrapper">
+        <a href="#" class="save-btn" data-index="0">Save</a>
+        <div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
+        <a href="#" class="save-btn" data-index="1">Save</a>
+        <div class="cornerstone-element" data-index="1" oncontextmenu="return false"></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- include the hammer.js library for touch gestures -->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.6/dist/cornerstone.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.js"></script>
+<script src="./dist/cornerstoneTools.js"></script>
+
+<script src="./netlify-example/metaDataProvider.js"></script>
+<script>
+  window.cornerstoneTools ||
+    document.write(
+      '<script src="https://unpkg.com/cornerstone-tools">\x3C/script>'
+    );
+</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="netlify-example/imageLoader.js"></script>
+
+<script>
+  cornerstoneTools.init({ showSVGCursors: true });
+  const imageIds = ['example://1', 'example://2', 'example://3'];
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
+  // Enable & Setup all of our elements
+  const elements = document.querySelectorAll('.cornerstone-element');
+  Array.from(elements).forEach(element => {
+    cornerstone.enable(element);
+
+    element.tabIndex = 0;
+    element.focus();
+
+    cornerstone.loadImage(imageIds[0]).then(function (image) {
+      cornerstoneTools.addStackStateManager(element, ['stack']);
+      cornerstone.displayImage(element, image);
+      cornerstoneTools.addToolState(element, 'stack', stack);
+    });
+
+    //Save As Tool
+    const index = element.getAttribute('data-index');
+    const saveBtn = element.parentElement.querySelector(
+      `a[data-index='${index}']`
+    );
+    saveBtn.addEventListener('click', evt => {
+      cornerstoneTools.SaveAs(element, 'viewportImage.png');
+    });
+
+    // Log measurement events
+    const { EVENTS } = cornerstoneTools;
+    const log = event => {
+      const type = `MEASUREMENT_${event.type
+        .replace('cornerstonetoolsmeasurement', '')
+        .toUpperCase()}`;
+      const color = {
+        MEASUREMENT_ADDED: '#27e',
+        MEASUREMENT_MODIFIED: '#e72',
+        MEASUREMENT_COMPLETED: '#5b5',
+        MEASUREMENT_REMOVED: '#f55',
+      }[type];
+
+      const getData = detail => {
+        const { measurementData = {} } = detail;
+        const out = {};
+        const measurementKeys = [
+          'length',
+          'rAngle',
+          'value',
+          'text',
+          'str',
+          'text',
+          'longestDiameter',
+          'shortestDiameter',
+        ];
+
+        if (measurementData.cachedStats) {
+          Object.keys(measurementData.cachedStats).forEach(key => {
+            out[key] = measurementData.cachedStats[key];
+          });
+        }
+
+        measurementKeys.forEach(key => {
+          if (key in measurementData) {
+            out[key] = measurementData[key];
+          }
+=======
     .magnifyTool {
       border: 4px white solid;
       box-shadow: 2px 2px 10px #1e1e1e;
@@ -187,6 +406,7 @@
         if (measurementData.cachedStats) {
           Object.keys(measurementData.cachedStats).forEach(function (key) {
             out[key] = measurementData.cachedStats[key];
+>>>>>>> upstream/master
           });
         }
 
@@ -208,10 +428,10 @@
       );
     };
 
-    element.addEventListener(EVENTS.MEASUREMENT_ADDED, log);
-    element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, log);
-    element.addEventListener(EVENTS.MEASUREMENT_COMPLETED, log);
-    element.addEventListener(EVENTS.MEASUREMENT_REMOVED, log);
+  element.addEventListener(EVENTS.MEASUREMENT_ADDED, log);
+  element.addEventListener(EVENTS.MEASUREMENT_MODIFIED, log);
+  element.addEventListener(EVENTS.MEASUREMENT_COMPLETED, log);
+  element.addEventListener(EVENTS.MEASUREMENT_REMOVED, log);
   }); // Iterate over all tool-category links
 
   var toolCategoryLinks = document.querySelectorAll('ul.tool-category-list a');
@@ -303,6 +523,25 @@
         toolLink.classList.remove('active');
       }
     });
+<<<<<<< HEAD
+
+    // Activate first tool
+    cornerstoneTools.setToolActive(
+      cornerstoneTools.store.state.tools[0].name,
+      {
+        mouseButtonMask: 1,
+        isTouchActive: true,
+      }
+    );
+
+    const setToolCategoryActive = categoryName => {
+      Array.from(toolCategoryLinks).forEach(toolLink => {
+        if (categoryName === toolLink.getAttribute('data-category')) {
+          toolLink.classList.remove('active');
+          toolLink.classList.add('active');
+        } else {
+          toolLink.classList.remove('active');
+=======
     Array.from(toolCategorySections).forEach(function (toolCategorySection) {
       if (categoryName === toolCategorySection.getAttribute('data-tool-category')) {
         toolCategorySection.classList.remove('active');
@@ -339,6 +578,7 @@
 
         if (mouseButtonIcon) {
           toolBtn.classList.add(mouseButtonIcon);
+>>>>>>> upstream/master
         }
 
         if (touchIcon) {
@@ -346,19 +586,19 @@
         } // Remove relevant classes from other buttons
 
       } else {
-        if (mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
-          toolBtn.classList.remove(mouseButtonIcon);
-        }
-
-        if (touchIcon && toolBtn.classList.contains(touchIcon)) {
-          toolBtn.classList.remove(touchIcon);
-        }
-
-        if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
-          toolBtn.classList.remove('active');
-        }
+        if(mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
+        toolBtn.classList.remove(mouseButtonIcon);
       }
-    });
+
+      if (touchIcon && toolBtn.classList.contains(touchIcon)) {
+        toolBtn.classList.remove(touchIcon);
+      }
+
+      if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
+        toolBtn.classList.remove('active');
+      }
+    }
+  });
   }; // Find all and configure each textMarkers
 
 
