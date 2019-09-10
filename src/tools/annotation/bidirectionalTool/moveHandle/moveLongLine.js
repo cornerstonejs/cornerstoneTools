@@ -2,7 +2,8 @@ import getDistance from './getDistance.js';
 import getLineVector from './getLineVector.js';
 import getBaseData from './getBaseData.js';
 
-function updateLine(cps, rps, intersection, fixedPoint, mid, data) {
+function updateLine(baseData, fixedPoint, mid, data) {
+  const { cps, rps, intersection } = baseData;
   const { start, perpendicularStart, perpendicularEnd } = data.handles;
 
   // Get the original distance from perpendicular handles to intersection
@@ -26,7 +27,7 @@ function updateLine(cps, rps, intersection, fixedPoint, mid, data) {
 // Move long line handle
 export default function(proposedPoint, data, eventData, fixedPoint) {
   const baseData = getBaseData(data, eventData, fixedPoint);
-  const { cps, rps, intersection, distanceToFixed } = baseData;
+  const { cps, rps, distanceToFixed } = baseData;
 
   const newLineLength = getDistance(cps, rps, fixedPoint, proposedPoint);
 
@@ -43,7 +44,7 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   };
 
   // Calculate and set the new position of the perpendicular handles
-  updateLine(cps, rps, intersection, fixedPoint, newIntersection, data);
+  updateLine(baseData, fixedPoint, newIntersection, data);
 
   return true;
 }
