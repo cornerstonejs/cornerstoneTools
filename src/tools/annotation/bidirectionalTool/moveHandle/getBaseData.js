@@ -1,11 +1,10 @@
 import external from '../../../../externalModules.js';
-import getDistance from './getDistance.js';
+import getDistance from './getDistanceWithPixelSpacing.js';
 
 export default function getBaseData(data, eventData, fixedPoint) {
   const { lineSegment } = external.cornerstoneMath;
   const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
-  const cps = eventData.image.columnPixelSpacing || 1;
-  const rps = eventData.image.rowPixelSpacing || 1;
+  const { columnPixelSpacing = 1, rowPixelSpacing = 1 } = eventData.image;
 
   const longLine = {
     start,
@@ -17,11 +16,16 @@ export default function getBaseData(data, eventData, fixedPoint) {
     end: perpendicularEnd,
   });
 
-  const distanceToFixed = getDistance(cps, rps, fixedPoint, intersection);
+  const distanceToFixed = getDistance(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    fixedPoint,
+    intersection
+  );
 
   return {
-    cps,
-    rps,
+    columnPixelSpacing,
+    rowPixelSpacing,
     start,
     end,
     perpendicularStart,

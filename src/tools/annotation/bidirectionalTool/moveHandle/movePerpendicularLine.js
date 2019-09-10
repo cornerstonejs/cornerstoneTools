@@ -1,47 +1,56 @@
 import external from './../../../../externalModules.js';
-import getDistance from './getDistance.js';
-import getLineVector from './getLineVector.js';
+import getLineVector from '../utils/getLineVector.js';
+import getDistanceWithPixelSpacing from './getDistanceWithPixelSpacing.js';
 import getBaseData from './getBaseData.js';
 
-function isFixedEnd(baseData) {
-  const { fixedPoint, perpendicularEnd } = baseData;
-
+function isFixedEnd(fixedPoint, perpendicularEnd) {
   return fixedPoint === perpendicularEnd;
 }
 
 function getMultiplier(baseData) {
-  return isFixedEnd(baseData) ? -1 : 1;
+  const { fixedPoint, perpendicularEnd } = baseData;
+
+  return isFixedEnd(fixedPoint, perpendicularEnd) ? -1 : 1;
 }
 
 function getMovingPoint(baseData) {
-  const { perpendicularEnd, perpendicularStart } = baseData;
+  const { fixedPoint, perpendicularEnd, perpendicularStart } = baseData;
 
-  return isFixedEnd(baseData) ? perpendicularStart : perpendicularEnd;
+  if (isFixedEnd(fixedPoint, perpendicularEnd)) {
+    return perpendicularStart;
+  }
+
+  return perpendicularEnd;
 }
 
 function getHelperLine(baseData, proposedPoint, vector) {
-  const { cps, rps } = baseData;
+  const { columnPixelSpacing, rowPixelSpacing } = baseData;
 
   // Create a helper line to find the intesection point in the long line
   const highNumber = Number.MAX_SAFE_INTEGER;
 
   // Get the multiplier
-  const multiplier = getMultiplier(baseData);
+  const multiplier = getMultiplier(baseData) * highNumber;
 
   return {
     start: proposedPoint,
     end: {
-      x: proposedPoint.x + vector.y * highNumber * rps * multiplier,
-      y: proposedPoint.y + vector.x * highNumber * cps * multiplier * -1,
+      x: proposedPoint.x + vector.y * rowPixelSpacing * multiplier,
+      y: proposedPoint.y + vector.x * columnPixelSpacing * multiplier * -1,
     },
   };
 }
 
 function updateLine(baseData, mid, helperLine, vector) {
-  const { cps, rps, fixedPoint, distanceToFixed } = baseData;
+  const {
+    columnPixelSpacing,
+    rowPixelSpacing,
+    fixedPoint,
+    distanceToFixed,
+  } = baseData;
 
   // Get the multiplier
-  const multiplier = getMultiplier(baseData);
+  const multiplier = getMultiplier(baseData) * distanceToFixed;
 
   // Define the moving point
   const movingPoint = getMovingPoint(baseData);
@@ -49,17 +58,29 @@ function updateLine(baseData, mid, helperLine, vector) {
   // Change the position of the perpendicular line handles
   movingPoint.x = helperLine.start.x;
   movingPoint.y = helperLine.start.y;
-  fixedPoint.x = mid.x + vector.y * distanceToFixed * rps * multiplier;
-  fixedPoint.y = mid.y + vector.x * distanceToFixed * cps * multiplier * -1;
+  fixedPoint.x = mid.x + vector.y * rowPixelSpacing * multiplier;
+  fixedPoint.y = mid.y + vector.x * columnPixelSpacing * multiplier * -1;
 }
 
 // Move perpendicular line handles
 export default function(proposedPoint, data, eventData, fixedPoint) {
   const { lineSegment } = external.cornerstoneMath;
   const baseData = getBaseData(data, eventData, fixedPoint);
-  const { cps, rps, start, end, longLine, intersection } = baseData;
+  const {
+    columnPixelSpacing,
+    rowPixelSpacing,
+    start,
+    end,
+    longLine,
+    intersection,
+  } = baseData;
 
-  const longLineLength = getDistance(cps, rps, start, end);
+  const longLineLength = getDistanceWithPixelSpacing(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    start,
+    end
+  );
 
   // Stop here if the long line has no length
   if (longLineLength === 0) {
@@ -67,7 +88,12 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   }
 
   // Inclination of the perpendicular line
-  const vector = getLineVector(cps, rps, start, intersection);
+  const vector = getLineVector(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    start,
+    intersection
+  );
 
   // Get a helper line to calculate the intersection
   const helperLine = getHelperLine(baseData, proposedPoint, vector);

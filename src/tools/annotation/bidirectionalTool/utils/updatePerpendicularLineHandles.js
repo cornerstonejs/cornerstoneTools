@@ -1,3 +1,5 @@
+import getLineVector from './getLineVector';
+
 // Update the  perpendicular line handles
 export default function(eventData, data) {
   if (!data.handles.perpendicularStart.locked) {
@@ -7,9 +9,7 @@ export default function(eventData, data) {
   let startX, startY, endX, endY;
 
   const { start, end } = data.handles;
-  const { columnPixelSpacing, rowPixelSpacing } = eventData.image;
-  const cps = columnPixelSpacing || 1;
-  const rps = rowPixelSpacing || 1;
+  const { columnPixelSpacing = 1, rowPixelSpacing = 1 } = eventData.image;
 
   if (start.x === end.x && start.y === end.y) {
     startX = start.x;
@@ -23,20 +23,22 @@ export default function(eventData, data) {
       y: (start.y + end.y) / 2,
     };
 
-    // Length of long-axis
-    const dx = (start.x - end.x) * cps;
-    const dy = (start.y - end.y) * rps;
-    const length = Math.sqrt(dx * dx + dy * dy);
+    // Inclination of the perpendicular line
+    const vector = getLineVector(
+      columnPixelSpacing,
+      rowPixelSpacing,
+      start,
+      end
+    );
 
-    const vectorX = dx / length;
-    const vectorY = dy / length;
+    const perpendicularLineLength = vector.length / 2;
+    const rowMultiplier = perpendicularLineLength / (2 * rowPixelSpacing);
+    const columnMultiplier = perpendicularLineLength / (2 * columnPixelSpacing);
 
-    const perpendicularLineLength = length / 2;
-
-    startX = mid.x + (perpendicularLineLength / (2 * cps)) * vectorY;
-    startY = mid.y - (perpendicularLineLength / (2 * rps)) * vectorX;
-    endX = mid.x - (perpendicularLineLength / (2 * cps)) * vectorY;
-    endY = mid.y + (perpendicularLineLength / (2 * rps)) * vectorX;
+    startX = mid.x + columnMultiplier * vector.y;
+    startY = mid.y - rowMultiplier * vector.x;
+    endX = mid.x - columnMultiplier * vector.y;
+    endY = mid.y + rowMultiplier * vector.x;
   }
 
   data.handles.perpendicularStart.x = startX;
