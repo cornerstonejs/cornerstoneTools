@@ -1,35 +1,28 @@
-import external from './../../../../externalModules.js';
 import getDistance from './getDistance.js';
+import getLineVector from './getLineVector.js';
+import getBaseData from './getBaseData.js';
 
 // Move long line handle
 export default function(proposedPoint, data, eventData, fixedPoint) {
-  const { lineSegment } = external.cornerstoneMath;
-  const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
-  const { columnPixelSpacing, rowPixelSpacing } = eventData.image;
-  const cps = columnPixelSpacing || 1;
-  const rps = rowPixelSpacing || 1;
-
-  const longLine = {
+  const {
+    cps,
+    rps,
     start,
-    end,
-  };
+    perpendicularEnd,
+    perpendicularStart,
+    intersection,
+    distanceToFixed,
+  } = getBaseData(data, eventData, fixedPoint);
 
-  const perpendicularLine = {
-    start: perpendicularStart,
-    end: perpendicularEnd,
-  };
-
-  const intersection = lineSegment.intersectLine(longLine, perpendicularLine);
-  const originalDistance = getDistance(cps, rps, fixedPoint, intersection);
   const newLineLength = getDistance(cps, rps, fixedPoint, proposedPoint);
 
   // Stop here if the handle tries to move before the intersection point
-  if (newLineLength <= originalDistance) {
+  if (newLineLength <= distanceToFixed) {
     return false;
   }
 
   // Calculate the new intersection point
-  const k = originalDistance / newLineLength;
+  const k = distanceToFixed / newLineLength;
   const newIntersection = {
     x: fixedPoint.x + (proposedPoint.x - fixedPoint.x) * k,
     y: fixedPoint.y + (proposedPoint.y - fixedPoint.y) * k,
@@ -40,11 +33,7 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   const distancePE = getDistance(cps, rps, perpendicularEnd, intersection);
 
   // Inclination of the perpendicular line
-  const dx = (fixedPoint.x - newIntersection.x) * cps;
-  const dy = (fixedPoint.y - newIntersection.y) * rps;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const vectorX = dx / length;
-  const vectorY = dy / length;
+  const vector = getLineVector(cps, rps, fixedPoint, newIntersection);
 
   // Define the mid points and the multipliers
   const midX = newIntersection.x;
@@ -53,10 +42,10 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   const mult2 = mult1 * -1;
 
   // Calculate and set the new position of the perpendicular handles
-  perpendicularStart.x = midX + vectorY * distancePS * rps * mult1;
-  perpendicularStart.y = midY + vectorX * distancePS * cps * mult2;
-  perpendicularEnd.x = midX + vectorY * distancePE * rps * mult2;
-  perpendicularEnd.y = midY + vectorX * distancePE * cps * mult1;
+  perpendicularStart.x = midX + vector.y * distancePS * rps * mult1;
+  perpendicularStart.y = midY + vector.x * distancePS * cps * mult2;
+  perpendicularEnd.x = midX + vector.y * distancePE * rps * mult2;
+  perpendicularEnd.y = midY + vector.x * distancePE * cps * mult1;
 
   return true;
 }
