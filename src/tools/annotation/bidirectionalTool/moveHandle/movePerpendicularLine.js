@@ -3,20 +3,61 @@ import getDistance from './getDistance.js';
 import getLineVector from './getLineVector.js';
 import getBaseData from './getBaseData.js';
 
+function isFixedEnd(baseData) {
+  const { fixedPoint, perpendicularEnd } = baseData;
+
+  return fixedPoint === perpendicularEnd;
+}
+
+function getMultiplier(baseData) {
+  return isFixedEnd(baseData) ? -1 : 1;
+}
+
+function getMovingPoint(baseData) {
+  const { perpendicularEnd, perpendicularStart } = baseData;
+
+  return isFixedEnd(baseData) ? perpendicularStart : perpendicularEnd;
+}
+
+function getHelperLine(baseData, proposedPoint, vector) {
+  const { cps, rps } = baseData;
+
+  // Create a helper line to find the intesection point in the long line
+  const highNumber = Number.MAX_SAFE_INTEGER;
+
+  // Get the multiplier
+  const multiplier = getMultiplier(baseData);
+
+  return {
+    start: proposedPoint,
+    end: {
+      x: proposedPoint.x + vector.y * highNumber * rps * multiplier,
+      y: proposedPoint.y + vector.x * highNumber * cps * multiplier * -1,
+    },
+  };
+}
+
+function updateLine(baseData, mid, helperLine, vector) {
+  const { cps, rps, fixedPoint, distanceToFixed } = baseData;
+
+  // Get the multiplier
+  const multiplier = getMultiplier(baseData);
+
+  // Define the moving point
+  const movingPoint = getMovingPoint(baseData);
+
+  // Change the position of the perpendicular line handles
+  movingPoint.x = helperLine.start.x;
+  movingPoint.y = helperLine.start.y;
+  fixedPoint.x = mid.x + vector.y * distanceToFixed * rps * multiplier;
+  fixedPoint.y = mid.y + vector.x * distanceToFixed * cps * multiplier * -1;
+}
+
 // Move perpendicular line handles
 export default function(proposedPoint, data, eventData, fixedPoint) {
   const { lineSegment } = external.cornerstoneMath;
-  const {
-    cps,
-    rps,
-    start,
-    end,
-    perpendicularEnd,
-    perpendicularStart,
-    longLine,
-    intersection,
-    distanceToFixed,
-  } = getBaseData(data, eventData, fixedPoint);
+  const baseData = getBaseData(data, eventData, fixedPoint);
+  const { cps, rps, start, end, longLine, intersection } = baseData;
 
   const longLineLength = getDistance(cps, rps, start, end);
 
@@ -28,36 +69,19 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   // Inclination of the perpendicular line
   const vector = getLineVector(cps, rps, start, intersection);
 
-  // Define the direction multipliers
-  const isFixedEnd = fixedPoint === perpendicularEnd;
-  const mult1 = isFixedEnd ? -1 : 1;
-  const mult2 = mult1 * -1;
-
-  // Create a helper line to find the intesection point in the long line
-  const newLine = {
-    start: proposedPoint,
-    end: {
-      x: proposedPoint.x + vector.y * Number.MAX_SAFE_INTEGER * rps * mult1,
-      y: proposedPoint.y + vector.x * Number.MAX_SAFE_INTEGER * cps * mult2,
-    },
-  };
+  // Get a helper line to calculate the intersection
+  const helperLine = getHelperLine(baseData, proposedPoint, vector);
 
   // Find the new intersection in the long line
-  const newIntersection = lineSegment.intersectLine(longLine, newLine);
+  const newIntersection = lineSegment.intersectLine(longLine, helperLine);
 
   // Stop the flow here if there's no intersection point between lines
   if (!newIntersection) {
     return false;
   }
 
-  // Define the moving point
-  const movingPoint = isFixedEnd ? perpendicularStart : perpendicularEnd;
-
   // Change the position of the perpendicular line handles
-  movingPoint.x = newLine.start.x;
-  movingPoint.y = newLine.start.y;
-  fixedPoint.x = newIntersection.x + vector.y * distanceToFixed * rps * mult1;
-  fixedPoint.y = newIntersection.y + vector.x * distanceToFixed * cps * mult2;
+  updateLine(baseData, newIntersection, helperLine, vector);
 
   return true;
 }

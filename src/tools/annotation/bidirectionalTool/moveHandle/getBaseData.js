@@ -29,5 +29,6 @@ export default function getBaseData(data, eventData, fixedPoint) {
     longLine,
     intersection,
     distanceToFixed,
+    fixedPoint,
   };
 }

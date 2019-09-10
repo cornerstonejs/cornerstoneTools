@@ -2,8 +2,8 @@ import getDistance from './getDistance.js';
 import getLineVector from './getLineVector.js';
 import getBaseData from './getBaseData.js';
 
-function updateLine(baseData, fixedPoint, mid, data) {
-  const { cps, rps, intersection } = baseData;
+function updateLine(baseData, mid, data) {
+  const { cps, rps, intersection, fixedPoint } = baseData;
   const { start, perpendicularStart, perpendicularEnd } = data.handles;
 
   // Get the original distance from perpendicular handles to intersection
@@ -13,15 +13,14 @@ function updateLine(baseData, fixedPoint, mid, data) {
   // Inclination of the perpendicular line
   const vector = getLineVector(cps, rps, fixedPoint, mid);
 
-  // Define the multipliers
-  const mult1 = fixedPoint === start ? 1 : -1;
-  const mult2 = mult1 * -1;
+  // Define the multiplier
+  const multiplier = fixedPoint === start ? 1 : -1;
 
   // Calculate and set the new position of the perpendicular handles
-  perpendicularStart.x = mid.x + vector.y * distancePS * rps * mult1;
-  perpendicularStart.y = mid.y + vector.x * distancePS * cps * mult2;
-  perpendicularEnd.x = mid.x + vector.y * distancePE * rps * mult2;
-  perpendicularEnd.y = mid.y + vector.x * distancePE * cps * mult1;
+  perpendicularStart.x = mid.x + vector.y * distancePS * rps * multiplier;
+  perpendicularStart.y = mid.y + vector.x * distancePS * cps * multiplier * -1;
+  perpendicularEnd.x = mid.x + vector.y * distancePE * rps * multiplier * -1;
+  perpendicularEnd.y = mid.y + vector.x * distancePE * cps * multiplier;
 }
 
 // Move long line handle
@@ -44,7 +43,7 @@ export default function(proposedPoint, data, eventData, fixedPoint) {
   };
 
   // Calculate and set the new position of the perpendicular handles
-  updateLine(baseData, fixedPoint, newIntersection, data);
+  updateLine(baseData, newIntersection, data);
 
   return true;
 }
