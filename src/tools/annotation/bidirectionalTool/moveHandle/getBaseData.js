@@ -1,5 +1,5 @@
 import external from '../../../../externalModules.js';
-import getDistance from './getDistanceWithPixelSpacing.js';
+import getDistance from '../utils/getDistanceWithPixelSpacing.js';
 
 function createLine(startPoint, endPoint) {
   return {

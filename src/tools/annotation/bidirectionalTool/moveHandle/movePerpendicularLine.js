@@ -1,6 +1,6 @@
 import external from './../../../../externalModules.js';
 import getLineVector from '../utils/getLineVector.js';
-import getDistanceWithPixelSpacing from './getDistanceWithPixelSpacing.js';
+import getDistanceWithPixelSpacing from '../utils/getDistanceWithPixelSpacing.js';
 import getBaseData from './getBaseData.js';
 
 function isFixedEnd(fixedPoint, perpendicularEnd) {
@@ -63,7 +63,12 @@ function updateLine(baseData, mid, helperLine, vector) {
 }
 
 // Move perpendicular line handles
-export default function(proposedPoint, data, eventData, fixedPoint) {
+export default function movePerpendicularLine(
+  proposedPoint,
+  data,
+  eventData,
+  fixedPoint
+) {
   const { lineSegment } = external.cornerstoneMath;
   const baseData = getBaseData(data, eventData, fixedPoint);
   const {

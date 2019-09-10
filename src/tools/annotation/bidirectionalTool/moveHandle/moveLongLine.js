@@ -1,29 +1,31 @@
 import getLineVector from '../utils/getLineVector.js';
-import getDistanceWithPixelSpacing from './getDistanceWithPixelSpacing.js';
+import getDistanceWithPixelSpacing from '../utils/getDistanceWithPixelSpacing.js';
 import getBaseData from './getBaseData.js';
 
-function updateLine(baseData, mid, data) {
+function getDistanceToIntersection(baseData, point) {
+  const { columnPixelSpacing, rowPixelSpacing, intersection } = baseData;
+
+  return getDistanceWithPixelSpacing(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    point,
+    intersection
+  );
+}
+
+function updateLine(baseData, mid) {
   const {
     columnPixelSpacing,
     rowPixelSpacing,
-    intersection,
+    start,
+    perpendicularStart,
+    perpendicularEnd,
     fixedPoint,
   } = baseData;
-  const { start, perpendicularStart, perpendicularEnd } = data.handles;
 
   // Get the original distance from perpendicular handles to intersection
-  const distancePS = getDistanceWithPixelSpacing(
-    columnPixelSpacing,
-    rowPixelSpacing,
-    perpendicularStart,
-    intersection
-  );
-  const distancePE = getDistanceWithPixelSpacing(
-    columnPixelSpacing,
-    rowPixelSpacing,
-    perpendicularEnd,
-    intersection
-  );
+  const distancePS = getDistanceToIntersection(baseData, perpendicularStart);
+  const distancePE = getDistanceToIntersection(baseData, perpendicularEnd);
 
   // Inclination of the perpendicular line
   const vector = getLineVector(
@@ -35,16 +37,14 @@ function updateLine(baseData, mid, data) {
 
   // Define the multiplier
   const multiplier = fixedPoint === start ? 1 : -1;
+  const rowMultiplier = multiplier * rowPixelSpacing;
+  const columnMultiplier = multiplier * columnPixelSpacing;
 
   // Calculate and set the new position of the perpendicular handles
-  perpendicularStart.x =
-    mid.x + vector.y * distancePS * rowPixelSpacing * multiplier;
-  perpendicularStart.y =
-    mid.y + vector.x * distancePS * columnPixelSpacing * multiplier * -1;
-  perpendicularEnd.x =
-    mid.x + vector.y * distancePE * rowPixelSpacing * multiplier * -1;
-  perpendicularEnd.y =
-    mid.y + vector.x * distancePE * columnPixelSpacing * multiplier;
+  perpendicularStart.x = mid.x + vector.y * distancePS * rowMultiplier;
+  perpendicularStart.y = mid.y + vector.x * distancePS * columnMultiplier * -1;
+  perpendicularEnd.x = mid.x + vector.y * distancePE * rowMultiplier * -1;
+  perpendicularEnd.y = mid.y + vector.x * distancePE * columnMultiplier;
 }
 
 export default function moveLongLine(
@@ -56,6 +56,7 @@ export default function moveLongLine(
   const baseData = getBaseData(data, eventData, fixedPoint);
   const { columnPixelSpacing, rowPixelSpacing, distanceToFixed } = baseData;
 
+  // Calculate the length of the new line, considering the proposed point
   const newLineLength = getDistanceWithPixelSpacing(
     columnPixelSpacing,
     rowPixelSpacing,
@@ -76,7 +77,7 @@ export default function moveLongLine(
   };
 
   // Calculate and set the new position of the perpendicular handles
-  updateLine(baseData, newIntersection, data);
+  updateLine(baseData, newIntersection);
 
   return true;
 }
