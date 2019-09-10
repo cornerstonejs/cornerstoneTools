@@ -1,8 +1,6 @@
 import external from './../../../../externalModules.js';
-import perpendicularBothFixedLeft from './perpendicularBothFixedLeft.js';
-import perpendicularBothFixedRight from './perpendicularBothFixedRight.js';
-import perpendicularLeftFixedPoint from './perpendicularLeftFixedPoint.js';
-import perpendicularRightFixedPoint from './perpendicularRightFixedPoint.js';
+import moveLongLine from './moveLongLine.js';
+import movePerpendicularLine from './movePerpendicularLine.js';
 
 // Sets position of handles(start, end, perpendicularStart, perpendicularEnd)
 export default function(handle, eventData, data, distanceFromTool) {
@@ -22,7 +20,7 @@ export default function(handle, eventData, data, distanceFromTool) {
 
   if (handle.index === 0) {
     // If long-axis start point is moved
-    result = perpendicularBothFixedLeft(proposedPoint, data);
+    result = moveLongLine(proposedPoint, data, eventData, data.handles.end);
     if (result) {
       handle.x = proposedPoint.x;
       handle.y = proposedPoint.y;
@@ -32,7 +30,7 @@ export default function(handle, eventData, data, distanceFromTool) {
     }
   } else if (handle.index === 1) {
     // If long-axis end point is moved
-    result = perpendicularBothFixedRight(proposedPoint, data);
+    result = moveLongLine(proposedPoint, data, eventData, data.handles.start);
     if (result) {
       handle.x = proposedPoint.x;
       handle.y = proposedPoint.y;
@@ -93,7 +91,12 @@ export default function(handle, eventData, data, distanceFromTool) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularLeftFixedPoint(proposedPoint, data);
+      movedPoint = movePerpendicularLine(
+        proposedPoint,
+        data,
+        eventData,
+        data.handles.perpendicularEnd
+      );
 
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularStart.x;
@@ -154,7 +157,12 @@ export default function(handle, eventData, data, distanceFromTool) {
     movedPoint = false;
 
     if (!outOfBounds) {
-      movedPoint = perpendicularRightFixedPoint(proposedPoint, data);
+      movedPoint = movePerpendicularLine(
+        proposedPoint,
+        data,
+        eventData,
+        data.handles.perpendicularStart
+      );
 
       if (!movedPoint) {
         eventData.currentPoints.image.x = data.handles.perpendicularEnd.x;

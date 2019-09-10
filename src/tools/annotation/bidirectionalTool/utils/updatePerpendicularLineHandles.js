@@ -7,6 +7,9 @@ export default function(eventData, data) {
   let startX, startY, endX, endY;
 
   const { start, end } = data.handles;
+  const { columnPixelSpacing, rowPixelSpacing } = eventData.image;
+  const cps = columnPixelSpacing || 1;
+  const rps = rowPixelSpacing || 1;
 
   if (start.x === end.x && start.y === end.y) {
     startX = start.x;
@@ -21,19 +24,19 @@ export default function(eventData, data) {
     };
 
     // Length of long-axis
-    const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
+    const dx = (start.x - end.x) * cps;
+    const dy = (start.y - end.y) * rps;
     const length = Math.sqrt(dx * dx + dy * dy);
 
-    const vectorX = (start.x - end.x) / length;
-    const vectorY = (start.y - end.y) / length;
+    const vectorX = dx / length;
+    const vectorY = dy / length;
 
     const perpendicularLineLength = length / 2;
 
-    startX = mid.x + (perpendicularLineLength / 2) * vectorY;
-    startY = mid.y - (perpendicularLineLength / 2) * vectorX;
-    endX = mid.x - (perpendicularLineLength / 2) * vectorY;
-    endY = mid.y + (perpendicularLineLength / 2) * vectorX;
+    startX = mid.x + (perpendicularLineLength / (2 * cps)) * vectorY;
+    startY = mid.y - (perpendicularLineLength / (2 * rps)) * vectorX;
+    endX = mid.x - (perpendicularLineLength / (2 * cps)) * vectorY;
+    endY = mid.y + (perpendicularLineLength / (2 * rps)) * vectorX;
   }
 
   data.handles.perpendicularStart.x = startX;
