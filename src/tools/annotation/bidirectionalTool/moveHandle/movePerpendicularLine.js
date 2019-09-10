@@ -62,6 +62,17 @@ function updateLine(baseData, mid, helperLine, vector) {
   fixedPoint.y = mid.y + vector.x * columnPixelSpacing * multiplier * -1;
 }
 
+function lineHasLength(columnPixelSpacing, rowPixelSpacing, line) {
+  const lineLength = getDistanceWithPixelSpacing(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    line.start,
+    line.end
+  );
+
+  return lineLength !== 0;
+}
+
 // Move perpendicular line handles
 export default function movePerpendicularLine(
   proposedPoint,
@@ -75,20 +86,12 @@ export default function movePerpendicularLine(
     columnPixelSpacing,
     rowPixelSpacing,
     start,
-    end,
     longLine,
     intersection,
   } = baseData;
 
-  const longLineLength = getDistanceWithPixelSpacing(
-    columnPixelSpacing,
-    rowPixelSpacing,
-    start,
-    end
-  );
-
   // Stop here if the long line has no length
-  if (longLineLength === 0) {
+  if (!lineHasLength(columnPixelSpacing, rowPixelSpacing, longLine)) {
     return false;
   }
 
