@@ -2,6 +2,7 @@ import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
 // State
+import textColors from './../../stateManagement/textColors.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -22,10 +23,12 @@ import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
-import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -42,6 +45,10 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: circleRoiCursor,
     };
 
@@ -62,10 +69,13 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {
@@ -83,11 +93,15 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         initialRotation: eventData.viewport.rotation,
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -223,6 +237,20 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
         drawHandles(context, eventData, data.handles, handleOptions);
 
+        // Hide TextBox
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
+          continue;
+        }
+        // TextBox OnHover
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
+          continue;
+        }
+
         // Update textbox stats
         if (data.invalidated === true) {
           if (data.cachedStats) {
@@ -254,6 +282,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
+        // Text Colors
+        const textColor = textColors.getColorIfActive(data);
+
         data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
 
         drawLinkedTextBox(
@@ -263,7 +294,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           textBoxContent,
           data.handles,
           textBoxAnchorPoints,
-          color,
+          textColor,
           lineWidth,
           10,
           true

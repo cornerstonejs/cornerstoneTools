@@ -1,19 +1,25 @@
 import external from '../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
-import { getToolState } from '../../stateManagement/toolState.js';
+import textColors from './../../stateManagement/textColors.js';
 import textStyle from '../../stateManagement/textStyle.js';
+import { getToolState } from '../../stateManagement/toolState.js';
 import toolColors from '../../stateManagement/toolColors.js';
+
 // Drawing
 import { getNewContext, draw } from '../../drawing/index.js';
 import drawTextBox from '../../drawing/drawTextBox.js';
 import drawHandles from '../../drawing/drawHandles.js';
-// Utilities
+
+// Util
 import getRGBPixels from '../../util/getRGBPixels.js';
 import calculateSUV from '../../util/calculateSUV.js';
 import { probeCursor } from '../cursors/index.js';
-import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:ProbeTool');
 
@@ -30,6 +36,10 @@ export default class ProbeTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false
+      },
       svgCursor: probeCursor,
     };
 
@@ -50,10 +60,13 @@ export default class ProbeTool extends BaseAnnotationTool {
       return;
     }
 
+    const config = this.configuration || {};
+
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         end: {
@@ -61,6 +74,12 @@ export default class ProbeTool extends BaseAnnotationTool {
           y: eventData.currentPoints.image.y,
           highlight: true,
           active: true,
+        },
+        textBox: {
+          color: undefined,
+          activeColor: undefined,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -156,6 +175,20 @@ export default class ProbeTool extends BaseAnnotationTool {
           color,
         });
 
+        // Hide TextBox
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
+          return;
+        }
+        // TextBox OnHover
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
+          return;
+        }
+
         // Update textbox stats
         if (data.invalidated === true) {
           if (data.cachedStats) {
@@ -195,14 +228,17 @@ export default class ProbeTool extends BaseAnnotationTool {
             coords
           );
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawTextBox(
             context,
             str,
             textCoords.x,
             textCoords.y + fontHeight + 5,
-            color
+            textColor
           );
-          drawTextBox(context, text, textCoords.x, textCoords.y, color);
+          drawTextBox(context, text, textCoords.x, textCoords.y, textColor);
         }
       });
     }

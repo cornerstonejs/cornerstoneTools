@@ -10,11 +10,11 @@ function getFillColor() {
   return fillColor;
 }
 
-function setToolColor(color) {
+function setTextColor(color) {
   defaultColor = color;
 }
 
-function getToolColor() {
+function getTextColor() {
   return defaultColor;
 }
 
@@ -28,18 +28,18 @@ function getActiveColor() {
 
 function getColorIfActive(data) {
   return data.active
-    ? data.activeColor || activeColor
-    : data.color || defaultColor;
+    ? data.handles.textBox.activeColor || data.activeColor || activeColor
+    : data.handles.textBox.color || data.color || defaultColor;
 }
 
-const toolColors = {
+const textColors = {
   setFillColor,
   getFillColor,
-  setToolColor,
-  getToolColor,
+  setTextColor,
+  getTextColor,
   setActiveColor,
   getActiveColor,
   getColorIfActive,
 };
 
-export default toolColors;
+export default textColors;

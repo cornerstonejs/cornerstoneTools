@@ -13,9 +13,6 @@ import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
 
-const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
-  doneCallback();
-
 /**
  * @public
  * @class BidirectionalTool
@@ -26,20 +23,21 @@ const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
  */
 
 export default class BidirectionalTool extends BaseAnnotationTool {
-  constructor(props) {
+  constructor(props = {}) {
     const defaultProps = {
       name: 'Bidirectional',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        changeMeasurementLocationCallback: emptyLocationCallback,
-        getMeasurementLocationCallback: emptyLocationCallback,
-        textBox: '',
-        shadow: '',
-        drawHandlesOnHover: true,
-        additionalData: [],
+        // hideTextBox: false,
+        // textBoxOnHover: false,
       },
       svgCursor: bidirectionalCursor,
     };
+
+    Object.assign(
+      defaultProps.configuration,
+      defaultBidirectionalConfiguration()
+    );
 
     super(props, defaultProps);
 
@@ -68,4 +66,18 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     data.shortestDiameter = shortestDiameter;
     data.invalidated = false;
   }
+}
+
+const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
+  doneCallback();
+
+function defaultBidirectionalConfiguration() {
+  return {
+    changeMeasurementLocationCallback: emptyLocationCallback,
+    getMeasurementLocationCallback: emptyLocationCallback,
+    textBox: '',
+    shadow: '',
+    drawHandlesOnHover: true,
+    additionalData: [],
+  };
 }
