@@ -2,6 +2,10 @@ import { getToolState } from '../../../stateManagement/toolState.js';
 import state from './state';
 import getElement from './getElement';
 
+import { getLogger } from '../../../util/logger';
+
+const logger = getLogger('store:modules:segmentationModule:getBrushColor');
+
 /**
  * Returns the brush color as a rgba CSS color for the active segment of the active
  * `Labelmap3D` for the `BrushStackState` displayed on the element.
@@ -22,6 +26,15 @@ export default function getBrushColor(
   }
 
   const stackState = getToolState(element, 'stack');
+
+  if (!stackState) {
+    logger.error(
+      'Consumers must define stacks in their application if using segmentations in cornerstoneTools.'
+    );
+
+    return;
+  }
+
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];
 
