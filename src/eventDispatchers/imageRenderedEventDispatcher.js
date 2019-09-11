@@ -1,4 +1,5 @@
 import { state, getModule } from './../store/index.js';
+import { getToolState } from '../stateManagement/toolState';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
 import external from './../externalModules.js';
 
@@ -18,9 +19,12 @@ const onImageRendered = function(evt) {
         tool.mode === 'enabled')
   );
 
+  // Must be using stacks in order to use segmentation tools.
+  const stackToolState = getToolState(element, 'stack');
   if (
-    segmentationConfiguration.renderFill ||
-    segmentationConfiguration.renderOutline
+    stackToolState &&
+    (segmentationConfiguration.renderFill ||
+      segmentationConfiguration.renderOutline)
   ) {
     onImageRenderedBrushEventHandler(evt);
   }
