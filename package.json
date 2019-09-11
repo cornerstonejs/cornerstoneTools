@@ -39,6 +39,7 @@
     "start": "npm run build:prod && npm run build:dev",
     "test": "npm run test:unit",
     "test:unit": "jest --clearCache && jest --runInBand \\.test\\.js$",
+    "test:tool": "jest --clearCache && jest --runInBand .*bidirectionalTool.*\\.test\\.js$",
     "test:ci": "npm run test:unit && codecov",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },

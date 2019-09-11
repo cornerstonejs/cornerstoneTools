@@ -1,7 +1,11 @@
 import getLineVector from './getLineVector';
 
-// Update the  perpendicular line handles
-export default function(eventData, data) {
+/**
+ *
+ * @param {*} eventData
+ * @param {*} data
+ */
+export default function updatePerpendicularLineHandles(eventData, data) {
   if (!data.handles.perpendicularStart.locked) {
     return;
   }

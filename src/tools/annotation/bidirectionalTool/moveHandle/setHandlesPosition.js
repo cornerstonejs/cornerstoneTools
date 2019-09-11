@@ -1,6 +1,6 @@
 import external from './../../../../externalModules.js';
-import moveLongLine from './moveLongLine.js';
-import movePerpendicularLine from './movePerpendicularLine.js';
+import moveLongLine from './moveLongLine/moveLongLine.js';
+import movePerpendicularLine from './movePerpendicularLine/movePerpendicularLine.js';
 
 // Sets position of handles(start, end, perpendicularStart, perpendicularEnd)
 export default function(handle, eventData, data, distanceFromTool) {
