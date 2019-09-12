@@ -85,7 +85,7 @@ export default class DragProbeTool extends BaseTool {
  * @param  {Object} evt Image rendered event
  * @returns {void}
  */
-const defaultStrategy = evt => {
+function defaultStrategy(evt) {
   const config = this.configuration;
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
@@ -143,7 +143,7 @@ const defaultStrategy = evt => {
     );
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
   });
-};
+}
 
 /**
  * Minimal strategy will position a circle and use the center of the circle to calculate and display probe data.
@@ -151,7 +151,7 @@ const defaultStrategy = evt => {
  * @param  {Object} evt Image rendered event
  * @returns {void}
  */
-const minimalStrategy = evt => {
+function minimalStrategy(evt) {
   const config = this.configuration;
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
@@ -259,4 +259,4 @@ const minimalStrategy = evt => {
       color
     );
   });
-};
+}
