@@ -29,7 +29,7 @@ export default class SphericalBrushTool extends BrushTool {
       configuration: { alwaysEraseOnClick: false },
     };
 
-    super(defaultProps);
+    super(props, defaultProps);
 
     this.touchDragCallback = this._paint.bind(this);
   }
