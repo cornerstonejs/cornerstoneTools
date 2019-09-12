@@ -38,7 +38,7 @@ export default class FreehandRoiSculptorTool extends BaseTool {
 
     this.updateOnMouseMove = true;
     this.isMultiPartTool = true;
-    this.referencedToolName = defaultProps.referencedToolName;
+    this.referencedToolName = this.initialConfiguration.referencedToolName;
 
     this._active = false;
 
