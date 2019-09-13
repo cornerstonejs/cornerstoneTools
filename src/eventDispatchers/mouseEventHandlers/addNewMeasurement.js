@@ -25,22 +25,6 @@ export default function(evt, tool) {
 
   external.cornerstone.updateImage(element);
 
-  const options = Object.assign(
-    {
-      doneMovingCallback: () => {
-        const eventType = EVENTS.MEASUREMENT_COMPLETED;
-        const eventData = {
-          toolName: tool.name,
-          element,
-          measurementData,
-        };
-
-        triggerEvent(element, eventType, eventData);
-      },
-    },
-    tool.options
-  );
-
   const handleMover =
     Object.keys(measurementData.handles).length === 1
       ? moveHandle
@@ -51,7 +35,17 @@ export default function(evt, tool) {
     tool.name,
     measurementData,
     measurementData.handles.end,
-    options,
-    'mouse'
+    tool.options,
+    'mouse',
+    () => {
+      const eventType = EVENTS.MEASUREMENT_COMPLETED;
+      const eventData = {
+        toolName: tool.name,
+        element,
+        measurementData,
+      };
+
+      triggerEvent(element, eventType, eventData);
+    }
   );
 }

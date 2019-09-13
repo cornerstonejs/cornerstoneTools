@@ -1,4 +1,4 @@
-import store from './index.js';
+import store, { getModule } from './index.js';
 import getToolForElement from './getToolForElement.js';
 import { getLogger } from '../util/logger.js';
 
@@ -63,7 +63,9 @@ const addTool = function(ApiTool, props) {
  * @returns {undefined}
  */
 const _addToolGlobally = function(ApiTool, props) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 

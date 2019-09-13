@@ -1,5 +1,5 @@
 import external from './externalModules.js';
-import store from './store/index.js';
+import store, { getModule } from './store/index.js';
 import addEnabledElement from './store/internals/addEnabledElement.js';
 import removeEnabledElement from './store/internals/removeEnabledElement.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
@@ -12,18 +12,20 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @method
  * @name init
  *
- * @param {Object} configuration
+ * @param {Object} [configuration = {}] The global configuration to apply.
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
-export default function(configuration) {
+export default function(configuration = {}) {
   _addCornerstoneEventListeners();
   _initModules();
   windowResizeHandler.enable();
 
   // Apply global configuration
-  store.modules.globalConfiguration.state = Object.assign(
+  const globalConfigurationModule = getModule('globalConfiguration');
+
+  globalConfigurationModule.configuration = Object.assign(
     {},
-    store.modules.globalConfiguration.state,
+    globalConfigurationModule.configuration,
     configuration
   );
 }

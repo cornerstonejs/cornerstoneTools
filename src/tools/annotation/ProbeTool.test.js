@@ -7,10 +7,6 @@ jest.mock('../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('../../import.js', () => ({
-  default: jest.fn(),
-}));
-
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     metaData: {

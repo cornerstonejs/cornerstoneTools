@@ -42,12 +42,12 @@ export default class RotateTool extends BaseTool {
 
   dragCallback(evt) {
     evt.detail.viewport.initialRotation = this.initialRotation;
-    this.applyActiveStrategy(evt, this.configuration);
+    this.applyActiveStrategy(evt);
     external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }
 
-const defaultStrategy = evt => {
+function defaultStrategy(evt) {
   const eventData = evt.detail;
   const { element, viewport } = eventData;
   const initialRotation = viewport.initialRotation;
@@ -82,7 +82,7 @@ const defaultStrategy = evt => {
   }
 
   viewport.rotation = initialRotation + angleInfo.angle;
-};
+}
 
 const horizontalStrategy = evt => {
   const eventData = evt.detail;

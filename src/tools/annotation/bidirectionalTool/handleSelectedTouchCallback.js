@@ -88,9 +88,9 @@ export default function(evt) {
         {
           deleteIfHandleOutsideImage: true,
           preventHandleOutsideImage: false,
-          doneMovingCallback,
         },
-        'touch'
+        'touch',
+        doneMovingCallback
       );
 
       preventPropagation(evt);

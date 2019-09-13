@@ -1,14 +1,14 @@
 ---
 layout: tool-simple
-title: Freehand Mouse Tool
-toolName: FreehandMouse
+title: FreehandRoi Tool
+toolName: FreehandRoi
 toolType: annotation
 ---
 
 <!--
   TODO: Demo should include:
-
-  - FreehandSculpterMouseTool
+  - FreehandRoiTool
+  - FreehandRoiSculptorTool
 -->
 
 {% include tool-simple-code-snippet.md %}

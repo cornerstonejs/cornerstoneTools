@@ -12,7 +12,7 @@
  * @returns {void}
  */
 export default function(context, canvas, viewport) {
-  if (!(viewport.vflip || viewport.vflip || viewport.rotation)) {
+  if (!(viewport.hflip || viewport.vflip || viewport.rotation)) {
     return;
   }
 

@@ -29,3 +29,13 @@
   margin-top: 15px;
   margin-bottom: 15px;
 }
+
+/* Custom Buttons  */
+button.button.set-tool-mode {
+  -webkit-transition: background-color 0.5s;
+  transition: background-color 0.5s;
+}
+
+.row-label {
+  margin: 0 20px 0 0;
+}

@@ -265,7 +265,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     let measurementData;
     let toMoveHandle;
-    let options;
+    let doneMovingCallback;
 
     // Search for incomplete measurements
     const element = evt.detail.element;
@@ -290,26 +290,20 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       };
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
-      options = Object.assign(
-        {
-          doneMovingCallback: () => {
-            const eventType = EVENTS.MEASUREMENT_COMPLETED;
-            const eventData = {
-              toolType: this.name,
-              element,
-              measurementData,
-            };
+      doneMovingCallback = () => {
+        const eventType = EVENTS.MEASUREMENT_COMPLETED;
+        const eventData = {
+          toolType: this.name,
+          element,
+          measurementData,
+        };
 
-            triggerEvent(element, eventType, eventData);
-          },
-        },
-        this.options
-      );
+        triggerEvent(element, eventType, eventData);
+      };
     } else {
       measurementData = this.createNewMeasurement(eventData);
       addToolState(element, this.name, measurementData);
       toMoveHandle = measurementData.handles.end;
-      options = this.options;
     }
 
     // Associate this data with this imageId so we can render it and manipulate it
@@ -320,8 +314,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.name,
       measurementData,
       toMoveHandle,
-      options,
-      interactionType
+      this.options,
+      interactionType,
+      doneMovingCallback
     );
   }
 

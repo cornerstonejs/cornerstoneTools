@@ -12,11 +12,11 @@ Note that unlike a lot of the Tools, the `element` on which the Tool resides is 
 For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
-import cornerstoneTools from 'cornerstone-tools';
-const BaseTool = cornerstoneTools.import('base/BaseTool');
+import csTools from 'cornerstone-tools';
+const BaseTool = csTools.importInternal('base/BaseTool');
 
-export default class HelloWorldMouseTool extends BaseTool {
-  constructor(name = 'HelloWorldMouse') {
+export default class HelloWorldTool extends BaseTool {
+  constructor(name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],
