@@ -171,8 +171,6 @@ export default class SphericalBrushTool extends BaseBrushTool {
       );
     }
 
-    triggerLabelmapModifiedEvent(element);
-
     external.cornerstone.updateImage(evt.detail.element);
   }
 
