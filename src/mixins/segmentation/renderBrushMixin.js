@@ -8,7 +8,7 @@ const { getters, configuration } = getModule('segmentation');
  * @param {Object} evt - The event.
  * @returns {void}
  */
-export default function renderBrush(evt) {
+function renderBrush(evt) {
   const eventData = evt.detail;
   const viewport = eventData.viewport;
 
@@ -60,3 +60,7 @@ export default function renderBrush(evt) {
   );
   context.stroke();
 }
+
+export default {
+  renderBrush,
+};
