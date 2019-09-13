@@ -14,6 +14,7 @@ const requestType = 'prefetch';
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
+  preserveExistingPool: false
 };
 
 let resetPrefetchTimeout;
@@ -137,8 +138,10 @@ function prefetch(element) {
     return;
   }
 
-  // Clear the requestPool of prefetch requests
-  requestPoolManager.clearRequestStack(requestType);
+  // Clear the requestPool of prefetch requests, if needed.
+  if (!configuration.preserveExistingPool) {
+    requestPoolManager.clearRequestStack(requestType);
+  }
 
   // Identify the nearest imageIdIndex to the currentImageIdIndex
   const nearest = nearestIndex(
@@ -194,6 +197,7 @@ function prefetch(element) {
   // Prefetch images around the current image (before and after)
   let lowerIndex = nearest.low;
   let higherIndex = nearest.high;
+  const imageIdsToPrefetch = [];
 
   while (
     lowerIndex >= 0 ||
@@ -208,8 +212,7 @@ function prefetch(element) {
       configuration.maxImagesToPrefetch;
 
     const shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
-    const shouldLoadHigher =
-      !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
+    const shouldLoadHigher = !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
 
     if (!shouldLoadHigher && !shouldLoadLower) {
       break;
@@ -218,28 +221,25 @@ function prefetch(element) {
     if (shouldLoadLower) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
       imageId = stack.imageIds[nextImageIdIndex];
-      requestPoolManager.addRequest(
-        element,
-        imageId,
-        requestType,
-        preventCache,
-        doneCallback,
-        failCallback
-      );
+      imageIdsToPrefetch.push(imageId);
     }
 
     if (shouldLoadHigher) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
       imageId = stack.imageIds[nextImageIdIndex];
-      requestPoolManager.addRequest(
-        element,
-        imageId,
-        requestType,
-        preventCache,
-        doneCallback,
-        failCallback
-      );
+      imageIdsToPrefetch.push(imageId);
     }
+  }
+  // Load images in reverse order, by adding them at the beginning of the pool.
+  for (const imageToLoad of imageIdsToPrefetch.reverse()) {
+    requestPoolManager.addRequest(
+      element,
+      imageToLoad,
+      requestType,
+      preventCache,
+      doneCallback,
+      failCallback
+    );
   }
 
   // Try to start the requestPool's grabbing procedure
