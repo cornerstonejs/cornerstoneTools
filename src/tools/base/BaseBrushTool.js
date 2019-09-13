@@ -3,7 +3,10 @@ import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import isToolActive from './../../store/isToolActive.js';
 import { getModule } from './../../store/index.js';
-import { getDiffBetweenPixelData } from '../../util/segmentation';
+import {
+  getDiffBetweenPixelData,
+  triggerLabelmapModifiedEvent,
+} from '../../util/segmentation';
 
 const { configuration, getters, setters } = getModule('segmentation');
 
@@ -181,6 +184,8 @@ class BaseBrushTool extends BaseTool {
 
       setters.pushState(this.element, [operation]);
     }
+
+    triggerLabelmapModifiedEvent(this.element);
   }
 
   // ===================================================================

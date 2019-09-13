@@ -1,11 +1,7 @@
 import external from './../../externalModules.js';
 import { BaseBrushTool } from '../base';
 import store, { getModule } from './../../store/index.js';
-import {
-  drawBrushPixels,
-  getCircle,
-  triggerLabelmapModifiedEvent,
-} from '../../util/segmentation/index.js';
+import { drawBrushPixels, getCircle } from '../../util/segmentation/index.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BrushTool');
@@ -121,8 +117,6 @@ export default class BrushTool extends BaseBrushTool {
       columns,
       shouldErase
     );
-
-    triggerLabelmapModifiedEvent(element);
 
     external.cornerstone.updateImage(evt.detail.element);
   }
