@@ -1,3 +1,7 @@
+import store, { getModule } from './../../store/index.js';
+
+const { getters, configuration } = getModule('segmentation');
+
 /**
  * Called by the event dispatcher to render the image.
  *
