@@ -34,7 +34,7 @@
     "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api:dev\"",
     "docs:book": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
     "docs:deploy": "bash ./.circleci/update-docs.sh",
-    "lint": "eslint -c .eslintrc.js --fix src && prettier --single-quote --write src/**/*.{js,jsx,json,css}",
+    "lint": "eslint -c .eslintrc.js --fix src && prettier --single-quote --write src/**/*.{js,json,css}",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
     "test": "npm run test:unit",
@@ -48,8 +48,8 @@
     }
   },
   "lint-staged": {
-    "src/**/*.{js,jsx,json,css}": [
-      "prettier --single-quote --write",
+    "src/**/*.{js,json,css}": [
+      "prettier --write",
       "git add"
     ]
   },
@@ -74,10 +74,10 @@
     "gitbook-plugin-ga": "2.0.0",
     "gitbook-plugin-github": "3.0.0",
     "gitbook-plugin-sitemap": "1.2.0",
-    "husky": "2.4.x",
+    "husky": "3.0.x",
     "jest": "^24.8.0",
     "jest-junit": "5.1.0",
-    "lint-staged": "^8.2.1",
+    "lint-staged": "^9.2.5",
     "lodash": "^4.17.15",
     "nodemon": "1.18.6",
     "prettier": "1.18.x",

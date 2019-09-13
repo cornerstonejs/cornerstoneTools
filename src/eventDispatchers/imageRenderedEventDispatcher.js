@@ -21,6 +21,7 @@ const onImageRendered = function(evt) {
 
   // Must be using stacks in order to use segmentation tools.
   const stackToolState = getToolState(element, 'stack');
+
   if (
     stackToolState &&
     (segmentationConfiguration.renderFill ||

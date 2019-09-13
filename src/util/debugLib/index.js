@@ -7,7 +7,7 @@ import setup from './common.js';
  */
 const storage = localstorage();
 
-let debugLib = {
+const debugLib = {
   formatArgs,
   save,
   load,
@@ -152,26 +152,25 @@ function useColors() {
  */
 
 function formatArgs(args) {
-  args[0] =
-    (this.useColors ? '%c' : '') +
+  args[0] = `${(this.useColors ? '%c' : '') +
     this.namespace +
     (this.useColors ? ' %c' : ' ') +
     args[0] +
-    (this.useColors ? '%c ' : ' ') +
-    '+' +
-    debugLib.humanize(this.diff);
+    (this.useColors ? '%c ' : ' ')}+${debugLib.humanize(this.diff)}`;
 
   if (!this.useColors) {
     return;
   }
 
-  let c = 'color: ' + this.color;
+  const c = `color: ${this.color}`;
+
   args.splice(1, 0, c, 'color: inherit'); // The final "%c" is somewhat tricky, because there could be other
   // arguments passed either before or after the %c, so we need to
   // figure out the correct index to insert the CSS into
 
   let index = 0;
   let lastC = 0;
+
   args[0].replace(/%[a-zA-Z%]/g, function(match) {
     if (match === '%%') {
       return;
@@ -263,7 +262,7 @@ function localstorage() {
 }
 
 const setupDebug = setup(debugLib);
-let formatters = setupDebug.formatters;
+const formatters = setupDebug.formatters;
 /**
  * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
  */
@@ -272,7 +271,7 @@ formatters.j = function(v) {
   try {
     return JSON.stringify(v);
   } catch (error) {
-    return '[UnexpectedJSONParseError]: ' + error.message;
+    return `[UnexpectedJSONParseError]: ${error.message}`;
   }
 };
 

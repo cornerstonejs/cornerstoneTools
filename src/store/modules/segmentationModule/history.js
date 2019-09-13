@@ -17,6 +17,7 @@ function undo(element, labelmapIndex) {
 
   if (!undo.length) {
     logger.warn('No undos left.');
+
     return;
   }
 
@@ -38,6 +39,7 @@ function redo(element, labelmapIndex) {
 
   if (!redo.length) {
     logger.warn('No redos left.');
+
     return;
   }
 
@@ -65,6 +67,7 @@ function applyState(labelmap3D, operations, replaceIndex) {
 
     for (let i = 0; i < diff.length; i++) {
       const diffI = diff[i];
+
       pixelData[diffI[0]] = diffI[replaceIndex];
     }
   });
