@@ -1,5 +1,7 @@
+import external from './../../externalModules.js';
 import store, { getModule } from './../../store/index.js';
 
+const { cornerstone } = external;
 const { getters, configuration } = getModule('segmentation');
 
 /**
@@ -41,8 +43,6 @@ function renderBrush(evt) {
   const color = getters.brushColor(element, this._drawing);
 
   context.setTransform(1, 0, 0, 1, 0, 0);
-
-  const { cornerstone } = external;
 
   const circleRadius = radius * viewport.scale;
   const mouseCoordsCanvas = cornerstone.pixelToCanvas(element, mousePosition);
