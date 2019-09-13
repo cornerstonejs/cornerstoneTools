@@ -327,6 +327,10 @@ export default class SphericalBrushTool extends BrushTool {
       }
     }
 
-    setters.pushState(this.element, operations);
+    if (configuration.storeHistory) {
+      setters.pushState(this.element, operations);
+    }
+
+    triggerLabelmapModifiedEvent(this.element);
   }
 }
