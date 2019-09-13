@@ -4,12 +4,10 @@ import { getDiffBetweenPixelData } from '../../../util/segmentation';
 import { pushState, undo, redo } from './history';
 
 let mockLabelmap3D;
-let mockElement = {};
+const mockElement = {};
 
 jest.mock('./getLabelmaps3D', () => ({
-  getLabelmap3D: (element, labelmapIndex) => {
-    return mockLabelmap3D;
-  },
+  getLabelmap3D: (element, labelmapIndex) => mockLabelmap3D,
 }));
 
 jest.mock('../../../externalModules.js', () => ({
@@ -125,7 +123,9 @@ describe('history.js', () => {
       }
 
       const uInt16ViewOfLabelmap3D = new Uint16Array(labelmap3D.buffer);
-      let hasNonZeroElement = uInt16ViewOfLabelmap3D.some(voxel => voxel !== 0);
+      const hasNonZeroElement = uInt16ViewOfLabelmap3D.some(
+        voxel => voxel !== 0
+      );
 
       expect(labelmap3D.undo.length).toBe(0);
       expect(labelmap3D.redo.length).toBe(numberOfOperations);

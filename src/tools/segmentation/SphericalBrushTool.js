@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BrushTool from './BrushTool.js';
+import BaseBrushTool from './../base/BaseBrushTool.js';
 import { getModule } from './../../store/index.js';
 import {
   drawBrushPixels,
@@ -21,12 +21,13 @@ const { getters, setters, configuration } = getModule('segmentation');
  * @classdesc Tool for drawing segmentations on an image.
  * @extends Tools.Base.BaseBrushTool
  */
-export default class SphericalBrushTool extends BrushTool {
+export default class SphericalBrushTool extends BaseBrushTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'SphericalBrush',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: { alwaysEraseOnClick: false },
+      mixins: ['renderBrushMixin'],
     };
 
     super(props, defaultProps);
@@ -120,6 +121,7 @@ export default class SphericalBrushTool extends BrushTool {
         );
 
         const previousPixeldata = labelmap2DForImageIdIndex.pixelData.slice();
+
         previousPixeldataForImagesInRange.push(previousPixeldata);
       }
 
@@ -168,8 +170,6 @@ export default class SphericalBrushTool extends BrushTool {
         shouldErase
       );
     }
-
-    triggerLabelmapModifiedEvent(element);
 
     external.cornerstone.updateImage(evt.detail.element);
   }
@@ -320,6 +320,7 @@ export default class SphericalBrushTool extends BrushTool {
         const previousPixeldata = previousPixeldataForImagesInRange[i];
         const labelmap2D = labelmap3D.labelmaps2D[imageIdIndex];
         const newPixelData = labelmap2D.pixelData;
+
         operations.push({
           imageIdIndex,
           diff: getDiffBetweenPixelData(previousPixeldata, newPixelData),
