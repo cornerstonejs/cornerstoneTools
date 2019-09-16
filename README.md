@@ -145,6 +145,9 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 #### 3rd Party Tool Plugins
 
 - Image Statistics: [Source](https://github.com/QSolutionsLLC/cornerstone-tool-image-statistics) | [Demo](https://qsolutionsllc.github.io/cornerstone-tool-image-statistics/)
+- Rotated Elliptical ROI Tool: [Source](https://github.com/sisobus/cornerstoneTools-RotatedEllipticalRoiTool) | [Demo](https://examples.sisobus.com/rotated-elliptical-roi/)
+
+A huge thanks to tool authors, like @sisobus, for sharing their work with the community!
 
 ## Other Solutions
 
