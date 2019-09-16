@@ -110,7 +110,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * Initialise painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -147,7 +147,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * End painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
