@@ -2,6 +2,10 @@ import { getToolState } from '../../../stateManagement/toolState.js';
 import getElement from './getElement';
 import state from './state';
 
+import { getLogger } from '../../../util/logger';
+
+const logger = getLogger('store:modules:segmentationModule:getLabelmaps3D');
+
 /**
  * Returns the `Labelmap3D` objects associated with the series displayed
  * in the element, the `activeLabelmapIndex` and the `currentImageIdIndex`.
@@ -19,6 +23,15 @@ export default function getLabelmaps3D(elementOrEnabledElementUID) {
   }
 
   const stackState = getToolState(element, 'stack');
+
+  if (!stackState) {
+    logger.error(
+      'Consumers must define stacks in their application if using segmentations in cornerstoneTools.'
+    );
+
+    return;
+  }
+
   const stackData = stackState.data[0];
 
   const firstImageId = stackData.imageIds[0];

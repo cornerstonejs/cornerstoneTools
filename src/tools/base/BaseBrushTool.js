@@ -3,7 +3,10 @@ import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import isToolActive from './../../store/isToolActive.js';
 import { getModule } from './../../store/index.js';
-import { getDiffBetweenPixelData } from '../../util/segmentation';
+import {
+  getDiffBetweenPixelData,
+  triggerLabelmapModifiedEvent,
+} from '../../util/segmentation';
 
 const { configuration, getters, setters } = getModule('segmentation');
 
@@ -107,7 +110,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * Initialise painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -144,7 +147,7 @@ class BaseBrushTool extends BaseTool {
   /**
    * End painting with BaseBrushTool.
    *
-   * @virtual
+   * @abstract
    * @event
    * @param {Object} evt - The event.
    * @returns {void}
@@ -181,6 +184,8 @@ class BaseBrushTool extends BaseTool {
 
       setters.pushState(this.element, [operation]);
     }
+
+    triggerLabelmapModifiedEvent(this.element);
   }
 
   // ===================================================================

@@ -38,7 +38,7 @@ function setup(env) {
   /**
    * Selects a color for a debug namespace
    * @param {String} namespace The namespace string for the for the debug instance to be colored
-   * @return {Number|String} An ANSI color code for the given namespace
+   * @returns {Number|String} An ANSI color code for the given namespace
    * @api private
    */
   function selectColor(namespace) {
@@ -57,7 +57,7 @@ function setup(env) {
    * Create a debugger with the given `namespace`.
    *
    * @param {String} namespace
-   * @return {Function}
+   * @returns {Function}
    * @api public
    */
   function createDebug(namespace) {
@@ -74,6 +74,7 @@ function setup(env) {
       // Set `diff` timestamp
       const curr = Number(new Date());
       const ms = curr - (prevTime || curr);
+
       self.diff = ms;
       self.prev = prevTime;
       self.curr = curr;
@@ -88,6 +89,7 @@ function setup(env) {
 
       // Apply any `formatters` transformations
       let index = 0;
+
       args[0] = args[0].replace(/%([a-zA-Z%])/g, (match, format) => {
         // If we encounter an escaped % then don't increase the array index
         if (match === '%%') {
@@ -95,14 +97,17 @@ function setup(env) {
         }
         index++;
         const formatter = createDebug.formatters[format];
+
         if (typeof formatter === 'function') {
           const val = args[index];
+
           match = formatter.call(self, val);
 
           // Now we need to remove `args[index]` since it's inlined in the `format`
           args.splice(index, 1);
           index--;
         }
+
         return match;
       });
 
@@ -110,6 +115,7 @@ function setup(env) {
       createDebug.formatArgs.call(self, args);
 
       const logFn = self.log || createDebug.log;
+
       logFn.apply(self, args);
     }
 
@@ -134,10 +140,13 @@ function setup(env) {
 
   function destroy() {
     const index = createDebug.instances.indexOf(this);
+
     if (index !== -1) {
       createDebug.instances.splice(index, 1);
+
       return true;
     }
+
     return false;
   }
 
@@ -147,7 +156,9 @@ function setup(env) {
         (typeof delimiter === 'undefined' ? ':' : delimiter) +
         namespace
     );
+
     newDebug.log = this.log;
+
     return newDebug;
   }
 
@@ -172,21 +183,22 @@ function setup(env) {
 
     for (i = 0; i < len; i++) {
       if (!split[i]) {
-        // ignore empty strings
+        // Ignore empty strings
         continue;
       }
 
       namespaces = split[i].replace(/\*/g, '.*?');
 
       if (namespaces[0] === '-') {
-        createDebug.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
+        createDebug.skips.push(new RegExp(`^${namespaces.substr(1)}$`));
       } else {
-        createDebug.names.push(new RegExp('^' + namespaces + '$'));
+        createDebug.names.push(new RegExp(`^${namespaces}$`));
       }
     }
 
     for (i = 0; i < createDebug.instances.length; i++) {
       const instance = createDebug.instances[i];
+
       instance.enabled = createDebug.enabled(instance.namespace);
     }
   }
@@ -194,15 +206,17 @@ function setup(env) {
   /**
    * Disable debug output.
    *
-   * @return {String} namespaces
+   * @returns {String} namespaces
    * @api public
    */
   function disable() {
     const namespaces = [
       ...createDebug.names.map(toNamespace),
-      ...createDebug.skips.map(toNamespace).map(namespace => '-' + namespace),
+      ...createDebug.skips.map(toNamespace).map(namespace => `-${namespace}`),
     ].join(',');
+
     createDebug.enable('');
+
     return namespaces;
   }
 
@@ -210,7 +224,7 @@ function setup(env) {
    * Returns true if the given mode name is enabled, false otherwise.
    *
    * @param {String} name
-   * @return {Boolean}
+   * @returns {Boolean}
    * @api public
    */
   function enabled(name) {
@@ -240,7 +254,7 @@ function setup(env) {
    * Convert regexp to namespace
    *
    * @param {RegExp} regxep
-   * @return {String} namespace
+   * @returns {String} namespace
    * @api private
    */
   function toNamespace(regexp) {
@@ -254,13 +268,14 @@ function setup(env) {
    * Coerce `val`.
    *
    * @param {Mixed} val
-   * @return {Mixed}
+   * @returns {Mixed}
    * @api private
    */
   function coerce(val) {
     if (val instanceof Error) {
       return val.stack || val.message;
     }
+
     return val;
   }
 

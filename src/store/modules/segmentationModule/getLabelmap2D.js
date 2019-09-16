@@ -5,6 +5,10 @@ import addLabelmap2D from './addLabelmap2D';
 import external from '../../../externalModules';
 import state from './state';
 
+import { getLogger } from '../../../util/logger';
+
+const logger = getLogger('store:modules:segmentationModule:getLabelmap2D');
+
 /**
  * Returns the active `labelmap3D` and the `currentImageIdIndex`. If a labelmap does
  * not get exist, creates a new one. Generates a `labelmap2D` for the `currentImageIndex`
@@ -23,6 +27,15 @@ export default function getLabelmap2D(elementOrEnabledElementUID) {
 
   const cornerstone = external.cornerstone;
   const stackState = getToolState(element, 'stack');
+
+  if (!stackState) {
+    logger.error(
+      'Consumers must define stacks in their application if using segmentations in cornerstoneTools.'
+    );
+
+    return;
+  }
+
   const stackData = stackState.data[0];
 
   const enabledElement = cornerstone.getEnabledElement(element);
