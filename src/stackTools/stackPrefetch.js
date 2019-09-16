@@ -14,7 +14,7 @@ const requestType = 'prefetch';
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
-  preserveExistingPool: false
+  preserveExistingPool: false,
 };
 
 let resetPrefetchTimeout;
@@ -212,7 +212,8 @@ function prefetch(element) {
       configuration.maxImagesToPrefetch;
 
     const shouldLoadLower = !shouldSkipLower && lowerIndex >= 0;
-    const shouldLoadHigher = !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
+    const shouldLoadHigher =
+      !shouldSkipHigher && higherIndex < stackPrefetch.indicesToRequest.length;
 
     if (!shouldLoadHigher && !shouldLoadLower) {
       break;
