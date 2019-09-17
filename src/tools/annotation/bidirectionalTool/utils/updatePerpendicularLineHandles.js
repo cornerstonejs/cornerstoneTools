@@ -8,7 +8,7 @@ import getLineVector from './getLineVector';
  * @param {*} eventData Data object associated with the event
  * @param {*} measurementData Data from current bidirectional tool measurement
  *
- * @returns {boolean} False in case the handle is locked or true when moved
+ * @returns {boolean} False in case the handle is not locked or true when moved
  */
 export default function updatePerpendicularLineHandles(
   eventData,
