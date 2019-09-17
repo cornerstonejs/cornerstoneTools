@@ -1,5 +1,5 @@
 import getLineVector from '../../utils/getLineVector';
-import getDistanceToIntersection from './getDistanceToIntersection';
+import getDistanceWithPixelSpacing from '../../utils/getDistanceWithPixelSpacing';
 
 /**
  * Returns the updated line object that will be used to change the position of
@@ -17,12 +17,25 @@ export default function updatePerpendicularLine(baseData, mid) {
     start,
     perpendicularStart,
     perpendicularEnd,
+    intersection,
     fixedPoint,
   } = baseData;
 
-  // Get the original distance from perpendicular handles to intersection
-  const distancePS = getDistanceToIntersection(baseData, perpendicularStart);
-  const distancePE = getDistanceToIntersection(baseData, perpendicularEnd);
+  // Get the original distance from perpendicular start handle to intersection
+  const distancePS = getDistanceWithPixelSpacing(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    perpendicularStart,
+    intersection
+  );
+
+  // Get the original distance from perpendicular end handle to intersection
+  const distancePE = getDistanceWithPixelSpacing(
+    columnPixelSpacing,
+    rowPixelSpacing,
+    perpendicularEnd,
+    intersection
+  );
 
   // Inclination of the perpendicular line
   const vector = getLineVector(
