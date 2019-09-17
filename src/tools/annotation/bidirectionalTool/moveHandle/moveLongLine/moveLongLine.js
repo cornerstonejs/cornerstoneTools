@@ -3,20 +3,29 @@ import getBaseData from '../getBaseData.js';
 import updatePerpendicularLine from './updatePerpendicularLine.js';
 
 /**
+ * Move the long line updating the perpendicular line handles position.
  *
- * @param {*} proposedPoint
- * @param {*} toolData
- * @param {*} eventData
- * @param {*} fixedPoint
+ * @param {*} proposedPoint Point that was moved in bidirectional tool
+ * @param {*} measurementData Data from current bidirectional tool measurement
+ * @param {*} eventData Data object associated with the event
+ * @param {*} fixedPoint Point that is not being moved in long line
+ *
+ * @returns {boolean} True if perpendicular handles were updated, false if not
  */
 export default function moveLongLine(
   proposedPoint,
-  toolData,
+  measurementData,
   eventData,
   fixedPoint
 ) {
-  const baseData = getBaseData(toolData, eventData, fixedPoint);
-  const { columnPixelSpacing, rowPixelSpacing, distanceToFixed } = baseData;
+  const baseData = getBaseData(measurementData, eventData, fixedPoint);
+  const {
+    columnPixelSpacing,
+    rowPixelSpacing,
+    distanceToFixed,
+    perpendicularStart,
+    perpendicularEnd,
+  } = baseData;
 
   // Calculate the length of the new line, considering the proposed point
   const newLineLength = getDistanceWithPixelSpacing(
@@ -38,8 +47,14 @@ export default function moveLongLine(
     y: fixedPoint.y + (proposedPoint.y - fixedPoint.y) * k,
   };
 
-  // Calculate and set the new position of the perpendicular handles
-  updatePerpendicularLine(baseData, newIntersection);
+  // Calculate and the new position of the perpendicular handles
+  const newLine = updatePerpendicularLine(baseData, newIntersection);
+
+  // Update the perpendicular line handles
+  perpendicularStart.x = newLine.start.x;
+  perpendicularStart.y = newLine.start.y;
+  perpendicularEnd.x = newLine.end.x;
+  perpendicularEnd.y = newLine.end.y;
 
   return true;
 }

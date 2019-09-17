@@ -2,12 +2,13 @@ import getDirectionMultiplier from './getDirectionMultiplier';
 import getMovingPoint from './getMovingPoint';
 
 /**
- * Update the opposite handle from the one that is being moved.
+ * Returns the updated line object that will be used to change the position of
+ * the perpendicular line handles.
  *
- * @param {*} baseData
- * @param {*} mid
- * @param {*} helperLine
- * @param {*} vector
+ * @param {*} baseData Base data for bidirectional line moving
+ * @param {*} mid Middle point considering the proposed point
+ * @param {*} helperLine Line based on proposed point that crosses long line
+ * @param {*} vector Vector with the perpendicular line inclination
  */
 export default function updatePerpendicularLine(
   baseData,

@@ -2,9 +2,13 @@ import getLineVector from '../../utils/getLineVector';
 import getDistanceToIntersection from './getDistanceToIntersection';
 
 /**
+ * Returns the updated line object that will be used to change the position of
+ * the perpendicular line handles.
  *
- * @param {*} baseData
- * @param {*} mid
+ * @param {*} baseData Base data for bidirectional line moving
+ * @param {*} mid Middle point considering the proposed point
+ *
+ * @returns {*} Returns a line object with the updated handles position
  */
 export default function updatePerpendicularLine(baseData, mid) {
   const {
@@ -33,9 +37,15 @@ export default function updatePerpendicularLine(baseData, mid) {
   const rowMultiplier = multiplier * rowPixelSpacing;
   const columnMultiplier = multiplier * columnPixelSpacing;
 
-  // Calculate and set the new position of the perpendicular handles
-  perpendicularStart.x = mid.x + vector.y * distancePS * rowMultiplier;
-  perpendicularStart.y = mid.y + vector.x * distancePS * columnMultiplier * -1;
-  perpendicularEnd.x = mid.x + vector.y * distancePE * rowMultiplier * -1;
-  perpendicularEnd.y = mid.y + vector.x * distancePE * columnMultiplier;
+  // Calculate and return the new position of the perpendicular handles
+  return {
+    start: {
+      x: mid.x + vector.y * distancePS * rowMultiplier,
+      y: mid.y + vector.x * distancePS * columnMultiplier * -1,
+    },
+    end: {
+      x: mid.x + vector.y * distancePE * rowMultiplier * -1,
+      y: mid.y + vector.x * distancePE * columnMultiplier,
+    },
+  };
 }

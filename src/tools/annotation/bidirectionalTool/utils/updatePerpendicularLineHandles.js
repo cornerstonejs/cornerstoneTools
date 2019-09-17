@@ -1,18 +1,26 @@
 import getLineVector from './getLineVector';
 
 /**
+ * Update the perpendicular line handles when the measurement is being created.
+ * This method will make the perpendicular line intersect in the middle of the
+ * long line and assume half the size of the long line.
  *
- * @param {*} eventData
- * @param {*} data
+ * @param {*} eventData Data object associated with the event
+ * @param {*} measurementData Data from current bidirectional tool measurement
+ *
+ * @returns {boolean} False in case the handle is locked or true when moved
  */
-export default function updatePerpendicularLineHandles(eventData, data) {
-  if (!data.handles.perpendicularStart.locked) {
-    return;
+export default function updatePerpendicularLineHandles(
+  eventData,
+  measurementData
+) {
+  if (!measurementData.handles.perpendicularStart.locked) {
+    return false;
   }
 
   let startX, startY, endX, endY;
 
-  const { start, end } = data.handles;
+  const { start, end } = measurementData.handles;
   const { columnPixelSpacing = 1, rowPixelSpacing = 1 } = eventData.image;
 
   if (start.x === end.x && start.y === end.y) {
@@ -45,8 +53,10 @@ export default function updatePerpendicularLineHandles(eventData, data) {
     endY = mid.y + rowMultiplier * vector.x;
   }
 
-  data.handles.perpendicularStart.x = startX;
-  data.handles.perpendicularStart.y = startY;
-  data.handles.perpendicularEnd.x = endX;
-  data.handles.perpendicularEnd.y = endY;
+  measurementData.handles.perpendicularStart.x = startX;
+  measurementData.handles.perpendicularStart.y = startY;
+  measurementData.handles.perpendicularEnd.x = endX;
+  measurementData.handles.perpendicularEnd.y = endY;
+
+  return true;
 }

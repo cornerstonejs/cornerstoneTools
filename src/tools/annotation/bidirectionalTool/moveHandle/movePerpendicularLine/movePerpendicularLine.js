@@ -6,20 +6,23 @@ import getHelperLine from './getHelperLine.js';
 import updatePerpendicularLine from './updatePerpendicularLine.js';
 
 /**
+ * Move the perpendicular line updating the opposite handle position.
  *
- * @param {*} proposedPoint
- * @param {*} toolData
- * @param {*} eventData
- * @param {*} fixedPoint
+ * @param {*} proposedPoint Point that was moved in bidirectional tool
+ * @param {*} measurementData Data from current bidirectional tool measurement
+ * @param {*} eventData Data object associated with the event
+ * @param {*} fixedPoint Point that is not being moved in long line
+ *
+ * @returns {boolean} True if perpendicular handles were updated, false if not
  */
 export default function movePerpendicularLine(
   proposedPoint,
-  toolData,
+  measurementData,
   eventData,
   fixedPoint
 ) {
   const { lineSegment } = external.cornerstoneMath;
-  const baseData = getBaseData(toolData, eventData, fixedPoint);
+  const baseData = getBaseData(measurementData, eventData, fixedPoint);
   const {
     columnPixelSpacing,
     rowPixelSpacing,
