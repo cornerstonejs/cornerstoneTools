@@ -27,8 +27,6 @@ export default function movePerpendicularLine(
     columnPixelSpacing,
     rowPixelSpacing,
     start,
-    perpendicularStart,
-    perpendicularEnd,
     longLine,
     intersection,
   } = baseData;
@@ -66,10 +64,10 @@ export default function movePerpendicularLine(
   );
 
   // Change the position of the perpendicular line handles
-  perpendicularStart.x = newLine.start.x;
-  perpendicularStart.y = newLine.start.y;
-  perpendicularEnd.x = newLine.end.x;
-  perpendicularEnd.y = newLine.end.y;
+  measurementData.handles.perpendicularStart.x = newLine.start.x;
+  measurementData.handles.perpendicularStart.y = newLine.start.y;
+  measurementData.handles.perpendicularEnd.x = newLine.end.x;
+  measurementData.handles.perpendicularEnd.y = newLine.end.y;
 
   return true;
 }

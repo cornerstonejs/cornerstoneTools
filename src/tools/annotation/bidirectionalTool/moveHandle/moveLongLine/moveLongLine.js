@@ -19,13 +19,7 @@ export default function moveLongLine(
   fixedPoint
 ) {
   const baseData = getBaseData(measurementData, eventData, fixedPoint);
-  const {
-    columnPixelSpacing,
-    rowPixelSpacing,
-    distanceToFixed,
-    perpendicularStart,
-    perpendicularEnd,
-  } = baseData;
+  const { columnPixelSpacing, rowPixelSpacing, distanceToFixed } = baseData;
 
   // Calculate the length of the new line, considering the proposed point
   const newLineLength = getDistanceWithPixelSpacing(
@@ -51,10 +45,10 @@ export default function moveLongLine(
   const newLine = updatePerpendicularLine(baseData, newIntersection);
 
   // Update the perpendicular line handles
-  perpendicularStart.x = newLine.start.x;
-  perpendicularStart.y = newLine.start.y;
-  perpendicularEnd.x = newLine.end.x;
-  perpendicularEnd.y = newLine.end.y;
+  measurementData.handles.perpendicularStart.x = newLine.start.x;
+  measurementData.handles.perpendicularStart.y = newLine.start.y;
+  measurementData.handles.perpendicularEnd.x = newLine.end.x;
+  measurementData.handles.perpendicularEnd.y = newLine.end.y;
 
   return true;
 }
