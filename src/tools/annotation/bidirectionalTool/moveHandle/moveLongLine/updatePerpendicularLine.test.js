@@ -30,9 +30,9 @@ describe('updatePerpendicularLine.js', () => {
 
     const newLine = updatePerpendicularLine(baseData, mid);
 
-    expect(newLine.start.x).toEqual(6.910938354123028);
-    expect(newLine.start.y).toEqual(-1.1150027331936894);
-    expect(newLine.end.x).toEqual(3.500936622008277);
-    expect(newLine.end.y).toEqual(9.797002809573513);
+    expect(newLine.start.x).toBeCloseTo(6.910938354123028);
+    expect(newLine.start.y).toBeCloseTo(-1.1150027331936894);
+    expect(newLine.end.x).toBeCloseTo(3.500936622008277);
+    expect(newLine.end.y).toBeCloseTo(9.797002809573513);
   });
 });

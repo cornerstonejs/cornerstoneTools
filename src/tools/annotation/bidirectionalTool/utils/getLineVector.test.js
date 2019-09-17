@@ -22,9 +22,9 @@ describe('getLineVector.js', () => {
       endPoint
     );
 
-    expect(vector.x).toEqual(-0.9615239476408233);
-    expect(vector.y).toEqual(-0.2747211278973781);
-    expect(vector.length).toEqual(2.912043955712207);
+    expect(vector.x).toBeCloseTo(-0.9615239476408233);
+    expect(vector.y).toBeCloseTo(-0.2747211278973781);
+    expect(vector.length).toBeCloseTo(2.912043955712207);
   });
 
   it('line vector for negative line', () => {
@@ -41,9 +41,9 @@ describe('getLineVector.js', () => {
       endPoint
     );
 
-    expect(vector.x).toEqual(0.9899494936611666);
-    expect(vector.y).toEqual(0.14142135623730953);
-    expect(vector.length).toEqual(5.65685424949238);
+    expect(vector.x).toBeCloseTo(0.9899494936611666);
+    expect(vector.y).toBeCloseTo(0.14142135623730953);
+    expect(vector.length).toBeCloseTo(5.65685424949238);
   });
 
   it('line vector for line with same point coordinates', () => {

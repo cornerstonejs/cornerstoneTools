@@ -60,10 +60,10 @@ describe('moveLongLine.js', () => {
     expect(result).toEqual(true);
 
     // Expect perpendicular lines position to be updated
-    expect(perpendicularStart.x).toEqual(3.9031375531257786);
-    expect(perpendicularStart.y).toEqual(6.657455355319679);
-    expect(perpendicularEnd.x).toEqual(4.069228512833258);
-    expect(perpendicularEnd.y).toEqual(2.671272322340161);
+    expect(perpendicularStart.x).toBeCloseTo(3.9031375531257786);
+    expect(perpendicularStart.y).toBeCloseTo(6.657455355319679);
+    expect(perpendicularEnd.x).toBeCloseTo(4.069228512833258);
+    expect(perpendicularEnd.y).toBeCloseTo(2.671272322340161);
   });
 
   it('long line is moved and perpendicular line position stays the same', () => {
