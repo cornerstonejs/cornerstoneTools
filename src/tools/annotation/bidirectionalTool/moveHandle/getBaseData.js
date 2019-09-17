@@ -40,15 +40,15 @@ export default function getBaseData(measurementData, eventData, fixedPoint) {
   );
 
   return {
-    columnPixelSpacing,
-    rowPixelSpacing,
-    start,
-    end,
-    perpendicularStart,
-    perpendicularEnd,
-    longLine,
-    intersection,
-    distanceToFixed,
-    fixedPoint,
+    columnPixelSpacing, // Width that a pixel represents in mm
+    rowPixelSpacing, // Height that a pixel represents in mm
+    start, // Start point of the long line
+    end, // End point of the long line
+    perpendicularStart, // Start point of the perpendicular line
+    perpendicularEnd, // End point of the perpendicular line
+    longLine, // Long line object containing the start and end points
+    intersection, // Intersection point between long and perpendicular lines
+    distanceToFixed, // Distance from intersection to the fixed point
+    fixedPoint, // Opposite point from the handle that is being moved
   };
 }
