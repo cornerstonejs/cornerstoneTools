@@ -27,6 +27,8 @@ export default function movePerpendicularLine(
     columnPixelSpacing,
     rowPixelSpacing,
     start,
+    perpendicularStart,
+    perpendicularEnd,
     longLine,
     intersection,
   } = baseData;
@@ -55,8 +57,19 @@ export default function movePerpendicularLine(
     return false;
   }
 
+  // Calculate and the new position of the perpendicular handles
+  const newLine = updatePerpendicularLine(
+    baseData,
+    newIntersection,
+    helperLine,
+    vector
+  );
+
   // Change the position of the perpendicular line handles
-  updatePerpendicularLine(baseData, newIntersection, helperLine, vector);
+  perpendicularStart.x = newLine.start.x;
+  perpendicularStart.y = newLine.start.y;
+  perpendicularEnd.x = newLine.end.x;
+  perpendicularEnd.y = newLine.end.y;
 
   return true;
 }

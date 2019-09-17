@@ -1,5 +1,5 @@
 import external from '../../../../externalModules.js';
-import getDistance from '../utils/getDistanceWithPixelSpacing.js';
+import getDistanceWithPixelSpacing from '../utils/getDistanceWithPixelSpacing.js';
 
 function createLine(startPoint, endPoint) {
   return {
@@ -32,7 +32,7 @@ export default function getBaseData(measurementData, eventData, fixedPoint) {
   const perpendicularLine = createLine(perpendicularStart, perpendicularEnd);
   const intersection = lineSegment.intersectLine(longLine, perpendicularLine);
 
-  const distanceToFixed = getDistance(
+  const distanceToFixed = getDistanceWithPixelSpacing(
     columnPixelSpacing,
     rowPixelSpacing,
     fixedPoint,
