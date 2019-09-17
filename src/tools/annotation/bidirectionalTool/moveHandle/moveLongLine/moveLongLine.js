@@ -35,10 +35,10 @@ export default function moveLongLine(
   }
 
   // Calculate the new intersection point
-  const k = distanceToFixed / newLineLength;
+  const distanceRatio = distanceToFixed / newLineLength;
   const newIntersection = {
-    x: fixedPoint.x + (proposedPoint.x - fixedPoint.x) * k,
-    y: fixedPoint.y + (proposedPoint.y - fixedPoint.y) * k,
+    x: fixedPoint.x + (proposedPoint.x - fixedPoint.x) * distanceRatio,
+    y: fixedPoint.y + (proposedPoint.y - fixedPoint.y) * distanceRatio,
   };
 
   // Calculate and the new position of the perpendicular handles
