@@ -70,7 +70,7 @@ describe('getBaseData.js', () => {
     expect(result.fixedPoint.y).toEqual(4);
   });
 
-  it('baseData object is returned with row and column pixel spacing defaulted to 1', () => {
+  it('ensure that baseData object is returned with default row and column pixel spacing', () => {
     const start = createPoint(0, 4);
     const end = createPoint(8, 4);
     const perpendicularStart = createPoint(4, 6);
