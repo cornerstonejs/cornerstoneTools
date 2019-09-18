@@ -143,8 +143,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.verticalLine.start,
         imageAttributes.verticalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );
@@ -157,8 +157,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.horizontalLine.start,
         imageAttributes.horizontalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );
