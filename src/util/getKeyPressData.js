@@ -6,7 +6,7 @@ export default function getKeyPressData(e) {
   const element = e.currentTarget;
   const enabledElement = cornerstone.getEnabledElement(element);
 
-  if (!enabledElement.image) {
+  if (!enabledElement || !enabledElement.image) {
     return;
   }
 
