@@ -146,7 +146,11 @@ export default class AngleTool extends BaseAnnotationTool {
   renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesIfActive,
+      drawHandlesOnHover,
+    } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -169,6 +173,7 @@ export default class AngleTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         // Differentiate the color of activation tool
@@ -188,16 +193,21 @@ export default class AngleTool extends BaseAnnotationTool {
           eventData.element,
           data.handles.start,
           [data.handles.middle, data.handles.end],
-          { color }
+          {
+            color,
+          }
         );
 
         // Draw the handles
         const handleOptions = {
+          active: data.active,
           color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
+        // Draw the handles
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats

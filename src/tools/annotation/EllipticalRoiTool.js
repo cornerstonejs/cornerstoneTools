@@ -177,7 +177,11 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const { image, element } = eventData;
     const lineWidth = toolStyle.getToolWidth();
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesIfActive,
+      drawHandlesOnHover,
+    } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
@@ -202,11 +206,14 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // Configure
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
+          active: data.active,
           color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         // Draw
@@ -221,6 +228,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
+
+        // Draw the handles
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats

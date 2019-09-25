@@ -97,7 +97,11 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesIfActive,
+      drawHandlesOnHover,
+    } = this.configuration;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(element, this.name);
@@ -120,6 +124,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         const color = toolColors.getColorIfActive(data);
@@ -154,9 +159,11 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         const handleOptions = {
+          active: data.active,
           color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
         if (this.configuration.drawHandles) {

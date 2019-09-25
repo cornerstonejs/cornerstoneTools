@@ -36,6 +36,12 @@ export default function(context, evtDetail, handles, options = {}) {
       continue;
     }
 
+    // Draw the handles on hover
+    if (options.drawHandlesOnHover === true && !options.active) {
+      continue;
+    }
+
+    // Draw the handles if active
     if (options.drawHandlesIfActive === true && !handle.active) {
       continue;
     }

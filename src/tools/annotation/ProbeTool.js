@@ -148,13 +148,15 @@ export default class ProbeTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
+        // Configure
         const color = toolColors.getColorIfActive(data);
+        const handleOptions = {
+          color,
+          handleRadius,
+        };
 
         // Draw the handles
-        drawHandles(context, eventData, data.handles, {
-          handleRadius,
-          color,
-        });
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
         if (data.invalidated === true) {
