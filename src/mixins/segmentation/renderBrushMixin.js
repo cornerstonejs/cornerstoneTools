@@ -1,9 +1,6 @@
 import external from './../../externalModules.js';
 import store, { getModule } from './../../store/index.js';
 
-const { cornerstone } = external;
-const { getters, configuration } = getModule('segmentation');
-
 /**
  * Called by the event dispatcher to render the image.
  *
@@ -11,6 +8,8 @@ const { getters, configuration } = getModule('segmentation');
  * @returns {void}
  */
 function renderBrush(evt) {
+  const { cornerstone } = external;
+  const { getters, configuration } = getModule('segmentation');
   const eventData = evt.detail;
   const viewport = eventData.viewport;
 
