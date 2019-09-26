@@ -242,18 +242,18 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
 
-        drawLinkedTextBox(
-          context,
-          element,
-          data.handles.textBox,
-          textBoxContent,
-          data.handles,
-          textBoxAnchorPoints,
-          color,
-          lineWidth,
-          10,
-          true
-        );
+        // drawLinkedTextBox(
+        //   context,
+        //   element,
+        //   data.handles.textBox,
+        //   textBoxContent,
+        //   data.handles,
+        //   textBoxAnchorPoints,
+        //   color,
+        //   lineWidth,
+        //   10,
+        //   true
+        // );
       }
     });
   }
