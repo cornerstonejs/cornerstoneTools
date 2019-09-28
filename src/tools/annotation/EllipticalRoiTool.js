@@ -204,14 +204,26 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
-        const color = toolColors.getColorIfActive(data);
+        let color = toolColors.getColorIfActive(data);
         const handleOptions = {
-          active: data.active,
-          color,
           handleRadius,
           drawHandlesIfActive,
           drawHandlesOnHover,
         };
+
+        // Handles
+        const handleKeys = Object.keys(data.handles);
+
+        for (let i = 0; i < handleKeys.length; i++) {
+          const handleKey = handleKeys[i];
+          const handle = data.handles[handleKey];
+
+          if (data.active || handle.active) {
+            color = toolColors.getActiveColor();
+            handleOptions.active = true;
+            handleOptions.color = toolColors.getActiveColor();
+          }
+        }
 
         // Configurable shadow
         setShadow(context, this.configuration);
