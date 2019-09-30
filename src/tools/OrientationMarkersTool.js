@@ -37,26 +37,24 @@ export default class OrientationMarkersTool extends BaseTool {
   }
 
   forceImageUpdate(element) {
-    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const cornerstone = external.cornerstone;
+    const enabledElement = cornerstone.getEnabledElement(element);
 
     if (enabledElement.image) {
-      external.cornerstone.updateImage(element);
+      cornerstone.updateImage(element);
     }
   }
 
   renderToolData(evt) {
     const eventData = evt.detail;
-
     const context = getNewContext(eventData.canvasContext.canvas);
     const element = eventData.element;
-
     const markers = getOrientationMarkers(element);
 
     if (!markers) {
       return;
     }
     const coords = getOrientationMarkerPositions(element, markers);
-
     const color = toolColors.getToolColor();
 
     const textWidths = {
@@ -66,103 +64,90 @@ export default class OrientationMarkersTool extends BaseTool {
       bottom: textBoxWidth(context, markers.bottom, 0),
     };
 
-    drawTextBox(
-      context,
-      markers.top,
-      coords.top.x - textWidths.top / 2,
-      coords.top.y,
-      color
-    );
-    drawTextBox(
-      context,
-      markers.left,
-      coords.left.x - textWidths.left / 2,
-      coords.left.y,
-      color
-    );
+    drawTopLeftText(context, markers, coords, textWidths, color);
     if (this.configuration.drawAllMarkers) {
-      drawTextBox(
-        context,
-        markers.right,
-        coords.right.x - textWidths.right / 2,
-        coords.right.y,
-        color
-      );
-      drawTextBox(
-        context,
-        markers.bottom,
-        coords.bottom.x - textWidths.bottom / 2,
-        coords.bottom.y,
-        color
-      );
+      drawBottomRightText(context, markers, coords, textWidths, color);
     }
   }
 }
 
+const drawTopLeftText = (context, markers, coords, textWidths, color) => {
+  drawTextBox(
+    context,
+    markers.top,
+    coords.top.x - textWidths.top / 2,
+    coords.top.y,
+    color
+  );
+  drawTextBox(
+    context,
+    markers.left,
+    coords.left.x - textWidths.left / 2,
+    coords.left.y,
+    color
+  );
+};
+
+const drawBottomRightText = (context, markers, coords, textWidths, color) => {
+  drawTextBox(
+    context,
+    markers.right,
+    coords.right.x - textWidths.right / 2,
+    coords.right.y,
+    color
+  );
+  drawTextBox(
+    context,
+    markers.bottom,
+    coords.bottom.x - textWidths.bottom / 2,
+    coords.bottom.y,
+    color
+  );
+};
+
 const getOrientationMarkers = element => {
   const cornerstone = external.cornerstone;
   const enabledElement = cornerstone.getEnabledElement(element);
-  const imagePlaneMetaData = cornerstone.metaData.get(
+  const imagePlane = cornerstone.metaData.get(
     'imagePlaneModule',
     enabledElement.image.imageId
   );
 
-  if (
-    !imagePlaneMetaData ||
-    !imagePlaneMetaData.rowCosines ||
-    !imagePlaneMetaData.columnCosines
-  ) {
+  if (!imagePlane || !imagePlane.rowCosines || !imagePlane.columnCosines) {
     return;
   }
 
-  const rowString = orientation.getOrientationString(
-    imagePlaneMetaData.rowCosines
-  );
-  const columnString = orientation.getOrientationString(
-    imagePlaneMetaData.columnCosines
-  );
-
-  const oppositeRowString = orientation.invertOrientationString(rowString);
-  const oppositeColumnString = orientation.invertOrientationString(
-    columnString
-  );
+  const row = orientation.getOrientationString(imagePlane.rowCosines);
+  const column = orientation.getOrientationString(imagePlane.columnCosines);
+  const oppositeRow = orientation.invertOrientationString(row);
+  const oppositeColumn = orientation.invertOrientationString(column);
 
   return {
-    top: oppositeColumnString,
-    bottom: columnString,
-    left: oppositeRowString,
-    right: rowString,
+    top: oppositeColumn,
+    bottom: column,
+    left: oppositeRow,
+    right: row,
   };
 };
 
 const getOrientationMarkerPositions = element => {
-  const cornerstone = external.cornerstone;
-  const enabledElement = cornerstone.getEnabledElement(element);
-  let coords;
-
-  coords = {
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+  const top = external.cornerstone.pixelToCanvas(element, {
     x: enabledElement.image.width / 2,
     y: 5,
-  };
-  const top = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  });
+  const bottom = external.cornerstone.pixelToCanvas(element, {
     x: enabledElement.image.width / 2,
     y: enabledElement.image.height - 15,
-  };
-  const bottom = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  });
+  const left = external.cornerstone.pixelToCanvas(element, {
     x: 5,
     y: enabledElement.image.height / 2,
-  };
-  const left = cornerstone.pixelToCanvas(element, coords);
-
-  coords = {
+  });
+  const right = external.cornerstone.pixelToCanvas(element, {
     x: enabledElement.image.width - 10,
     y: enabledElement.image.height / 2,
-  };
-  const right = cornerstone.pixelToCanvas(element, coords);
+  });
 
   return {
     top,
