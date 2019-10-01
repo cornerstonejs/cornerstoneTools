@@ -6,6 +6,7 @@ import FreehandRoiSculptorTool from './FreehandRoiSculptorTool.js';
 import MagnifyTool from './MagnifyTool.js';
 import PanMultiTouchTool from './PanMultiTouchTool.js';
 import PanTool from './PanTool.js';
+import PointerTool from './PointerTool.js';
 import ReferenceLinesTool from './ReferenceLinesTool.js';
 import RotateTool from './RotateTool.js';
 import RotateTouchTool from './RotateTouchTool.js';
@@ -29,6 +30,7 @@ export {
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
+  PointerTool,
   ReferenceLinesTool,
   RotateTool,
   RotateTouchTool,
@@ -53,6 +55,7 @@ export default {
   MagnifyTool,
   PanMultiTouchTool,
   PanTool,
+  PointerTool,
   ReferenceLinesTool,
   RotateTool,
   RotateTouchTool,

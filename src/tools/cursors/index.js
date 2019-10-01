@@ -305,6 +305,16 @@ export const panCursor = new MouseCursor(
   }
 );
 
+export const pointerCursor = new MouseCursor(
+  `<path fill="ACTIVE_COLOR" d=""/>`,
+  {
+    viewBox: {
+      x: 1792,
+      y: 1792,
+    },
+  }
+);
+
 export const rotateCursor = new MouseCursor(
   `<path fill="ACTIVE_COLOR" d="M1664 256v448q0 26-19 45t-45 19h-448q-42 0-59-40-17-39
       14-69l138-138q-148-137-349-137-104 0-198.5 40.5t-163.5 109.5-109.5

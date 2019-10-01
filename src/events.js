@@ -212,6 +212,11 @@ const EVENTS = {
    *  @type {String}
    */
   LABELMAP_MODIFIED: 'cornersontetoolslabelmapmodified',
+
+  /**
+   *  @type {String}
+   */
+  POINTER: 'cornersontetoolspointer',
 };
 
 export default EVENTS;
