@@ -1,3 +1,4 @@
+import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import { state } from '../store/index.js';
@@ -10,7 +11,7 @@ import EVENTS from '../events.js';
  * @class PointerTool
  * @memberof Tools
  *
- * @classdesc Tool for deleting the data of other Annotation Tools.
+ * @classdesc Tool for selecting annotations by activating them as well as events.
  * @extends Tools.Base.BaseTool
  */
 export default class PointerTool extends BaseTool {
@@ -23,7 +24,13 @@ export default class PointerTool extends BaseTool {
 
     super(props, defaultProps);
 
+    // Mode
+    this.enabledCallback = this._disabledCallback.bind(this);
+    this.disabledCallback = this._disabledCallback.bind(this);
+
+    // Mouse
     this.preMouseDownCallback = this._nearbyTools.bind(this);
+    // Touch
     this.preTouchStartCallback = this._nearbyTools.bind(this);
   }
 
@@ -35,12 +42,13 @@ export default class PointerTool extends BaseTool {
       const toolState = getToolState(element, tool.name);
 
       if (toolState) {
-        // Modifying in a foreach? Probably not ideal
         toolState.data.forEach(function(data, index) {
-          if (
-            typeof tool.pointNearTool === 'function' &&
-            tool.pointNearTool(element, data, coords)
-          ) {
+          const pointNearTool = tool.pointNearTool(element, data, coords);
+
+          if (typeof tool.pointNearTool === 'function' && pointNearTool) {
+            currentMeasurement = data;
+            data.active = true;
+
             const eventType = EVENTS.POINTER;
             const eventData = {
               element,
@@ -50,13 +58,29 @@ export default class PointerTool extends BaseTool {
             };
 
             triggerEvent(element, eventType, eventData);
+          } else {
+            data.active = false;
           }
+
+          // Update Image
+          external.cornerstone.updateImage(element);
         });
       }
     });
 
-    const consumeEvent = true;
+    return true;
+  }
 
-    return consumeEvent;
+  _disabledCallback(element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    if (enabledElement.image) {
+      currentMeasurement.active = false;
+
+      // Update Image
+      external.cornerstone.updateImage(element);
+    }
   }
 }
+
+let currentMeasurement = {};
