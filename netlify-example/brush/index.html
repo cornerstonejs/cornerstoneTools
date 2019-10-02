@@ -128,6 +128,16 @@
                 visible
               </td>
             </tr>
+            <tr>
+              <th>
+                <button type="button" api-call="calculate-segment-1-stats">
+                  Calculate Segment 1 stats.
+                </button>
+              </th>
+              <td id="calculate-segment-1-stats-label">
+
+              </td>
+            </tr>
           </table>
 
           <h2>Active Labelmap</h2>
@@ -234,15 +244,6 @@
 
   // Enable & Setup all of our elements
   const element = document.querySelector('.cornerstone-element-help');
-
-  // TEMP
-  window.TEST_STATS = () => {
-    const labelmapStats = cornerstoneTools.getModule('segmentation').getters.labelmapStats;
-
-    labelmapStats(element, 1);
-  }
-  console.log();
-  // TEMP
 
   cornerstone.enable(element);
 
@@ -481,6 +482,30 @@
         visibilityLabel.innerHTML = visible ? 'visible' : 'hidden';
 
         cornerstone.updateImage(element);
+        break;
+      case 'calculate-segment-1-stats':
+        getters.labelmapStats(element, 1).then(result => {
+          const statsLabel = document.getElementById(
+            'calculate-segment-1-stats-label'
+          );
+
+          if (result) {
+            statsLabel.innerHTML = `vol: ${
+              Math.round(result.volume)
+              } mm, mean: ${
+              Math.round(result.mean)
+              }, stdDev: ${
+              Math.round(result.stdDev)
+              }, min: ${
+              Math.round(result.min)
+              }, max: ${
+              Math.round(result.max)
+              }`;
+          } else {
+            statsLabel.innerHTML = 'No segment.'
+          }
+
+        })
         break;
       default:
         return;
