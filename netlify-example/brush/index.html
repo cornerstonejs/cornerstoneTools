@@ -213,10 +213,12 @@
   const imageIds = [imageId];
   */
 
+  /*
   const imageIds = [
     'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm',
     'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.12.dcm',
   ];
+  */
 
 
   const imageIds = [
@@ -232,6 +234,15 @@
 
   // Enable & Setup all of our elements
   const element = document.querySelector('.cornerstone-element-help');
+
+  // TEMP
+  window.TEST_STATS = () => {
+    const labelmapStats = cornerstoneTools.getModule('segmentation').getters.labelmapStats;
+
+    labelmapStats(element, 1);
+  }
+  console.log();
+  // TEMP
 
   cornerstone.enable(element);
 
@@ -289,8 +300,6 @@
     // Add the tool
     const toolName = toolBtn.getAttribute('data-tool');
     const apiTool = cornerstoneTools[`${toolName}Tool`];
-
-    console.log(apiTool);
 
     if (apiTool) {
       cornerstoneTools.addTool(apiTool);

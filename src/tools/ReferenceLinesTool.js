@@ -45,7 +45,9 @@ export default class ReferenceLinesTool extends BaseTool {
       // TODO: Unable to add tool state, image never loaded.
       // Should we `setToolDisabledForElement` here?
       logger.warn(
-        `Unable to enable ${this.name}. Exiting enable callback. Tool will be enabled, but will not render.`
+        `Unable to enable ${
+          this.name
+        }. Exiting enable callback. Tool will be enabled, but will not render.`
       );
 
       return;
