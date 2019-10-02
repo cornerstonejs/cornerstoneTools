@@ -128,6 +128,16 @@
                 visible
               </td>
             </tr>
+            <tr>
+              <th>
+                <button type="button" api-call="calculate-segment-1-stats">
+                  Calculate Segment 1 stats.
+                </button>
+              </th>
+              <td id="calculate-segment-1-stats-label">
+
+              </td>
+            </tr>
           </table>
 
           <h2>Active Labelmap</h2>
@@ -213,10 +223,12 @@
   const imageIds = [imageId];
   */
 
+  /*
   const imageIds = [
     'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.11.dcm',
     'dicomweb://s3.amazonaws.com/lury/PTCTStudy/1.3.6.1.4.1.25403.52237031786.3872.20100510032220.12.dcm',
   ];
+  */
 
 
   const imageIds = [
@@ -289,8 +301,6 @@
     // Add the tool
     const toolName = toolBtn.getAttribute('data-tool');
     const apiTool = cornerstoneTools[`${toolName}Tool`];
-
-    console.log(apiTool);
 
     if (apiTool) {
       cornerstoneTools.addTool(apiTool);
@@ -472,6 +482,31 @@
         visibilityLabel.innerHTML = visible ? 'visible' : 'hidden';
 
         cornerstone.updateImage(element);
+        break;
+      case 'calculate-segment-1-stats':
+        getters.labelmapStats(element, 1).then(result => {
+          const statsLabel = document.getElementById(
+            'calculate-segment-1-stats-label'
+          );
+
+          if (result) {
+            statsLabel.innerHTML = `vol: ${
+              Math.round(result.volume)
+              } mm, mean: ${
+              Math.round(result.mean)
+              }, stdDev: ${
+              Math.round(result.stdDev)
+              }, min: ${
+              Math.round(result.min)
+              }, max: ${
+              Math.round(result.max)
+              }`;
+
+          } else {
+            statsLabel.innerHTML = 'No segment.'
+          }
+
+        })
         break;
       default:
         return;
