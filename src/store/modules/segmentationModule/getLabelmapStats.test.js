@@ -27,23 +27,17 @@ describe('getLabelmapsStats.js', () => {
         {
           rowPixelSpacing,
           columnPixelSpacing,
-          getPixelData: () => {
-            return [0, 0, 0, 0, 1, 2, 2, 1, 0];
-          },
+          getPixelData: () => [0, 0, 0, 0, 1, 2, 2, 1, 0],
         },
         {
           rowPixelSpacing,
           columnPixelSpacing,
-          getPixelData: () => {
-            return [0, 0, 0, 1, 2, 2, 1, 0, 0];
-          },
+          getPixelData: () => [0, 0, 0, 1, 2, 2, 1, 0, 0],
         },
         {
           rowPixelSpacing,
           columnPixelSpacing,
-          getPixelData: () => {
-            return [0, 0, 0, 0, 0, 0, 0, 0, 0];
-          },
+          getPixelData: () => [0, 0, 0, 0, 0, 0, 0, 0, 0],
         },
       ];
 
