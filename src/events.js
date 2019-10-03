@@ -212,11 +212,6 @@ const EVENTS = {
    *  @type {String}
    */
   LABELMAP_MODIFIED: 'cornersontetoolslabelmapmodified',
-
-  /**
-   *  @type {String}
-   */
-  CONFIGURATION_MODIFIED: 'cornersontetoolsconfigurationmodified',
 };
 
 export default EVENTS;
