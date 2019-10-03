@@ -79,7 +79,7 @@ cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
 cornerstoneTools.init();
 ```
 
-The `cornerstoneTools.init();` call accepts a configuration object if you would like to deviate from default behaviors:
+The `cornerstoneTools.init();` call accepts a configuration object if you would like to deviate from default behaviors of `cornerstoneTool`'s `globalConfiguration`:
 
 ```js
 cornerstoneTools.init({
@@ -106,6 +106,25 @@ cornerstoneTools.init({
    */
   showSVGCursors: false,
 });
+```
+
+If you wish to change modules other than the `globalConfiguration` module, you may pass an array of named module configuration like so:
+
+```js
+cornerstoneTools.init([
+  {
+    moduleName: 'globalConfiguration',
+    configuration: {
+      showSVGCursors: true,
+    },
+  },
+  {
+    moduleName: 'segmentation',
+    configuration: {
+      outlineWidth: 2,
+    },
+  },
+]);
 ```
 
 You can go further and configure textStyle, toolStyle, toolColors, etc:

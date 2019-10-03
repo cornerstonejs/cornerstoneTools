@@ -1,7 +1,7 @@
 import external from '../../../externalModules';
 import { getLogger } from '../../../util/logger';
 import state from './state';
-import configuration from './configuration';
+import { getModule } from '../../index.js';
 
 const logger = getLogger('store:modules:segmentationModule:setColorLUT');
 
@@ -13,6 +13,7 @@ const logger = getLogger('store:modules:segmentationModule:setColorLUT');
  * @returns {null}
  */
 export default function setColorLUT(colorLUTIndex, colorLUT = []) {
+  const { configuration } = getModule('segmentation');
   const segmentsPerLabelmap = configuration.segmentsPerLabelmap;
 
   if (colorLUT) {
@@ -82,11 +83,15 @@ export function getColorLUT(labelmap3DOrColorLUTIndex) {
 function _checkColorLUTLength(colorLUT, segmentsPerLabelmap) {
   if (colorLUT.length < segmentsPerLabelmap) {
     logger.warn(
-      `The provided colorLUT only provides ${colorLUT.length} labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}. Autogenerating the rest.`
+      `The provided colorLUT only provides ${
+        colorLUT.length
+      } labels, whereas segmentsPerLabelmap is set to ${segmentsPerLabelmap}. Autogenerating the rest.`
     );
   } else if (colorLUT.length > segmentsPerLabelmap) {
     logger.warn(
-      `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${colorLUT.length}. Using the first ${segmentsPerLabelmap} colors from the LUT.`
+      `segmentsPerLabelmap is set to ${segmentsPerLabelmap}, and the provided colorLUT provides ${
+        colorLUT.length
+      }. Using the first ${segmentsPerLabelmap} colors from the LUT.`
     );
   }
 }
