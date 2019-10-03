@@ -18,7 +18,6 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 export default function(configuration = {}) {
   _addCornerstoneEventListeners();
   _initModules();
-  windowResizeHandler.enable();
 
   // Apply global configuration
   const globalConfigurationModule = getModule('globalConfiguration');
@@ -28,6 +27,10 @@ export default function(configuration = {}) {
     globalConfigurationModule.configuration,
     configuration
   );
+
+  if (globalConfigurationModule.configuration.autoResizeViewports) {
+    windowResizeHandler.enable();
+  }
 }
 
 /**
