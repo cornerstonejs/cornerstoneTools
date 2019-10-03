@@ -46,6 +46,7 @@ import isPointInImage from './util/isPointInImage';
 import isPointInPolygon from './util/isPointInPolygon';
 import throttle from './util/throttle';
 import { wait, waitForEnabledElementImageToLoad } from './util/wait';
+import getKeyPressData from './util/getKeyPressData';
 
 import drawTextBox, { textBoxWidth } from './drawing/drawTextBox.js';
 import drawArrow from './drawing/drawArrow.js';
@@ -165,6 +166,7 @@ export const lib = {
   'util/throttle': throttle,
   'util/wait': wait,
   'util/waitForEnabledElementImageToLoad': waitForEnabledElementImageToLoad,
+  'util/getKeyPressData': getKeyPressData,
 
   // Whole tool specific util packages
   'util/ellipseUtils': ellipseUtils,
