@@ -12,7 +12,7 @@
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
 [![Coverage Status][coverage-badge]][coverage]
-[![All Contributors](https://img.shields.io/badge/all_contributors-30-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-31-orange.svg?style=flat-square)](#contributors)
 
 [![NPM version][npm-version-image]][npm-url]
 [![NPM downloads][npm-downloads-image]][npm-url]
@@ -145,6 +145,9 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 #### 3rd Party Tool Plugins
 
 - Image Statistics: [Source](https://github.com/QSolutionsLLC/cornerstone-tool-image-statistics) | [Demo](https://qsolutionsllc.github.io/cornerstone-tool-image-statistics/)
+- Rotated Elliptical ROI Tool: [Source](https://github.com/sisobus/cornerstoneTools-RotatedEllipticalRoiTool) | [Demo](https://examples.sisobus.com/rotated-elliptical-roi/)
+
+A huge thanks to tool authors, like @sisobus, for sharing their work with the community!
 
 ## Other Solutions
 
@@ -196,6 +199,7 @@ Thanks goes to these people ([emoji key][emojis]):
   <tr>
     <td align="center"><a href="http://garrido.io"><img src="https://avatars2.githubusercontent.com/u/5546851?v=4" width="100px;" alt="Gabriel Garrido"/><br /><sub><b>Gabriel Garrido</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Ggpsv" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/ASVBPREAUBV"><img src="https://avatars0.githubusercontent.com/u/4126256?v=4" width="100px;" alt="ASVBPREAUBV"/><br /><sub><b>ASVBPREAUBV</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=ASVBPREAUBV" title="Documentation">📖</a></td>
+    <td align="center"><a href="https://github.com/frolic06"><img src="https://avatars0.githubusercontent.com/u/50960211?v=4" width="100px;" alt="frolic06"/><br /><sub><b>frolic06</b></sub></a><br /><a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=frolic06" title="Code">💻</a></td>
   </tr>
 </table>
 

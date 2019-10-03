@@ -148,6 +148,7 @@ import {
   setToolPassive,
   setToolPassiveForElement,
 } from './store/setToolMode.js';
+import isToolActiveForElement from './store/isToolActiveForElement';
 import {
   addToolState,
   getToolState,
@@ -266,6 +267,7 @@ const cornerstoneTools = {
   removeToolForElement,
   setToolOptions,
   setToolOptionsForElement,
+  isToolActiveForElement,
   setToolActive,
   setToolActiveForElement,
   setToolEnabled,
@@ -373,6 +375,7 @@ export {
   removeToolForElement,
   setToolOptions,
   setToolOptionsForElement,
+  isToolActiveForElement,
   setToolActive,
   setToolActiveForElement,
   setToolEnabled,

@@ -5,7 +5,7 @@ import getToolForElement from './getToolForElement.js';
  * @export
  * @public
  * @method
- * @name isToolActive
+ * @name isToolActiveForElement
  *
  * @param  {HTMLElement} element The element being queried.
  * @param  {string} name    The name of the tool.
