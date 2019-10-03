@@ -1,3 +1,4 @@
+import EVENTS from '../../events.js';
 // State
 import { getters, state } from './../../store/index.js';
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -7,6 +8,7 @@ import { findHandleDataNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
 import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
+import triggerEvent from '../../util/triggerEvent.js';
 
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
@@ -126,15 +128,34 @@ export default function(evt) {
   if (annotationToolsWithPointNearClick.length > 0) {
     const firstToolNearPoint = annotationToolsWithPointNearClick[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
-    const firstAnnotationNearPoint = toolState.data.find(data =>
-      firstToolNearPoint.pointNearTool(element, data, coords)
-    );
+
+    let index = 0;
+    const firstAnnotationNearPoint = toolState.data.find((data, i) => {
+      if (firstToolNearPoint.pointNearTool(element, data, coords)) {
+        index = i;
+
+        return true;
+      }
+
+      return false;
+    });
 
     firstToolNearPoint.toolSelectedCallback(
       evt,
       firstAnnotationNearPoint,
       'mouse'
     );
+
+    // Measurement Selected
+    const eventType = EVENTS.MEASUREMENT_SELECTED;
+    const eventData = {
+      toolName: firstToolNearPoint.name,
+      element,
+      measurementData: firstAnnotationNearPoint,
+      index,
+    };
+
+    triggerEvent(element, eventType, eventData);
 
     return;
   }
