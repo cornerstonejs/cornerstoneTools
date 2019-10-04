@@ -187,6 +187,10 @@ import {
   disable as disableLogger,
 } from './util/logger.js';
 
+import { default as calculateSUV } from './util/calculateSUV.js';
+
+import { default as convertToVector3 } from './util/convertToVector3.js';
+
 // ~~~~~~ THIRD PARTY SUPPORT  ~~~~~ //
 import { default as register } from './thirdParty/register.js';
 import { default as registerSome } from './thirdParty/registerSome.js';
@@ -299,6 +303,8 @@ const cornerstoneTools = {
   SaveAs,
   enableLogger,
   disableLogger,
+  calculateSUV,
+  convertToVector3,
   importInternal,
   import: importInternal,
   register,
@@ -407,6 +413,8 @@ export {
   SaveAs,
   enableLogger,
   disableLogger,
+  calculateSUV,
+  convertToVector3,
   register,
   registerSome,
   wwwcSynchronizer,
