@@ -43,9 +43,10 @@ export default class PointerTool extends BaseTool {
 
       if (toolState) {
         toolState.data.forEach(function(data, index) {
-          const pointNearTool = tool.pointNearTool(element, data, coords);
-
-          if (typeof tool.pointNearTool === 'function' && pointNearTool) {
+          if (
+            typeof tool.pointNearTool === 'function' &&
+            tool.pointNearTool(element, data, coords)
+          ) {
             currentMeasurement = data;
             data.active = true;
 
@@ -72,13 +73,15 @@ export default class PointerTool extends BaseTool {
   }
 
   _disabledCallback(element) {
-    const enabledElement = external.cornerstone.getEnabledElement(element);
+    if (currentMeasurement.active === true) {
+      const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (enabledElement.image) {
-      currentMeasurement.active = false;
+      if (enabledElement.image) {
+        currentMeasurement.active = false;
 
-      // Update Image
-      external.cornerstone.updateImage(element);
+        // Update Image
+        external.cornerstone.updateImage(element);
+      }
     }
   }
 }
