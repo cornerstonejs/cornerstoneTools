@@ -208,7 +208,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
-        drawHandles(context, eventData, data.handles, handleOptions);
+        // drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
         if (data.invalidated === true) {

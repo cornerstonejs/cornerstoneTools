@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.0.2 - 2019-09-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.0.3 - 2019-10-04 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "9824cd180d8c31f4d96a";
+/******/ 	var hotCurrentHash = "6573877bd21a17540aa5";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -25250,8 +25250,8 @@ function (_BaseAnnotationTool) {
 
           Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawRect"])(context, element, data.handles.start, data.handles.end, {
             color: color
-          }, 'pixel', data.handles.initialRotation);
-          Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawHandles"])(context, eventData, data.handles, handleOptions); // Update textbox stats
+          }, 'pixel', data.handles.initialRotation); // drawHandles(context, eventData, data.handles, handleOptions);
+          // Update textbox stats
 
           if (data.invalidated === true) {
             if (data.cachedStats) {
@@ -36459,7 +36459,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.0.2');
+/* harmony default export */ __webpack_exports__["default"] = ('4.0.3');
 
 /***/ })
 
