@@ -42,7 +42,7 @@ describe('OrientationMarkersTool.js', () => {
   });
 
   describe('forceImageUpdate', () => {
-    it('should call updateImage is image exists', () => {
+    it('should call updateImage if image exists', () => {
       external.cornerstone.getEnabledElement.mockReturnValue({ image: {} });
       external.cornerstone.updateImage = jest.fn();
 
@@ -52,7 +52,7 @@ describe('OrientationMarkersTool.js', () => {
       expect(external.cornerstone.updateImage).toHaveBeenCalled();
     });
 
-    it('should NOT call updateImage is image does not exists', () => {
+    it('should NOT call updateImage if image does not exists', () => {
       external.cornerstone.getEnabledElement.mockReturnValue({
         image: undefined,
       });
