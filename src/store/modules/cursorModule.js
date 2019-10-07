@@ -1,3 +1,5 @@
+import external from '../../externalModules';
+
 const configuration = {
   iconSize: 16,
   viewBox: {
@@ -25,6 +27,7 @@ const getters = {
 };
 
 export default {
+  configuration,
   getters,
   setters,
 };
