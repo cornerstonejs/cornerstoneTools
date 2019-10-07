@@ -36,8 +36,9 @@ import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import deleteSegment from './deleteSegment';
 
 import state from './state';
-import configuration from './configuration';
+import configuration from './defaultConfiguration';
 import { pushState, undo, redo } from './history';
+import setRadius from './setRadius';
 
 /**
  * A map of `firstImageId` to associated `BrushStackState`, where
@@ -127,12 +128,7 @@ export default {
     colorLUTIndexForLabelmap3D: setColorLUTIndexForLabelmap3D,
     colorForSegmentIndexOfColorLUT: setColorForSegmentIndexOfColorLUT,
     activeLabelmapIndex: setActiveLabelmapIndex,
-    radius: newRadius => {
-      configuration.radius = Math.min(
-        Math.max(newRadius, configuration.minRadius),
-        configuration.maxRadius
-      );
-    },
+    radius: setRadius,
     pushState,
     undo,
     redo,
