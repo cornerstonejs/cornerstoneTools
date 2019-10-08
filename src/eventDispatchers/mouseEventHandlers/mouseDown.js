@@ -139,7 +139,6 @@ export default function(evt) {
   if (annotationToolsWithPointNearClick.length > 0) {
     const firstToolNearPoint = annotationToolsWithPointNearClick[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
-
     const firstAnnotationNearPoint = toolState.data.find(data =>
       firstToolNearPoint.pointNearTool(element, data, coords)
     );
