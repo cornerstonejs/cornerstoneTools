@@ -106,6 +106,17 @@ export default function(evt) {
       'mouse'
     );
 
+    // Measurement Selected
+    const eventType = EVENTS.MEASUREMENT_SELECTED;
+    const eventData = {
+      toolName: firstToolWithMoveableHandles.name,
+      element,
+      measurementData: data,
+      coords,
+    };
+
+    triggerEvent(element, eventType, eventData);
+
     return;
   }
 
@@ -129,16 +140,9 @@ export default function(evt) {
     const firstToolNearPoint = annotationToolsWithPointNearClick[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
 
-    let index = 0;
-    const firstAnnotationNearPoint = toolState.data.find((data, i) => {
-      if (firstToolNearPoint.pointNearTool(element, data, coords)) {
-        index = i;
-
-        return true;
-      }
-
-      return false;
-    });
+    const firstAnnotationNearPoint = toolState.data.find(data =>
+      firstToolNearPoint.pointNearTool(element, data, coords)
+    );
 
     firstToolNearPoint.toolSelectedCallback(
       evt,
@@ -152,7 +156,7 @@ export default function(evt) {
       toolName: firstToolNearPoint.name,
       element,
       measurementData: firstAnnotationNearPoint,
-      index,
+      coords,
     };
 
     triggerEvent(element, eventType, eventData);
