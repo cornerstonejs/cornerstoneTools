@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolHandlesColors from './../stateManagement/toolHandlesColors.js';
 import path from './path.js';
 import { state } from './../store/index.js';
 
@@ -22,9 +22,8 @@ import { state } from './../store/index.js';
  */
 export default function(context, evtDetail, handles, options = {}) {
   const element = evtDetail.element;
-  const defaultColor = toolColors.getToolColor();
 
-  context.strokeStyle = options.color || defaultColor;
+  context.strokeStyle = options.color || toolHandlesColors.getToolColor();
 
   const handleKeys = Object.keys(handles);
 
@@ -49,7 +48,7 @@ export default function(context, evtDetail, handles, options = {}) {
     const lineWidth = handle.active
       ? toolStyle.getActiveWidth()
       : toolStyle.getToolWidth();
-    const fillStyle = options.fill;
+    const fillStyle = options.fill || toolHandlesColors.getFillColor();
 
     path(
       context,

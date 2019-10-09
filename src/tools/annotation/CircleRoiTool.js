@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolHandlesColors from '../../stateManagement/toolHandlesColors.js';
 
 // Drawing
 import {
@@ -205,10 +206,11 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           const handleKey = handleKeys[i];
           const handle = data.handles[handleKey];
 
-          if (data.active || handle.active) {
+          if (typeof handle === 'object' && (data.active || handle.active)) {
             color = toolColors.getActiveColor();
+
             handleOptions.active = true;
-            handleOptions.color = toolColors.getActiveColor();
+            handleOptions.color = toolHandlesColors.getColorIfActive(handle);
           }
         }
 
