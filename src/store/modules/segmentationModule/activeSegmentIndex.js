@@ -1,7 +1,7 @@
 import getElement from './getElement';
 import { getToolState } from '../../../stateManagement/toolState.js';
 import state from './state';
-import configuration from './configuration';
+import { getModule } from '../../index.js';
 
 /**
  * Returns the `activeSegmentIndex` for the active `Labelmap3D` for the `BrushStackState` displayed on the element.
@@ -68,6 +68,8 @@ function setActiveSegmentIndex(elementOrEnabledElementUID, segmentIndex) {
   const activeLabelmapIndex = brushStackState.activeLabelmapIndex;
   const labelmap3D = brushStackState.labelmaps3D[activeLabelmapIndex];
 
+  const { configuration } = getModule('segmentation');
+
   if (segmentIndex <= 0) {
     segmentIndex = 1;
   } else if (segmentIndex > configuration.segmentsPerLabelmap) {
@@ -119,6 +121,7 @@ function decrementActiveSegmentIndex(elementOrEnabledElementUID) {
  * @returns {null}
  */
 function _changeActiveSegmentIndex(element, increaseOrDecrease = 'increase') {
+  const { configuration } = getModule('segmentation');
   const stackState = getToolState(element, 'stack');
   const stackData = stackState.data[0];
   const firstImageId = stackData.imageIds[0];

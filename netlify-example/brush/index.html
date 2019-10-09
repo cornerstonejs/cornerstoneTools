@@ -438,7 +438,7 @@
 
   // Segmentation Module API //
 
-  const { configuration, getters, setters } = cornerstoneTools.getModule(
+  const segmentationModule = cornerstoneTools.getModule(
     'segmentation'
   );
 
@@ -447,11 +447,11 @@
   function brushApiCall(opperation) {
     switch (opperation) {
       case 'next-segment':
-        setters.incrementActiveSegmentIndex(element);
+        segmentationModule.setters.incrementActiveSegmentIndex(element);
         cornerstone.updateImage(element);
         break;
       case 'previous-segment':
-        setters.decrementActiveSegmentIndex(element);
+        segmentationModule.setters.decrementActiveSegmentIndex(element);
         cornerstone.updateImage(element);
         break;
       case 'switch-labelmap':
@@ -461,7 +461,7 @@
           activeLabelmapIndex = 0;
         }
 
-        setters.activeLabelmapIndex(element, activeLabelmapIndex);
+        segmentationModule.setters.activeLabelmapIndex(element, activeLabelmapIndex);
 
         const label = document.getElementById('active-label-map-label');
         label.innerHTML = 'Active Labelmap: ' + activeLabelmapIndex;
@@ -471,7 +471,7 @@
         break;
 
       case 'toggle-segment-1':
-        const visible = setters.toggleSegmentVisibility(element, 1);
+        const visible = segmentationModule.setters.toggleSegmentVisibility(element, 1);
 
         console.log(visible);
 
@@ -483,7 +483,7 @@
         cornerstone.updateImage(element);
         break;
       case 'calculate-segment-1-stats':
-        getters.labelmapStats(element, 1).then(result => {
+        segmentationModule.getters.labelmapStats(element, 1).then(result => {
           const statsLabel = document.getElementById(
             'calculate-segment-1-stats-label'
           );
@@ -516,7 +516,7 @@
   const outlineDisplay = document.getElementById('display-outline');
 
   outlineDisplay.addEventListener('input', event => {
-    configuration.renderOutline = event.target.checked;
+    segmentationModule.configuration.renderOutline = event.target.checked;
     cornerstone.updateImage(element);
   });
 
@@ -524,7 +524,7 @@
   const fillDisplay = document.getElementById('display-fill');
 
   fillDisplay.addEventListener('input', event => {
-    configuration.renderFill = event.target.checked;
+    segmentationModule.configuration.renderFill = event.target.checked;
     cornerstone.updateImage(element);
   });
 
@@ -532,7 +532,7 @@
   const inactiveDisplay = document.getElementById('display-inactive');
 
   inactiveDisplay.addEventListener('input', event => {
-    configuration.shouldRenderInactiveLabelmaps = event.target.checked;
+    segmentationModule.configuration.shouldRenderInactiveLabelmaps = event.target.checked;
     cornerstone.updateImage(element);
   });
 
@@ -544,7 +544,7 @@
   alphaSlider.addEventListener('input', event => {
     const normalisedAlpha = event.target.value / 255.0;
 
-    configuration.fillAlpha = normalisedAlpha;
+    segmentationModule.configuration.fillAlpha = normalisedAlpha;
     cornerstone.updateImage(element);
   });
 
@@ -552,12 +552,12 @@
   const outlineAlphaSlider = document.getElementById('outline-alpha');
 
   outlineAlphaSlider.defaultValue = Math.floor(
-    configuration.outlineAlpha * 255
+    segmentationModule.configuration.outlineAlpha * 255
   );
   outlineAlphaSlider.addEventListener('input', event => {
     const normalisedAlpha = event.target.value / 255.0;
 
-    configuration.outlineAlpha = normalisedAlpha;
+    segmentationModule.configuration.outlineAlpha = normalisedAlpha;
     cornerstone.updateImage(element);
   });
 
@@ -565,12 +565,12 @@
   const inactiveAlphaSlider = document.getElementById('fill-alpha-inactive');
 
   inactiveAlphaSlider.defaultValue = Math.floor(
-    configuration.fillAlphaInactive * 255
+    segmentationModule.configuration.fillAlphaInactive * 255
   );
   inactiveAlphaSlider.addEventListener('input', event => {
     const normalisedAlpha = event.target.value / 255.0;
 
-    configuration.fillAlphaInactive = normalisedAlpha;
+    segmentationModule.configuration.fillAlphaInactive = normalisedAlpha;
     cornerstone.updateImage(element);
   });
 
@@ -580,12 +580,12 @@
   );
 
   inactiveOutlineAlphaSlider.defaultValue = Math.floor(
-    configuration.outlineAlphaInactive * 255
+    segmentationModule.configuration.outlineAlphaInactive * 255
   );
   inactiveOutlineAlphaSlider.addEventListener('input', event => {
     const normalisedAlpha = event.target.value / 255.0;
 
-    configuration.outlineAlphaInactive = normalisedAlpha;
+    segmentationModule.configuration.outlineAlphaInactive = normalisedAlpha;
     cornerstone.updateImage(element);
   });
 
@@ -637,11 +637,11 @@
 
   Mousetrap.bind(['command+z', 'ctrl+z'], function () {
     console.log('UNDO');
-    setters.undo(element)
+    segmentationModule.setters.undo(element)
   });
   Mousetrap.bind(['command+y', 'ctrl+y'], function () {
     console.log('REDO');
-    setters.redo(element)
+    segmentationModule.setters.redo(element)
   });
 </script>
 
