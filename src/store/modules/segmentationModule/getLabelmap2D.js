@@ -1,5 +1,6 @@
 import getElement from './getElement';
 import { getToolState } from '../../../stateManagement/toolState.js';
+import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import addLabelmap3D from './addLabelmap3D';
 import addLabelmap2D from './addLabelmap2D';
 import external from '../../../externalModules';
@@ -133,7 +134,7 @@ export function getLabelmap2DByImageIdIndex(
 
     labelmap3D.labelmaps2D[imageIdIndex] = {
       pixelData,
-      getSegmentIndexes: () => new Set(pixelData),
+      segmentsOnLabelmap: getSegmentsOnPixelData(pixelData),
     };
   }
 
