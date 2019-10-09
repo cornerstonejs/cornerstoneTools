@@ -91,7 +91,6 @@ export default function(evt) {
       // Draw the handles
       const handleOptions = {
         active: data.active,
-        color,
         handleRadius,
         drawHandlesIfActive,
         drawHandlesOnHover,

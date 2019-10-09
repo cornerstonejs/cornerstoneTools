@@ -188,7 +188,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
           active: data.active,
-          color,
           handleRadius,
           drawHandlesIfActive,
           drawHandlesOnHover,

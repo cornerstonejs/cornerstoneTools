@@ -23,13 +23,15 @@ import { state } from './../store/index.js';
 export default function(context, evtDetail, handles, options = {}) {
   const element = evtDetail.element;
 
-  context.strokeStyle = options.color || toolHandlesColors.getToolColor();
-
   const handleKeys = Object.keys(handles);
 
   for (let i = 0; i < handleKeys.length; i++) {
     const handleKey = handleKeys[i];
     const handle = handles[handleKey];
+
+    // Stroke Style
+    context.strokeStyle =
+      options.color || toolHandlesColors.getColorIfActive(handle);
 
     if (handle.drawnIndependently === true) {
       continue;
@@ -48,7 +50,8 @@ export default function(context, evtDetail, handles, options = {}) {
     const lineWidth = handle.active
       ? toolStyle.getActiveWidth()
       : toolStyle.getToolWidth();
-    const fillStyle = options.fill || toolHandlesColors.getFillColor();
+    const fillStyle =
+      options.fill || handle.fill || toolHandlesColors.getFillColor();
 
     path(
       context,

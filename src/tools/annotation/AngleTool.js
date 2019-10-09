@@ -201,7 +201,6 @@ export default class AngleTool extends BaseAnnotationTool {
         // Draw the handles
         const handleOptions = {
           active: data.active,
-          color,
           handleRadius,
           drawHandlesIfActive,
           drawHandlesOnHover,

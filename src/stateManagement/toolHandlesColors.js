@@ -1,8 +1,8 @@
 import toolColors from './toolColors.js';
 
-let defaultColor = toolColors.defaultColor,
-  activeColor = toolColors.activeColor,
-  fillColor = toolColors.fillColor;
+let defaultColor = 'greenyellow',
+  activeColor = toolColors.getActiveColor(),
+  fillColor = toolColors.getFillColor();
 
 function setFillColor(color) {
   fillColor = color;
@@ -29,11 +29,11 @@ function getActiveColor() {
 }
 
 function getColorIfActive(data) {
-  if (data.color) {
-    return data.color;
+  if (data.active === true) {
+    return data.activeColor || activeColor;
   }
 
-  return data.active ? activeColor : defaultColor;
+  return data.color || defaultColor;
 }
 
 const toolHandlesColors = {

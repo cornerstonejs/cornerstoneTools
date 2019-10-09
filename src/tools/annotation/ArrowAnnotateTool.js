@@ -160,7 +160,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
         const handleOptions = {
           active: data.active,
-          color,
           handleRadius,
           drawHandlesIfActive,
           drawHandlesOnHover,

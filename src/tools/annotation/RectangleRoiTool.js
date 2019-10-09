@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolHandlesColors from '../../stateManagement/toolHandlesColors.js';
 
 // Drawing
 import {
@@ -194,7 +195,6 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
           active: data.active,
-          color,
           handleRadius,
           drawHandlesIfActive,
           drawHandlesOnHover,

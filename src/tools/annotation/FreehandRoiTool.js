@@ -402,7 +402,6 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         // Draw handles
         const handleOptions = {
-          color,
           fill: fillColor,
         };
 
