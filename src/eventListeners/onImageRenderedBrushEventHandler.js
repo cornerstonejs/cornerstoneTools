@@ -1,7 +1,7 @@
 import { getModule } from '../store/index.js';
 import renderSegmentation from './internals/renderSegmentation.js';
 
-const { configuration, getters } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 /**
  * Finds which segmentations need to be rendered based on the configuration and
@@ -13,6 +13,7 @@ const { configuration, getters } = getModule('segmentation');
 export default function(evt) {
   const eventData = evt.detail;
   const element = eventData.element;
+  const { configuration, getters } = segmentationModule;
 
   const {
     activeLabelmapIndex,

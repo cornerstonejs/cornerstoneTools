@@ -3,7 +3,7 @@ import external from '../../externalModules.js';
 import { getNewContext, draw, drawLines } from '../../drawing/index.js';
 import { disableLogger } from '../../index.js';
 
-const { state, configuration } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 export default function renderSegmentationOutline(
   evt,
@@ -12,6 +12,7 @@ export default function renderSegmentationOutline(
   labelmapIndex,
   isActiveLabelMap
 ) {
+  const { configuration } = segmentationModule;
   const outline = getOutline(
     evt,
     labelmap3D,
@@ -37,6 +38,7 @@ export function renderOutline(
   colorLUTIndex,
   isActiveLabelMap = true
 ) {
+  const { configuration, state } = segmentationModule;
   const eventData = evt.detail;
   const { element, canvasContext } = eventData;
 

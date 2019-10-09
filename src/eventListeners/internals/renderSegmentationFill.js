@@ -6,7 +6,7 @@ import {
 } from '../../drawing/index.js';
 import external from '../../externalModules';
 
-const { state, configuration } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 export default function renderSegmentationFill(
   evt,
@@ -31,6 +31,7 @@ export default function renderSegmentationFill(
  * @returns {HTMLCanvasElement}
  */
 export function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
+  const { state } = segmentationModule;
   const eventData = evt.detail;
   const { image } = eventData;
   const cols = image.width;
@@ -77,6 +78,7 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
  * @returns {null}
  */
 export function renderFill(evt, labelmapCanvas, isActiveLabelMap) {
+  const { configuration } = segmentationModule;
   const eventData = evt.detail;
   const context = getNewContext(eventData.canvasContext.canvas);
 

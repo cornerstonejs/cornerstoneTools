@@ -12,7 +12,7 @@ import { getDiffBetweenPixelData } from '../../util/segmentation';
 
 const logger = getLogger('tools:SphericalBrushTool');
 
-const { getters, setters, configuration } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 /**
  * @public
@@ -44,6 +44,7 @@ export default class SphericalBrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _startPainting(evt) {
+    const { configuration, getters } = segmentationModule;
     const eventData = evt.detail;
     const { element, image } = eventData;
     const { cornerstone } = external;
@@ -137,6 +138,7 @@ export default class SphericalBrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _paint(evt) {
+    const { getters } = segmentationModule;
     const eventData = evt.detail;
     const element = eventData.element;
     const image = eventData.image;
@@ -290,6 +292,7 @@ export default class SphericalBrushTool extends BaseBrushTool {
   _endPainting(evt) {
     const { labelmap3D, imagesInRange } = this.paintEventData;
     const operations = [];
+    const { configuration, setters } = segmentationModule;
 
     for (let i = 0; i < imagesInRange.length; i++) {
       const { imageIdIndex } = imagesInRange[i];
