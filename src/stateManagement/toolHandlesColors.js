@@ -1,6 +1,6 @@
 import toolColors from './toolColors.js';
 
-let defaultColor = 'greenyellow',
+let defaultColor = toolColors.getActiveColor(),
   activeColor = toolColors.getActiveColor(),
   fillColor = toolColors.getFillColor();
 
