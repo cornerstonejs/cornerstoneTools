@@ -12,6 +12,7 @@
   - [Configuration](index.md#configuration)
   - [Adding and Using Tools](index.md#adding-and-using-tools)
   - [Next Steps](index.md#next-steps)
+- [Debugging](debugging/index.md)
 - [Contributing](contributing.md)
 
 ## Tools In-Depth
@@ -27,19 +28,25 @@
   - [Base Tool](tool-types/index.md#base-tool)
   - [Base Annotation Tool](tool-types/index.md#base-annotation-tool)
   - [Base Brush Tool](tool-types/index.md#base-brush-tool)
+  - [Segmentation Tool](tool-types/index.md#segmentation-tool)
 - [Tool Mixins](tool-mixins/index.md)
   - [Binary Tools](tool-mixins/index.md#binary-tools)
+  - [Segmentation Mixins](tool-mixins/index.md#segmentation-mixins)
 - [Custom Tools](custom-tools/index.md)
   - [Choosing a Base Class](custom-tools/index.md#choosing-a-base-class)
   - [Creating your Tool](custom-tools/index.md#creating-your-tool)
   - [Adding Mixins](custom-tools/index.md#adding-mixins)
   - [Mode Change Callbacks](custom-tools/index.md#mode-change-callbacks)
   - [Event Dispatcher Callbacks](custom-tools/index.md#event-dispatcher-callbacks)
+- [Modules](modules/index.md)
+  - [GlobalConfiguration](modules/index.md#global-configuration)
+  - [Cursor](modules/index.md#cursors)
+  - [Segmentation](modules/index.md#segmentation)
 - [Third-Party Functionality](third-party-functionality/index.md)
-  - [Item Types](third-party-functionality/index.md#item-types.md)
-  - [Registration](third-party-functionality/index.md#registration.md)
-  - [Imports](third-party-functionality/index.md#imports.md)
-  - [Tools](third-party-functionality/index.md#tools.md)
+  - [Item Types](third-party-functionality/index.md#item-types)
+  - [Registration](third-party-functionality/index.md#registration)
+  - [Imports](third-party-functionality/index.md#imports)
+  - [Tools](third-party-functionality/index.md#tools)
 
 ## Migrating
 

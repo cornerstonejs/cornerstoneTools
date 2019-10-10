@@ -1,0 +1,38 @@
+<div class="buttons">
+    <div class="row-label">
+        Segmentation
+    </div>
+    <button id="previous-seg" class="button">
+        Previous
+    </button>
+    <button id="next-seg" class="button">
+        Next
+    </button>
+</div>
+
+<script>
+  function initSegmentationColorsButtons() {
+    element.addEventListener('cornerstoneimagerendered', handleImageRendered);
+  }
+
+  function initCustomColorMap() {
+    const ActiveScissorTool = cornerstoneTools.getToolForElement(
+      element,
+      '{{page.toolName}}'
+    );
+
+    document.getElementById('next-seg').addEventListener('click', function(){
+      ActiveScissorTool.setActiveLabelmap(ActiveScissorTool.getActiveLabelmap() + 1);
+    });
+
+    document.getElementById('previous-seg').addEventListener('click', function(){
+      ActiveScissorTool.setActiveLabelmap(ActiveScissorTool.getActiveLabelmap() - 1);
+    });
+  }
+
+  // Logic to fire after first image load
+  const handleImageRendered = (evt) => {
+    evt.detail.element.removeEventListener('cornerstoneimagerendered', handleImageRendered);
+    initCustomColorMap();
+  };
+</script>

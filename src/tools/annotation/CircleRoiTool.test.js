@@ -13,11 +13,25 @@ jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
+jest.mock('./../../importInternal.js', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('../../externalModules.js');
+jest.mock('../../externalModules.js', () => ({
+  cornerstoneMath: {
+    point: {
+      distance: (from, to) => {
+        const distanceSquared =
+          Math.pow(from.x - to.x, 2) + Math.pow(from.y - to.y, 2);
+
+        return Math.sqrt(distanceSquared);
+      },
+    },
+  },
+  cornerstone: {
+    pixelToCanvas: jest.fn(),
+  },
+}));
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -30,6 +44,11 @@ const goodMouseEventData = {
   viewport: {
     rotation: 0,
   },
+};
+
+const image = {
+  rowPixelSpacing: 0.8984375,
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('CircleRoiTool.js', () => {
@@ -165,7 +184,7 @@ describe('CircleRoiTool.js', () => {
       expect(isPointNearTool).toBe(false);
     });
 
-    it('returns false when point is inside the cirle roi', () => {
+    it('returns false when point is not in the hit area region', () => {
       const instantiatedTool = new CircleRoiTool();
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -173,8 +192,8 @@ describe('CircleRoiTool.js', () => {
 
       // Setting the coordinates to be inside the circle annotation
       const coords = {
-        x: 20,
-        y: 20,
+        x: 23.5, // For the 'mouse', we are setting the hit area region to be 7.5 px wide
+        y: 23.5,
       };
 
       // picking a start handler as {x: 25, y: 25} and end handler as {x: 15, y: 15};
@@ -227,6 +246,66 @@ describe('CircleRoiTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(true);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    external.cornerstone.metaData = {
+      get: jest.fn(),
+    };
+
+    // prettier-ignore
+    external.cornerstone.getPixels = () => [
+      100, 100, 100,
+      100, 4, 5,
+      100, 3, 6,
+      100, 100, 100,
+      100, 4, 5,
+      100, 3, 6,
+      100, 100, 100,
+      100, 4, 5,
+      100, 3, 6,
+      100, 100, 100,
+      100, 4, 5,
+      100, 3, 6,
+    ];
+
+    it('should calculate and update annotation values', () => {
+      const instantiatedTool = new CircleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('5.07');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('1.12');
+
+      data.handles.start.x = 3;
+      data.handles.start.y = 3;
+      data.handles.end.x = 5;
+      data.handles.end.y = 5;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('20.29');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('47.86');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.60');
     });
   });
 

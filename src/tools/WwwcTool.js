@@ -11,8 +11,8 @@ import { wwwcCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class WwwcTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Wwwc',
       strategies: { basicLevelingStrategy },
       supportedInteractionTypes: ['Mouse', 'Touch'],
@@ -21,11 +21,8 @@ export default class WwwcTool extends BaseTool {
       },
       svgCursor: wwwcCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   mouseDragCallback(evt) {
@@ -51,7 +48,8 @@ export default class WwwcTool extends BaseTool {
  * @param {Object} { orienttion }
  * @returns {void}
  */
-function basicLevelingStrategy(evt, { orientation }) {
+function basicLevelingStrategy(evt) {
+  const { orientation } = this.configuration;
   const eventData = evt.detail;
 
   const maxVOI =

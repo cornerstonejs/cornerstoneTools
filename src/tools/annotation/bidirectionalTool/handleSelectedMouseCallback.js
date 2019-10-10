@@ -108,9 +108,9 @@ export default function(evt) {
         {
           deleteIfHandleOutsideImage: true,
           preventHandleOutsideImage: false,
-          doneMovingCallback,
         },
-        'mouse'
+        'mouse',
+        doneMovingCallback
       );
 
       preventPropagation(evt);

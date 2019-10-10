@@ -5,6 +5,11 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import getActiveTool from '../util/getActiveTool';
+import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('manipulators:moveHandle');
 
 const runAnimation = {
   value: false,
@@ -39,9 +44,9 @@ const _upOrEndEvents = {
  * @param {*} handle
  * @param {*} [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {function} [options.doneMovingCallback]
  * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
+ * @param {function} doneMovingCallback
  * @returns {undefined}
  */
 export default function(
@@ -50,7 +55,8 @@ export default function(
   annotation,
   handle,
   options = {},
-  interactionType = 'mouse'
+  interactionType = 'mouse',
+  doneMovingCallback
 ) {
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
@@ -83,7 +89,8 @@ export default function(
         dragHandler,
         upOrEndHandler,
       },
-      evt
+      evt,
+      doneMovingCallback
     );
   };
 
@@ -133,7 +140,7 @@ function _dragHandler(
   interactionType,
   evt
 ) {
-  const { image, currentPoints, element } = evt.detail;
+  const { image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -156,6 +163,12 @@ function _dragHandler(
 
   external.cornerstone.updateImage(element);
 
+  const activeTool = getActiveTool(element, buttons, interactionType);
+
+  if (activeTool instanceof BaseAnnotationTool) {
+    activeTool.updateCachedStats(image, element, annotation);
+  }
+
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
@@ -174,7 +187,8 @@ function _upOrEndHandler(
   options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
-  evt
+  evt,
+  doneMovingCallback
 ) {
   const image = evtDetail.currentPoints.image;
   const element = evt.detail.element;
@@ -210,7 +224,15 @@ function _upOrEndHandler(
   }
 
   if (typeof options.doneMovingCallback === 'function') {
+    logger.warn(
+      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+    );
+
     options.doneMovingCallback();
+  }
+
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
   }
 
   external.cornerstone.updateImage(element);

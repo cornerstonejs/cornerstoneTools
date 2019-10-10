@@ -7,10 +7,12 @@ const globalConfiguration = modules.globalConfiguration;
 /**
  * Creates an SVG Cursor for the target element
  *
+ * @param {HTMLElement} element - The DOM Element to draw on
  * @param {MouseCursor} svgCursor - The cursor.
+ * @returns {void}
  */
 function setToolCursor(element, svgCursor) {
-  if (!globalConfiguration.state.showSVGCursors) {
+  if (!globalConfiguration.configuration.showSVGCursors) {
     return;
   }
   // TODO: (state vs options) Exit if cursor wasn't updated
@@ -21,6 +23,7 @@ function setToolCursor(element, svgCursor) {
   const mousePoint = svgCursor.mousePoint;
 
   const svgCursorUrl = window.URL.createObjectURL(cursorBlob);
+
   element.style.cursor = `url('${svgCursorUrl}') ${mousePoint}, auto`;
 
   state.svgCursorUrl = svgCursorUrl;
@@ -31,7 +34,7 @@ function resetToolCursor(element) {
 }
 
 function hideToolCursor(element) {
-  if (!globalConfiguration.state.showSVGCursors) {
+  if (!globalConfiguration.configuration.showSVGCursors) {
     return;
   }
 

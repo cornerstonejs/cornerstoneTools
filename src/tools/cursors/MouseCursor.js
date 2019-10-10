@@ -3,6 +3,8 @@ import { modules } from '../../store/index.js';
 
 const cursorModule = modules.cursor;
 
+/* eslint-disable valid-jsdoc */
+
 /*
 MACROS - The following keys will have the appropriate value injected when
 an SVG is requested:
@@ -23,11 +25,10 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconSVG - Returns an SVG of the icon only.
+   * Returns an SVG of the icon only.
    *
-   * @param  {Object} options    An object which overrides default properties
-   *                             of the returned SVG.
-   * @returns {Blob}              The SVG of the icon.
+   * @param  {Object} options - An object which overrides default properties of the returned SVG.
+   * @returns {Blob} The SVG of the icon.
    */
   getIconSVG(options = {}) {
     const svgString = this._generateIconSVGString(options);
@@ -36,22 +37,20 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconSVGString - Returns a string representation of the SVG of the icon only.
+   *  Returns a string representation of the SVG of the icon only.
    *
-   * @param  {Object} options An object which overrides default properties
-   *                             of the returned SVG.
-   * @returns {string}         The stringified SVG of the icon.
+   * @param  {Object} options - An object which overrides default properties of the returned SVG.
+   * @returns {string} The stringified SVG of the icon.
    */
   getIconSVGString(options = {}) {
     return this._generateIconSVGString(options);
   }
 
   /**
-   * getIconWithPointerSVG - Returns an SVG of the icon + pointer.
+   * Returns an SVG of the icon + pointer.
    *
-   * @param  {Object} options An object which overrides default properties
-   *                             of the returned SVG.
-   * @returns {Blob}              The SVG of the icon + pointer..
+   * @param  {Object} options - An object which overrides default properties of the returned SVG.
+   * @returns {Blob} The SVG of the icon + pointer..
    */
   getIconWithPointerSVG(options = {}) {
     const svgString = this._generateIconWithPointerSVGString(options);
@@ -60,19 +59,17 @@ export default class MouseCursor {
   }
 
   /**
-   * getIconWithPointerString - Returns a string representation of the SVG
-   *                            of the icon + pointer.
+   * Returns a string representation of the SVG of the icon + pointer.
    *
-   * @param  {Object} options An object which overrides default properties
-   *                          of the returned SVG.
-   * @returns {string}         The stringified SVG of the icon + pointer.
+   * @param  {Object} options - An object which overrides default properties of the returned SVG.
+   * @returns {string} The stringified SVG of the icon + pointer.
    */
   getIconWithPointerString(options = {}) {
     return this._generateIconWithPointerSVGString(options);
   }
 
   /**
-   * get mousePoint - Returns the mousePoint as a space seperated string.
+   * Returns the mousePoint as a space seperated string.
    *
    * @returns {string} The mousePoint.
    */
@@ -83,12 +80,10 @@ export default class MouseCursor {
   }
 
   /**
-   * _generateIconWithPointerSVGString - Generates a string representation of
-   *                                     the icon + pointer.
+   * Generates a string representation of the icon + pointer.
    *
-   * @param  {Object} options   An object which overrides default properties
-   *                            of the returned string.
-   * @returns {string}           The SVG as a string.
+   * @param  {Object} options - An object which overrides default properties of the returned string.
+   * @returns {string} The SVG as a string.
    */
   _generateIconWithPointerSVGString(options = {}) {
     const svgOptions = Object.assign({}, this.options, options);
@@ -114,11 +109,10 @@ export default class MouseCursor {
   }
 
   /**
-   * _generateIconSVGString - Generates a string representation of the icon.
+   * Generates a string representation of the icon.
    *
-   * @param  {Object} options   An object which overrides default properties
-   *                            of the returned string.
-   * @returns {string}           The SVG as a string.
+   * @param  {Object} options - An object which overrides default properties of the returned string.
+   * @returns {string} The SVG as a string.
    */
   _generateIconSVGString(options = {}) {
     const svgOptions = Object.assign({}, this.options, options);
@@ -137,12 +131,11 @@ export default class MouseCursor {
   }
 
   /**
-   * _injectColors - Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in
-   *                 svgString with their appropriate values.
+   * Replaces ACTIVE_COLOR, TOOL_COLOR and FILL_COLOR in svgString with their appropriate values.
    *
-   * @param  {string} svgString    The string to modify.
-   * @param  {Object} options      Optional overrides for the colors.
-   * @returns {string}              The string with color values injected.
+   * @param  {string} svgString - The string to modify.
+   * @param  {Object} options - Optional overrides for the colors.
+   * @returns {string} The string with color values injected.
    */
   _injectColors(svgString, options = {}) {
     const activeColor = options.activeColor || toolColors.getActiveColor();

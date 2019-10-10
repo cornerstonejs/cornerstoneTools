@@ -1,4 +1,6 @@
-const state = {
+import external from '../../externalModules';
+
+const configuration = {
   iconSize: 16,
   viewBox: {
     x: 16,
@@ -16,17 +18,16 @@ const state = {
 
 const setters = {
   defaultOptions: newOptions => {
-    Object.assign(state, newOptions);
+    Object.assign(configuration, newOptions);
   },
 };
 
 const getters = {
-  defaultOptions: () => {
-    return state;
-  },
+  defaultOptions: () => configuration,
 };
 
 export default {
+  configuration,
   getters,
   setters,
 };

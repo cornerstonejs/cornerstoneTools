@@ -2,12 +2,15 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
+import EVENTS from './../../events.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import triggerEvent from './../../util/triggerEvent.js';
+
 import {
   addToolState,
   removeToolState,
@@ -28,8 +31,8 @@ import { arrowAnnotateCursor } from '../cursors/index.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -41,11 +44,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       },
       svgCursor: arrowAnnotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.preventNewMeasurement = false;
   }
 
@@ -89,6 +89,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
       25
     );
+  }
+
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
   }
 
   renderToolData(evt) {
@@ -241,47 +245,32 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    const toolOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          if (measurementData.text === undefined) {
-            this.configuration.getTextCallback(text => {
-              if (text) {
-                measurementData.text = text;
-              } else {
-                removeToolState(element, this.name, measurementData);
-              }
-
-              measurementData.active = false;
-              external.cornerstone.updateImage(element);
-            });
-          }
-
-          external.cornerstone.updateImage(element);
-        },
-      },
-      this.options
-    );
-
     moveNewHandle(
       evt.detail,
       this.name,
       measurementData,
       measurementData.handles.end,
-      toolOptions,
-      interactionType
+      this.options,
+      interactionType,
+      () => {
+        if (measurementData.text === undefined) {
+          this.configuration.getTextCallback(text => {
+            if (text) {
+              measurementData.text = text;
+            } else {
+              removeToolState(element, this.name, measurementData);
+            }
+
+            measurementData.active = false;
+            external.cornerstone.updateImage(element);
+          });
+        }
+        external.cornerstone.updateImage(element);
+      }
     );
   }
 
   doubleClickCallback(evt) {
-    if (
-      !Array.isArray(this.options.mouseButtonMask) ||
-      !this.options.mouseButtonMask.includes(evt.detail.buttons)
-    ) {
-      return;
-    }
-
     return this._updateTextForNearbyAnnotation(evt);
   }
 

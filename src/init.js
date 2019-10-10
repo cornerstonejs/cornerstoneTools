@@ -1,5 +1,5 @@
 import external from './externalModules.js';
-import store from './store/index.js';
+import store, { getModule } from './store/index.js';
 import addEnabledElement from './store/internals/addEnabledElement.js';
 import removeEnabledElement from './store/internals/removeEnabledElement.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
@@ -12,20 +12,42 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @method
  * @name init
  *
- * @param {Object} configuration
+ * @param {Object|Object[]} [defaultConfiguration = {}] The configuration to apply. Assumed globalConfiguration
+ * only one value, otherwise moduleName, configuration entires in an array.
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
-export default function(configuration) {
+export default function(defaultConfiguration = {}) {
   _addCornerstoneEventListeners();
   _initModules();
-  windowResizeHandler.enable();
 
-  // Apply global configuration
-  store.modules.globalConfiguration.state = Object.assign(
-    {},
-    store.modules.globalConfiguration.state,
-    configuration
-  );
+  const globalConfigurationModule = getModule('globalConfiguration');
+
+  if (Array.isArray(defaultConfiguration)) {
+    defaultConfiguration.forEach(configurationEntry => {
+      const { moduleName, configuration } = configurationEntry;
+
+      const module = getModule(moduleName);
+
+      if (module) {
+        module.configuration = Object.assign(
+          {},
+          module.configuration,
+          configuration
+        );
+      }
+    });
+  } else {
+    // defaultConfiguration is an object, default to assigning it to globalConfiguration.
+    globalConfigurationModule.configuration = Object.assign(
+      {},
+      globalConfigurationModule.configuration,
+      defaultConfiguration
+    );
+  }
+
+  if (globalConfigurationModule.configuration.autoResizeViewports) {
+    windowResizeHandler.enable();
+  }
 }
 
 /**

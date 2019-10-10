@@ -1,4 +1,4 @@
-import store from './index.js';
+import store, { getModule } from './index.js';
 
 /**
  * Deactivates and removes the tool from the target element with the provided name
@@ -49,7 +49,9 @@ const removeTool = function(toolName) {
  * @returns {void}
  */
 const _removeToolGlobally = function(toolName) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 

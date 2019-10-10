@@ -12,8 +12,8 @@ import { setToolOptions, getToolOptions } from '../toolOptions.js';
  * @extends Tools.Base.BaseTool
  */
 export default class StackScrollMultiTouchTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'StackScrollMultiTouch',
       supportedInteractionTypes: ['MultiTouch'],
       configuration: {
@@ -22,11 +22,8 @@ export default class StackScrollMultiTouchTool extends BaseTool {
         touchPointers: 3,
       },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.multiTouchDragCallback = this._dragCallback.bind(this);
   }
 

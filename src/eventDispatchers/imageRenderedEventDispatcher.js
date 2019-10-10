@@ -1,7 +1,9 @@
-import { state } from './../store/index.js';
-import BaseBrushTool from './../tools/base/BaseBrushTool.js';
+import { state, getModule } from './../store/index.js';
+import { getToolState } from '../stateManagement/toolState';
 import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedBrushEventHandler.js';
 import external from './../externalModules.js';
+
+const segmentationModule = getModule('segmentation');
 
 const onImageRendered = function(evt) {
   const eventData = evt.detail;
@@ -16,11 +18,16 @@ const onImageRendered = function(evt) {
         tool.mode === 'enabled')
   );
 
-  const brushTools = toolsToRender.filter(
-    tool => tool instanceof BaseBrushTool
-  );
+  // Must be using stacks in order to use segmentation tools.
+  const stackToolState = getToolState(element, 'stack');
 
-  if (brushTools.length > 0) {
+  const segmentationConfiguration = segmentationModule.configuration;
+
+  if (
+    stackToolState &&
+    (segmentationConfiguration.renderFill ||
+      segmentationConfiguration.renderOutline)
+  ) {
     onImageRenderedBrushEventHandler(evt);
   }
 

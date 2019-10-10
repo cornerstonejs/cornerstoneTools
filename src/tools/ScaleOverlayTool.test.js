@@ -18,10 +18,6 @@ jest.mock('../drawing/index.js', () => ({
   getNewContext: jest.fn(),
 }));
 
-jest.mock('../import.js', () => ({
-  default: jest.fn(),
-}));
-
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('ScaleOverlayTool.js', () => {
   describe('default values', () => {

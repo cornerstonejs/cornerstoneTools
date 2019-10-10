@@ -4,7 +4,7 @@ Next you can add any [mixins](../anatomy-of-a-tool/index.md#mixins) you wish to 
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.import('base/BaseTool');
+const BaseTool = csTools.importInternal('base/BaseTool');
 
 export default class HelloWorldMouseTool extends BaseTool {
   constructor(name = 'HelloWorldMouse') {

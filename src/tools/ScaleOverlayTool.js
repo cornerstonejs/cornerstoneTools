@@ -17,8 +17,8 @@ const logger = getLogger('tools:ScaleOverlayTool');
  * @extends Tools.Base.BaseTool
  */
 export default class ScaleOverlayTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ScaleOverlay',
       configuration: {
         minorTickLength: 12.5,
@@ -26,11 +26,8 @@ export default class ScaleOverlayTool extends BaseTool {
       },
       mixins: ['enabledOrDisabledBinaryTool'],
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   enabledCallback(element) {
@@ -72,9 +69,7 @@ export default class ScaleOverlayTool extends BaseTool {
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
       logger.warn(
-        `unable to define rowPixelSpacing or colPixelSpacing from data on ${
-          this.name
-        }'s renderToolData`
+        `unable to define rowPixelSpacing or colPixelSpacing from data on ${this.name}'s renderToolData`
       );
 
       return;
@@ -148,8 +143,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.verticalLine.start,
         imageAttributes.verticalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );
@@ -162,8 +157,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.horizontalLine.start,
         imageAttributes.horizontalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );

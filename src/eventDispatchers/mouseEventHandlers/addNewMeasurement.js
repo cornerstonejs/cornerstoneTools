@@ -1,7 +1,9 @@
+import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
 import { getLogger } from '../../util/logger.js';
+import triggerEvent from '../../util/triggerEvent.js';
 
 const logger = getLogger('eventDispatchers:mouseEventHandlers');
 
@@ -34,6 +36,16 @@ export default function(evt, tool) {
     measurementData,
     measurementData.handles.end,
     tool.options,
-    'mouse'
+    'mouse',
+    () => {
+      const eventType = EVENTS.MEASUREMENT_COMPLETED;
+      const eventData = {
+        toolName: tool.name,
+        element,
+        measurementData,
+      };
+
+      triggerEvent(element, eventType, eventData);
+    }
   );
 }

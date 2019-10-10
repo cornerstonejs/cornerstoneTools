@@ -24,8 +24,8 @@ import { probeCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class DragProbeTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'DragProbe',
       strategies: {
         default: defaultStrategy,
@@ -35,9 +35,8 @@ export default class DragProbeTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: probeCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
     this.touchDragCallback = this._movingEventCallback.bind(this);
     this.touchEndCallback = this._endMovingEventCallback.bind(this);
@@ -45,7 +44,6 @@ export default class DragProbeTool extends BaseTool {
     this.mouseDragCallback = this._movingEventCallback.bind(this);
     this.mouseUpCallback = this._endMovingEventCallback.bind(this);
 
-    this.initialConfiguration = initialConfiguration;
     this.dragEventData = {};
   }
 
@@ -85,10 +83,10 @@ export default class DragProbeTool extends BaseTool {
  * Default strategy will pick the exactly point of mouse/touch interact and display the probe data.
  *
  * @param  {Object} evt Image rendered event
- * @param  {Object} config Tool configuration
  * @returns {void}
  */
-const defaultStrategy = (evt, config) => {
+function defaultStrategy(evt) {
+  const config = this.configuration;
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
   const { element, image, currentPoints, canvasContext } = eventData;
@@ -145,16 +143,16 @@ const defaultStrategy = (evt, config) => {
     );
     drawTextBox(context, text, textCoords.x, textCoords.y, color);
   });
-};
+}
 
 /**
  * Minimal strategy will position a circle and use the center of the circle to calculate and display probe data.
  *
  * @param  {Object} evt Image rendered event
- * @param  {Object} config Tool configuration
  * @returns {void}
  */
-const minimalStrategy = (evt, config) => {
+function minimalStrategy(evt) {
+  const config = this.configuration;
   const cornerstone = external.cornerstone;
   const eventData = evt.detail;
   const {
@@ -261,4 +259,4 @@ const minimalStrategy = (evt, config) => {
       color
     );
   });
-};
+}

@@ -13,10 +13,10 @@ For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.import('base/BaseTool');
+const BaseTool = csTools.importInternal('base/BaseTool');
 
-export default class HelloWorldMouseTool extends BaseTool {
-  constructor(name = 'HelloWorldMouse') {
+export default class HelloWorldTool extends BaseTool {
+  constructor(name = 'HelloWorld') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],
