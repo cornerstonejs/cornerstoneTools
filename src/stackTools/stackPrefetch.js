@@ -239,7 +239,8 @@ function prefetch(element) {
       requestType,
       preventCache,
       doneCallback,
-      failCallback
+      failCallback,
+      true
     );
   }
 

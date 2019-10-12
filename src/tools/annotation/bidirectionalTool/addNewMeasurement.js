@@ -9,6 +9,7 @@ import {
 import triggerEvent from '../../../util/triggerEvent.js';
 import getActiveTool from '../../../util/getActiveTool';
 import BaseAnnotationTool from '../../base/BaseAnnotationTool';
+import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
@@ -61,7 +62,8 @@ export default function(evt, interactionType) {
         );
       }
 
-      // Perpendicular line is not connected to long-line
+      // Update perpendicular line and disconnect it from the long-line
+      updatePerpendicularLineHandles(eventData, measurementData);
       perpendicularStart.locked = false;
 
       measurementData.invalidated = true;
