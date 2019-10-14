@@ -4,6 +4,7 @@ import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 import getActiveTool from '../../../../util/getActiveTool';
 import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
+import { MagnifyTool } from '../../../index.js';
 
 const touchEndEvents = [
   EVENTS.TOUCH_END,
@@ -21,13 +22,23 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
+  const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
   const { element, image, buttons } = mouseEventData;
+  const magnify = new MagnifyTool();
+
+  window.magnify = magnify;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
   };
 
   const touchDragCallback = event => {
+    if (!magnify.zoomElement) {
+      magnify._drawZoomedElement(event);
+    }
+
+    magnify._drawMagnificationTool(event);
+
     const eventData = event.detail;
 
     handle.hasMoved = true;
@@ -75,14 +86,31 @@ export default function(
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
+  const currentImage = external.cornerstone.getImage(element);
+  const imageRenderedHandler = () => {
+    const newImage = external.cornerstone.getImage(element);
+
+    // Check if the rendered image changed during measurement modifying and stop it if so
+    if (newImage.imageId !== currentImage.imageId) {
+      touchEndCallback();
+    }
+  };
+
+  // Bind the event listener for image rendering
+  element.addEventListener(IMAGE_RENDERED, imageRenderedHandler);
+
   const touchEndCallback = () => {
     handle.active = false;
     state.isToolLocked = false;
 
+    element.removeEventListener(IMAGE_RENDERED, imageRenderedHandler);
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
     touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);
     });
+
+    magnify._removeZoomElement();
+    magnify._destroyMagnificationCanvas(element);
 
     external.cornerstone.updateImage(element);
 

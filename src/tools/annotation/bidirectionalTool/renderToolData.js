@@ -1,4 +1,5 @@
 /* eslint no-loop-func: 0 */ // --> OFF
+import external from './../../../externalModules.js';
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
@@ -14,9 +15,24 @@ import {
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 import getPixelSpacing from '../../../util/getPixelSpacing';
 
-export default function(evt) {
-  const eventData = evt.detail;
-  const { element, canvasContext, image } = eventData;
+export default function renderToolData(event) {
+  const eventData = event.detail;
+  const zoomElement = window.magnify && window.magnify.zoomElement;
+
+  renderToolDataForElement.call(this, eventData);
+
+  if (zoomElement) {
+    const zoomEventData = Object.assign({}, eventData, {
+      element: zoomElement,
+      canvasContext: getNewContext(window.magnify.zoomCanvas),
+    });
+
+    renderToolDataForElement.call(this, zoomEventData);
+  }
+}
+
+const renderToolDataForElement = function(eventData) {
+  const { image, element, canvasContext } = eventData;
   const { handleRadius, drawHandlesOnHover } = this.configuration;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
@@ -118,7 +134,7 @@ export default function(evt) {
       );
     });
   }
-}
+};
 
 const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   let suffix = ' mm';
