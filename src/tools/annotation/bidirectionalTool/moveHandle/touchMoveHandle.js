@@ -36,6 +36,7 @@ export default function(
 ) {
   const { element, image, buttons } = mouseEventData;
   const magnify = new MagnifyTool();
+  const isTextBoxHandle = handle === data.handles.textBox;
 
   window.magnify = magnify;
   const distanceFromTool = {
@@ -66,7 +67,7 @@ export default function(
     data.invalidated = true;
 
     waitForImageRendered(element, () => {
-      if (!state.isToolLocked) {
+      if (!state.isToolLocked || isTextBoxHandle) {
         return;
       }
 
