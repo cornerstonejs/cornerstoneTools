@@ -81,11 +81,7 @@ export default class MagnifyTool extends BaseTool {
 
   _drawMagnificationTool(evt) {
     const element = evt.detail.element;
-    const magnifyCanvas = element.querySelector('.magnifyTool');
-
-    if (!magnifyCanvas) {
-      this._createMagnificationCanvas(element);
-    }
+    const magnifyCanvas = this._createMagnificationCanvas(element);
 
     if (this.zoomCanvas === undefined) {
       return;
@@ -241,13 +237,15 @@ export default class MagnifyTool extends BaseTool {
    * @private
    *
    * @param {*} element
-   * @returns {void}
+   * @returns {*} Existing canvas element or the one just created
    */
   _createMagnificationCanvas(element) {
+    let magnifyCanvas = element.querySelector('.magnifyTool');
+
     // If the magnifying glass canvas doesn't already exist
-    if (element.querySelector('.magnifyTool') === null) {
+    if (magnifyCanvas === null) {
       // Create a canvas and append it as a child to the element
-      const magnifyCanvas = document.createElement('canvas');
+      magnifyCanvas = document.createElement('canvas');
 
       // The magnifyTool class is used to find the canvas later on
       // Make sure position is absolute so the canvas can follow the mouse / touch
@@ -258,6 +256,8 @@ export default class MagnifyTool extends BaseTool {
       magnifyCanvas.style.display = 'none';
       element.appendChild(magnifyCanvas);
     }
+
+    return magnifyCanvas;
   }
 
   /**

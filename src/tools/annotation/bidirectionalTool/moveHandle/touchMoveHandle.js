@@ -6,6 +6,8 @@ import getActiveTool from '../../../../util/getActiveTool';
 import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
 import { MagnifyTool } from '../../../index.js';
 
+const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
+
 const touchEndEvents = [
   EVENTS.TOUCH_END,
   EVENTS.TOUCH_DRAG_END,
@@ -13,6 +15,16 @@ const touchEndEvents = [
   EVENTS.TOUCH_PRESS,
   EVENTS.TAP,
 ];
+
+function waitForImageRendered(element, callback) {
+  const renderedCallback = () => {
+    element.removeEventListener(IMAGE_RENDERED, renderedCallback);
+
+    callback();
+  };
+
+  element.addEventListener(IMAGE_RENDERED, renderedCallback);
+}
 
 export default function(
   mouseEventData,
@@ -22,7 +34,6 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
-  const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
   const { element, image, buttons } = mouseEventData;
   const magnify = new MagnifyTool();
 
@@ -33,12 +44,6 @@ export default function(
   };
 
   const touchDragCallback = event => {
-    if (!magnify.zoomElement) {
-      magnify._drawZoomedElement(event);
-    }
-
-    magnify._drawMagnificationTool(event);
-
     const eventData = event.detail;
 
     handle.hasMoved = true;
@@ -59,6 +64,19 @@ export default function(
     }
 
     data.invalidated = true;
+
+    waitForImageRendered(element, () => {
+      if (!state.isToolLocked) {
+        return;
+      }
+
+      if (!magnify.zoomElement) {
+        magnify._drawZoomedElement(event);
+      }
+
+      magnify._drawMagnificationTool(event);
+      external.cornerstone.updateImage(magnify.zoomElement);
+    });
 
     external.cornerstone.updateImage(element);
 
