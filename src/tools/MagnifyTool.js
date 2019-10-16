@@ -82,6 +82,7 @@ export default class MagnifyTool extends BaseTool {
   _getCanvasOffset(magnifySize, canvasLocation) {
     // TODO: [fingerphobic] get canvas size by parameter
     const canvasWidth = magnifySize * 2;
+    const halfCanvasSize = Math.floor(canvasWidth / 2);
     const halfMagnifySize = Math.floor(magnifySize / 2);
     const quarterMagnifySize = Math.floor(magnifySize / 4);
     let left = 0;
@@ -90,29 +91,42 @@ export default class MagnifyTool extends BaseTool {
     // TODO: Remove log
     console.log('>>>>', canvasLocation.x, canvasLocation.y, magnifySize);
     if (canvasLocation.y < magnifySize) {
-      const offset = halfMagnifySize;
+      const verticalOffsetImpact =
+        halfMagnifySize *
+        ((canvasLocation.y - halfMagnifySize) / halfMagnifySize);
+      let offset;
 
-      if (canvasLocation.x < magnifySize) {
+      if (canvasLocation.x < halfCanvasSize) {
         if (canvasLocation.x > quarterMagnifySize) {
-          left = offset;
+          offset = halfMagnifySize;
         } else {
           const factor = 1 - canvasLocation.x / quarterMagnifySize;
 
-          left = offset - quarterMagnifySize * factor;
+          offset = halfMagnifySize - quarterMagnifySize * factor;
+        }
+
+        if (canvasLocation.y > halfMagnifySize) {
+          offset -= verticalOffsetImpact;
         }
       } else {
         const rightLimit = canvasWidth - quarterMagnifySize;
 
         if (canvasLocation.x < rightLimit) {
-          left = -offset;
+          offset = -halfMagnifySize;
         } else {
           const rightBoundaryPosition = canvasLocation.x - rightLimit;
           const rightBoundarySize = canvasWidth - rightLimit;
           const factor = rightBoundaryPosition / rightBoundarySize;
 
-          left = -offset + quarterMagnifySize * factor;
+          offset = -halfMagnifySize + quarterMagnifySize * factor;
+        }
+
+        if (canvasLocation.y > halfMagnifySize) {
+          offset += verticalOffsetImpact;
         }
       }
+
+      left = offset;
     }
 
     return {
