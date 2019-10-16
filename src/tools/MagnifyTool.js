@@ -94,36 +94,11 @@ export default class MagnifyTool extends BaseTool {
       const verticalOffsetImpact =
         halfMagnifySize *
         ((canvasLocation.y - halfMagnifySize) / halfMagnifySize);
-      let offset;
+      const factor = canvasLocation.x < halfCanvasSize ? 1 : -1;
+      let offset = halfMagnifySize * factor;
 
-      if (canvasLocation.x < halfCanvasSize) {
-        if (canvasLocation.x > quarterMagnifySize) {
-          offset = halfMagnifySize;
-        } else {
-          const factor = 1 - canvasLocation.x / quarterMagnifySize;
-
-          offset = halfMagnifySize - quarterMagnifySize * factor;
-        }
-
-        if (canvasLocation.y > halfMagnifySize) {
-          offset -= verticalOffsetImpact;
-        }
-      } else {
-        const rightLimit = canvasWidth - quarterMagnifySize;
-
-        if (canvasLocation.x < rightLimit) {
-          offset = -halfMagnifySize;
-        } else {
-          const rightBoundaryPosition = canvasLocation.x - rightLimit;
-          const rightBoundarySize = canvasWidth - rightLimit;
-          const factor = rightBoundaryPosition / rightBoundarySize;
-
-          offset = -halfMagnifySize + quarterMagnifySize * factor;
-        }
-
-        if (canvasLocation.y > halfMagnifySize) {
-          offset += verticalOffsetImpact;
-        }
+      if (canvasLocation.y > halfMagnifySize) {
+        offset -= verticalOffsetImpact * factor;
       }
 
       left = offset;
