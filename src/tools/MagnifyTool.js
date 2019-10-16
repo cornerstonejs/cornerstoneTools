@@ -79,6 +79,26 @@ export default class MagnifyTool extends BaseTool {
     this._removeZoomElement();
   }
 
+  _getCanvasOffset(magnifySize, canvasLocation) {
+    const halfMagnifySize = Math.floor(magnifySize / 2);
+    let left = 0;
+    const top = -halfMagnifySize;
+
+    console.log(canvasLocation.x, canvasLocation.y);
+    if (canvasLocation.y < magnifySize) {
+      if (canvasLocation.x < magnifySize) {
+        left = halfMagnifySize;
+      } else {
+        left = -halfMagnifySize;
+      }
+    }
+
+    return {
+      left,
+      top,
+    };
+  }
+
   _drawMagnificationTool(evt) {
     const element = evt.detail.element;
     const magnifyCanvas = this._createMagnificationCanvas(element);
@@ -148,10 +168,12 @@ export default class MagnifyTool extends BaseTool {
     );
 
     // Place the magnification tool at the same location as the pointer
-    const touchOffset = evt.detail.isTouchEvent ? 120 : 0;
+    const canvasOffset = this._getCanvasOffset(magnifySize, canvasLocation);
+    const offsetTop = evt.detail.isTouchEvent ? canvasOffset.top : 0;
+    const offsetLeft = evt.detail.isTouchEvent ? canvasOffset.left : 0;
     const magnifyPosition = {
-      top: Math.max(canvasLocation.y - 0.5 * magnifySize - touchOffset, 0),
-      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0),
+      top: Math.max(canvasLocation.y - 0.5 * magnifySize + offsetTop, 0),
+      left: Math.max(canvasLocation.x - 0.5 * magnifySize + offsetLeft, 0),
     };
 
     // Get full magnifier dimensions with borders

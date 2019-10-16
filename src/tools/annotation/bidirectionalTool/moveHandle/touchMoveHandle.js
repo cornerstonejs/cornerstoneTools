@@ -35,8 +35,12 @@ export default function(
   preventHandleOutsideImage
 ) {
   const { element, image, buttons } = mouseEventData;
-  const magnify = new MagnifyTool();
   const isTextBoxHandle = handle === data.handles.textBox;
+  const magnify = new MagnifyTool({
+    configuration: {
+      magnifySize: Math.floor(element.clientWidth / 2),
+    },
+  });
 
   window.magnify = magnify;
   const distanceFromTool = {
