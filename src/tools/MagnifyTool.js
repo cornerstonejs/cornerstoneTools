@@ -80,16 +80,38 @@ export default class MagnifyTool extends BaseTool {
   }
 
   _getCanvasOffset(magnifySize, canvasLocation) {
+    // TODO: [fingerphobic] get canvas size by parameter
+    const canvasWidth = magnifySize * 2;
     const halfMagnifySize = Math.floor(magnifySize / 2);
+    const quarterMagnifySize = Math.floor(magnifySize / 4);
     let left = 0;
     const top = -halfMagnifySize;
 
-    console.log(canvasLocation.x, canvasLocation.y);
+    // TODO: Remove log
+    console.log('>>>>', canvasLocation.x, canvasLocation.y, magnifySize);
     if (canvasLocation.y < magnifySize) {
+      const offset = halfMagnifySize;
+
       if (canvasLocation.x < magnifySize) {
-        left = halfMagnifySize;
+        if (canvasLocation.x > quarterMagnifySize) {
+          left = offset;
+        } else {
+          const factor = 1 - canvasLocation.x / quarterMagnifySize;
+
+          left = offset - quarterMagnifySize * factor;
+        }
       } else {
-        left = -halfMagnifySize;
+        const rightLimit = canvasWidth - quarterMagnifySize;
+
+        if (canvasLocation.x < rightLimit) {
+          left = -offset;
+        } else {
+          const rightBoundaryPosition = canvasLocation.x - rightLimit;
+          const rightBoundarySize = canvasWidth - rightLimit;
+          const factor = rightBoundaryPosition / rightBoundarySize;
+
+          left = -offset + quarterMagnifySize * factor;
+        }
       }
     }
 
@@ -125,6 +147,15 @@ export default class MagnifyTool extends BaseTool {
       canvas.height
     );
     const magnificationLevel = this.configuration.magnificationLevel;
+
+    const canvasOffset = this._getCanvasOffset(magnifySize, canvasLocation);
+    let offsetTop = 0;
+    let offsetLeft = 0;
+
+    if (evt.detail.isTouchEvent) {
+      offsetTop = canvasOffset.top;
+      offsetLeft = canvasOffset.left;
+    }
 
     magnifyCanvas.width = magnifySize;
     magnifyCanvas.height = magnifySize;
@@ -168,9 +199,6 @@ export default class MagnifyTool extends BaseTool {
     );
 
     // Place the magnification tool at the same location as the pointer
-    const canvasOffset = this._getCanvasOffset(magnifySize, canvasLocation);
-    const offsetTop = evt.detail.isTouchEvent ? canvasOffset.top : 0;
-    const offsetLeft = evt.detail.isTouchEvent ? canvasOffset.left : 0;
     const magnifyPosition = {
       top: Math.max(canvasLocation.y - 0.5 * magnifySize + offsetTop, 0),
       left: Math.max(canvasLocation.x - 0.5 * magnifySize + offsetLeft, 0),
