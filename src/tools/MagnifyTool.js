@@ -84,7 +84,6 @@ export default class MagnifyTool extends BaseTool {
     const canvasWidth = magnifySize * 2;
     const halfCanvasSize = Math.floor(canvasWidth / 2);
     const halfMagnifySize = Math.floor(magnifySize / 2);
-    const quarterMagnifySize = Math.floor(magnifySize / 4);
     let left = 0;
     const top = -halfMagnifySize;
 

@@ -1,5 +1,5 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../../../externalModules.js';
+import { state } from '../../../store/index.js';
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
@@ -27,11 +27,11 @@ export default function renderToolData(event) {
       canvasContext: getNewContext(window.magnify.zoomCanvas),
     });
 
-    renderToolDataForElement.call(this, zoomEventData);
+    renderToolDataForElement.call(this, zoomEventData, true);
   }
 }
 
-const renderToolDataForElement = function(eventData) {
+const renderToolDataForElement = function(eventData, isZoomElement = false) {
   const { image, element, canvasContext } = eventData;
   const { handleRadius, drawHandlesOnHover } = this.configuration;
 
@@ -63,7 +63,9 @@ const renderToolDataForElement = function(eventData) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    const isActiveColor = data.active || data.activeTouch;
+
+    color = isActiveColor ? activeColor : toolColors.getToolColor();
 
     // Calculate the data measurements
     if (data.invalidated === true) {
@@ -104,6 +106,12 @@ const renderToolDataForElement = function(eventData) {
         handleRadius,
         drawHandlesIfActive: drawHandlesOnHover,
       };
+
+      // Draw bigger handles when active on touch devices
+      if (data.activeTouch && !isZoomElement) {
+        handleOptions.handleRadius = state.touchProximity;
+        handleOptions.drawHandlesIfActive = false;
+      }
 
       // Draw the handles
       drawHandles(context, eventData, data.handles, handleOptions);

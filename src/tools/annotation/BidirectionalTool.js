@@ -13,6 +13,9 @@ import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
 
+import EVENTS from '../../events.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
 
@@ -54,6 +57,43 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.handleSelectedCallback = handleSelectedCallback.bind(this);
     this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);
     this.handleSelectedTouchCallback = handleSelectedTouchCallback.bind(this);
+  }
+
+  preTouchStartCallback(evt) {
+    console.log('>>>>TOUCH_START_PRE', evt);
+    const { element, currentPoints } = evt.detail;
+    const lastCanvasPoints = currentPoints.canvas;
+
+    const touchEndCallback = evt => {
+      const { element, currentPoints } = evt.detail;
+      const isEqualX = currentPoints.canvas.x === lastCanvasPoints.x;
+      const isEqualY = currentPoints.canvas.y === lastCanvasPoints.y;
+
+      element.removeEventListener(EVENTS.TOUCH_END, touchEndCallback);
+
+      if (isEqualX && isEqualY) {
+        const toolState = getToolState(element, this.name);
+        const toolData = toolState.data.find(data =>
+          this.pointNearTool(element, data, lastCanvasPoints)
+        );
+
+        console.log('>>>>EQUAL', evt, toolState, toolData);
+
+        toolState.data.forEach(data => {
+          if (data !== toolData) {
+            data.activeTouch = false;
+          }
+        });
+
+        if (toolData) {
+          toolData.activeTouch = !toolData.activeTouch;
+        }
+      }
+    };
+
+    element.addEventListener(EVENTS.TOUCH_END, touchEndCallback);
+
+    return false;
   }
 
   updateCachedStats(image, element, data) {
