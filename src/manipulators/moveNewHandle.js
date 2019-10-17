@@ -63,6 +63,12 @@ export default function(
   state.isToolLocked = true;
 
   function moveHandler(evt) {
+    if (annotation.cancelled) {
+      moveEndHandler(evt);
+
+      return;
+    }
+
     _moveHandler(
       toolName,
       annotation,

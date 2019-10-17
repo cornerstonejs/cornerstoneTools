@@ -14,7 +14,11 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
 
 import EVENTS from '../../events.js';
-import { getToolState } from '../../stateManagement/toolState.js';
+import {
+  getToolState,
+  removeToolState,
+} from '../../stateManagement/toolState.js';
+import external from '../../externalModules.js';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
@@ -73,20 +77,29 @@ export default class BidirectionalTool extends BaseAnnotationTool {
 
       if (isEqualX && isEqualY) {
         const toolState = getToolState(element, this.name);
-        const toolData = toolState.data.find(data =>
-          this.pointNearTool(element, data, lastCanvasPoints)
+        const measurementData = toolState.data.find(data =>
+          this.pointNearTool(element, data, lastCanvasPoints, 'touch')
         );
 
-        console.log('>>>>EQUAL', evt, toolState, toolData);
+        // Delete the measurement if no dragging was performed during touch
+        if (measurementData.isCreating) {
+          measurementData.isCreating = false;
+          measurementData.cancelled = true;
+
+          removeToolState(element, this.name, measurementData);
+          external.cornerstone.updateImage(element);
+        }
+
+        console.log('>>>>EQUAL', evt, toolState, measurementData);
 
         toolState.data.forEach(data => {
-          if (data !== toolData) {
+          if (data !== measurementData) {
             data.activeTouch = false;
           }
         });
 
-        if (toolData) {
-          toolData.activeTouch = !toolData.activeTouch;
+        if (measurementData) {
+          measurementData.activeTouch = !measurementData.activeTouch;
         }
       }
     };
