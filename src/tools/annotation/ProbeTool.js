@@ -93,7 +93,7 @@ export default class ProbeTool extends BaseAnnotationTool {
       data.handles.end
     );
 
-    return external.cornerstoneMath.point.distance(probeCoords, coords) < 5;
+    return external.cornerstoneMath.point.distance(probeCoords, coords) < 6;
   }
 
   updateCachedStats(image, element, data) {
