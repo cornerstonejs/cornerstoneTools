@@ -5,6 +5,7 @@ import pointNearTool from './bidirectionalTool/pointNearTool.js';
 import renderToolData from './bidirectionalTool/renderToolData.js';
 import addNewMeasurement from './bidirectionalTool/addNewMeasurement.js';
 import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
+import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js';
 import handleSelectedCallback from './bidirectionalTool/handleSelectedCallback.js';
 import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouseCallback.js';
 import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
@@ -57,56 +58,11 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.renderToolData = renderToolData.bind(this);
     this.addNewMeasurement = addNewMeasurement.bind(this);
     this._moveCallback = _moveCallback.bind(this);
+    this.preTouchStartCallback = preTouchStartCallback.bind(this);
 
     this.handleSelectedCallback = handleSelectedCallback.bind(this);
     this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);
     this.handleSelectedTouchCallback = handleSelectedTouchCallback.bind(this);
-  }
-
-  preTouchStartCallback(evt) {
-    console.log('>>>>TOUCH_START_PRE', evt);
-    const { element, currentPoints } = evt.detail;
-    const lastCanvasPoints = currentPoints.canvas;
-
-    const touchEndCallback = evt => {
-      const { element, currentPoints } = evt.detail;
-      const isEqualX = currentPoints.canvas.x === lastCanvasPoints.x;
-      const isEqualY = currentPoints.canvas.y === lastCanvasPoints.y;
-
-      element.removeEventListener(EVENTS.TOUCH_END, touchEndCallback);
-
-      if (isEqualX && isEqualY) {
-        const toolState = getToolState(element, this.name);
-        const measurementData = toolState.data.find(data =>
-          this.pointNearTool(element, data, lastCanvasPoints, 'touch')
-        );
-
-        // Delete the measurement if no dragging was performed during touch
-        if (measurementData.isCreating) {
-          measurementData.isCreating = false;
-          measurementData.cancelled = true;
-
-          removeToolState(element, this.name, measurementData);
-          external.cornerstone.updateImage(element);
-        }
-
-        console.log('>>>>EQUAL', evt, toolState, measurementData);
-
-        toolState.data.forEach(data => {
-          if (data !== measurementData) {
-            data.activeTouch = false;
-          }
-        });
-
-        if (measurementData) {
-          measurementData.activeTouch = !measurementData.activeTouch;
-        }
-      }
-    };
-
-    element.addEventListener(EVENTS.TOUCH_END, touchEndCallback);
-
-    return false;
   }
 
   updateCachedStats(image, element, data) {

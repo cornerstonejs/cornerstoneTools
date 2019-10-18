@@ -82,6 +82,7 @@ export default function(
       evt
     );
   }
+
   // So we don't need to inline the entire `moveEndEventHandler` function
   function moveEndHandler(evt) {
     _moveEndHandler(
@@ -99,11 +100,36 @@ export default function(
     );
   }
 
+  // Prevent moving events from being triggered if measurement is removed
+  function removedHandler() {
+    element.removeEventListener(EVENTS.MEASUREMENT_REMOVED, removedHandler);
+    _clearEventListeners(element, interactionType, {
+      moveHandler,
+      moveEndHandler,
+    });
+  }
+
   // Add event listeners
   _moveEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveHandler);
   });
+  element.addEventListener(EVENTS.MEASUREMENT_REMOVED, removedHandler);
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+}
+
+function _clearEventListeners(
+  element,
+  interactionType,
+  { moveHandler, moveEndHandler }
+) {
+  state.isToolLocked = false;
+  _moveEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveHandler);
+  });
+  _moveEndEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveEndHandler);
+  });
+  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 }
 
 function _moveHandler(
@@ -181,16 +207,12 @@ function _moveEndHandler(
   handle.active = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
-  state.isToolLocked = false;
 
   // Remove event listeners
-  _moveEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveHandler);
+  _clearEventListeners(element, interactionType, {
+    moveHandler,
+    moveEndHandler,
   });
-  _moveEndEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveEndHandler);
-  });
-  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
 
   // TODO: WHY?
   // Why would a Touch_Pinch or Touch_Press be associated with a new handle?
