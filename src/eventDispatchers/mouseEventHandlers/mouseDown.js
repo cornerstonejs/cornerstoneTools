@@ -112,7 +112,6 @@ export default function(evt) {
       toolName: firstToolWithMoveableHandles.name,
       element,
       measurementData: data,
-      coords,
     };
 
     triggerEvent(element, eventType, eventData);
@@ -155,7 +154,6 @@ export default function(evt) {
       toolName: firstToolNearPoint.name,
       element,
       measurementData: firstAnnotationNearPoint,
-      coords,
     };
 
     triggerEvent(element, eventType, eventData);
