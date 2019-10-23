@@ -4,7 +4,6 @@ import onImageRenderedBrushEventHandler from '../eventListeners/onImageRenderedB
 import external from './../externalModules.js';
 
 const segmentationModule = getModule('segmentation');
-const segmentationConfiguration = segmentationModule.configuration;
 
 const onImageRendered = function(evt) {
   const eventData = evt.detail;
@@ -21,6 +20,8 @@ const onImageRendered = function(evt) {
 
   // Must be using stacks in order to use segmentation tools.
   const stackToolState = getToolState(element, 'stack');
+
+  const segmentationConfiguration = segmentationModule.configuration;
 
   if (
     stackToolState &&

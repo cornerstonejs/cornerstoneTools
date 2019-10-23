@@ -55,6 +55,7 @@ import drawLinkedTextBox from './drawing/drawLinkedTextBox.js';
 import drawHandles from './drawing/drawHandles.js';
 
 import getLuminance from './util/getLuminance.js';
+import getROITextBoxCoords from './util/getROITextBoxCoords';
 import copyPoints from './util/copyPoints.js';
 import calculateSUV from './util/calculateSUV.js';
 import setContextToDisplayFontSize from './util/setContextToDisplayFontSize.js';
@@ -131,6 +132,7 @@ export const lib = {
   'drawing/textBoxWidth': textBoxWidth,
 
   'util/getLuminance': getLuminance,
+  'util/getROITextBoxCoords': getROITextBoxCoords,
   'util/copyPoints': copyPoints,
   'util/calculateSUV': calculateSUV,
   'util/setContextToDisplayFontSize': setContextToDisplayFontSize,

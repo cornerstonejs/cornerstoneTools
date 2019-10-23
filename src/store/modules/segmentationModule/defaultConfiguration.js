@@ -1,5 +1,5 @@
 // Segmentation module configuration.
-const configuration = {
+const defaultConfiguration = {
   renderOutline: true,
   renderFill: true,
   shouldRenderInactiveLabelmaps: true,
@@ -15,4 +15,4 @@ const configuration = {
   storeHistory: true,
 };
 
-export default configuration;
+export default defaultConfiguration;

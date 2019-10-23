@@ -1,7 +1,7 @@
 import external from '../../../externalModules';
 import { getLogger } from '../../../util/logger';
 import state from './state';
-import configuration from './configuration';
+import { getModule } from '../../index.js';
 
 const logger = getLogger('store:modules:segmentationModule:setColorLUT');
 
@@ -13,6 +13,7 @@ const logger = getLogger('store:modules:segmentationModule:setColorLUT');
  * @returns {null}
  */
 export default function setColorLUT(colorLUTIndex, colorLUT = []) {
+  const { configuration } = getModule('segmentation');
   const segmentsPerLabelmap = configuration.segmentsPerLabelmap;
 
   if (colorLUT) {

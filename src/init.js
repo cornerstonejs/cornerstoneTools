@@ -12,22 +12,42 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  * @method
  * @name init
  *
- * @param {Object} [configuration = {}] The global configuration to apply.
+ * @param {Object|Object[]} [defaultConfiguration = {}] The configuration to apply. Assumed globalConfiguration
+ * only one value, otherwise moduleName, configuration entires in an array.
  * @returns {Object} A configured CornerstoneTools instance with top level API members.
  */
-export default function(configuration = {}) {
+export default function(defaultConfiguration = {}) {
   _addCornerstoneEventListeners();
   _initModules();
-  windowResizeHandler.enable();
 
-  // Apply global configuration
   const globalConfigurationModule = getModule('globalConfiguration');
 
-  globalConfigurationModule.configuration = Object.assign(
-    {},
-    globalConfigurationModule.configuration,
-    configuration
-  );
+  if (Array.isArray(defaultConfiguration)) {
+    defaultConfiguration.forEach(configurationEntry => {
+      const { moduleName, configuration } = configurationEntry;
+
+      const module = getModule(moduleName);
+
+      if (module) {
+        module.configuration = Object.assign(
+          {},
+          module.configuration,
+          configuration
+        );
+      }
+    });
+  } else {
+    // defaultConfiguration is an object, default to assigning it to globalConfiguration.
+    globalConfigurationModule.configuration = Object.assign(
+      {},
+      globalConfigurationModule.configuration,
+      defaultConfiguration
+    );
+  }
+
+  if (globalConfigurationModule.configuration.autoResizeViewports) {
+    windowResizeHandler.enable();
+  }
 }
 
 /**

@@ -6,7 +6,7 @@ import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:BrushTool');
 
-const { configuration } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 /**
  * @public
@@ -37,6 +37,7 @@ export default class BrushTool extends BaseBrushTool {
    * @returns {void}
    */
   _paint(evt) {
+    const { configuration } = segmentationModule;
     const eventData = evt.detail;
     const element = eventData.element;
     const { rows, columns } = eventData.image;
