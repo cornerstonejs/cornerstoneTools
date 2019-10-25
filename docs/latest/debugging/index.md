@@ -10,7 +10,7 @@ warnings logged to the console in some scenarios.
 
 But there is more log information available if you need it.
 
-## Turing debug logs on and off
+## Turning debug logs on and off
 
 `cornerstoneTools` exports `enableLogger` and `disableLogger` methods as top level api methods.
 
