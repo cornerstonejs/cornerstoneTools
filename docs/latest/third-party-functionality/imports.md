@@ -10,8 +10,8 @@ const evenMoreHelloWorldMixin = cornerstoneTools.importInternal(
 
 You can add to the list of methods and utilities that can be retrieved by [registering them](#registration).
 
-And store modules may be retrieved with the top-level `getModule` function:
+Store modules may also be retrieved with the top-level `getModule` function:
 
 ```js
-const { helloWorldModule } = cornerstoneTools.getModule('helloWorldModule);
+const { helloWorldModule } = cornerstoneTools.getModule('helloWorldModule');
 ```
