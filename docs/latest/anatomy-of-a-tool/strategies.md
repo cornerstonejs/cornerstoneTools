@@ -5,7 +5,7 @@ Tools may optionally have multiple strategies of operation. [`BaseTool`](../tool
 | Argument | Type | Description |
 |----------|------|-------------|
 | strategies | Object |An `Object` comprised of `function`s that take the `evt` and Tool `configuration` as arguments and perform an operation.
-| defaultStrategy | string | The name of the default strategy to apply. The name should be identical to a property name in `strategies`|
+| defaultStrategy | string | The name of the default strategy to apply. The name should be identical to a property name in `strategies`.|
 
 Upon instantiation of the Tool, the `activeStrategy` is set to the `defaultStrategy`. If `defaultStrategy` is absent, the first function of the `strategies` is used. The strategies mechanism is entirely optional.
 
@@ -13,4 +13,4 @@ Upon instantiation of the Tool, the `activeStrategy` is set to the `defaultStrat
 
 The strategy can be changed by setting `tool.activeStrategy` to a new value. The strategy can be reset to the default by calling `setDefaultStrategy`.
 
- A simple example of a Tool that utilizes the strategy mechanism is the [`rotate` Tool](https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/imageTools/rotate.js).
+A simple example of a Tool that utilizes the strategy mechanism is the [`rotate` Tool](https://github.com/cornerstonejs/cornerstoneTools/blob/master/src/tools/RotateTool.js).

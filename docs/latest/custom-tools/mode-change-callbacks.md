@@ -7,7 +7,7 @@ In the Cornerstone Tools framework, if a Tool changes [mode](../anatomy-of-a-too
 - `Enabled` - `enabledCallback (element)`
 - `Disabled` - `enabledCallback (element)`
 
-Note that unlike a lot of the Tools, the `element` on which the Tool resides is passed to the callback, not `evt`.
+Note that unlike a lot of the callbacks, the `element` on which the Tool resides is passed to the mode change callbacks, not `evt`.
 
 For our example Tool, this gives us more chances to log hello to the console:
 
