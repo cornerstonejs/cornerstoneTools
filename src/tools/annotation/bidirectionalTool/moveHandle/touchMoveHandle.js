@@ -36,13 +36,21 @@ export default function(
   const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
   const { element, image, buttons } = mouseEventData;
   const isTextBoxHandle = handle === data.handles.textBox;
-  const magnify = new MagnifyTool({
-    configuration: {
-      magnifySize: Math.floor(element.clientWidth / 2),
-    },
-  });
+  const config = this.configuration || {};
+  const magnifySize = config.touchMagnifySize || 0;
 
-  window.magnify = magnify;
+  if (magnifySize) {
+    const magnificationLevel = config.touchMagnificationLevel || 2;
+    const magnify = new MagnifyTool({
+      configuration: {
+        magnifySize,
+        magnificationLevel,
+      },
+    });
+
+    this.magnify = magnify;
+  }
+
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
@@ -75,12 +83,14 @@ export default function(
         return;
       }
 
-      if (!magnify.zoomElement) {
-        magnify._drawZoomedElement(event);
-      }
+      if (this.magnify) {
+        if (!this.magnify.zoomElement) {
+          this.magnify._drawZoomedElement(event);
+        }
 
-      magnify._drawMagnificationTool(event);
-      external.cornerstone.updateImage(magnify.zoomElement);
+        this.magnify._drawMagnificationTool(event);
+        external.cornerstone.updateImage(this.magnify.zoomElement);
+      }
     });
 
     external.cornerstone.updateImage(element);
@@ -132,8 +142,10 @@ export default function(
       element.removeEventListener(eventType, touchEndCallback);
     });
 
-    magnify._removeZoomElement();
-    magnify._destroyMagnificationCanvas(element);
+    if (this.magnify) {
+      this.magnify._removeZoomElement();
+      this.magnify._destroyMagnificationCanvas(element);
+    }
 
     external.cornerstone.updateImage(element);
 

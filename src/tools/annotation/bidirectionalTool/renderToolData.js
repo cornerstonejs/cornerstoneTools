@@ -17,14 +17,14 @@ import getPixelSpacing from '../../../util/getPixelSpacing';
 
 export default function renderToolData(event) {
   const eventData = event.detail;
-  const zoomElement = window.magnify && window.magnify.zoomElement;
+  const zoomElement = this.magnify && this.magnify.zoomElement;
 
   renderToolDataForElement.call(this, eventData);
 
   if (zoomElement) {
     const zoomEventData = Object.assign({}, eventData, {
       element: zoomElement,
-      canvasContext: getNewContext(window.magnify.zoomCanvas),
+      canvasContext: getNewContext(this.magnify.zoomCanvas),
     });
 
     renderToolDataForElement.call(this, zoomEventData, true);

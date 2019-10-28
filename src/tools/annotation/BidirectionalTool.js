@@ -44,7 +44,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         textBox: '',
         shadow: '',
         drawHandlesOnHover: true,
-        additionalData: [],
+        touchMagnifySize: 0,
       },
       svgCursor: bidirectionalCursor,
     };

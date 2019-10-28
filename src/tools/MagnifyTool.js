@@ -79,16 +79,12 @@ export default class MagnifyTool extends BaseTool {
     this._removeZoomElement();
   }
 
-  _getCanvasOffset(magnifySize, canvasLocation) {
-    // TODO: [fingerphobic] get canvas size by parameter
-    const canvasWidth = magnifySize * 2;
+  _getCanvasOffset(magnifySize, canvasLocation, canvasWidth) {
     const halfCanvasSize = Math.floor(canvasWidth / 2);
     const halfMagnifySize = Math.floor(magnifySize / 2);
     let left = 0;
     const top = -halfMagnifySize;
 
-    // TODO: Remove log
-    console.log('>>>>', canvasLocation.x, canvasLocation.y, magnifySize);
     if (canvasLocation.y < magnifySize) {
       const verticalOffsetImpact =
         halfMagnifySize *
@@ -136,7 +132,12 @@ export default class MagnifyTool extends BaseTool {
     );
     const magnificationLevel = this.configuration.magnificationLevel;
 
-    const canvasOffset = this._getCanvasOffset(magnifySize, canvasLocation);
+    const canvasWidth = element.clientWidth;
+    const canvasOffset = this._getCanvasOffset(
+      magnifySize,
+      canvasLocation,
+      canvasWidth
+    );
     let offsetTop = 0;
     let offsetLeft = 0;
 
