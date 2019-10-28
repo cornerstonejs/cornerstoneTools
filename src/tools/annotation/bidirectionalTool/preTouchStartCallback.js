@@ -43,6 +43,7 @@ export default function(evt) {
 
       toolState.data.forEach(data => {
         if (data !== measurementData) {
+          data.active = false;
           data.activeTouch = false;
         }
       });

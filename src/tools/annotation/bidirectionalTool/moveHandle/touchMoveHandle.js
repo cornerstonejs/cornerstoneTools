@@ -6,8 +6,6 @@ import getActiveTool from '../../../../util/getActiveTool';
 import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
 import { MagnifyTool } from '../../../index.js';
 
-const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
-
 const touchEndEvents = [
   EVENTS.TOUCH_END,
   EVENTS.TOUCH_DRAG_END,
@@ -17,6 +15,7 @@ const touchEndEvents = [
 ];
 
 function waitForImageRendered(element, callback) {
+  const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
   const renderedCallback = () => {
     element.removeEventListener(IMAGE_RENDERED, renderedCallback);
 
@@ -34,6 +33,7 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
+  const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
   const { element, image, buttons } = mouseEventData;
   const isTextBoxHandle = handle === data.handles.textBox;
   const magnify = new MagnifyTool({
