@@ -94,7 +94,7 @@ should be installed as one of your project's `dependencies`:
 
 ```js
 // To install the newest version
-npm install --save cornerstone-tools@3
+npm install --save cornerstone-tools
 
 // To install the legacy version (2.4.x branch)
 npm install --save cornerstone-tools@2
