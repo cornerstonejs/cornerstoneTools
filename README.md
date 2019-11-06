@@ -9,4 +9,9 @@
 
 <p>Changes have been made to support: 1. Hiding metrics as annotations are drawn, disabling the mobile drawing offset, and hiding the handles.</p>
 
+<h3>Deployment Steps</h3>
+<p>
+  Run the build, commit the changes (update package.json to reflect the new version), and then create a release tag on Github with the version you would like. For example, 4.6.2-d.
+</p>
+
 </div>

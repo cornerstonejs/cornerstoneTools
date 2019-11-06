@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.0.3 - 2019-10-23 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.6.2-d - 2019-11-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "c7dad70e6e73fda9c05a";
+/******/ 	var hotCurrentHash = "720f4fb89b7314ccdf82";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -25677,13 +25677,17 @@ function (_BaseAnnotationTool) {
           if (!data.handles.textBox.hasMoved) {
             var defaultCoords = Object(_util_getROITextBoxCoords_js__WEBPACK_IMPORTED_MODULE_12__["default"])(eventData.viewport, data.handles);
             Object.assign(data.handles.textBox, defaultCoords);
-          }
+          } // const textBoxAnchorPoints = handles =>
+          //   _findTextBoxAnchorPoints(handles.start, handles.end);
+          // const textBoxContent = _createTextBoxContent(
+          //   context,
+          //   image.color,
+          //   data.cachedStats,
+          //   modality,
+          //   hasPixelSpacing,
+          //   this.configuration
+          // );
 
-          var textBoxAnchorPoints = function textBoxAnchorPoints(handles) {
-            return _findTextBoxAnchorPoints(handles.start, handles.end);
-          };
-
-          var textBoxContent = _createTextBoxContent(context, image.color, data.cachedStats, modality, hasPixelSpacing, _this2.configuration);
 
           data.unit = _getUnit(modality, _this2.configuration.showHounsfieldUnits); // drawLinkedTextBox(
           //   context,
@@ -37127,7 +37131,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.0.3');
+/* harmony default export */ __webpack_exports__["default"] = ('4.6.2-d');
 
 /***/ })
 

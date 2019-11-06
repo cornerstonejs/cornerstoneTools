@@ -229,16 +229,16 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           Object.assign(data.handles.textBox, defaultCoords);
         }
 
-        const textBoxAnchorPoints = handles =>
-          _findTextBoxAnchorPoints(handles.start, handles.end);
-        const textBoxContent = _createTextBoxContent(
-          context,
-          image.color,
-          data.cachedStats,
-          modality,
-          hasPixelSpacing,
-          this.configuration
-        );
+        // const textBoxAnchorPoints = handles =>
+        //   _findTextBoxAnchorPoints(handles.start, handles.end);
+        // const textBoxContent = _createTextBoxContent(
+        //   context,
+        //   image.color,
+        //   data.cachedStats,
+        //   modality,
+        //   hasPixelSpacing,
+        //   this.configuration
+        // );
 
         data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
 
