@@ -34,6 +34,7 @@ export default function renderToolData(event) {
 const renderToolDataForElement = function(eventData, isZoomElement = false) {
   const { image, element, canvasContext } = eventData;
   const { handleRadius, drawHandlesOnHover } = this.configuration;
+  const { drawActiveTouchHandles } = this.configuration;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -108,7 +109,7 @@ const renderToolDataForElement = function(eventData, isZoomElement = false) {
       };
 
       // Draw bigger handles when active on touch devices
-      if (data.activeTouch && !isZoomElement) {
+      if (drawActiveTouchHandles && data.activeTouch && !isZoomElement) {
         handleOptions.handleRadius = state.touchProximity;
         handleOptions.drawHandlesIfActive = false;
       }
