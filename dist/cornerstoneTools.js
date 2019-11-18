@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.6.2mod - 2019-11-18 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.6.2-m - 2019-11-18 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "f78328d6e33677c04ad4";
+/******/ 	var hotCurrentHash = "52ed1050fd2458220d87";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -37062,7 +37062,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.6.2mod');
+/* harmony default export */ __webpack_exports__["default"] = ('4.6.2-m');
 
 /***/ })
 
