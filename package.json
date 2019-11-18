@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "4.0.1",
+  "version": "4.6.2mod",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
@@ -60,7 +60,7 @@
     "all-contributors-cli": "5.11.0",
     "babel-jest": "^24.8.0",
     "babel-loader": "^8.0.4",
-    "canvas": "2.1.0",
+    "canvas": "^2.6.0",
     "commitizen": "3.0.5",
     "coveralls": "3.0.2",
     "cz-conventional-changelog": "2.1.0",
