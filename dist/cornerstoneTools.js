@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.6.2mod - 2019-11-20 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.6.3-m - 2019-11-20 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "4eb6198d17eb8b228949";
+/******/ 	var hotCurrentHash = "2ec8bf0786a6b562be0f";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -16557,6 +16557,7 @@ function (_BaseTool) {
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default()(CrosshairsTool).call(this, props, defaultProps));
     _this.mouseDownCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_this));
     _this.mouseDragCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_this));
+    _this.touchStartCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_this));
     _this.touchDragCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5___default()(_this));
     _this.synchronizationContext = null;
     return _this;
@@ -16569,10 +16570,9 @@ function (_BaseTool) {
       var element = eventData.element; // Prevent CornerstoneToolsTouchStartActive from killing any press events
 
       evt.stopImmediatePropagation(); // If we have no toolData for this element, return immediately as there is nothing to do
+      // const toolData = getToolState(element, this.name);
 
-      var toolData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_8__["getToolState"])(element, this.name);
-
-      if (!toolData) {
+      if (!this.synchronizationContext) {
         return;
       } // Get current element target information
 
@@ -16683,15 +16683,14 @@ function (_BaseTool) {
           switch (_context.prev = _context.next) {
             case 0:
               _ref = _args.length > 1 && _args[1] !== undefined ? _args[1] : {}, synchronizationContext = _ref.synchronizationContext;
-              console.log('crosshairs tool enable with synchronizationContext', synchronizationContext);
-              _context.next = 4;
+              _context.next = 3;
               return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(Object(_util_wait_js__WEBPACK_IMPORTED_MODULE_13__["waitForEnabledElementImageToLoad"])(element));
 
-            case 4:
+            case 3:
               enabledElement = _context.sent;
 
               if (!(!enabledElement || !synchronizationContext)) {
-                _context.next = 8;
+                _context.next = 7;
                 break;
               }
 
@@ -16700,10 +16699,10 @@ function (_BaseTool) {
               logger.warn("Unable to enable ".concat(this.name, ". Exiting enable callback. Tool will be enabled, but will not render."));
               return _context.abrupt("return");
 
-            case 8:
+            case 7:
               this.synchronizationContext = synchronizationContext;
 
-            case 9:
+            case 8:
             case "end":
               return _context.stop();
           }
@@ -16715,7 +16714,6 @@ function (_BaseTool) {
     value: function activeCallback(element, _ref2) {
       var mouseButtonMask = _ref2.mouseButtonMask,
           synchronizationContext = _ref2.synchronizationContext;
-      console.log('active cross hair tool for element', element, synchronizationContext);
       Object(_toolOptions_js__WEBPACK_IMPORTED_MODULE_9__["setToolOptions"])(this.name, element, {
         mouseButtonMask: mouseButtonMask
       }); // Clear any currently existing toolData
@@ -37113,7 +37111,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.6.2mod');
+/* harmony default export */ __webpack_exports__["default"] = ('4.6.3-m');
 
 /***/ })
 
