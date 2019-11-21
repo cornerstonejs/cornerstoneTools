@@ -263,7 +263,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
             measurementData.active = false;
             external.cornerstone.updateImage(element);
-          });
+          }, evt.detail);
         }
         external.cornerstone.updateImage(element);
       }
