@@ -1,14 +1,8 @@
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-import {
-  addToolState,
-  clearToolState,
-  getToolState,
-} from '../stateManagement/toolState.js';
-import { setToolOptions } from '../toolOptions.js';
+import { getToolState } from '../stateManagement/toolState.js';
 import convertToVector3 from '../util/convertToVector3.js';
 import { getLogger } from '../util/logger.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
-import { waitForEnabledElementImageToLoad } from '../util/wait.js';
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { crosshairsCursor } from './cursors/index.js';
@@ -34,11 +28,11 @@ export default class CrosshairsTool extends BaseTool {
 
     super(props, defaultProps);
 
-    this.mouseDownCallback = this._chooseLocation.bind(this);
-    this.mouseDragCallback = this._chooseLocation.bind(this);
-    this.touchStartCallback = this._chooseLocation.bind(this);
-    this.touchDragCallback = this._chooseLocation.bind(this);
-    this.synchronizationContext = null;
+    this.eventHandler = this._chooseLocation.bind(this);
+    this.mouseClickCallback = this.eventHandler; // Ok
+    this.mouseDragCallback = this.eventHandler; // Ok
+    this.touchDragCallback = this.eventHandler; // Ok
+    this.postTouchStartCallback = this.eventHandler;
   }
 
   _chooseLocation(evt) {
@@ -48,10 +42,10 @@ export default class CrosshairsTool extends BaseTool {
     // Prevent CornerstoneToolsTouchStartActive from killing any press events
     evt.stopImmediatePropagation();
 
-    // If we have no toolData for this element, return immediately as there is nothing to do
-    // const toolData = getToolState(element, this.name);
+    // If we have no synchronizationContext for this element, return immediately as there is nothing to do
+    const { synchronizationContext } = this.options;
 
-    if (!this.synchronizationContext) {
+    if (!synchronizationContext) {
       return;
     }
 
@@ -82,7 +76,7 @@ export default class CrosshairsTool extends BaseTool {
     // Get the enabled elements associated with this synchronization context
     // const syncContext = toolData.data[0].synchronizationContext;
     // const enabledElements = syncContext.getSourceElements();
-    const enabledElements = this.synchronizationContext.getSourceElements();
+    const enabledElements = synchronizationContext.getSourceElements();
 
     // Iterate over each synchronized element
     enabledElements.forEach(function(targetElement) {
@@ -187,32 +181,6 @@ export default class CrosshairsTool extends BaseTool {
           }
         );
       }
-    });
-  }
-
-  async enabledCallback(element, { synchronizationContext } = {}) {
-    const enabledElement = await waitForEnabledElementImageToLoad(element);
-
-    if (!enabledElement || !synchronizationContext) {
-      // TODO: Unable to add tool state, image never loaded.
-      // Should we `setToolDisabledForElement` here?
-      logger.warn(
-        `Unable to enable ${this.name}. Exiting enable callback. Tool will be enabled, but will not render.`
-      );
-
-      return;
-    }
-    this.synchronizationContext = synchronizationContext;
-  }
-
-  activeCallback(element, { mouseButtonMask, synchronizationContext }) {
-    setToolOptions(this.name, element, { mouseButtonMask });
-
-    // Clear any currently existing toolData
-    clearToolState(element, this.name);
-
-    addToolState(element, this.name, {
-      synchronizationContext,
     });
   }
 }
