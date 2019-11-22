@@ -57,6 +57,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
+  setCurrentRoi(roi) {
+    this.roi = roi;
+  }
+
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
@@ -74,6 +78,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       active: true,
       color: undefined,
       invalidated: true,
+      roi: this.roi,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -201,7 +206,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
-        const color = toolColors.getColorIfActive(data);
+        const color = data.roi.color;
         const handleOptions = {
           color,
           handleRadius,
