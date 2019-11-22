@@ -104,6 +104,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       active: true,
       invalidated: true,
       color: undefined,
+      roi: this.roi,
       handles: {
         points: [],
       },
@@ -119,6 +120,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     };
 
     return measurementData;
+  }
+
+  setCurrentRoi(roi) {
+    this.roi = roi;
   }
 
   /**
@@ -333,6 +338,14 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     data.invalidated = false;
   }
 
+  contourBelongsToCurentRoi(data) {
+    if (!this.roi) {
+      return false;
+    }
+
+    return data.roi.id === this.roi.id;
+  }
+
   /**
    *
    *
@@ -369,7 +382,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
-        let color = toolColors.getColorIfActive(data);
+        let color = data.roi.color;
         let fillColor;
 
         if (data.active) {
@@ -377,11 +390,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
             color = config.invalidColor;
             fillColor = config.invalidColor;
           } else {
-            color = toolColors.getColorIfActive(data);
-            fillColor = toolColors.getFillColor();
+            color = data.roi.color;
+            fillColor = data.roi.fillColor;
           }
         } else {
-          fillColor = toolColors.getToolColor();
+          fillColor = data.roi.fillColor;
         }
 
         if (data.handles.points.length) {
@@ -407,7 +420,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           fill: fillColor,
         };
 
-        if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
+        if (
+          this.contourBelongsToCurentRoi(data) &&
+          (config.alwaysShowHandles || (data.active && data.polyBoundingBox))
+        ) {
           // Render all handles
           options.handleRadius = config.activeHandleRadius;
           drawHandles(context, eventData, data.handles.points, options);
@@ -446,32 +462,34 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         }
 
         // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
-        if (data.polyBoundingBox && !data.handles.textBox.freehand) {
-          // If the textbox has not been moved by the user, it should be displayed on the right-most
-          // Side of the tool.
-          if (!data.handles.textBox.hasMoved) {
-            // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
-            // Note that this calculates it in image coordinates
-            data.handles.textBox.x =
-              data.polyBoundingBox.left + data.polyBoundingBox.width;
-            data.handles.textBox.y =
-              data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+        if (this.configuration.showStatsTextbox) {
+          if (data.polyBoundingBox && !data.handles.textBox.freehand) {
+            // If the textbox has not been moved by the user, it should be displayed on the right-most
+            // Side of the tool.
+            if (!data.handles.textBox.hasMoved) {
+              // Find the rightmost side of the polyBoundingBox at its vertical center, and place the textbox here
+              // Note that this calculates it in image coordinates
+              data.handles.textBox.x =
+                data.polyBoundingBox.left + data.polyBoundingBox.width;
+              data.handles.textBox.y =
+                data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
+            }
+
+            const text = textBoxText.call(this, data);
+
+            drawLinkedTextBox(
+              context,
+              element,
+              data.handles.textBox,
+              text,
+              data.handles.points,
+              textBoxAnchorPoints,
+              color,
+              lineWidth,
+              0,
+              true
+            );
           }
-
-          const text = textBoxText.call(this, data);
-
-          drawLinkedTextBox(
-            context,
-            element,
-            data.handles.textBox,
-            text,
-            data.handles.points,
-            textBoxAnchorPoints,
-            color,
-            lineWidth,
-            0,
-            true
-          );
         }
       });
     }
@@ -871,6 +889,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     const config = this.configuration;
     const data = toolState.data[config.currentTool];
+
+    if (!this.contourBelongsToCurentRoi(data)) {
+      return;
+    }
+
     const currentHandle = config.currentHandle;
     const points = data.handles.points;
     let handleIndex = -1;
@@ -1815,6 +1838,7 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
+    showStatsTextbox: false,
   };
 }
 
