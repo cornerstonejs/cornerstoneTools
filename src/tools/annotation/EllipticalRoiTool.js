@@ -45,6 +45,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
+        showStatsTextbox: false,
         // showMinMax: false,
         // showHounsfieldUnits: true,
       },
@@ -223,50 +224,55 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         );
         drawHandles(context, eventData, data.handles, handleOptions);
 
-        // Update textbox stats
-        if (data.invalidated === true) {
-          if (data.cachedStats) {
-            this.throttledUpdateCachedStats(image, element, data);
-          } else {
-            this.updateCachedStats(image, element, data);
+        if (this.configuration.showStatsTextbox) {
+          // Update textbox stats
+          if (data.invalidated === true) {
+            if (data.cachedStats) {
+              this.throttledUpdateCachedStats(image, element, data);
+            } else {
+              this.updateCachedStats(image, element, data);
+            }
           }
-        }
 
-        // Default to textbox on right side of ROI
-        if (!data.handles.textBox.hasMoved) {
-          const defaultCoords = getROITextBoxCoords(
-            eventData.viewport,
-            data.handles
+          // Default to textbox on right side of ROI
+          if (!data.handles.textBox.hasMoved) {
+            const defaultCoords = getROITextBoxCoords(
+              eventData.viewport,
+              data.handles
+            );
+
+            Object.assign(data.handles.textBox, defaultCoords);
+          }
+
+          const textBoxAnchorPoints = handles =>
+            _findTextBoxAnchorPoints(handles.start, handles.end);
+          const textBoxContent = _createTextBoxContent(
+            context,
+            image.color,
+            data.cachedStats,
+            modality,
+            hasPixelSpacing,
+            this.configuration
           );
 
-          Object.assign(data.handles.textBox, defaultCoords);
+          data.unit = _getUnit(
+            modality,
+            this.configuration.showHounsfieldUnits
+          );
+
+          drawLinkedTextBox(
+            context,
+            element,
+            data.handles.textBox,
+            textBoxContent,
+            data.handles,
+            textBoxAnchorPoints,
+            color,
+            lineWidth,
+            10,
+            true
+          );
         }
-
-        const textBoxAnchorPoints = handles =>
-          _findTextBoxAnchorPoints(handles.start, handles.end);
-        const textBoxContent = _createTextBoxContent(
-          context,
-          image.color,
-          data.cachedStats,
-          modality,
-          hasPixelSpacing,
-          this.configuration
-        );
-
-        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
-
-        drawLinkedTextBox(
-          context,
-          element,
-          data.handles.textBox,
-          textBoxContent,
-          data.handles,
-          textBoxAnchorPoints,
-          color,
-          lineWidth,
-          10,
-          true
-        );
       }
     });
   }
