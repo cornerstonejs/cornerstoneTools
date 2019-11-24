@@ -28,6 +28,10 @@ import throttle from './../../util/throttle.js';
 import { ellipticalRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import {
+  moveHandleNearImagePoint,
+  moveAnnotation,
+} from '../../util/findAndMoveHelpers.js';
 
 const logger = getLogger('tools:annotation:EllipticalRoiTool');
 
@@ -227,7 +231,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
-        drawHandles(context, eventData, data.handles, handleOptions);
+
+        if (this.isOnCurrentRoi(data)) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         if (this.configuration.showStatsTextbox) {
           // Update textbox stats
@@ -280,6 +287,22 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
       }
     });
+  }
+
+  isOnCurrentRoi(data) {
+    return this.roi && this.roi.id === data.roi.id;
+  }
+
+  handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
+    if (this.isOnCurrentRoi(toolData)) {
+      moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
+    }
+  }
+
+  toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
+    if (this.isOnCurrentRoi(annotation)) {
+      moveAnnotation(evt, this, annotation, interactionType);
+    }
   }
 }
 
