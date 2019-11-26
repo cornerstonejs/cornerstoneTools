@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.7.0-m - 2019-11-21 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.7.1-m - 2019-11-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "92122fa287842ce6e2d9";
+/******/ 	var hotCurrentHash = "d2b926e334f8bd241a64";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -21629,6 +21629,11 @@ function (_BaseAnnotationTool) {
 
             measurementData.active = false;
             _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
+            Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_14__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].MEASUREMENT_MODIFIED, {
+              toolType: _this3.name,
+              element: element,
+              measurementData: measurementData
+            });
           }, evt.detail);
         }
 
@@ -21673,15 +21678,20 @@ function (_BaseAnnotationTool) {
     }
   }, {
     key: "_doneChangingTextCallback",
-    value: function _doneChangingTextCallback(element, data, updatedText, deleteTool) {
+    value: function _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
       if (deleteTool === true) {
-        Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_15__["removeToolState"])(element, this.name, data);
+        Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_15__["removeToolState"])(element, this.name, measurementData);
       } else {
-        data.text = updatedText;
+        measurementData.text = updatedText;
       }
 
-      data.active = false;
+      measurementData.active = false;
       _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
+      Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_14__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].MEASUREMENT_MODIFIED, {
+        toolType: this.name,
+        element: element,
+        measurementData: measurementData
+      });
     }
   }]);
 
@@ -32583,7 +32593,7 @@ function useColors() {
 
 
 function formatArgs(args) {
-  args[0] = "".concat((this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' '), "+").concat(debugLib.humanize(this.diff));
+  args[0] = "".concat((this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' '), "+").concat(setupDebug.humanize(this.diff));
 
   if (!this.useColors) {
     return;
@@ -37055,7 +37065,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.7.0-m');
+/* harmony default export */ __webpack_exports__["default"] = ('4.7.1-m');
 
 /***/ })
 
