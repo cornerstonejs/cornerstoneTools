@@ -35,6 +35,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         getMeasurementLocationCallback: emptyLocationCallback,
         textBox: '',
         shadow: '',
+        drawHandles: true,
         drawHandlesOnHover: true,
         additionalData: [],
       },

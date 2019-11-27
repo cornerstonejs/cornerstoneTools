@@ -73,12 +73,14 @@ export default class FreehandRoiSculptorTool extends BaseTool {
         handleRadius: this._toolSizeCanvas,
       };
 
-      drawHandles(
-        context,
-        eventData,
-        this.configuration.mouseLocation.handles,
-        options
-      );
+      if (this.configuration.drawHandles) {
+        drawHandles(
+          context,
+          eventData,
+          this.configuration.mouseLocation.handles,
+          options
+        );
+      }
     } else if (this.configuration.showCursorOnHover && !this._recentTouchEnd) {
       this._renderHoverCursor(evt);
     }
@@ -252,12 +254,14 @@ export default class FreehandRoiSculptorTool extends BaseTool {
       handleRadius: radiusCanvas,
     };
 
-    drawHandles(
-      context,
-      eventData,
-      this.configuration.mouseLocation.handles,
-      options
-    );
+    if (this.configuration.drawHandles) {
+      drawHandles(
+        context,
+        eventData,
+        this.configuration.mouseLocation.handles,
+        options
+      );
+    }
 
     if (this.configuration.limitRadiusOutsideRegion) {
       context.globalAlpha = 1.0; // Reset drawing alpha for other draw calls.
@@ -1246,6 +1250,7 @@ function getDefaultFreehandRoiSculptorToolConfiguration() {
     currentTool: null,
     dragColor: toolColors.getActiveColor(),
     hoverColor: toolColors.getToolColor(),
+    drawHandles: true,
 
     /* --- Hover options ---
     showCursorOnHover:        Shows a preview of the sculpting radius on hover.

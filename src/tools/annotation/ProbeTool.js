@@ -31,6 +31,9 @@ export default class ProbeTool extends BaseAnnotationTool {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: probeCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -150,11 +153,13 @@ export default class ProbeTool extends BaseAnnotationTool {
       draw(context, context => {
         const color = toolColors.getColorIfActive(data);
 
-        // Draw the handles
-        drawHandles(context, eventData, data.handles, {
-          handleRadius,
-          color,
-        });
+        if (this.configuration.drawHandles) {
+          // Draw the handles
+          drawHandles(context, eventData, data.handles, {
+            handleRadius,
+            color,
+          });
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {
