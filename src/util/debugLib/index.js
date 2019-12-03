@@ -156,7 +156,7 @@ function formatArgs(args) {
     this.namespace +
     (this.useColors ? ' %c' : ' ') +
     args[0] +
-    (this.useColors ? '%c ' : ' ')}+${debugLib.humanize(this.diff)}`;
+    (this.useColors ? '%c ' : ' ')}+${setupDebug.humanize(this.diff)}`;
 
   if (!this.useColors) {
     return;
