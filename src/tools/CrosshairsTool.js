@@ -1,13 +1,11 @@
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import convertToVector3 from '../util/convertToVector3.js';
-import { getLogger } from '../util/logger.js';
 import { imagePointToPatientPoint } from '../util/pointProjector.js';
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { crosshairsCursor } from './cursors/index.js';
 
-const logger = getLogger('tools:CrosshairsTool');
 /**
  * @public
  * @class CrosshairsTool
@@ -74,8 +72,6 @@ export default class CrosshairsTool extends BaseTool {
     );
 
     // Get the enabled elements associated with this synchronization context
-    // const syncContext = toolData.data[0].synchronizationContext;
-    // const enabledElements = syncContext.getSourceElements();
     const enabledElements = synchronizationContext.getSourceElements();
 
     // Iterate over each synchronized element
