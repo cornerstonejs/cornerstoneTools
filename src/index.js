@@ -95,6 +95,7 @@ import {
   RectangleScissorsTool,
   CircleScissorsTool,
   CorrectionScissorsTool,
+  ContourTool,
 } from './tools/segmentation/index.js';
 import {
   CrosshairsTool,
@@ -231,6 +232,7 @@ const cornerstoneTools = {
   FreehandScissorsTool,
   CircleScissorsTool,
   CorrectionScissorsTool,
+  ContourTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
@@ -339,6 +341,7 @@ export {
   FreehandScissorsTool,
   CircleScissorsTool,
   CorrectionScissorsTool,
+  ContourTool,
   // ~ Tools
   CrosshairsTool,
   DoubleTapFitToWindowTool,
