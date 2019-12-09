@@ -1,10 +1,18 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import store from '../../store/index.js';
+import language from '../../language.js';
 
 // State
-import { getToolState } from './../../stateManagement/toolState.js';
+import {
+  getToolState,
+  addToolState,
+  removeToolState,
+} from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+// Manipulators
+import { moveNewHandle } from './../../manipulators/index.js';
 
 // Drawing
 import {
@@ -18,8 +26,8 @@ import {
 
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
+import EVENTS from '../../events.js';
 import {
-  pointInEllipse,
   calculateEllipseStatistics,
 } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
@@ -28,6 +36,7 @@ import throttle from './../../util/throttle.js';
 import { ellipticalRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import triggerEvent from '../../util/triggerEvent.js';
 
 const logger = getLogger('tools:annotation:EllipticalRoiTool');
 
@@ -45,14 +54,15 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        // showMinMax: false,
-        // showHounsfieldUnits: true,
+        showMinMax: true,
+        showHounsfieldUnits: true,
       },
       svgCursor: ellipticalRoiCursor,
     };
 
     super(props, defaultProps);
 
+    this.preventNewMeasurement = false;
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
@@ -124,28 +134,19 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       data.handles.end
     );
 
-    const minorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) + distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) + distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) - distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) - distance,
+    const rect = {
+      left: Math.min(startCanvas.x, endCanvas.x),
+      top: Math.min(startCanvas.y, endCanvas.y),
+      width: Math.abs(startCanvas.x - endCanvas.x),
+      height: Math.abs(startCanvas.y - endCanvas.y),
     };
 
-    const majorEllipse = {
-      left: Math.min(startCanvas.x, endCanvas.x) - distance / 2,
-      top: Math.min(startCanvas.y, endCanvas.y) - distance / 2,
-      width: Math.abs(startCanvas.x - endCanvas.x) + distance,
-      height: Math.abs(startCanvas.y - endCanvas.y) + distance,
-    };
+    const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
+      rect,
+      coords
+    );
 
-    const pointInMinorEllipse = pointInEllipse(minorEllipse, coords);
-    const pointInMajorEllipse = pointInEllipse(majorEllipse, coords);
-
-    if (pointInMajorEllipse && !pointInMinorEllipse) {
-      return true;
-    }
-
-    return false;
+    return distanceToPoint < distance;
   }
 
   updateCachedStats(image, element, data) {
@@ -209,6 +210,18 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         setShadow(context, this.configuration);
 
+        // drawRect(
+        //   context,
+        //   element,
+        //   data.handles.start,
+        //   data.handles.end,
+        //   {
+        //     color,
+        //   },
+        //   'pixel',
+        //   data.handles.initialRotation
+        // );
+
         // Draw
         drawEllipse(
           context,
@@ -221,7 +234,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (data.active) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {
@@ -252,23 +267,69 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           hasPixelSpacing,
           this.configuration
         );
-
-        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
-
-        drawLinkedTextBox(
-          context,
-          element,
-          data.handles.textBox,
-          textBoxContent,
-          data.handles,
-          textBoxAnchorPoints,
-          color,
-          lineWidth,
-          10,
-          true
-        );
+        const textColor = toolColors.getTextColor();
+        if (data.cachedStats.area.toFixed(2) > 0) {
+          drawLinkedTextBox(
+            context,
+            element,
+            data.handles.textBox,
+            textBoxContent,
+            data.handles,
+            textBoxAnchorPoints,
+            textColor,
+            lineWidth,
+            10,
+            true
+          );
+        }
       }
     });
+  }
+
+  addNewMeasurement(evt, interactionType) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const measurementData = this.createNewMeasurement(eventData);
+
+    if (!measurementData) {
+      return;
+    }
+
+    // Associate this data with this imageId so we can render it and manipulate it
+    addToolState(element, this.name, measurementData);
+
+    const toolOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          const eventType = EVENTS.MEASUREMENT_COMPLETED;
+          const eventData = {
+            toolName: this.name,
+            element,
+            measurementData,
+          };
+
+          triggerEvent(element, eventType, eventData);
+          if (
+            !measurementData.cachedStats ||
+            measurementData.cachedStats.area === 0
+          ) {
+            measurementData.visible = false;
+            removeToolState(element, this.name, measurementData);
+          }
+        },
+      },
+      this.options
+    );
+
+    moveNewHandle(
+      eventData,
+      this.name,
+      measurementData,
+      measurementData.handles.end,
+      toolOptions,
+      interactionType
+    );
   }
 }
 
@@ -309,10 +370,6 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
-function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
-}
-
 /**
  *
  *
@@ -327,12 +384,13 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, mean, stdDev, min, max, meanStdDevSUV } = {},
+  { area, mean, stdDev, min, max, avg, meanStdDevSUV } = {},
   modality,
   hasPixelSpacing,
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
+  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
@@ -340,50 +398,56 @@ function _createTextBoxContent(
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const unit = _getUnit(modality, options.showHounsfieldUnits);
+    const suffix = showHounsfieldUnits ? ' HU' : '';
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `Std Dev: ${numbersWithCommas(
-      stdDev.toFixed(2)
-    )} ${unit}`;
+    // let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
+    // const stdDevString = `Std Dev: ${numbersWithCommas(
+    //   stdDev.toFixed(2)
+    // )}${suffix}`;
 
     // If this image has SUV values to display, concatenate them to the text line
-    if (hasStandardUptakeValues) {
-      const SUVtext = ' SUV: ';
+    // if (hasStandardUptakeValues) {
+    //   const SUVtext = ' SUV: ';
 
-      const meanSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.mean.toFixed(2)
-      )}`;
-      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.stdDev.toFixed(2)
-      )}`;
+    //   const meanSuvString = `${SUVtext}${numbersWithCommas(
+    //     meanStdDevSUV.mean.toFixed(2)
+    //   )}`;
+    //   const stdDevSuvString = `${SUVtext}${numbersWithCommas(
+    //     meanStdDevSUV.stdDev.toFixed(2)
+    //   )}`;
 
-      const targetStringLength = Math.floor(
-        context.measureText(`${stdDevString}     `).width
-      );
+    //   const targetStringLength = Math.floor(
+    //     context.measureText(`${stdDevString}     `).width
+    //   );
 
-      while (context.measureText(meanString).width < targetStringLength) {
-        meanString += ' ';
-      }
+    //   while (context.measureText(meanString).width < targetStringLength) {
+    //     meanString += ' ';
+    //   }
 
-      otherLines.push(`${meanString}${meanSuvString}`);
-      otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
-    } else {
-      otherLines.push(`${meanString}     ${stdDevString}`);
-    }
+    //   otherLines.push(`${meanString}${meanSuvString}`);
+    //   otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
+    // } else {
+    //   otherLines.push(`${meanString}     ${stdDevString}`);
+    // }
 
     if (showMinMax) {
-      let minString = `Min: ${min} ${unit}`;
-      const maxString = `Max: ${max} ${unit}`;
-      const targetStringLength = hasStandardUptakeValues
-        ? Math.floor(context.measureText(`${stdDevString}     `).width)
-        : Math.floor(context.measureText(`${meanString}     `).width);
+      const lang = store.modules.globalConfiguration.state.language;
+      let minString = `${language[lang].min} ${min}${suffix}`;
+      const maxString = `${language[lang].max} ${max}${suffix}`;
+      const avgString = `${language[lang].avg} ${avg}${suffix}`;
+      const stdDevString = `${language[lang].stdDev} ${stdDev}${suffix}`;
+      // const targetStringLength = hasStandardUptakeValues
+      //   ? Math.floor(context.measureText(`${stdDevString}     `).width)
+      //   : Math.floor(context.measureText(`${meanString}     `).width);
 
-      while (context.measureText(minString).width < targetStringLength) {
-        minString += ' ';
-      }
+      // while (context.measureText(minString).width < targetStringLength) {
+      //   minString += ' ';
+      // }
 
-      otherLines.push(`${minString}${maxString}`);
+      otherLines.push(minString);
+      otherLines.push(maxString);
+      otherLines.push(avgString);
+      otherLines.push(stdDevString);
     }
   }
 
@@ -403,10 +467,10 @@ function _createTextBoxContent(
 function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
-    ? ` mm${String.fromCharCode(178)}`
+    ? ` cm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
-  return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+  return `${language[store.modules.globalConfiguration.state.language].area} ${numbersWithCommas((area / 100).toFixed(2))}${suffix}`;
 }
 
 /**
@@ -441,6 +505,9 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ellipseCoordinates
   );
 
+  // const center = {x: ellipseCoordinates.left, y: ellipseCoordinates.top}
+  // const info = CtCalculator.getEllipseInfo(image.getDicom(), center,  ellipseCoordinates.width, ellipseCoordinates.height);
+
   let meanStdDevSUV;
 
   if (modality === 'PT') {
@@ -461,9 +528,10 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     count: ellipseMeanStdDev.count || 0,
     mean: ellipseMeanStdDev.mean || 0,
     variance: ellipseMeanStdDev.variance || 0,
-    stdDev: ellipseMeanStdDev.stdDev || 0,
+    stdDev: ellipseMeanStdDev.stdDev.toFixed() || 0,
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
+    avg: ellipseMeanStdDev.mean.toFixed() || 0,
     meanStdDevSUV,
   };
 }

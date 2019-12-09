@@ -13,7 +13,7 @@ import {
   drawHandles,
   drawRect,
   drawLinkedTextBox,
-  setShadow,
+  setShadow
 } from './../../drawing/index.js';
 
 // Util
@@ -36,15 +36,17 @@ const logger = getLogger('tools:annotation:RectangleRoiTool');
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
-  constructor(props = {}) {
+  constructor (props = {}) {
     const defaultProps = {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true
+        isSquare: false, // 正方形
+        isShowTextBox: true // 显示测量信息
       },
-      svgCursor: rectangleRoiCursor,
+      svgCursor: rectangleRoiCursor
     };
 
     super(props, defaultProps);
@@ -52,13 +54,15 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
-  createNewMeasurement(eventData) {
+  createNewMeasurement (eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
       logger.error(
-        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
       );
 
       return;
@@ -74,13 +78,13 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: false,
+          active: false
         },
         end: {
           x: eventData.currentPoints.image.x,
           y: eventData.currentPoints.image.y,
           highlight: true,
-          active: true,
+          active: true
         },
         initialRotation: eventData.viewport.rotation,
         textBox: {
@@ -89,13 +93,13 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
-          hasBoundingBox: true,
-        },
-      },
+          hasBoundingBox: true
+        }
+      }
     };
   }
 
-  pointNearTool(element, data, coords, interactionType) {
+  pointNearTool (element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
@@ -124,7 +128,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       left: Math.min(startCanvas.x, endCanvas.x),
       top: Math.min(startCanvas.y, endCanvas.y),
       width: Math.abs(startCanvas.x - endCanvas.x),
-      height: Math.abs(startCanvas.y - endCanvas.y),
+      height: Math.abs(startCanvas.y - endCanvas.y)
     };
 
     const distanceToPoint = external.cornerstoneMath.rect.distanceToPoint(
@@ -135,7 +139,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     return distanceToPoint < distance;
   }
 
-  updateCachedStats(image, element, data) {
+  updateCachedStats (image, element, data) {
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
@@ -154,7 +158,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     data.invalidated = false;
   }
 
-  renderToolData(evt) {
+  renderToolData (evt) {
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -164,7 +168,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const { image, element } = eventData;
     const lineWidth = toolStyle.getToolWidth();
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const { handleRadius, drawHandlesOnHover, isSquare, isShowTextBox } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
@@ -177,7 +181,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const modality = seriesModule.modality;
     const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
 
-    draw(context, context => {
+    draw(context, (context) => {
       // If we have tool data for this element - iterate over each set and draw it
       for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
@@ -191,19 +195,37 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         const handleOptions = {
           color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive: drawHandlesOnHover
         };
 
         setShadow(context, this.configuration);
+
+        // 调整矩形为正方形
+        const start = data.handles.start;
+        const end = data.handles.end;
+
+        if (isSquare) {
+          const width = data.handles.end.x - data.handles.start.x;
+          const height = data.handles.end.y - data.handles.start.y;
+          const MaxDiff = Math.abs(Math.abs(width) - Math.abs(height) > 0 ? width : height);
+
+          if (Math.abs(width) > Math.abs(height)) {
+            end.x = start.x + width;
+            end.y = start.y + (Math.abs(height) / height) * MaxDiff;
+          } else {
+            end.x = start.x + (Math.abs(width) / width) * MaxDiff;
+            end.y = start.y + height;
+          }
+        }
 
         // Draw
         drawRect(
           context,
           element,
-          data.handles.start,
-          data.handles.end,
+          start,
+          end,
           {
-            color,
+            color
           },
           'pixel',
           data.handles.initialRotation
@@ -229,31 +251,31 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           Object.assign(data.handles.textBox, defaultCoords);
         }
 
-        const textBoxAnchorPoints = handles =>
-          _findTextBoxAnchorPoints(handles.start, handles.end);
-        const textBoxContent = _createTextBoxContent(
-          context,
-          image.color,
-          data.cachedStats,
-          modality,
-          hasPixelSpacing,
-          this.configuration
-        );
+        if (isShowTextBox) {
+          const textBoxAnchorPoints = (handles) =>
+            _findTextBoxAnchorPoints(handles.start, handles.end);
+          const textBoxContent = _createTextBoxContent(
+            context,
+            image.color,
+            data.cachedStats,
+            modality,
+            hasPixelSpacing,
+            this.configuration
+          );
 
-        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
-
-        drawLinkedTextBox(
-          context,
-          element,
-          data.handles.textBox,
-          textBoxContent,
-          data.handles,
-          textBoxAnchorPoints,
-          color,
-          lineWidth,
-          10,
-          true
-        );
+          drawLinkedTextBox(
+            context,
+            element,
+            data.handles.textBox,
+            textBoxContent,
+            data.handles,
+            textBoxAnchorPoints,
+            color,
+            lineWidth,
+            10,
+            true
+          );
+        }
       }
     });
   }
@@ -267,12 +289,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
  * @param {*} endHandle
  * @returns {{ left: number, top: number, width: number, height: number}}
  */
-function _getRectangleImageCoordinates(startHandle, endHandle) {
+function _getRectangleImageCoordinates (startHandle, endHandle) {
   return {
     left: Math.min(startHandle.x, endHandle.x),
     top: Math.min(startHandle.y, endHandle.y),
     width: Math.abs(startHandle.x - endHandle.x),
-    height: Math.abs(startHandle.y - endHandle.y),
+    height: Math.abs(startHandle.y - endHandle.y)
   };
 }
 
@@ -286,7 +308,7 @@ function _getRectangleImageCoordinates(startHandle, endHandle) {
  * @param {*} pixelSpacing
  * @returns {Object} The Stats object
  */
-function _calculateStats(image, element, handles, modality, pixelSpacing) {
+function _calculateStats (image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the rectangle in image coordinates
   const roiCoordinates = _getRectangleImageCoordinates(
     handles.start,
@@ -310,7 +332,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   if (modality === 'PT') {
     meanStdDevSUV = {
       mean: calculateSUV(image, roiMeanStdDev.mean, true) || 0,
-      stdDev: calculateSUV(image, roiMeanStdDev.stdDev, true) || 0,
+      stdDev: calculateSUV(image, roiMeanStdDev.stdDev, true) || 0
     };
   }
 
@@ -328,7 +350,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     stdDev: roiMeanStdDev.stdDev || 0,
     min: roiMeanStdDev.min || 0,
     max: roiMeanStdDev.max || 0,
-    meanStdDevSUV,
+    meanStdDevSUV
   };
 }
 
@@ -339,7 +361,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
  * @param {*} rectangle
  * @returns {{ count, number, mean: number,  variance: number,  stdDev: number,  min: number,  max: number }}
  */
-function _calculateRectangleStats(sp, rectangle) {
+function _calculateRectangleStats (sp, rectangle) {
   let sum = 0;
   let sumSquared = 0;
   let count = 0;
@@ -365,7 +387,7 @@ function _calculateRectangleStats(sp, rectangle) {
       variance: 0.0,
       stdDev: 0.0,
       min: 0.0,
-      max: 0.0,
+      max: 0.0
     };
   }
 
@@ -378,7 +400,7 @@ function _calculateRectangleStats(sp, rectangle) {
     variance,
     stdDev: Math.sqrt(variance),
     min,
-    max,
+    max
   };
 }
 
@@ -389,7 +411,7 @@ function _calculateRectangleStats(sp, rectangle) {
  * @param {*} endHandle
  * @returns {Array.<{x: number, y: number}>}
  */
-function _findTextBoxAnchorPoints(startHandle, endHandle) {
+function _findTextBoxAnchorPoints (startHandle, endHandle) {
   const { left, top, width, height } = _getRectangleImageCoordinates(
     startHandle,
     endHandle
@@ -399,23 +421,23 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
     {
       // Top middle point of rectangle
       x: left + width / 2,
-      y: top,
+      y: top
     },
     {
       // Left middle point of rectangle
       x: left,
-      y: top + height / 2,
+      y: top + height / 2
     },
     {
       // Bottom middle point of rectangle
       x: left + width / 2,
-      y: top + height,
+      y: top + height
     },
     {
       // Right middle point of rectangle
       x: left + width,
-      y: top + height / 2,
-    },
+      y: top + height / 2
+    }
   ];
 }
 
@@ -426,17 +448,13 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  * @param {*} hasPixelSpacing
  * @returns {string} The formatted label for showing area
  */
-function _formatArea(area, hasPixelSpacing) {
+function _formatArea (area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
     : ` px${String.fromCharCode(178)}`;
 
   return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
-}
-
-function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
 }
 
 /**
@@ -451,7 +469,7 @@ function _getUnit(modality, showHounsfieldUnits) {
  * @param {*} [options={}]
  * @returns {string[]}
  */
-function _createTextBoxContent(
+function _createTextBoxContent (
   context,
   isColorImage,
   { area, mean, stdDev, min, max, meanStdDevSUV },
@@ -460,18 +478,19 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
+  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   const otherLines = [];
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const unit = _getUnit(modality, options.showHounsfieldUnits);
+    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
+    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
-    )} ${unit}`;
+    )}${suffix}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -499,8 +518,8 @@ function _createTextBoxContent(
     }
 
     if (showMinMax) {
-      let minString = `Min: ${min} ${unit}`;
-      const maxString = `Max: ${max} ${unit}`;
+      let minString = `Min: ${min}${suffix}`;
+      const maxString = `Max: ${max}${suffix}`;
       const targetStringLength = hasStandardUptakeValues
         ? Math.floor(context.measureText(`${stdDevString}     `).width)
         : Math.floor(context.measureText(`${meanString}     `).width);
@@ -514,7 +533,7 @@ function _createTextBoxContent(
   }
 
   textLines.push(_formatArea(area, hasPixelSpacing));
-  otherLines.forEach(x => textLines.push(x));
+  otherLines.forEach((x) => textLines.push(x));
 
   return textLines;
 }

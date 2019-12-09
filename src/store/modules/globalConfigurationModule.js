@@ -1,11 +1,13 @@
-const configuration = {
+const state = {
   mouseEnabled: true,
   touchEnabled: true,
+  keyboardEnabled: true,
   globalToolSyncEnabled: false,
   showSVGCursors: false,
-  autoResizeViewports: true,
+  language: 'zh-CN'
 };
 
 export default {
-  configuration,
+  state,
+  setters: {},
 };

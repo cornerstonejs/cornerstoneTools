@@ -1,6 +1,7 @@
-let defaultColor = 'white',
-  activeColor = 'greenyellow',
-  fillColor = 'transparent';
+let defaultColor = '#02ff00',
+  activeColor = '#00ff00',
+  fillColor = 'transparent',
+  textColor = '#ffc300';
 
 function setFillColor(color) {
   fillColor = color;
@@ -16,6 +17,14 @@ function setToolColor(color) {
 
 function getToolColor() {
   return defaultColor;
+}
+
+function setTextColor(color) {
+  textColor = color;
+}
+
+function getTextColor() {
+  return textColor;
 }
 
 function setActiveColor(color) {
@@ -34,6 +43,7 @@ function getColorIfActive(data) {
   return data.active ? activeColor : defaultColor;
 }
 
+
 const toolColors = {
   setFillColor,
   getFillColor,
@@ -42,6 +52,8 @@ const toolColors = {
   setActiveColor,
   getActiveColor,
   getColorIfActive,
+  setTextColor,
+  getTextColor,
 };
 
 export default toolColors;

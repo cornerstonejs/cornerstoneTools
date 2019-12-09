@@ -1,5 +1,5 @@
-import getToolForElement from './getToolForElement.js';
 import { state } from './index.js';
+import getToolForElement from './getToolForElement.js';
 
 /**
  * Sets the options of a tool on a specific element.
@@ -34,7 +34,7 @@ const setToolOptionsForElement = function(element, toolName, options) {
  */
 const setToolOptions = function(toolName, options) {
   state.enabledElements.forEach(element => {
-    setToolOptionsForElement(element, toolName, options);
+    setToolOptionsForElement(element, options);
   });
 };
 

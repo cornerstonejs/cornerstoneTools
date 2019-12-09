@@ -92,13 +92,9 @@ export default function(
     return;
   }
 
-  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(
-    targetElement
-  );
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(targetElement);
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
-    targetElement
-  );
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
 
   stackData.currentImageIdIndex = newImageIdIndex;
   const newImageId = stackData.imageIds[newImageIdIndex];

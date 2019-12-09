@@ -16,11 +16,5 @@ export default {
     })),
     pixelToCanvas: jest.fn(),
     setViewport: jest.fn(),
-    updateImage: jest.fn(),
-  },
-  cornerstoneMath: {
-    point: {
-      distance: jest.fn(),
-    },
   },
 };

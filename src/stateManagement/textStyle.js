@@ -1,6 +1,6 @@
 let defaultFontSize = 15,
   defaultFont = `${defaultFontSize}px Arial`,
-  defaultBackgroundColor = 'transparent';
+  defaultBackgroundColor = 'rgba(0, 0, 0, 0.8)';
 
 function setFont(font) {
   defaultFont = font;

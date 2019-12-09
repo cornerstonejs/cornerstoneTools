@@ -4,12 +4,10 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
-import { state } from './../store/index.js';
+import { getters, state } from './../store/index.js';
+import getActiveToolsForElement from './../store/getActiveToolsForElement';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
-import { getLogger } from '../util/logger.js';
-
-const logger = getLogger('manipulators:moveHandle');
 
 const runAnimation = {
   value: false,
@@ -44,9 +42,9 @@ const _upOrEndEvents = {
  * @param {*} handle
  * @param {*} [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
+ * @param {function} [options.doneMovingCallback]
  * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
- * @param {function} doneMovingCallback
  * @returns {undefined}
  */
 export default function(
@@ -55,8 +53,7 @@ export default function(
   annotation,
   handle,
   options = {},
-  interactionType = 'mouse',
-  doneMovingCallback
+  interactionType = 'mouse'
 ) {
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
@@ -89,8 +86,7 @@ export default function(
         dragHandler,
         upOrEndHandler,
       },
-      evt,
-      doneMovingCallback
+      evt
     );
   };
 
@@ -140,6 +136,9 @@ function _dragHandler(
   interactionType,
   evt
 ) {
+  if (evt.detail.buttons !== 1 ) {
+    return;
+  }
   const { image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
@@ -148,7 +147,6 @@ function _dragHandler(
     page.x,
     interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
-
   runAnimation.value = false;
   handle.active = true;
   handle.hasMoved = true;
@@ -187,11 +185,9 @@ function _upOrEndHandler(
   options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
-  evt,
-  doneMovingCallback
+  evt
 ) {
-  const image = evtDetail.currentPoints.image;
-  const element = evt.detail.element;
+  const { image, element, buttons } = evtDetail;
 
   handle.active = false;
   annotation.active = false;
@@ -224,15 +220,24 @@ function _upOrEndHandler(
   }
 
   if (typeof options.doneMovingCallback === 'function') {
-    logger.warn(
-      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
-    );
-
     options.doneMovingCallback();
   }
 
-  if (typeof doneMovingCallback === 'function') {
-    doneMovingCallback();
+  if (buttons === 2) { //鼠标右键
+    handle.active = true;
+    annotation.active = true;
+    // TODO: A way to not flip this for textboxes on annotations
+    annotation.invalidated = true;
+    const activeTool = state.tools.filter(tool => tool.name === toolName);
+
+    if (activeTool[0] instanceof BaseAnnotationTool) {
+      activeTool[0].toolSelectedCallback(
+        {detail: evtDetail},
+        annotation,
+        'mouse',
+        toolName
+      )
+    }
   }
 
   external.cornerstone.updateImage(element);

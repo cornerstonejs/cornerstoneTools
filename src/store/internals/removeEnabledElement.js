@@ -2,16 +2,17 @@ import {
   mouseEventListeners,
   wheelEventListener,
   touchEventListeners,
+  keyboardEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher,
+  keyboardEventDispatcher,
 } from '../../eventDispatchers/index.js';
-import store, { getModule } from '../index.js';
+import store from '../index.js';
 import { getLogger } from '../../util/logger.js';
-import loadHandlerManager from '../../stateManagement/loadHandlerManager.js';
 
 const logger = getLogger('internals:removeEnabledElement');
 
@@ -38,29 +39,33 @@ const logger = getLogger('internals:removeEnabledElement');
 export default function(elementDisabledEvt) {
   logger.log('EVENT:ELEMENT_DISABLED');
   const enabledElement = elementDisabledEvt.detail.element;
-  const { configuration } = getModule('globalConfiguration');
 
   // Dispatchers
   imageRenderedEventDispatcher.disable(enabledElement);
   newImageEventDispatcher.disable(enabledElement);
 
   // Mouse
-  if (configuration.mouseEnabled) {
+  if (store.modules.globalConfiguration.state.mouseEnabled) {
     mouseEventListeners.disable(enabledElement);
     wheelEventListener.disable(enabledElement);
     mouseToolEventDispatcher.disable(enabledElement);
   }
 
   // Touch
-  if (configuration.touchEnabled) {
+  if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.disable(enabledElement);
     touchToolEventDispatcher.disable(enabledElement);
+  }
+
+  // Keyboard
+  if (store.modules.globalConfiguration.state.keyboardEnabled) {
+    keyboardEventListeners.disable(enabledElement);
+    keyboardEventDispatcher.disable(enabledElement);
   }
 
   // State
   _removeAllToolsForElement(enabledElement);
   _removeEnabledElement(enabledElement);
-  _removeLoadHandlers(enabledElement);
 }
 
 /**
@@ -99,17 +104,6 @@ const _removeEnabledElement = function(enabledElement) {
   } else {
     logger.warn('unable to remove element');
   }
-};
-
-/**
- * Remove load handler for the element
- * @private
- * @method
- * @param {HTMLElement} element
- * @returns {void}
- */
-const _removeLoadHandlers = function(element) {
-  loadHandlerManager.removeHandlers(element);
 };
 
 /**

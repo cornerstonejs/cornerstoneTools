@@ -1,11 +1,8 @@
 // Modules
-import segmentation from './modules/segmentationModule';
+import brush from './modules/brushModule.js';
 import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
-import { getLogger } from '../util/logger.js';
-
-const logger = getLogger('store:modules:storeLogger');
 
 export const state = {
   // Global
@@ -28,6 +25,10 @@ export const state = {
 };
 
 export const getters = {
+  mouseMoveTools: () =>
+    state.tools.filter(tool =>
+      tool.supportedInteractionTypes.includes('MouseMove')
+    ),
   mouseTools: () =>
     state.tools.filter(tool =>
       tool.supportedInteractionTypes.includes('Mouse')
@@ -35,6 +36,10 @@ export const getters = {
   touchTools: () =>
     state.tools.filter(tool =>
       tool.supportedInteractionTypes.includes('Touch')
+    ),
+  keyboardTools: () =>
+    state.tools.filter(tool =>
+      tool.supportedInteractionTypes.includes('Keyboard')
     ),
   enabledElementByUID: enabledElementUID =>
     state.enabledElements.find(
@@ -47,14 +52,10 @@ export const getters = {
 export const setters = {};
 
 export const modules = {
-  segmentation,
+  brush,
   cursor,
   globalConfiguration,
 };
-
-export function getModule(moduleName) {
-  return modules[moduleName];
-}
 
 export default {
   modules,

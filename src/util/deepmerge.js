@@ -8,11 +8,7 @@ const isMergeableObject = val => {
   );
 };
 
-const emptyTarget = val => {
-  const isEmpty = Array.isArray(val) ? [] : {};
-
-  return isEmpty;
-};
+const emptyTarget = val => (Array.isArray(val) ? [] : {});
 
 const cloneIfNecessary = (value, optionsArgument) => {
   const clone = optionsArgument && optionsArgument.clone === true;

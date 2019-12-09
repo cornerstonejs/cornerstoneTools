@@ -7,16 +7,16 @@ In the Cornerstone Tools framework, if a Tool changes [mode](../anatomy-of-a-too
 - `Enabled` - `enabledCallback (element)`
 - `Disabled` - `enabledCallback (element)`
 
-Note that unlike a lot of the callbacks, the `element` on which the Tool resides is passed to the mode change callbacks, not `evt`.
+Note that unlike a lot of the Tools, the `element` on which the Tool resides is passed to the callback, not `evt`.
 
 For our example Tool, this gives us more chances to log hello to the console:
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.importInternal('base/BaseTool');
+const BaseTool = csTools.import('base/BaseTool');
 
-export default class HelloWorldTool extends BaseTool {
-  constructor(name = 'HelloWorld') {
+export default class HelloWorldMouseTool extends BaseTool {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],

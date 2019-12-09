@@ -105,6 +105,17 @@ const moveAnnotation = function(
   annotation,
   interactionType = 'mouse'
 ) {
+  const toolOptions = Object.assign(
+    {},
+    {
+      doneMovingCallback: () => {
+        annotation.active = false;
+        state.isToolLocked = false;
+      },
+    },
+    tool.options
+  );
+
   annotation.active = true;
   state.isToolLocked = true;
 
@@ -113,12 +124,8 @@ const moveAnnotation = function(
     tool.name,
     annotation,
     null,
-    tool.options,
-    interactionType,
-    () => {
-      annotation.active = false;
-      state.isToolLocked = false;
-    }
+    toolOptions,
+    interactionType
   );
 
   evt.stopImmediatePropagation();

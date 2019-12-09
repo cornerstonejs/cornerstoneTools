@@ -11,7 +11,7 @@ jest.mock('./../../externalModules.js', () => ({
   },
 }));
 
-jest.mock('./../../importInternal.js', () => ({
+jest.mock('./../../import.js', () => ({
   default: jest.fn(),
 }));
 

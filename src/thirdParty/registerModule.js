@@ -30,10 +30,6 @@ export default function(name, newModule, overwrite = false) {
   }
 
   modules[name] = newModule;
-
-  if (typeof modules[name].onRegisterCallback === 'function') {
-    modules[name].onRegisterCallback();
-  }
 }
 
 function isModuleNameRegistered(name) {

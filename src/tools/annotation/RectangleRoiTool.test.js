@@ -7,7 +7,7 @@ jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../importInternal.js', () => ({
+jest.mock('./../../import.js', () => ({
   default: jest.fn(),
 }));
 
@@ -16,9 +16,11 @@ jest.mock('./../../externalModules.js', () => ({
     metaData: {
       get: jest.fn(),
     },
-    /* eslint-enable prettier/prettier */
-    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
-    /* eslint-enable prettier/prettier */
+    getPixels: () => {
+      return [100, 100, 100,
+        100, 4, 5,
+        100, 3, 6];
+    }
   },
 }));
 
@@ -37,7 +39,7 @@ const goodMouseEventData = {
 
 const image = {
   rowPixelSpacing: 0.8984375,
-  columnPixelSpacing: 0.8984375,
+  columnPixelSpacing: 0.8984375
 };
 
 describe('RectangleRoiTool.js', () => {
@@ -190,15 +192,14 @@ describe('RectangleRoiTool.js', () => {
         handles: {
           start: {
             x: 0,
-            y: 0,
+            y: 0
           },
           end: {
             x: 3,
-            y: 3,
-          },
+            y: 3
+          }
         },
       };
-
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');

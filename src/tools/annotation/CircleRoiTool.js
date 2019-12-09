@@ -25,7 +25,6 @@ import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
-import getCircleCoords from '../../util/getCircleCoords';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -56,7 +55,9 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
     if (!goodEventData) {
       logger.error(
-        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+        `required eventData not supplied to tool ${
+          this.name
+        }'s createNewMeasurement`
       );
 
       return;
@@ -97,8 +98,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
 
-    const getDistance = external.cornerstoneMath.point.distance;
-
     if (!hasStartAndEndHandles) {
       logger.warn(
         `invalid parameters supplied to tool ${this.name}'s pointNearTool`
@@ -122,10 +121,10 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     );
 
     // StartCanvas is the center of the circle
-    const distanceFromCenter = getDistance(startCanvas, coords);
+    const distanceFromCenter = _getDistance(startCanvas, coords);
 
     // Getting radius of circle annotation in canvas
-    const radius = getDistance(startCanvas, endCanvas);
+    const radius = _getDistance(startCanvas, endCanvas);
 
     // Checking if point is near the tool by comparing its distance from the center of the circle
     return (
@@ -160,7 +159,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       return;
     }
 
-    const getDistance = external.cornerstoneMath.point.distance;
     const eventData = evt.detail;
     const { image, element, canvasContext } = eventData;
     const lineWidth = toolStyle.getToolWidth();
@@ -207,7 +205,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         );
 
         // Calculating the radius where startCanvas is the center of the circle to be drawn
-        const radius = getDistance(startCanvas, endCanvas);
+        const radius = _getDistance(startCanvas, endCanvas);
 
         // Draw Circle
         drawCircle(
@@ -254,8 +252,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
-        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
-
         drawLinkedTextBox(
           context,
           element,
@@ -281,7 +277,10 @@ export default class CircleRoiTool extends BaseAnnotationTool {
  * @returns {Array.<{x: number, y: number}>}
  */
 function _findTextBoxAnchorPoints(startHandle, endHandle) {
-  const { left, top, width, height } = getCircleCoords(startHandle, endHandle);
+  const { left, top, width, height } = _getCirlceImageCoodinates(
+    startHandle,
+    endHandle
+  );
 
   return [
     {
@@ -307,10 +306,6 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
-function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
-}
-
 /**
  *
  *
@@ -331,6 +326,7 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
+  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   // Don't display mean/standardDev for color images
@@ -338,12 +334,12 @@ function _createTextBoxContent(
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const unit = _getUnit(modality, options.showHounsfieldUnits);
+    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
+    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
-    )} ${unit}`;
+    )}${suffix}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -371,8 +367,8 @@ function _createTextBoxContent(
     }
 
     if (showMinMax) {
-      let minString = `Min: ${min} ${unit}`;
-      const maxString = `Max: ${max} ${unit}`;
+      let minString = `Min: ${min}${suffix}`;
+      const maxString = `Max: ${max}${suffix}`;
       const targetStringLength = hasStandardUptakeValues
         ? Math.floor(context.measureText(`${stdDevString}     `).width)
         : Math.floor(context.measureText(`${meanString}     `).width);
@@ -419,7 +415,10 @@ function _formatArea(area, hasPixelSpacing) {
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the ellipse in image coordinates
-  const circleCoordinates = getCircleCoords(handles.start, handles.end);
+  const circleCoordinates = _getCirlceImageCoodinates(
+    handles.start,
+    handles.end
+  );
 
   // Retrieve the array of pixels that the ellipse bounds cover
   const pixels = external.cornerstone.getPixels(
@@ -460,4 +459,36 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,
   };
+}
+
+/**
+ * Retrieve the bounds of the ellipse in image coordinates
+ *
+ * @param {*} startHandle
+ * @param {*} endHandle
+ * @returns {{ left: number, top: number, width: number, height: number }}
+ */
+function _getCirlceImageCoodinates(startHandle, endHandle) {
+  const radius = _getDistance(startHandle, endHandle);
+
+  return {
+    left: Math.round(Math.min(startHandle.x - radius, endHandle.x)),
+    top: Math.round(Math.min(startHandle.y - radius, endHandle.y)),
+    width: radius * 2,
+    height: radius * 2,
+  };
+}
+
+/**
+ * Returns the distance in canvas from the given coords to the center of the circle annotation.
+ *
+ * @param {*} startCoords - start point cooridnates
+ * @param {*} endCoords - end point cooridnates
+ * @returns {number} number - the distance between two points (start and end)
+ */
+function _getDistance(startCoords, endCoords) {
+  const dx = startCoords.x - endCoords.x;
+  const dy = startCoords.y - endCoords.y;
+
+  return Math.sqrt(dx * dx + dy * dy);
 }

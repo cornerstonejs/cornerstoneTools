@@ -10,7 +10,7 @@ warnings logged to the console in some scenarios.
 
 But there is more log information available if you need it.
 
-## Turning debug logs on and off
+## Turing debug logs on and off
 
 `cornerstoneTools` exports `enableLogger` and `disableLogger` methods as top level api methods.
 
@@ -19,35 +19,33 @@ But there is more log information available if you need it.
 Multiple scopes are comma separated. Excluding a scope is done by prefixing with `-`. You can use the `*` match against many scopes.
 
 ```js
-import cornerstoneTools from 'cornerstone-tools';
+import csTools from 'cornerstone-tools';
 
 // Enable logging
-cornerstoneTools.enableLogger();
+csTools.enableLogger();
 // defaults to "cornerstoneTools:*" which will print all logs from the cornerstoneTools package
 
 // This is just some sugar ontop of the debug library. You can enable all
 // debug logging – including things outside of cornerstoneTools
-cornerstoneTools.enableLogger('*');
+csTools.enableLogger('*');
 
 // Only show logs from setToolMode.js
-cornerstoneTools.enableLogger('cornerstoneTools:store:setToolMode');
+csTools.enableLogger('cornerstoneTools:store:setToolMode');
 
 // Show all logs, but exclude the eventDispatchers (which can be a bit noisy)
-cornerstoneTools.enableLogger(
-  'cornerstoneTools:*,-cornerstoneTools:eventDispatchers:*'
-);
+csTools.enableLogger('cornerstoneTools:*,-cornerstoneTools:eventDispatchers:*');
 
 // Disable logging
-const prevSettings = cornerstoneTools.disableLogger();
+const prevSettings = csTools.disableLogger();
 // `disableLogger` returns a string of the previous settings in case
 // you wanted to toggle logging off and back on later.
 
 // Eg. this would re-enable the previous settings
-cornerstoneTools.enableLogging(prevSettings);
+csTools.enableLogging(prevSettings);
 ```
 
 As this is based on the wonderful `debug` library, you can also enable/disable
-the logger when you don't have access to `cornerstoneTools` by using `localStorage`.
+the logger when you don't have access to `csTools` by using `localStorage`.
 
 ```js
 // This will enable all cornerstoneTools logs

@@ -58,12 +58,11 @@ layout: default
           </ul>
         </div>
 
-        <!-- SEGMENTATION TOOLS -->
+        <!-- BRUSH TOOLS -->
         <div class="column">
-          <h4 class="title is-4">Segmentation</h4>
+          <h4 class="title is-4">Brush</h4>
           <ul class="tool-list content">
-            {% for page in site.pages %} {% if page.toolType == 'segmentation'
-            %}
+            {% for page in site.pages %} {% if page.toolType == 'brush' %}
             <li>
               <a class="tool-link" href="{{ page.url | relative_url }}">
                 {{ page.title | escape }}
@@ -81,18 +80,11 @@ layout: default
         <div class="column">
           <h4 class="title is-4">Misc.</h4>
           <ul class="tool-list content">
-            {% for page in site.pages %} {% if page.toolType == 'sync-tool' %}
-            <li>
-              <a class="tool-link" href="{{ page.url | relative_url }}">
-                {{ page.title | escape }}
-              </a>
-            </li>
-            {% endif %} {% endfor %}
             <li>Stack Image Id Synchronization</li>
             <li>Stack Image Position Synchronization</li>
             <li>Pan/Zoom Synchronization</li>
             <li>Update Image Synchronization</li>
-            <li>WWWC Synchronization</li>
+            <li>WWWC Snchronization</li>
             <li>Linking/Unlinking Elements</li>
           </ul>
         </div>
@@ -143,11 +135,6 @@ layout: default
             <li>Hello World</li>
             <li>Seed Points</li>
             <li>Save As...</li>
-            <li>
-              <a href="concepts/cursors">
-                Enable Cursors
-              </a>
-            </li>
           </ul>
         </div>
       </div>

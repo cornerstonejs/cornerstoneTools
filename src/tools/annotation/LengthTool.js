@@ -1,8 +1,16 @@
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import store from '../../store/index.js';
+import language from '../../language.js';
 // State
-import { getToolState } from './../../stateManagement/toolState.js';
+import {
+  getToolState,
+  addToolState,
+  removeToolState,
+} from './../../stateManagement/toolState.js';
+import EVENTS from '../../events.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import { moveNewHandle } from './../../manipulators/index.js';
 // Drawing
 import {
   getNewContext,
@@ -17,6 +25,7 @@ import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import triggerEvent from '../../util/triggerEvent.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -33,10 +42,14 @@ export default class LengthTool extends BaseAnnotationTool {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: lengthCursor,
+      configuration: {
+        suffix: 'cm',
+        shrink: 0,
+      },
     };
 
     super(props, defaultProps);
-
+    this.preventNewMeasurement = false;
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
@@ -118,11 +131,13 @@ export default class LengthTool extends BaseAnnotationTool {
   updateCachedStats(image, element, data) {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
+    const { shrink } = this.configuration;
+
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
-      (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+      (data.handles.end.x - data.handles.start.x - shrink) * (colPixelSpacing || 1);
     const dy =
-      (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+      (data.handles.end.y - data.handles.start.y - shrink) * (rowPixelSpacing || 1);
 
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
@@ -134,7 +149,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const { handleRadius, drawHandlesOnHover, suffix } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -173,7 +188,9 @@ export default class LengthTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (data.active) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         if (!data.handles.textBox.hasMoved) {
           const coords = {
@@ -205,34 +222,43 @@ export default class LengthTool extends BaseAnnotationTool {
           }
         }
 
-        const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+        if (data.length > 0) {
+          const text = textBoxText(
+            data,
+            rowPixelSpacing,
+            colPixelSpacing,
+            suffix
+          );
 
-        drawLinkedTextBox(
-          context,
-          element,
-          data.handles.textBox,
-          text,
-          data.handles,
-          textBoxAnchorPoints,
-          color,
-          lineWidth,
-          xOffset,
-          true
-        );
+          const textColor = toolColors.getTextColor();
+          drawLinkedTextBox(
+            context,
+            element,
+            data.handles.textBox,
+            text,
+            data.handles,
+            textBoxAnchorPoints,
+            textColor,
+            lineWidth,
+            xOffset,
+            true
+          );
+        }
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
+    function textBoxText(data, rowPixelSpacing, colPixelSpacing, suffix) {
       // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = 'mm';
+      let _suffix = suffix;
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
+        _suffix = ' pixels';
       }
 
-      data.unit = suffix;
-
-      return `${data.length.toFixed(2)} ${suffix}`;
+      const length = _suffix === 'mm' ? data.length : data.length / 10;
+      console.log('language:', language);
+      
+      return `${language[store.modules.globalConfiguration.state.language].length} ${length.toFixed(2)}${_suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
@@ -243,5 +269,48 @@ export default class LengthTool extends BaseAnnotationTool {
 
       return [handles.start, midpoint, handles.end];
     }
+  }
+
+  addNewMeasurement(evt, interactionType) {
+    const eventData = evt.detail;
+    const element = eventData.element;
+    const measurementData = this.createNewMeasurement(eventData);
+
+    if (!measurementData) {
+      return;
+    }
+
+    // Associate this data with this imageId so we can render it and manipulate it
+    addToolState(element, this.name, measurementData);
+
+    const toolOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          const eventType = EVENTS.MEASUREMENT_COMPLETED;
+          const eventData = {
+            toolName: this.name,
+            element,
+            measurementData,
+          };
+
+          triggerEvent(element, eventType, eventData);
+          if (!measurementData.length || measurementData.length === 0) {
+            measurementData.visible = false;
+            removeToolState(element, this.name, measurementData);
+          }
+        },
+      },
+      this.options
+    );
+
+    moveNewHandle(
+      eventData,
+      this.name,
+      measurementData,
+      measurementData.handles.end,
+      toolOptions,
+      interactionType
+    );
   }
 }

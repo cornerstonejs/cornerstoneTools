@@ -290,35 +290,56 @@ export default class AngleTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    // Step 1, create start and second middle.
+    const doneMovingEndHandleOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          measurementData.active = false;
+          this.preventNewMeasurement = false;
+          const eventType = EVENTS.MEASUREMENT_COMPLETED;
+          const eventData = {
+            toolType: this.name,
+            element,
+            measurementData,
+          };
+
+          triggerEvent(element, eventType, eventData);
+          external.cornerstone.updateImage(element);
+        },
+      },
+      this.options
+    );
+
+    const doneMovingMiddleHandleOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          measurementData.active = false;
+          measurementData.handles.end.active = true;
+
+          external.cornerstone.updateImage(element);
+
+          moveNewHandle(
+            eventData,
+            this.name,
+            measurementData,
+            measurementData.handles.end,
+            doneMovingEndHandleOptions,
+            interactionType
+          );
+        },
+      },
+      this.options
+    );
+
+    // Step 1, create start and second middle
     moveNewHandle(
       eventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
-      this.options,
-      interactionType,
-      () => {
-        measurementData.active = false;
-        measurementData.handles.end.active = true;
-
-        external.cornerstone.updateImage(element);
-
-        // Step 2, create end.
-        moveNewHandle(
-          eventData,
-          this.name,
-          measurementData,
-          measurementData.handles.end,
-          this.options,
-          interactionType,
-          () => {
-            measurementData.active = false;
-            this.preventNewMeasurement = false;
-            external.cornerstone.updateImage(element);
-          }
-        );
-      }
+      doneMovingMiddleHandleOptions,
+      interactionType
     );
   }
 }

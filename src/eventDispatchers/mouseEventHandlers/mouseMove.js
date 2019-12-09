@@ -23,6 +23,15 @@ export default function(evt) {
   // Set the mouse position incase any tool needs it.
   state.mousePositionImage = currentPoints.image;
 
+  let mouseMoveTools = getInteractiveToolsForElement(element, getters.mouseMoveTools());
+  let activeMouseMoveTools = mouseMoveTools.filter(
+    tool => tool.mode === 'active' && tool.options.isMouseMoveActive
+  );
+  activeMouseMoveTools = activeMouseMoveTools.filter(tool => typeof tool.mouseMoveCallback === 'function');
+  if (activeMouseMoveTools.length > 0) {
+    activeMouseMoveTools[0].mouseMoveCallback(evt);
+  }
+
   // TODO: instead of filtering these for every interaction, we can change our
   // TODO: State's structure to always know these values.
   // Filter out disabled and enabled

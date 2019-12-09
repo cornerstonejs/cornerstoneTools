@@ -103,24 +103,4 @@ describe('eventListeners/wheelEventListener.js', () => {
     // Fire Away!
     localElement.dispatchEvent(new Event('wheel'));
   });
-
-  it('does not emit an `cornerstonetoolsmousewheel` event when scrolling less than one pixel', () => {
-    // Setup
-    const localElement = document.createElement('div');
-    const scrollCloseToZeroPixel = 0.00001;
-    const middleMouseButtonClickedEvent = new WheelEvent('wheel', {
-      deltaY: scrollCloseToZeroPixel,
-    });
-
-    // Assert
-    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
-      expect(false).toBe(true, `Unwanted event fired for ${evt}`);
-    });
-
-    // SUT
-    wheelEventListener.enable(localElement);
-
-    // Fire Away!
-    localElement.dispatchEvent(middleMouseButtonClickedEvent);
-  });
 });

@@ -23,14 +23,7 @@ function wheelEventHandler(evt) {
     return;
   }
 
-  // Prevent triggering MouseWheel events that are not real scroll events:
-  // E.g. when clicking the MiddleMouseWheelButton, a deltaY of 0 is emitted.
-  // See https://github.com/cornerstonejs/cornerstoneTools/issues/935
-  if (evt.deltaY > -1 && evt.deltaY < 1) {
-    return;
-  }
-
-  evt.preventDefault();
+  // evt.preventDefault();
 
   const { pageX, pageY } = evt;
   const startingCoords = external.cornerstone.pageToPixel(
@@ -70,7 +63,7 @@ function wheelEventHandler(evt) {
  */
 function enable(element) {
   disable(element);
-  element.addEventListener('wheel', wheelEventHandler, { passive: false });
+  element.addEventListener('wheel', wheelEventHandler, false);
 }
 
 /**
@@ -82,7 +75,7 @@ function enable(element) {
  * @returns {undefined}
  */
 function disable(element) {
-  element.removeEventListener('wheel', wheelEventHandler, { passive: false });
+  element.removeEventListener('wheel', wheelEventHandler, false);
 }
 
 export default {

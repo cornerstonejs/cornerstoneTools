@@ -55,7 +55,6 @@ export default function(sp, ellipse) {
 
   const mean = sum / count;
   const variance = sumSquared / count - mean * mean;
-
   return {
     count,
     mean,

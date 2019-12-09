@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import { panCursor } from './cursors/index.js';
+import {panCursor} from './cursors/index.js';
 
 /**
  * @public
@@ -11,33 +11,32 @@ import { panCursor } from './cursors/index.js';
  * @extends Tools.Base.BaseTool
  */
 export default class PanTool extends BaseTool {
-  constructor(props = {}) {
+  constructor (props = {}) {
     const defaultProps = {
       name: 'Pan',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: panCursor,
     };
 
-    super(props, defaultProps);
+    super (props, defaultProps);
 
     // Touch
-    this.touchDragCallback = this._dragCallback.bind(this);
+    this.touchDragCallback = this._dragCallback.bind (this);
     // Mouse
-    this.mouseDragCallback = this._dragCallback.bind(this);
+    this.mouseDragCallback = this._dragCallback.bind (this);
   }
 
-  _dragCallback(evt) {
+  _dragCallback (evt) {
     const eventData = evt.detail;
-    const { element, viewport } = eventData;
+    const {element, viewport} = eventData;
+    const translation = this._getTranslation (eventData);
 
-    const translation = this._getTranslation(eventData);
-
-    this._applyTranslation(viewport, translation);
-    external.cornerstone.setViewport(element, viewport);
+    this._applyTranslation (viewport, translation);
+    external.cornerstone.setViewport (element, viewport);
   }
 
-  _getTranslation(eventData) {
-    const { viewport, image, deltaPoints } = eventData;
+  _getTranslation (eventData) {
+    const {viewport, image, deltaPoints} = eventData;
 
     let widthScale = viewport.scale;
     let heightScale = viewport.scale;
@@ -54,7 +53,7 @@ export default class PanTool extends BaseTool {
     };
   }
 
-  _applyTranslation(viewport, translation) {
+  _applyTranslation (viewport, translation) {
     viewport.translation.x += translation.x;
     viewport.translation.y += translation.y;
   }

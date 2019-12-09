@@ -2,12 +2,14 @@ import {
   mouseEventListeners,
   wheelEventListener,
   touchEventListeners,
+  keyboardEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher,
+  keyboardEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import { addToolForElement } from './../addTool.js';
 import {
@@ -16,7 +18,7 @@ import {
   setToolEnabledForElement,
   setToolDisabledForElement,
 } from './../setToolMode.js';
-import store, { getModule } from '../index.js';
+import store from '../index.js';
 import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('internals:addEnabledElement');
@@ -56,19 +58,23 @@ export default function(elementEnabledEvt) {
   imageRenderedEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
 
-  const { configuration } = getModule('globalConfiguration');
-
   // Mouse
-  if (configuration.mouseEnabled) {
+  if (store.modules.globalConfiguration.state.mouseEnabled) {
     mouseEventListeners.enable(enabledElement);
     wheelEventListener.enable(enabledElement);
     mouseToolEventDispatcher.enable(enabledElement);
   }
 
   // Touch
-  if (configuration.touchEnabled) {
+  if (store.modules.globalConfiguration.state.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
+  }
+
+  // Keyboard
+  if (store.modules.globalConfiguration.state.keyboardEnabled) {
+    keyboardEventListeners.enable(enabledElement);
+    keyboardEventDispatcher.enable(enabledElement);
   }
 
   // State
@@ -117,9 +123,7 @@ function _initModulesOnElement(enabledElement) {
  * @returns {void}
  */
 function _addGlobalToolsToElement(enabledElement) {
-  const { configuration } = getModule('globalConfiguration');
-
-  if (!configuration.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
 
@@ -139,9 +143,7 @@ function _addGlobalToolsToElement(enabledElement) {
  * @returns {void}
  */
 function _repeatGlobalToolHistory(enabledElement) {
-  const { configuration } = getModule('globalConfiguration');
-
-  if (!configuration.globalToolSyncEnabled) {
+  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
     return;
   }
 

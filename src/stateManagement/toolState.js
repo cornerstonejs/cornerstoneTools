@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
+import { state } from '../store/index.js';
 
 /**
  * Returns the toolstate for a specific element.
@@ -138,6 +139,29 @@ function setElementToolStateManager(element, toolStateManager) {
   enabledElement.toolStateManager = toolStateManager;
 }
 
+function deleteToolData (evt) { 
+  const coords = evt.detail.currentPoints.canvas;
+  const element = evt.detail.element;
+  
+  state.tools.forEach(function(tool) {
+    const toolState = getToolState(element, tool.name);
+
+    if (toolState) {
+      // Modifying in a foreach? Probably not ideal
+      toolState.data.forEach(function(data) {
+        if (
+          typeof tool.pointNearTool === 'function' &&
+          tool.pointNearTool(element, data, coords)
+        ) {
+            removeToolState(element, tool.name, data);
+            // Refresh the canvas
+            external.cornerstone.updateImage(element);
+        }
+      });
+    }
+  });
+}
+
 export {
   addToolState,
   getToolState,
@@ -145,4 +169,5 @@ export {
   clearToolState,
   setElementToolStateManager,
   getElementToolStateManager,
+  deleteToolData,
 };

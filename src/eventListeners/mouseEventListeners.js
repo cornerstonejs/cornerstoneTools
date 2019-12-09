@@ -30,7 +30,7 @@ function getEventButtons(event) {
       return 2;
   }
 
-  return 0;
+  return event.which;
 }
 
 function preventClickHandler() {
@@ -141,6 +141,9 @@ function mouseDown(e) {
   }
 
   function onMouseMove(e) {
+    if (element.clientHeight <= 0) {
+      return;
+    }
     // Calculate our current points in page and image coordinates
     const eventType = EVENTS.MOUSE_DRAG;
     const currentPoints = {
@@ -262,16 +265,16 @@ function mouseDown(e) {
 
     triggerEvent(eventData.element, eventType, eventData);
 
-    document.removeEventListener('mousemove', onMouseMove);
-    document.removeEventListener('mouseup', onMouseUp);
+    element.removeEventListener('mousemove', onMouseMove);
+    element.removeEventListener('mouseup', onMouseUp);
 
     element.addEventListener('mousemove', mouseMove);
 
     isClickEvent = true;
   }
 
-  document.addEventListener('mousemove', onMouseMove);
-  document.addEventListener('mouseup', onMouseUp);
+  element.addEventListener('mousemove', onMouseMove);
+  element.addEventListener('mouseup', onMouseUp);
 }
 
 function mouseMove(e) {

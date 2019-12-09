@@ -4,17 +4,22 @@ Once you have an appropriate base class chosen (we will use the `BaseTool` in th
 
 ### Class Definition
 
-By convention the class name should be in PascalCase, and suffixed with `Tool`.
-For example we shall call our wonderful tool `HelloWorldTool`:
+By convention the class name should be in PascalCase, and suffixed with:
+
+- `Tool` - If it supports both `mouse` and `touch` input.
+- `MouseTool` - If it only supports `mouse` input.
+- `TouchTool` - If it only supports `touch` input.
+
+For example, our example is going to support mouse, so we shall call it the `HelloWorldMouseTool`:
 
 ```js
 import csTools from 'cornerstone-tools';
-const BaseTool = csTools.importInternal('base/BaseTool');
+const BaseTool = csTools.import('base/BaseTool');
 // NOTE: if you're creating a tool inside the CornerstoneTools repository
 // you can import BaseTool directly from `src/tools/base`.
 
-export default class HelloWorldTool extends BaseTool {
-  constructor(name = 'HelloWorld') {
+export default class HelloWorldMouseTool extends BaseTool {
+  constructor(name = 'HelloWorldMouse') {
     super({
       name,
       supportedInteractionTypes: ['Mouse'],

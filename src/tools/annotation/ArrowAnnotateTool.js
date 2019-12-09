@@ -30,6 +30,7 @@ import { arrowAnnotateCursor } from '../cursors/index.js';
  * @classdesc Create and position an arrow and label
  * @extends Tools.Base.BaseAnnotationTool
  */
+
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
   constructor(props = {}) {
     const defaultProps = {
@@ -38,15 +39,16 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       configuration: {
         getTextCallback,
         changeTextCallback,
-        drawHandles: false,
+        drawHandles: true,
         drawHandlesOnHover: true,
-        arrowFirst: true,
+        arrowFirst: false,
       },
       svgCursor: arrowAnnotateCursor,
     };
 
     super(props, defaultProps);
     this.preventNewMeasurement = false;
+    this.doubleClickCallback = this.doubleClickCallback.bind(this);
   }
 
   createNewMeasurement(evt) {
@@ -91,8 +93,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
-  updateCachedStats() {
-    // Implementing to satisfy BaseAnnotationTool
+  updateCachedStats(image, element, data) {
+    // No stats calculation for this tool
   }
 
   renderToolData(evt) {
@@ -159,7 +161,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        if (this.configuration.drawHandles) {
+        if (data.active && this.configuration.drawHandles) {
           drawHandles(context, evt.detail, data.handles, handleOptions);
         }
 
@@ -214,7 +216,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             text,
             data.handles,
             textBoxAnchorPoints,
-            color,
+            toolColors.getTextColor(),
             lineWidth,
             0,
             false
@@ -245,38 +247,65 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
+    const toolOptions = Object.assign(
+      {},
+      {
+        doneMovingCallback: () => {
+          const annotationLength = dist2(
+            measurementData.handles.start,
+            measurementData.handles.end
+          );
+          if (measurementData.text === undefined) {
+            if (annotationLength > 10) {
+              this.configuration.getTextCallback(text => {
+                measurementData.active = false;
+
+                if (text) {
+                  measurementData.text = text;
+                  const eventType = EVENTS.MEASUREMENT_COMPLETED;
+                  const eventData = {
+                    toolName: this.name,
+                    element,
+                    measurementData,
+                  };
+
+                  triggerEvent(element, eventType, eventData);
+                } else {
+                  removeToolState(element, this.name, measurementData);
+                }
+
+                external.cornerstone.updateImage(element);
+              });
+            } else {
+              measurementData.visible = false;
+              removeToolState(element, this.name, measurementData);
+            }
+          }
+
+          external.cornerstone.updateImage(element);
+        },
+      },
+      this.options
+    );
+
     moveNewHandle(
       evt.detail,
       this.name,
       measurementData,
       measurementData.handles.end,
-      this.options,
-      interactionType,
-      () => {
-        if (measurementData.text === undefined) {
-          this.configuration.getTextCallback(text => {
-            if (text) {
-              measurementData.text = text;
-            } else {
-              removeToolState(element, this.name, measurementData);
-            }
-
-            measurementData.active = false;
-            external.cornerstone.updateImage(element);
-
-            triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
-              toolType: this.name,
-              element,
-              measurementData,
-            });
-          }, evt.detail);
-        }
-        external.cornerstone.updateImage(element);
-      }
+      toolOptions,
+      interactionType
     );
   }
 
   doubleClickCallback(evt) {
+    if (
+      !Array.isArray(this.options.mouseButtonMask) ||
+      !this.options.mouseButtonMask.includes(evt.detail.buttons)
+    ) {
+      return;
+    }
+
     return this._updateTextForNearbyAnnotation(evt);
   }
 
@@ -302,7 +331,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       ) {
         data.active = true;
         external.cornerstone.updateImage(element);
-
         // Allow relabelling via a callback
         this.configuration.changeTextCallback(
           data,
@@ -319,28 +347,30 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
+  _doneChangingTextCallback(element, data, updatedText, deleteTool) {
     if (deleteTool === true) {
-      removeToolState(element, this.name, measurementData);
+      removeToolState(element, this.name, data);
     } else {
-      measurementData.text = updatedText;
+      data.text = updatedText;
     }
 
-    measurementData.active = false;
+    data.active = false;
     external.cornerstone.updateImage(element);
-
-    triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
-      toolType: this.name,
-      element,
-      measurementData,
-    });
   }
 }
 
+function dist2(v, w) {
+  const sqr = x => {
+    return x * x;
+  };
+
+  return sqr(v.x - w.x) + sqr(v.y - w.y);
+}
+
 function getTextCallback(doneChangingTextCallback) {
-  doneChangingTextCallback(prompt('Enter your annotation:'));
+  doneChangingTextCallback(prompt('请输入注释:'));
 }
 
 function changeTextCallback(data, eventData, doneChangingTextCallback) {
-  doneChangingTextCallback(prompt('Change your annotation:'));
+  doneChangingTextCallback(prompt('请修改注释:'));
 }

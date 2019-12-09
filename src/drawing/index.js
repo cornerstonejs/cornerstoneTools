@@ -15,6 +15,7 @@
 
 import draw from './draw.js';
 import drawArrow from './drawArrow.js';
+import drawArea from './drawArea.js';
 import drawCircle from './drawCircle.js';
 import drawEllipse from './drawEllipse.js';
 import drawHandles from './drawHandles.js';
@@ -38,6 +39,7 @@ import resetCanvasContextTransform from './resetCanvasContextTransform.js';
 export {
   draw,
   drawArrow,
+  drawArea,
   drawCircle,
   drawEllipse,
   drawHandles,

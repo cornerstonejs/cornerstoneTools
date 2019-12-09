@@ -48,27 +48,28 @@ export default class WwwcTool extends BaseTool {
  * @param {Object} { orienttion }
  * @returns {void}
  */
-function basicLevelingStrategy(evt) {
-  const { orientation } = this.configuration;
+function basicLevelingStrategy(evt, { orientation }) {
   const eventData = evt.detail;
+  const deltaX = eventData.deltaPoints.page.x;
+  const deltaY = eventData.deltaPoints.page.y;
 
-  const maxVOI =
-    eventData.image.maxPixelValue * eventData.image.slope +
-    eventData.image.intercept;
-  const minVOI =
-    eventData.image.minPixelValue * eventData.image.slope +
-    eventData.image.intercept;
-  const imageDynamicRange = maxVOI - minVOI;
-  const multiplier = imageDynamicRange / 1024;
-
-  const deltaX = eventData.deltaPoints.page.x * multiplier;
-  const deltaY = eventData.deltaPoints.page.y * multiplier;
-
-  if (orientation === 0) {
-    eventData.viewport.voi.windowWidth += deltaX;
-    eventData.viewport.voi.windowCenter += deltaY;
-  } else {
-    eventData.viewport.voi.windowWidth += deltaY;
-    eventData.viewport.voi.windowCenter += deltaX;
-  }
+  eventData.viewport.voi.windowWidth = formatWindowLevelValue(eventData.viewport.voi.windowWidth + deltaX);
+  eventData.viewport.voi.windowCenter = formatWindowLevelValue(eventData.viewport.voi.windowCenter - deltaY);
 }
+
+const WindowLevelValue = {
+  VALUE_MAX: 9999,
+  VALUE_MIN: -9999,
+};
+
+const formatWindowLevelValue = function(val) {
+  if (val > WindowLevelValue.VALUE_MAX) {
+    return WindowLevelValue.VALUE_MAX;
+  }
+
+  if (val < WindowLevelValue.VALUE_MIN) {
+    return WindowLevelValue.VALUE_MIN;
+  }
+  return val;
+};
+  

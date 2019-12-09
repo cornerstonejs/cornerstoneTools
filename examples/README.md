@@ -116,22 +116,3 @@ The example's dependencies are specified in [`/examples/includes/head.html`](htt
 _How do I make things prettier?_
 
 We currently include [bulma](https://bulma.io/documentation/), a CSS framework, to add a few classes to make styling easier. Please reference their documentation if you would like to leverage styling.
-
-## Developing the examples with Jerkyll without installing Ruby/Gems
-
-Serve the page with autoreload in docker:
-```
-docker run --rm -it --volume="$PWD:/srv/jekyll" -p 4000:4000 jekyll/jekyll:3.8.5 jekyll serve --watch
-```
-Go to localhost:4000
-
-Explanation:
-```
-docker run
---rm                          # Automatically remove the container when it exits
--it                           # Makes the logs from inside the container visible in your comandline
---volume="$PWD:/srv/jekyll"   # Takes the current folder and maps it to the container
--p 4000:4000                  # Fowards the port 4000 to localhost:4000
-jekyll/jekyll:3.8.5           # Which docker image to use
-jekyll serve --watch          # Command to run inside the container
-```

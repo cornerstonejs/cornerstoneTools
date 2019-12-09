@@ -12,7 +12,7 @@ const globalConfiguration = modules.globalConfiguration;
  * @returns {void}
  */
 function setToolCursor(element, svgCursor) {
-  if (!globalConfiguration.configuration.showSVGCursors) {
+  if (!globalConfiguration.state.showSVGCursors) {
     return;
   }
   // TODO: (state vs options) Exit if cursor wasn't updated
@@ -34,7 +34,7 @@ function resetToolCursor(element) {
 }
 
 function hideToolCursor(element) {
-  if (!globalConfiguration.configuration.showSVGCursors) {
+  if (!globalConfiguration.state.showSVGCursors) {
     return;
   }
 

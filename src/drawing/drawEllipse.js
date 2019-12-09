@@ -54,10 +54,7 @@ export default function(
   const xMin = Math.min(corner1.x, corner2.x);
   const yMin = Math.min(corner1.y, corner2.y);
 
-  let center = {
-    x: xMin + w / 2,
-    y: yMin + h / 2,
-  };
+  let center = { x: xMin + w / 2, y: yMin + h / 2 };
 
   if (Math.abs(rotation) > 0.05) {
     center = rotatePoint(center, centerPoint, rotation);
