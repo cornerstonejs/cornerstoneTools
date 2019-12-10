@@ -43,9 +43,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       name: 'CircleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: circleRoiCursor,
-      configuration: {
-        drawHandles: true,
-      },
     };
 
     super(props, defaultProps);
@@ -224,9 +221,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           'pixel'
         );
 
-        if (this.configuration.drawHandles) {
-          drawHandles(context, eventData, data.handles, handleOptions);
-        }
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
         if (data.invalidated === true) {
