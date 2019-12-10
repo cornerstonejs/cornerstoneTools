@@ -65,7 +65,7 @@ export default class FreehandRoiSculptorTool extends BaseTool {
       return false;
     }
 
-    if (this._active) {
+    if (this._active && this.configuration.drawHandles) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
         color: this.configuration.dragColor,
@@ -73,14 +73,12 @@ export default class FreehandRoiSculptorTool extends BaseTool {
         handleRadius: this._toolSizeCanvas,
       };
 
-      if (this.configuration.drawHandles) {
-        drawHandles(
-          context,
-          eventData,
-          this.configuration.mouseLocation.handles,
-          options
-        );
-      }
+      drawHandles(
+        context,
+        eventData,
+        this.configuration.mouseLocation.handles,
+        options
+      );
     } else if (this.configuration.showCursorOnHover && !this._recentTouchEnd) {
       this._renderHoverCursor(evt);
     }
