@@ -45,7 +45,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       name: 'EllipticalRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        drawHandles: true,
         // showMinMax: false,
         // showHounsfieldUnits: true,
       },
@@ -222,10 +221,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
-
-        if (this.configuration.drawHandles) {
-          drawHandles(context, eventData, data.handles, handleOptions);
-        }
+        drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats
         if (data.invalidated === true) {
