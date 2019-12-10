@@ -50,18 +50,12 @@ export default class FreehandRoiSculptorTool extends BaseTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-
-    if (this.configuration.currentTool === null) {
-      return false;
-    }
-
     const element = eventData.element;
     const config = this.configuration;
-
     const toolState = getToolState(element, this.referencedToolName);
-    const data = toolState.data[config.currentTool];
+    const toolData = toolState.data[config.currentTool];
 
-    if (!data) {
+    if (this.configuration.currentTool === null || !toolData) {
       return false;
     }
 
