@@ -50,16 +50,22 @@ export default class FreehandRoiSculptorTool extends BaseTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const element = eventData.element;
-    const config = this.configuration;
-    const toolState = getToolState(element, this.referencedToolName);
-    const toolData = toolState.data[config.currentTool];
 
-    if (this.configuration.currentTool === null || !toolData) {
+    if (this.configuration.currentTool === null) {
       return false;
     }
 
-    if (this._active && this.configuration.drawHandles) {
+    const element = eventData.element;
+    const config = this.configuration;
+
+    const toolState = getToolState(element, this.referencedToolName);
+    const data = toolState.data[config.currentTool];
+
+    if (!data) {
+      return false;
+    }
+
+    if (this._active) {
       const context = eventData.canvasContext.canvas.getContext('2d');
       const options = {
         color: this.configuration.dragColor,
@@ -246,14 +252,12 @@ export default class FreehandRoiSculptorTool extends BaseTool {
       handleRadius: radiusCanvas,
     };
 
-    if (this.configuration.drawHandles) {
-      drawHandles(
-        context,
-        eventData,
-        this.configuration.mouseLocation.handles,
-        options
-      );
-    }
+    drawHandles(
+      context,
+      eventData,
+      this.configuration.mouseLocation.handles,
+      options
+    );
 
     if (this.configuration.limitRadiusOutsideRegion) {
       context.globalAlpha = 1.0; // Reset drawing alpha for other draw calls.
@@ -1242,7 +1246,6 @@ function getDefaultFreehandRoiSculptorToolConfiguration() {
     currentTool: null,
     dragColor: toolColors.getActiveColor(),
     hoverColor: toolColors.getToolColor(),
-    drawHandles: true,
 
     /* --- Hover options ---
     showCursorOnHover:        Shows a preview of the sculpting radius on hover.
