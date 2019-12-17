@@ -67,8 +67,6 @@ export default class Contour extends BaseBrushTool {
       external.cornerstone.updateImage(cache.evt.detail.element);
     }, 1000);
     this.touchDragCallback = this._paint.bind(this);
-
-    setTimeout(this._doStaff, 3000);
   }
 
   /**
@@ -84,8 +82,6 @@ export default class Contour extends BaseBrushTool {
     const { rows, columns } = eventData.image;
     const { x, y } = eventData.currentPoints.image;
 
-    // this.pixelsArray.push({ x, y });
-    // console.log(`[x, y]: [${x}, ${y}]`);
     this.sendToServer();
 
     if (x < 0 || x > columns || y < 0 || y > rows) {
@@ -102,7 +98,6 @@ export default class Contour extends BaseBrushTool {
     cache.pixelData = labelmap2D.pixelData;
     cache.activeSegmentIndex = labelmap3D.activeSegmentIndex;
     cache.columns = columns;
-    console.log(shouldErase);
 
     // Draw / Erase the active color.
     drawBrushPixels(
