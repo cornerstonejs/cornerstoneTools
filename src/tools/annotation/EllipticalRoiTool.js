@@ -65,6 +65,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.roi = roi;
   }
 
+  setPassiveRoi(roi) {
+    this.passiveRoi = roi;
+  }
+
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
@@ -219,7 +223,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         setShadow(context, this.configuration);
 
-        const lineWidth = this.isOnCurrentRoi(data) ? 5 : 3;
+        const lineWidth =
+          this.isOnCurrentRoi(data) || this.isOnPassiveRoi(data) ? 5 : 3;
 
         // Draw
         drawEllipse(
@@ -294,6 +299,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
   isOnCurrentRoi(data) {
     return this.roi && this.roi.id === data.roi.id;
+  }
+
+  isOnPassiveRoi(data) {
+    return this.passiveRoi && this.passiveRoi.id === data.roi.id;
   }
 
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
