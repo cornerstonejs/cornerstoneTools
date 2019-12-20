@@ -219,6 +219,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         setShadow(context, this.configuration);
 
+        const lineWidth = this.isOnCurrentRoi(data) ? 4 : 2;
+
         // Draw
         drawEllipse(
           context,
@@ -227,6 +229,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.handles.end,
           {
             color,
+            lineWidth,
           },
           'pixel',
           data.handles.initialRotation
