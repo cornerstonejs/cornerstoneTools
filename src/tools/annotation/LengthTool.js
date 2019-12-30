@@ -33,6 +33,9 @@ export default class LengthTool extends BaseAnnotationTool {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: lengthCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -173,7 +176,9 @@ export default class LengthTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         if (!data.handles.textBox.hasMoved) {
           const coords = {
