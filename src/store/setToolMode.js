@@ -256,6 +256,8 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   tool.mode = mode;
   tool.mergeOptions(options);
 
+  console.log(`Set ${toolName} mode: ${mode}`);
+
   // Call tool's hook for this event, if one exists
   if (tool[`${mode}Callback`]) {
     tool[`${mode}Callback`](element, options);
