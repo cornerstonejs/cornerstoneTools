@@ -65,7 +65,10 @@ export default function(synchronizer, sourceElement, targetElement) {
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
     // Console.log(index + '=' + distance);
 
-    if (distance < minDistance) {
+    if (
+      distance < minDistance &&
+      comparePlane(sourceImagePosition, imagePosition)
+    ) {
       minDistance = distance;
       newImageIdIndex = index;
     }
@@ -122,3 +125,19 @@ export default function(synchronizer, sourceElement, targetElement) {
     );
   }
 }
+
+const minValue = 0.001;
+const comparePlane = (vector1, vector2) => {
+  const k0 = vector1.getComponent(0) / vector2.getComponent(0);
+  const k1 = vector1.getComponent(1) / vector2.getComponent(1);
+  const k2 = vector1.getComponent(2) / vector2.getComponent(2);
+
+  if (
+    Math.abs(k0 - k1) <= minValue &&
+    Math.abs(k0 - k2) <= minValue &&
+    Math.abs(k1 - k2) <= minValue
+  )
+    return true;
+
+  return false;
+};

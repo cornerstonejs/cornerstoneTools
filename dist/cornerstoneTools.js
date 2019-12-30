@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.7.1-m - 2019-11-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.0.1 - 2019-12-30 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "d2b926e334f8bd241a64";
+/******/ 	var hotCurrentHash = "5f5c5ba582e6ab644a37";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -15810,7 +15810,7 @@ __webpack_require__.r(__webpack_exports__);
     var imagePosition = Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imagePlane.imagePositionPatient);
     var distance = imagePosition.distanceToSquared(sourceImagePosition); // Console.log(index + '=' + distance);
 
-    if (distance < minDistance) {
+    if (distance < minDistance && comparePlane(sourceImagePosition, imagePosition)) {
       minDistance = distance;
       newImageIdIndex = index;
     }
@@ -15860,6 +15860,15 @@ __webpack_require__.r(__webpack_exports__);
     });
   }
 });
+var minValue = 0.001;
+
+var comparePlane = function comparePlane(vector1, vector2) {
+  var k0 = vector1.getComponent(0) / vector2.getComponent(0);
+  var k1 = vector1.getComponent(1) / vector2.getComponent(1);
+  var k2 = vector1.getComponent(2) / vector2.getComponent(2);
+  if (Math.abs(k0 - k1) <= minValue && Math.abs(k0 - k2) <= minValue && Math.abs(k1 - k2) <= minValue) return true;
+  return false;
+};
 
 /***/ }),
 
@@ -16500,11 +16509,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../stateManagement/loadHandlerManager.js */ "./stateManagement/loadHandlerManager.js");
 /* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 /* harmony import */ var _util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../util/convertToVector3.js */ "./util/convertToVector3.js");
-/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
-/* harmony import */ var _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../util/pointProjector.js */ "./util/pointProjector.js");
-/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./../externalModules.js */ "./externalModules.js");
-/* harmony import */ var _base_BaseTool_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./base/BaseTool.js */ "./tools/base/BaseTool.js");
-/* harmony import */ var _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./cursors/index.js */ "./tools/cursors/index.js");
+/* harmony import */ var _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/pointProjector.js */ "./util/pointProjector.js");
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./../externalModules.js */ "./externalModules.js");
+/* harmony import */ var _base_BaseTool_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./base/BaseTool.js */ "./tools/base/BaseTool.js");
+/* harmony import */ var _cursors_index_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./cursors/index.js */ "./tools/cursors/index.js");
 
 
 
@@ -16518,8 +16526,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_9__["getLogger"])('tools:CrosshairsTool');
 /**
  * @public
  * @class CrosshairsTool
@@ -16545,7 +16551,7 @@ function (_BaseTool) {
     var defaultProps = {
       name: 'Crosshairs',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["crosshairsCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_12__["crosshairsCursor"]
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(CrosshairsTool).call(this, props, defaultProps));
     _this.eventHandler = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_4___default()(_this));
@@ -16575,9 +16581,9 @@ function (_BaseTool) {
 
 
       var sourceElement = element;
-      var sourceEnabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.getEnabledElement(sourceElement);
+      var sourceEnabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.getEnabledElement(sourceElement);
       var sourceImageId = sourceEnabledElement.image.imageId;
-      var sourceImagePlane = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.metaData.get('imagePlaneModule', sourceImageId);
+      var sourceImagePlane = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.metaData.get('imagePlaneModule', sourceImageId);
 
       if (!sourceImagePlane) {
         return;
@@ -16586,9 +16592,7 @@ function (_BaseTool) {
 
       var sourceImagePoint = eventData.currentPoints.image; // Transfer this to a patientPoint given imagePlane metadata
 
-      var patientPoint = Object(_util_pointProjector_js__WEBPACK_IMPORTED_MODULE_10__["imagePointToPatientPoint"])(sourceImagePoint, sourceImagePlane); // Get the enabled elements associated with this synchronization context
-      // const syncContext = toolData.data[0].synchronizationContext;
-      // const enabledElements = syncContext.getSourceElements();
+      var patientPoint = Object(_util_pointProjector_js__WEBPACK_IMPORTED_MODULE_9__["imagePointToPatientPoint"])(sourceImagePoint, sourceImagePlane); // Get the enabled elements associated with this synchronization context
 
       var enabledElements = synchronizationContext.getSourceElements(); // Iterate over each synchronized element
 
@@ -16609,7 +16613,7 @@ function (_BaseTool) {
         var stackData = stackToolDataSource.data[0]; // Find within the element's stack the closest image plane to selected location
 
         stackData.imageIds.forEach(function (imageId, index) {
-          var imagePlane = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.metaData.get('imagePlaneModule', imageId); // Skip if the image plane is not ready
+          var imagePlane = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.metaData.get('imagePlaneModule', imageId); // Skip if the image plane is not ready
 
           if (!imagePlane || !imagePlane.imagePositionPatient || !imagePlane.rowCosines || !imagePlane.columnCosines) {
             return;
@@ -16644,15 +16648,15 @@ function (_BaseTool) {
           var loader;
 
           if (stackData.preventCache === true) {
-            loader = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
+            loader = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.loadImage(stackData.imageIds[newImageIdIndex]);
           } else {
-            loader = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
+            loader = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.loadAndCacheImage(stackData.imageIds[newImageIdIndex]);
           }
 
           loader.then(function (image) {
-            var viewport = _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.getViewport(targetElement);
+            var viewport = _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.getViewport(targetElement);
             stackData.currentImageIdIndex = newImageIdIndex;
-            _externalModules_js__WEBPACK_IMPORTED_MODULE_11__["default"].cornerstone.displayImage(targetElement, image, viewport);
+            _externalModules_js__WEBPACK_IMPORTED_MODULE_10__["default"].cornerstone.displayImage(targetElement, image, viewport);
 
             if (endLoadingHandler) {
               endLoadingHandler(targetElement, image);
@@ -16670,7 +16674,7 @@ function (_BaseTool) {
   }]);
 
   return CrosshairsTool;
-}(_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_12__["default"]);
+}(_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_11__["default"]);
 
 
 
@@ -19333,7 +19337,6 @@ function (_BaseTool) {
   _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(RotateTool, [{
     key: "postTouchStartCallback",
     value: function postTouchStartCallback(evt) {
-      console.log('rotate tool post touch start', evt);
       this.initialRotation = evt.detail.viewport.rotation;
     }
   }, {
@@ -19349,7 +19352,6 @@ function (_BaseTool) {
   }, {
     key: "postMouseDownCallback",
     value: function postMouseDownCallback(evt) {
-      console.log('rotate tool post mouse down', evt);
       this.initialRotation = evt.detail.viewport.rotation;
     }
   }, {
@@ -19370,8 +19372,7 @@ function defaultStrategy(evt) {
   var eventData = evt.detail;
   var element = eventData.element,
       viewport = eventData.viewport;
-  var initialRotation = viewport.initialRotation ? viewport.initialRotation : 0;
-  console.log('initial rotation', initialRotation, viewport.initialRotation); // Calculate the center of the image
+  var initialRotation = viewport.initialRotation ? viewport.initialRotation : 0; // Calculate the center of the image
 
   var rect = element.getBoundingClientRect(element);
   var width = element.clientWidth,
@@ -37065,7 +37066,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.7.1-m');
+/* harmony default export */ __webpack_exports__["default"] = ('4.0.1');
 
 /***/ })
 
