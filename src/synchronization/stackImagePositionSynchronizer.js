@@ -131,10 +131,13 @@ export default function(synchronizer, sourceElement, targetElement) {
 
 const minValue = 0.001;
 const comparePlane = (vector1, vector2) => {
+  console.log('compare 2 vector');
+  console.table(vector1, vector2);
   const k0 = vector1.getComponent(0) / vector2.getComponent(0);
   const k1 = vector1.getComponent(1) / vector2.getComponent(1);
   const k2 = vector1.getComponent(2) / vector2.getComponent(2);
-
+  console.table(k0, k1, k2);
+  console.table(Math.abs(k0 - k1), Math.abs(k0 - k2), Math.abs(k1 - k2));
   if (
     Math.abs(k0 - k1) <= minValue &&
     Math.abs(k0 - k2) <= minValue &&
