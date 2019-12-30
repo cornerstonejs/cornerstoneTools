@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "5f5c5ba582e6ab644a37";
+/******/ 	var hotCurrentHash = "d3fd093e1c7dcd0c75ca";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -15816,7 +15816,7 @@ __webpack_require__.r(__webpack_exports__);
     }
   });
 
-  if (newImageIdIndex === stackData.currentImageIdIndex) {
+  if (newImageIdIndex === stackData.currentImageIdIndex || newImageIdIndex === -1) {
     return;
   }
 
@@ -21117,7 +21117,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_17__["angleCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_17__["angleCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(AngleTool).call(this, props, defaultProps));
     _this.preventNewMeasurement = false;
@@ -21251,7 +21254,11 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_14__["default"])(context, eventData, data.handles, handleOptions); // Update textbox stats
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_14__["default"])(context, eventData, data.handles, handleOptions);
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.rAngle) {
@@ -21797,6 +21804,7 @@ function (_BaseAnnotationTool) {
         getMeasurementLocationCallback: emptyLocationCallback,
         textBox: '',
         shadow: '',
+        drawHandles: true,
         drawHandlesOnHover: true,
         additionalData: []
       },
@@ -22347,7 +22355,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_18__["cobbAngleCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_18__["cobbAngleCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(CobbAngleTool).call(this, props, defaultProps));
     _this.hasIncomplete = false;
@@ -22491,7 +22502,11 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_13__["default"])(context, eventData, data.handles, handleOptions); // Draw the text
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_13__["default"])(context, eventData, data.handles, handleOptions);
+          } // Draw the text
+
 
           context.fillStyle = color;
           var text = data.value;
@@ -23522,22 +23537,35 @@ function (_BaseAnnotationTool) {
           if (config.alwaysShowHandles || data.active && data.polyBoundingBox) {
             // Render all handles
             options.handleRadius = config.activeHandleRadius;
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, data.handles.points, options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, data.handles.points, options);
+            }
           }
 
           if (data.canComplete) {
             // Draw large handle at the origin if can complete drawing
             options.handleRadius = config.completeHandleRadius;
             var handle = data.handles.points[0];
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [handle], options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [handle], options);
+            }
           }
 
           if (data.active && !data.polyBoundingBox) {
             // Draw handle at origin and at mouse if actively drawing
             options.handleRadius = config.activeHandleRadius;
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, config.mouseLocation.handles, options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, config.mouseLocation.handles, options);
+            }
+
             var firstHandle = data.handles.points[0];
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [firstHandle], options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [firstHandle], options);
+            }
           } // Update textbox stats
 
 
@@ -24846,7 +24874,8 @@ function defaultFreehandConfiguration() {
     alwaysShowHandles: false,
     invalidColor: 'crimson',
     currentHandle: 0,
-    currentTool: -1
+    currentTool: -1,
+    drawHandles: true
   };
 }
 
@@ -24933,7 +24962,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["lengthCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["lengthCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(LengthTool).call(this, props, defaultProps));
     _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_16__["default"])(_this.updateCachedStats, 110);
@@ -25071,7 +25103,10 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, eventData, data.handles, handleOptions);
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, eventData, data.handles, handleOptions);
+          }
 
           if (!data.handles.textBox.hasMoved) {
             var coords = {
@@ -25220,7 +25255,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["probeCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["probeCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(ProbeTool).call(this, props, defaultProps));
     _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_17__["default"])(_this.updateCachedStats, 110);
@@ -25329,12 +25367,16 @@ function (_BaseAnnotationTool) {
         }
 
         Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["draw"])(context, function (context) {
-          var color = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_9__["default"].getColorIfActive(data); // Draw the handles
+          var color = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_9__["default"].getColorIfActive(data);
 
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_12__["default"])(context, eventData, data.handles, {
-            handleRadius: handleRadius,
-            color: color
-          }); // Update textbox stats
+          if (_this2.configuration.drawHandles) {
+            // Draw the handles
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_12__["default"])(context, eventData, data.handles, {
+              handleRadius: handleRadius,
+              color: color
+            });
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.cachedStats) {
@@ -25474,8 +25516,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {// showMinMax: false,
+      configuration: {
+        drawHandles: true // showMinMax: false,
         // showHounsfieldUnits: true
+
       },
       svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["rectangleRoiCursor"]
     };
@@ -25612,7 +25656,11 @@ function (_BaseAnnotationTool) {
           Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawRect"])(context, element, data.handles.start, data.handles.end, {
             color: color
           }, 'pixel', data.handles.initialRotation);
-          Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawHandles"])(context, eventData, data.handles, handleOptions); // Update textbox stats
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawHandles"])(context, eventData, data.handles, handleOptions);
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.cachedStats) {
@@ -27792,9 +27840,12 @@ __webpack_require__.r(__webpack_exports__);
         drawHandlesIfActive: drawHandlesOnHover
       }; // Draw the handles
 
-      Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, eventData, data.handles, handleOptions); // Draw the textbox
+      if (_this.configuration.drawHandles) {
+        Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, eventData, data.handles, handleOptions);
+      } // Draw the textbox
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
+
 
       var xOffset = 10;
 

@@ -74,7 +74,10 @@ export default function(synchronizer, sourceElement, targetElement) {
     }
   });
 
-  if (newImageIdIndex === stackData.currentImageIdIndex) {
+  if (
+    newImageIdIndex === stackData.currentImageIdIndex ||
+    newImageIdIndex === -1
+  ) {
     return;
   }
 
