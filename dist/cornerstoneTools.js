@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "d3fd093e1c7dcd0c75ca";
+/******/ 	var hotCurrentHash = "240a294f7483cf071d5b";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -15863,9 +15863,13 @@ __webpack_require__.r(__webpack_exports__);
 var minValue = 0.001;
 
 var comparePlane = function comparePlane(vector1, vector2) {
+  console.log('compare 2 vector');
+  console.table(vector1, vector2);
   var k0 = vector1.getComponent(0) / vector2.getComponent(0);
   var k1 = vector1.getComponent(1) / vector2.getComponent(1);
   var k2 = vector1.getComponent(2) / vector2.getComponent(2);
+  console.table(k0, k1, k2);
+  console.table(Math.abs(k0 - k1), Math.abs(k0 - k2), Math.abs(k1 - k2));
   if (Math.abs(k0 - k1) <= minValue && Math.abs(k0 - k2) <= minValue && Math.abs(k1 - k2) <= minValue) return true;
   return false;
 };
