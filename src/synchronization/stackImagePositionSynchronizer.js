@@ -43,6 +43,10 @@ export default function(synchronizer, sourceElement, targetElement) {
   const sourceImagePosition = convertToVector3(
     sourceImagePlane.imagePositionPatient
   );
+  const sourceImageOrientationPatient = {
+    row: convertToVector3(sourceImagePlane.rowCosines),
+    col: convertToVector3(sourceImagePlane.columnCosines),
+  };
   const stackToolDataSource = getToolState(targetElement, 'stack');
   const stackData = stackToolDataSource.data[0];
 
@@ -62,12 +66,26 @@ export default function(synchronizer, sourceElement, targetElement) {
     }
 
     const imagePosition = convertToVector3(imagePlane.imagePositionPatient);
+    const imageOrientationPatient = {
+      row: convertToVector3(imagePlane.rowCosines),
+      col: convertToVector3(imagePlane.columnCosines),
+    };
     const distance = imagePosition.distanceToSquared(sourceImagePosition);
     // Console.log(index + '=' + distance);
 
+    console.log('compare 2 image', index);
+    console.table([sourceImagePosition, imagePosition, distance]);
+    console.table([sourceImagePlane.sliceLocation, imagePlane.sliceLocation]);
     if (
       distance < minDistance &&
-      comparePlane(sourceImagePosition, imagePosition)
+      comparePlane(
+        sourceImageOrientationPatient.row,
+        imageOrientationPatient.row
+      ) &&
+      comparePlane(
+        sourceImageOrientationPatient.col,
+        imageOrientationPatient.col
+      )
     ) {
       minDistance = distance;
       newImageIdIndex = index;
@@ -129,21 +147,15 @@ export default function(synchronizer, sourceElement, targetElement) {
   }
 }
 
-const minValue = 0.001;
+const minValue = 0.1;
 const comparePlane = (vector1, vector2) => {
-  console.log('compare 2 vector');
-  console.table(vector1, vector2);
-  const k0 = vector1.getComponent(0) / vector2.getComponent(0);
-  const k1 = vector1.getComponent(1) / vector2.getComponent(1);
-  const k2 = vector1.getComponent(2) / vector2.getComponent(2);
-  console.table(k0, k1, k2);
-  console.table(Math.abs(k0 - k1), Math.abs(k0 - k2), Math.abs(k1 - k2));
-  if (
-    Math.abs(k0 - k1) <= minValue &&
-    Math.abs(k0 - k2) <= minValue &&
-    Math.abs(k1 - k2) <= minValue
-  )
-    return true;
+  // console.log('compare 2 vector');
+  // console.table([vector1, vector2]);
+  const k0 = Math.abs(vector1.x - vector2.x);
+  const k1 = Math.abs(vector1.y - vector2.y);
+  const k2 = Math.abs(vector1.z - vector2.z);
 
-  return false;
+  // console.table([k0, k1, k2]);
+
+  return k0 <= minValue && k1 <= minValue && k2 <= minValue;
 };
