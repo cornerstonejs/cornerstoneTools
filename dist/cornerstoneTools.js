@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.0.1 - 2019-12-31 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.0.1 - 2020-01-03 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "cd984bd39a65b6119a02";
+/******/ 	var hotCurrentHash = "bafe81bf44f480e7f314";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -15795,10 +15795,6 @@ __webpack_require__.r(__webpack_exports__);
   }
 
   var sourceImagePosition = Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(sourceImagePlane.imagePositionPatient);
-  var sourceImageOrientationPatient = {
-    row: Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(sourceImagePlane.rowCosines),
-    col: Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(sourceImagePlane.columnCosines)
-  };
   var stackToolDataSource = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_1__["getToolState"])(targetElement, 'stack');
   var stackData = stackToolDataSource.data[0];
   var minDistance = Number.MAX_VALUE;
@@ -15812,23 +15808,15 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     var imagePosition = Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imagePlane.imagePositionPatient);
-    var imageOrientationPatient = {
-      row: Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imagePlane.rowCosines),
-      col: Object(_util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_3__["default"])(imagePlane.columnCosines)
-    };
     var distance = imagePosition.distanceToSquared(sourceImagePosition); // Console.log(index + '=' + distance);
 
-    console.log('compare 2 image', index);
-    console.table([sourceImagePosition, imagePosition, distance]);
-    console.table([sourceImagePlane.sliceLocation, imagePlane.sliceLocation]);
-
-    if (distance < minDistance && comparePlane(sourceImageOrientationPatient.row, imageOrientationPatient.row) && comparePlane(sourceImageOrientationPatient.col, imageOrientationPatient.col)) {
+    if (distance < minDistance) {
       minDistance = distance;
       newImageIdIndex = index;
     }
   });
 
-  if (newImageIdIndex === stackData.currentImageIdIndex || newImageIdIndex === -1) {
+  if (newImageIdIndex === stackData.currentImageIdIndex) {
     return;
   }
 
@@ -15872,17 +15860,6 @@ __webpack_require__.r(__webpack_exports__);
     });
   }
 });
-var minValue = 0.1;
-
-var comparePlane = function comparePlane(vector1, vector2) {
-  // console.log('compare 2 vector');
-  // console.table([vector1, vector2]);
-  var k0 = Math.abs(vector1.x - vector2.x);
-  var k1 = Math.abs(vector1.y - vector2.y);
-  var k2 = Math.abs(vector1.z - vector2.z); // console.table([k0, k1, k2]);
-
-  return k0 <= minValue && k1 <= minValue && k2 <= minValue;
-};
 
 /***/ }),
 
