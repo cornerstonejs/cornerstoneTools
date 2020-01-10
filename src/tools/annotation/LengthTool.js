@@ -40,11 +40,9 @@ export default class LengthTool extends BaseAnnotationTool {
       configuration: {
         // hideTextBox: false,
         // textBoxOnHover: false,
-      },
-      svgCursor: lengthCursor,
-      configuration: {
         drawHandles: true,
       },
+      svgCursor: lengthCursor,
     };
 
     super(props, defaultProps);

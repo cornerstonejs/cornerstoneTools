@@ -38,12 +38,10 @@ export default class ProbeTool extends BaseAnnotationTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         // hideTextBox: false,
-        // textBoxOnHover: false
-      },
-      svgCursor: probeCursor,
-      configuration: {
+        // textBoxOnHover: false,
         drawHandles: true,
       },
+      svgCursor: probeCursor,
     };
 
     super(props, defaultProps);

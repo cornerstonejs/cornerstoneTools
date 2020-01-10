@@ -48,11 +48,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       configuration: {
         // hideTextBox: false,
         // textBoxOnHover: false,
-      },
-      svgCursor: cobbAngleCursor,
-      configuration: {
         drawHandles: true,
       },
+      svgCursor: cobbAngleCursor,
     };
 
     super(props, defaultProps);

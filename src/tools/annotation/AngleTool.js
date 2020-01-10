@@ -54,11 +54,9 @@ export default class AngleTool extends BaseAnnotationTool {
       configuration: {
         // hideTextBox: false,
         // textBoxOnHover: false,
-      },
-      svgCursor: angleCursor,
-      configuration: {
         drawHandles: true,
       },
+      svgCursor: angleCursor,
     };
 
     super(props, defaultProps);
