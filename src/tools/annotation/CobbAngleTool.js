@@ -40,6 +40,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: cobbAngleCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -215,8 +218,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           );
         }
 
-        // Draw the handles
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Draw the text
         context.fillStyle = color;

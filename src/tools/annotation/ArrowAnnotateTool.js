@@ -269,7 +269,13 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
             measurementData.active = false;
             external.cornerstone.updateImage(element);
-          });
+
+            triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+              toolType: this.name,
+              element,
+              measurementData,
+            });
+          }, evt.detail);
         }
         external.cornerstone.updateImage(element);
       }
@@ -302,6 +308,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       ) {
         data.active = true;
         external.cornerstone.updateImage(element);
+
         // Allow relabelling via a callback
         this.configuration.changeTextCallback(
           data,
@@ -318,15 +325,21 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  _doneChangingTextCallback(element, data, updatedText, deleteTool) {
+  _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
     if (deleteTool === true) {
-      removeToolState(element, this.name, data);
+      removeToolState(element, this.name, measurementData);
     } else {
-      data.text = updatedText;
+      measurementData.text = updatedText;
     }
 
-    data.active = false;
+    measurementData.active = false;
     external.cornerstone.updateImage(element);
+
+    triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+      toolType: this.name,
+      element,
+      measurementData,
+    });
   }
 }
 

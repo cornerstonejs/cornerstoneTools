@@ -43,6 +43,9 @@ export default class AngleTool extends BaseAnnotationTool {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: angleCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -206,8 +209,9 @@ export default class AngleTool extends BaseAnnotationTool {
           drawHandlesOnHover,
         };
 
-        // Draw the handles
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {
