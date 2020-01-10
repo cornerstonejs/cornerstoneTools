@@ -50,6 +50,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // textBoxOnHover: false,
       },
       svgCursor: cobbAngleCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -238,7 +241,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Draw the text
         context.fillStyle = color;

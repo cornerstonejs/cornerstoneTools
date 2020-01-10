@@ -2,7 +2,7 @@ import { getModule } from '../../store/index.js';
 import renderSegmentationFill from './renderSegmentationFill';
 import renderSegmentationOutline from './renderSegmentationOutline';
 
-const { configuration } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 /**
  * Renders the segmentation based on the brush configuration and
@@ -50,6 +50,8 @@ export default function renderSegmentation(
  * @returns  {boolean} True if the segmentation should be filled.
  */
 function shouldRenderFill(isActiveLabelMap) {
+  const { configuration } = segmentationModule;
+
   return (
     configuration.renderFill &&
     ((isActiveLabelMap && configuration.fillAlpha !== 0) ||
@@ -65,6 +67,8 @@ function shouldRenderFill(isActiveLabelMap) {
  * @returns  {boolean} True if the segmentation should be outlined.
  */
 function shouldRenderOutline(isActiveLabelMap) {
+  const { configuration } = segmentationModule;
+
   return (
     configuration.renderOutline &&
     ((isActiveLabelMap && configuration.outlineAlpha !== 0) ||

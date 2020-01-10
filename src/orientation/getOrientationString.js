@@ -27,15 +27,29 @@ export default function(vector) {
     Math.abs(vec3.z)
   );
 
+  const MIN = 0.0001;
+
   for (let i = 0; i < 3; i++) {
-    if (abs.x > 0.0001 && abs.x > abs.y && abs.x > abs.z) {
+    if (abs.x > MIN && abs.x > abs.y && abs.x > abs.z) {
       orientation += orientationX;
       abs.x = 0;
-    } else if (abs.y > 0.0001 && abs.y > abs.x && abs.y > abs.z) {
+    } else if (abs.y > MIN && abs.y > abs.x && abs.y > abs.z) {
       orientation += orientationY;
       abs.y = 0;
-    } else if (abs.z > 0.0001 && abs.z > abs.x && abs.z > abs.y) {
+    } else if (abs.z > MIN && abs.z > abs.x && abs.z > abs.y) {
       orientation += orientationZ;
+      abs.z = 0;
+    } else if (abs.x > MIN && abs.y > MIN && abs.x === abs.y) {
+      orientation += orientationX + orientationY;
+      abs.x = 0;
+      abs.y = 0;
+    } else if (abs.x > MIN && abs.z > MIN && abs.x === abs.z) {
+      orientation += orientationX + orientationZ;
+      abs.x = 0;
+      abs.z = 0;
+    } else if (abs.y > MIN && abs.z > MIN && abs.y === abs.z) {
+      orientation += orientationY + orientationZ;
+      abs.y = 0;
       abs.z = 0;
     } else {
       break;

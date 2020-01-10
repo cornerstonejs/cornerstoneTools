@@ -41,6 +41,9 @@ export default class ProbeTool extends BaseAnnotationTool {
         // textBoxOnHover: false
       },
       svgCursor: probeCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -169,11 +172,13 @@ export default class ProbeTool extends BaseAnnotationTool {
       draw(context, context => {
         const color = toolColors.getColorIfActive(data);
 
-        // Draw the handles
-        drawHandles(context, eventData, data.handles, {
-          handleRadius,
-          color,
-        });
+        if (this.configuration.drawHandles) {
+          // Draw the handles
+          drawHandles(context, eventData, data.handles, {
+            handleRadius,
+            color,
+          });
+        }
 
         // Hide TextBox
         if (this.configuration.hideTextBox || data.handles.textBox.hide) {

@@ -30,6 +30,13 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       configuration: {
         // hideTextBox: false,
         // textBoxOnHover: false,
+        changeMeasurementLocationCallback: emptyLocationCallback,
+        getMeasurementLocationCallback: emptyLocationCallback,
+        textBox: '',
+        shadow: '',
+        drawHandles: true,
+        drawHandlesOnHover: true,
+        additionalData: [],
       },
       svgCursor: bidirectionalCursor,
     };

@@ -2,7 +2,6 @@ import getElement from './getElement';
 import { getToolState } from '../../../stateManagement/toolState.js';
 import state from './state';
 import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
-import external from '../../../externalModules';
 import { triggerLabelmapModifiedEvent } from '../../../util/segmentation';
 
 /**

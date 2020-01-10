@@ -8,7 +8,7 @@ import {
   triggerLabelmapModifiedEvent,
 } from '../../util/segmentation';
 
-const { configuration, getters, setters } = getModule('segmentation');
+const segmentationModule = getModule('segmentation');
 
 /**
  * @abstract
@@ -118,6 +118,7 @@ class BaseBrushTool extends BaseTool {
   _startPainting(evt) {
     const eventData = evt.detail;
     const element = eventData.element;
+    const { configuration, getters } = segmentationModule;
 
     const {
       labelmap2D,
@@ -153,6 +154,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   _endPainting(evt) {
+    const { configuration, setters } = segmentationModule;
     const { labelmap2D, currentImageIdIndex } = this.paintEventData;
 
     // Grab the labels on the slice.
@@ -319,6 +321,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   increaseBrushSize() {
+    const { configuration, setters } = segmentationModule;
     const oldRadius = configuration.radius;
     let newRadius = Math.floor(oldRadius * 1.2);
 
@@ -339,6 +342,7 @@ class BaseBrushTool extends BaseTool {
    * @returns {void}
    */
   decreaseBrushSize() {
+    const { configuration, setters } = segmentationModule;
     const oldRadius = configuration.radius;
     const newRadius = Math.floor(oldRadius * 0.8);
 

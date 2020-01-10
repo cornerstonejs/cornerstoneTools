@@ -96,7 +96,9 @@ export default function(evt) {
       };
 
       // Draw the handles
-      drawHandles(context, eventData, data.handles, handleOptions);
+      if (this.configuration.drawHandles) {
+        drawHandles(context, eventData, data.handles, handleOptions);
+      }
 
       // Hide TextBox
       if (this.configuration.hideTextBox || data.handles.textBox.hide) {

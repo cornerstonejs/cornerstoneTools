@@ -44,6 +44,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
+        drawHandles: true,
         // showMinMax: false,
         // showHounsfieldUnits: true,
         // hideTextBox: false,
@@ -220,7 +221,10 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
-        drawHandles(context, eventData, data.handles, handleOptions);
+
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Hide TextBox
         if (this.configuration.hideTextBox || data.handles.textBox.hide) {

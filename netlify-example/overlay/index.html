@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<!-- support for mobile touch devices -->
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1" />
+	<link rel="stylesheet" href="../reset.css" />
+	<link rel="stylesheet" href="../app.css" />
+	<link rel="stylesheet" href="../icon-classes.css" />
+	<link rel="stylesheet" href="../tool-help.css" />
+</head>
+
+<body>
+	<div id="app">
+		<div class="wrapper">
+			<!-- Select Tool Category -->
+			<ul class="tool-category-list">
+				<li><a class="tools" data-category="tools" href="#">Tools</a></li>
+			</ul>
+
+			<!-- Select Active Tool -->
+			<ul class="tool-category active" data-tool-category="tools">
+				<li><a href="#" data-tool="OrientationMarkers">OrientationMarkers</a></li>
+			</ul>
+
+			<!-- Our beautiful element targets -->
+			<div class="cornerstone-element-wrapper-help">
+				<div class="cornerstone-element-help" data-index="0" oncontextmenu="return false"></div>
+				<div class="tool-help"></div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.6/dist/cornerstone.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.js"></script>
+<script src="../../dist/cornerstoneTools.js"></script>
+<script>
+	window.cornerstoneTools ||
+		document.write(
+			'<script src="https://unpkg.com/cornerstone-tools">\x3C/script>'
+		);
+</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../imageLoader.js"></script>
+<script src="../metaDataProvider.js"></script>
+
+<script>
+	// Initialise the extended cornerstoneTools library.
+	cornerstoneTools.init();
+
+	const imageIds = ['example://1', 'example://2', 'example://3'];
+	const stack = {
+		currentImageIdIndex: 0,
+		imageIds: imageIds,
+	};
+
+	// Enable & Setup all of our elements
+	const element = document.querySelector('.cornerstone-element-help');
+
+	cornerstone.enable(element);
+
+	element.tabIndex = 0;
+	element.focus();
+
+	cornerstone.loadImage(imageIds[2]).then(function(image) {
+		cornerstone.displayImage(element, image);
+
+		cornerstoneTools.addStackStateManager(element, ['stack']);
+		cornerstoneTools.addToolState(element, 'stack', stack);
+
+		// activate stack scroll (left / wheel)
+		cornerstoneTools.setToolActiveForElement(element, 'StackScroll', {
+			mouseButtonMask: 1
+		});
+		cornerstoneTools.setToolActiveForElement(element, 'StackScrollMouseWheel', {});
+
+		// display orientation markers
+		cornerstoneTools.setToolActiveForElement(element, 'OrientationMarkers', {});
+	});
+
+	cornerstoneTools.addTool(cornerstoneTools.StackScrollTool);
+	cornerstoneTools.addTool(cornerstoneTools.StackScrollMouseWheelTool);
+	cornerstoneTools.addTool(cornerstoneTools.OrientationMarkersTool);
+</script>
+
+</html>
