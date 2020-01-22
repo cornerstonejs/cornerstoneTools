@@ -3,6 +3,10 @@ import { getToolState } from '../../../stateManagement/toolState.js';
 import state from './state';
 import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import { triggerLabelmapModifiedEvent } from '../../../util/segmentation';
+import ARRAY_TYPES from './arrayTypes';
+import { getModule } from '../../index.js';
+
+const { UINT_16_ARRAY, FLOAT_32_ARRAY } = ARRAY_TYPES;
 
 /**
  * Takes a 16-bit encoded `ArrayBuffer` and stores it as a `Labelmap3D` for the
@@ -74,6 +78,8 @@ function setLabelmap3DByFirstImageId(
   segmentsOnLabelmapArray,
   colorLUTIndex = 0
 ) {
+  const { configuration } = getModule('segmentation');
+
   let brushStackState = state.series[firstImageId];
 
   if (!brushStackState) {
@@ -98,14 +104,31 @@ function setLabelmap3DByFirstImageId(
 
   const labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
   const slicelengthInBytes = buffer.byteLength / numberOfFrames;
-  const sliceLengthInUint16 = slicelengthInBytes / 2; // SliceLength in Uint16.
 
   for (let i = 0; i < numberOfFrames; i++) {
-    const pixelData = new Uint16Array(
-      buffer,
-      slicelengthInBytes * i,
-      sliceLengthInUint16
-    );
+    let pixelData;
+
+    switch (configuration.arrayType) {
+      case UINT_16_ARRAY:
+        pixelData = new Uint16Array(
+          buffer,
+          slicelengthInBytes * i, // 2 bytes/voxel
+          slicelengthInBytes / 2
+        );
+
+        break;
+
+      case FLOAT_32_ARRAY:
+        pixelData = new Float32Array(
+          buffer,
+          slicelengthInBytes * i,
+          slicelengthInBytes / 4
+        );
+        break;
+
+      default:
+        throw new Error(`Unsupported Array Type ${configuration.arrayType}`);
+    }
 
     const segmentsOnLabelmap = segmentsOnLabelmapArray
       ? segmentsOnLabelmapArray[i]
