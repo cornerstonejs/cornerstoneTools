@@ -3,7 +3,7 @@
 The segmentation module deals with centralisation of 3D labelmap data for each stack of cornerstone images. The data is centralized for two reasons:
 
 - Cornerstone data stored per imageId is of a 2D format, and labelmaps are very much 3D structures. Having the data for an entire 3D labelmap centralized, and 2D and 3D representations of it being accessible by cornerstone as needed provides the flexibility to perfom both 2D and 3D operations without having to re-aggregate data each time.
-- Storing the 3D labelmap in one `ArrayBuffer` allows for better interoperability and harmonous integration with 3D platforms, such as [vtk-js](https://kitware.github.io/vtk-js/).
+- Storing the 3D labelmap in one `ArrayBuffer` allows for better interoperability and harmonous integration with 3D platforms, such as [vtk-js](https://kitware.github.io/vtk-js/). If using a WebGL library such as `vtk-js`, it is recommended you set the use of `Float32Array` segmentations in the segmentation module configuration.
 
 ### Data Structure
 
