@@ -69,6 +69,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.passiveRoi = roi;
   }
 
+  setDataInvalidatedCallback(dataInvalidatedCallback) {
+    this.dataInvalidatedCallback = dataInvalidatedCallback;
+  }
+
   createNewMeasurement(eventData) {
     const goodEventData =
       eventData && eventData.currentPoints && eventData.currentPoints.image;
@@ -242,6 +246,12 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         if (this.isOnCurrentRoi(data)) {
           drawHandles(context, eventData, data.handles, handleOptions);
+        }
+
+        if (data.invalidated === true) {
+          if (this.dataInvalidatedCallback) {
+            this.dataInvalidatedCallback(data);
+          }
         }
 
         if (this.configuration.showStatsTextbox) {
