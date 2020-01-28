@@ -6,6 +6,7 @@ import getToolsWithMoveableHandles from '../../store/getToolsWithMoveableHandles
 import { findHandleDataNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import getInteractiveToolsForElement from './../../store/getInteractiveToolsForElement.js';
 import getToolsWithDataForElement from './../../store/getToolsWithDataForElement.js';
+import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
 
 /**
  * MouseDown is called before MouseDownActivate. If MouseDown
@@ -34,13 +35,17 @@ export default function(evt) {
 
   // ACTIVE TOOL W/ PRE CALLBACK?
   // Note: In theory, this should only ever be a single tool.
-  const activeTools = activeAndPassiveTools.filter(
+  let activeTools = activeAndPassiveTools.filter(
     tool =>
       tool.mode === 'active' &&
       Array.isArray(tool.options.mouseButtonMask) &&
       tool.options.mouseButtonMask.includes(eventData.buttons) &&
       tool.options.isMouseActive
   );
+
+  if (state.isMultiPartToolActive) {
+    activeTools = filterToolsUseableWithMultiPartTools(activeTools);
+  }
 
   // If any tools are active, check if they have a special reason for dealing with the event.
   if (activeTools.length > 0) {
@@ -60,6 +65,11 @@ export default function(evt) {
         return;
       }
     }
+  }
+
+  if (state.isMultiPartToolActive) {
+    // Don't fire events to Annotation Tools during a multi part loop.
+    return;
   }
 
   // Annotation tool specific

@@ -11,6 +11,9 @@ module.exports = {
   parserOptions: {
     sourceType: 'module',
     ecmaVersion: 2017,
+    "ecmaFeatures": {
+      "experimentalObjectRestSpread": true
+    }
   },
   globals: {},
   rules: {
@@ -70,7 +73,7 @@ module.exports = {
     //'init-declarations': 'warn',
     'import/default': 'warn',
     'import/export': 'warn',
-    'import/extensions': ['warn', { js: 'always' }],
+    'import/extensions': ['warn', { js: 'ignorePackages' }],
     'import/first': 'warn',
     'import/named': 'warn',
     'import/namespace': 'warn',

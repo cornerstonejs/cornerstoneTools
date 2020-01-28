@@ -21,6 +21,11 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
+import { angleCursor } from '../cursors/index.js';
+import triggerEvent from '../../util/triggerEvent.js';
+import EVENTS from '../../events.js';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import throttle from '../../util/throttle';
 
 /**
  * @public
@@ -30,20 +35,24 @@ import roundToDecimal from './../../util/roundToDecimal.js';
  * @extends Tools.Base.BaseAnnotationTool
  * @hideconstructor
  *
- * @param {ToolConfiguration} [configuration={}]
+ * @param {ToolConfiguration} [props={}]
  */
-class AngleTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+export default class AngleTool extends BaseAnnotationTool {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: angleCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.preventNewMeasurement = false;
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -52,6 +61,7 @@ class AngleTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -100,6 +110,42 @@ class AngleTool extends BaseAnnotationTool {
     );
   }
 
+  updateCachedStats(image, element, data) {
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+    const sideA = {
+      x: (data.handles.middle.x - data.handles.start.x) * colPixelSpacing,
+      y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing,
+    };
+
+    const sideB = {
+      x: (data.handles.end.x - data.handles.middle.x) * colPixelSpacing,
+      y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing,
+    };
+
+    const sideC = {
+      x: (data.handles.end.x - data.handles.start.x) * colPixelSpacing,
+      y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing,
+    };
+
+    const sideALength = length(sideA);
+    const sideBLength = length(sideB);
+    const sideCLength = length(sideC);
+
+    // Cosine law
+    let angle = Math.acos(
+      (Math.pow(sideALength, 2) +
+        Math.pow(sideBLength, 2) -
+        Math.pow(sideCLength, 2)) /
+        (2 * sideALength * sideBLength)
+    );
+
+    angle *= 180 / Math.PI;
+
+    data.rAngle = roundToDecimal(angle, 2);
+    data.invalidated = false;
+  }
+
   renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
@@ -113,6 +159,8 @@ class AngleTool extends BaseAnnotationTool {
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
+    const { image, element } = eventData;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
 
@@ -153,50 +201,21 @@ class AngleTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
-        // Default to isotropic pixel size, update suffix to reflect this
-        const columnPixelSpacing = eventData.image.columnPixelSpacing || 1;
-        const rowPixelSpacing = eventData.image.rowPixelSpacing || 1;
-
-        const sideA = {
-          x:
-            (data.handles.middle.x - data.handles.start.x) * columnPixelSpacing,
-          y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing,
-        };
-
-        const sideB = {
-          x: (data.handles.end.x - data.handles.middle.x) * columnPixelSpacing,
-          y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing,
-        };
-
-        const sideC = {
-          x: (data.handles.end.x - data.handles.start.x) * columnPixelSpacing,
-          y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing,
-        };
-
-        const sideALength = length(sideA);
-        const sideBLength = length(sideB);
-        const sideCLength = length(sideC);
-
-        // Cosine law
-        let angle = Math.acos(
-          (Math.pow(sideALength, 2) +
-            Math.pow(sideBLength, 2) -
-            Math.pow(sideCLength, 2)) /
-            (2 * sideALength * sideBLength)
-        );
-
-        angle *= 180 / Math.PI;
-
-        data.rAngle = roundToDecimal(angle, 2);
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.rAngle) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
+          }
+        }
 
         if (data.rAngle) {
-          const text = textBoxText(
-            data,
-            eventData.image.rowPixelSpacing,
-            eventData.image.columnPixelSpacing
-          );
+          const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
           const distance = 15;
 
@@ -245,9 +264,8 @@ class AngleTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, columnPixelSpacing) {
-      const suffix =
-        !rowPixelSpacing || !columnPixelSpacing ? ' (isotropic)' : '';
+    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
+      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
       const str = '00B0'; // Degrees symbol
 
       return (
@@ -277,48 +295,35 @@ class AngleTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    const doneMovingEndHandleOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          measurementData.active = false;
-          this.preventNewMeasurement = false;
-          external.cornerstone.updateImage(element);
-        },
-      },
-      this.options
-    );
-
-    const doneMovingMiddleHandleOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          measurementData.active = false;
-          measurementData.handles.end.active = true;
-
-          external.cornerstone.updateImage(element);
-
-          moveNewHandle(
-            eventData,
-            this.name,
-            measurementData,
-            measurementData.handles.end,
-            doneMovingEndHandleOptions,
-            interactionType
-          );
-        },
-      },
-      this.options
-    );
-
-    // Step 1, create start and second middle
+    // Step 1, create start and second middle.
     moveNewHandle(
       eventData,
       this.name,
       measurementData,
       measurementData.handles.middle,
-      doneMovingMiddleHandleOptions,
-      interactionType
+      this.options,
+      interactionType,
+      () => {
+        measurementData.active = false;
+        measurementData.handles.end.active = true;
+
+        external.cornerstone.updateImage(element);
+
+        // Step 2, create end.
+        moveNewHandle(
+          eventData,
+          this.name,
+          measurementData,
+          measurementData.handles.end,
+          this.options,
+          interactionType,
+          () => {
+            measurementData.active = false;
+            this.preventNewMeasurement = false;
+            external.cornerstone.updateImage(element);
+          }
+        );
+      }
     );
   }
 }
@@ -326,5 +331,3 @@ class AngleTool extends BaseAnnotationTool {
 function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 }
-
-export default AngleTool;

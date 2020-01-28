@@ -2,6 +2,7 @@ import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import { clipToBox } from '../util/clip.js';
 import zoomUtils from '../util/zoom/index.js';
+import { zoomCursor } from './cursors/index.js';
 
 const { correctShift, changeViewportScale } = zoomUtils;
 
@@ -14,8 +15,8 @@ const { correctShift, changeViewportScale } = zoomUtils;
  * @extends Tools.Base.BaseTool
  */
 export default class ZoomTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Zoom',
       strategies: {
         default: defaultStrategy,
@@ -30,12 +31,10 @@ export default class ZoomTool extends BaseTool {
         minScale: 0.25,
         maxScale: 20.0,
       },
+      svgCursor: zoomCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   touchDragCallback(evt) {
@@ -64,8 +63,10 @@ const dragCallback = function(evt) {
  *
  * @param {*} evt
  * @param {*} { invert, maxScale, minScale }
+ * @returns {void}
  */
-function defaultStrategy(evt, { invert, maxScale, minScale }) {
+function defaultStrategy(evt) {
+  const { invert, maxScale, minScale } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const { element, viewport } = evt.detail;
@@ -104,10 +105,13 @@ function defaultStrategy(evt, { invert, maxScale, minScale }) {
   viewport.translation.y -= shift.y;
 }
 
-function translateStrategy(
-  evt,
-  { invert, preventZoomOutsideImage, maxScale, minScale }
-) {
+function translateStrategy(evt) {
+  const {
+    invert,
+    preventZoomOutsideImage,
+    maxScale,
+    minScale,
+  } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const image = evt.detail.image;
@@ -207,7 +211,8 @@ function translateStrategy(
   updatedViewport.translation.y -= shift.y;
 }
 
-function zoomToCenterStrategy(evt, { invert, maxScale, minScale }) {
+function zoomToCenterStrategy(evt) {
+  const { invert, maxScale, minScale } = this.configuration;
   const deltaY = evt.detail.deltaPoints.page.y;
   const ticks = invert ? -deltaY / 100 : deltaY / 100;
   const viewport = evt.detail.viewport;

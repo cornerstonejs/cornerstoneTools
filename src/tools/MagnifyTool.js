@@ -1,6 +1,8 @@
 import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
+import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
+import { magnifyCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -11,20 +13,19 @@ import BaseTool from './base/BaseTool.js';
  * @extends Tools.Base.BaseTool
  */
 export default class MagnifyTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Magnify',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         magnifySize: 300,
         magnificationLevel: 2,
       },
+      svgCursor: magnifyCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
     this.zoomCanvas = undefined;
     this.zoomElement = undefined;
 
@@ -55,6 +56,8 @@ export default class MagnifyTool extends BaseTool {
     // On next frame
     window.requestAnimationFrame(() => this._drawMagnificationTool(evt));
 
+    hideToolCursor(evt.detail.element);
+
     evt.preventDefault();
     evt.stopPropagation();
   }
@@ -69,9 +72,10 @@ export default class MagnifyTool extends BaseTool {
   _removeMagnifyingGlass(evt) {
     const element = evt.detail.element;
 
-    element.querySelector('.magnifyTool').style.display = 'none';
     // Re-enable the mouse cursor
-    document.body.style.cursor = 'default';
+    setToolCursor(this.element, this.svgCursor);
+
+    element.querySelector('.magnifyTool').style.display = 'none';
     this._removeZoomElement();
   }
 
@@ -169,9 +173,6 @@ export default class MagnifyTool extends BaseTool {
     magnifyCanvas.style.top = `${magnifyPosition.top}px`;
     magnifyCanvas.style.left = `${magnifyPosition.left}px`;
     magnifyCanvas.style.display = 'block';
-
-    // Hide the mouse cursor, so the user can see better
-    document.body.style.cursor = 'none';
   }
 
   /**
@@ -180,6 +181,7 @@ export default class MagnifyTool extends BaseTool {
    *
    * @private
    * @param {*} evt
+   * @returns {void}
    */
   _drawZoomedElement(evt) {
     const element = evt.detail.element;
@@ -194,10 +196,12 @@ export default class MagnifyTool extends BaseTool {
     const image = enabledElement.image;
 
     // Create a new cornerstone enabledElement
-    this.zoomElement = document.createElement('div');
-    this.zoomElement.width = origCanvas.width * magnificationLevel;
-    this.zoomElement.height = origCanvas.height * magnificationLevel;
-    external.cornerstone.enable(this.zoomElement, enabledElement.options);
+    if (!this.zoomElement) {
+      this.zoomElement = document.createElement('div');
+      this.zoomElement.width = origCanvas.width * magnificationLevel;
+      this.zoomElement.height = origCanvas.height * magnificationLevel;
+      external.cornerstone.enable(this.zoomElement, enabledElement.options);
+    }
 
     const zoomEnabledElement = external.cornerstone.getEnabledElement(
       this.zoomElement
@@ -214,12 +218,13 @@ export default class MagnifyTool extends BaseTool {
     viewport.scale *= magnificationLevel;
     external.cornerstone.displayImage(this.zoomElement, image);
     external.cornerstone.setViewport(this.zoomElement, viewport);
+    // To do enable annotation tools for zoomElement
   }
 
   /**
    * Removes the canvas and associated enabled element that's
    * used to render the zoomed image.
-   *
+   * @returns {void}
    */
   _removeZoomElement() {
     if (this.zoomElement !== undefined) {
@@ -236,6 +241,7 @@ export default class MagnifyTool extends BaseTool {
    * @private
    *
    * @param {*} element
+   * @returns {void}
    */
   _createMagnificationCanvas(element) {
     // If the magnifying glass canvas doesn't already exist
@@ -257,10 +263,10 @@ export default class MagnifyTool extends BaseTool {
   /**
    *
    *
-   * @param {*} evt
+   * @param {*} element
+   * @returns {void}
    */
-  _destroyMagnificationCanvas(evt) {
-    const element = evt.detail.element;
+  _destroyMagnificationCanvas(element) {
     const magnifyCanvas = element.querySelector('.magnifyTool');
 
     if (magnifyCanvas) {

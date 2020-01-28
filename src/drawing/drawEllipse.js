@@ -1,5 +1,6 @@
 import external from './../externalModules.js';
 import path from './path.js';
+import { rotatePoint } from '../util/pointProjector.js';
 
 /**
  * Draw an ellipse within the bounding box defined by `corner1` and `corner2`.
@@ -15,6 +16,7 @@ import path from './path.js';
  * @param {String} [coordSystem='pixel'] - Can be "pixel" (default) or "canvas". The coordinate
  *     system of the points passed in to the function. If "pixel" then cornerstone.pixelToCanvas
  *     is used to transform the points from pixel to canvas coordinates.
+ * @param {Number} initialRotation - Ellipse initial rotation
  * @returns {undefined}
  */
 export default function(
@@ -23,32 +25,47 @@ export default function(
   corner1,
   corner2,
   options,
-  coordSystem = 'pixel'
+  coordSystem = 'pixel',
+  initialRotation = 0.0
 ) {
-  // http://stackoverflow.com/questions/2172798/how-to-draw-an-oval-in-html5-canvas
   if (coordSystem === 'pixel') {
     corner1 = external.cornerstone.pixelToCanvas(element, corner1);
     corner2 = external.cornerstone.pixelToCanvas(element, corner2);
   }
-  const x = Math.min(corner1.x, corner2.x);
-  const y = Math.min(corner1.y, corner2.y);
+
+  const viewport = external.cornerstone.getViewport(element);
+
+  // Calculate the center of the image
+  const { clientWidth: width, clientHeight: height } = element;
+  const { scale, translation } = viewport;
+  const rotation = viewport.rotation - initialRotation;
+
+  const centerPoint = {
+    x: width / 2 + translation.x * scale,
+    y: height / 2 + translation.y * scale,
+  };
+
+  if (Math.abs(rotation) > 0.05) {
+    corner1 = rotatePoint(corner1, centerPoint, -rotation);
+    corner2 = rotatePoint(corner2, centerPoint, -rotation);
+  }
   const w = Math.abs(corner1.x - corner2.x);
   const h = Math.abs(corner1.y - corner2.y);
+  const xMin = Math.min(corner1.x, corner2.x);
+  const yMin = Math.min(corner1.y, corner2.y);
 
-  const kappa = 0.5522848,
-    ox = (w / 2) * kappa, // Control point offset horizontal
-    oy = (h / 2) * kappa, // Control point offset vertical
-    xe = x + w, // X-end
-    ye = y + h, // Y-end
-    xm = x + w / 2, // X-middle
-    ym = y + h / 2; // Y-middle
+  let center = {
+    x: xMin + w / 2,
+    y: yMin + h / 2,
+  };
+
+  if (Math.abs(rotation) > 0.05) {
+    center = rotatePoint(center, centerPoint, rotation);
+  }
+  const angle = (rotation * Math.PI) / 180;
 
   path(context, options, context => {
-    context.moveTo(x, ym);
-    context.bezierCurveTo(x, ym - oy, xm - ox, y, xm, y);
-    context.bezierCurveTo(xm + ox, y, xe, ym - oy, xe, ym);
-    context.bezierCurveTo(xe, ym + oy, xm + ox, ye, xm, ye);
-    context.bezierCurveTo(xm - ox, ye, x, ym + oy, x, ym);
+    context.ellipse(center.x, center.y, w / 2, h / 2, angle, 0, 2 * Math.PI);
     context.closePath();
   });
 }

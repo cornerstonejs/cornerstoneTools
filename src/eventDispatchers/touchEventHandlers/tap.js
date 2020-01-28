@@ -12,7 +12,7 @@ import { moveHandle, moveAllHandles } from '../../manipulators/index.js';
 import deactivateAllToolInstances from './shared/deactivateAllToolInstances.js';
 
 export default function(evt) {
-  if (state.isToolLocked) {
+  if (state.isToolLocked || state.isMultiPartToolActive) {
     return;
   }
 
@@ -68,23 +68,14 @@ export default function(evt) {
     moveableHandle.active = true; // Why here, but not touchStart?
     external.cornerstone.updateImage(element);
 
-    const toolOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          deactivateAllToolInstances(toolState);
-        },
-      },
-      firstToolWithMoveableHandles.options
-    );
-
     moveHandle(
       evt.detail,
       firstToolWithMoveableHandles.name,
       toolState.data,
       moveableHandle,
-      toolOptions,
-      'touch'
+      firstToolWithMoveableHandles.options,
+      'touch',
+      () => deactivateAllToolInstances(toolState)
     );
     evt.stopImmediatePropagation();
     evt.preventDefault();
@@ -119,23 +110,14 @@ export default function(evt) {
     firstAnnotationNearPoint.active = true;
     external.cornerstone.updateImage(element);
 
-    const toolOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          deactivateAllToolInstances(toolState);
-        },
-      },
-      firstToolNearPoint.options
-    );
-
     moveAllHandles(
       evt.detail,
       firstToolNearPoint.name,
       firstAnnotationNearPoint,
       null,
-      toolOptions,
-      'touch'
+      firstToolNearPoint.options,
+      'touch',
+      () => deactivateAllToolInstances(toolState)
     );
 
     evt.stopImmediatePropagation();

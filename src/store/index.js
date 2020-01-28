@@ -1,7 +1,11 @@
 // Modules
-import brush from './modules/brushModule.js';
+import segmentation from './modules/segmentationModule';
+import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('store:modules:storeLogger');
 
 export const state = {
   // Global
@@ -11,6 +15,7 @@ export const state = {
   enabledElements: [],
   tools: [],
   isToolLocked: false,
+  activeMultiPartTool: null,
   mousePositionImage: {},
   // Settings
   clickProximity: 6,
@@ -18,6 +23,8 @@ export const state = {
   handleRadius: 6,
   deleteIfHandleOutsideImage: true,
   preventHandleOutsideImage: false,
+  // Cursor
+  svgCursorUrl: null,
 };
 
 export const getters = {
@@ -40,9 +47,14 @@ export const getters = {
 export const setters = {};
 
 export const modules = {
-  brush,
+  segmentation,
+  cursor,
   globalConfiguration,
 };
+
+export function getModule(moduleName) {
+  return modules[moduleName];
+}
 
 export default {
   modules,

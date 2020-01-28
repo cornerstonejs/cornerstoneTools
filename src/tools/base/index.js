@@ -1,6 +1,6 @@
 import BaseAnnotationTool from './BaseAnnotationTool.js';
-import BaseBrushTool from './BaseBrushTool.js';
 import BaseTool from './BaseTool.js';
+import BaseBrushTool from './BaseBrushTool.js';
 
 // Named Exports
 export { default as BaseAnnotationTool } from './BaseAnnotationTool.js';

@@ -1,6 +1,7 @@
 ## Directories
 node_modules
 _book/
+build
 
 ## Files
 .npmrc
@@ -13,3 +14,5 @@ coverage/
 docs/latest/api
 dist/
 junit.xml
+.DS_Store
+

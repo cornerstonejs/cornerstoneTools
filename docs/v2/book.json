@@ -33,8 +33,12 @@
           "selected": true
         },
         {
-          "value": "https://tools.cornerstonejs.org/",
+          "value": "https://tools.cornerstonejs.org/history/v3/",
           "text": "Version 3.x"
+        },
+        {
+          "value": "https://tools.cornerstonejs.org/",
+          "text": "Version 4.x"
         }
       ]
     }

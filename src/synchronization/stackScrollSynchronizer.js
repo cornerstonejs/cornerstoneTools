@@ -15,6 +15,7 @@ import clip from '../util/clip.js';
  * @param {HTMLElement} sourceElement - The source element for the scroll event
  * @param {HTMLElement} targetElement - The target element
  * @param {Object} eventData - The data object from the triggering event
+ * @returns {void}
  */
 export default function(synchronizer, sourceElement, targetElement, eventData) {
   // If the target and source are the same, stop
@@ -43,9 +44,13 @@ export default function(synchronizer, sourceElement, targetElement, eventData) {
     return;
   }
 
-  const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(
+    targetElement
+  );
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(targetElement);
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
+    targetElement
+  );
 
   stackData.currentImageIdIndex = newImageIdIndex;
   const newImageId = stackData.imageIds[newImageIdIndex];

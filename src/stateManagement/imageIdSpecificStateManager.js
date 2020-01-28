@@ -34,18 +34,23 @@ function newImageIdSpecificToolStateManager() {
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
-  function addImageIdSpecificToolState(element, toolType, data) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
-    // If we don't have any tool state for this imageId, add an empty object
+  function addElementToolState(element, toolType, data) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
-      toolState[enabledImage.image.imageId] = {};
+    // If we don't have an image for this element exit early
+    if (!enabledElement.image) {
+      return;
+    }
+    addImageIdToolState(enabledElement.image.imageId, toolType, data);
+  }
+
+  function addImageIdToolState(imageId, toolType, data) {
+    // If we don't have any tool state for this imageId, add an empty object
+    if (toolState.hasOwnProperty(imageId) === false) {
+      toolState[imageId] = {};
     }
 
-    const imageIdToolState = toolState[enabledImage.image.imageId];
+    const imageIdToolState = toolState[imageId];
 
     // If we don't have tool state for this type of tool, add an empty object
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
@@ -60,49 +65,60 @@ function newImageIdSpecificToolStateManager() {
     toolData.data.push(data);
   }
 
-  // Here you can get state - used by tools as well as modules
-  // That save state persistently
-  function getImageIdSpecificToolState(element, toolType) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
-    // If we don't have any tool state for this imageId, return undefined
+  function getElementToolState(element, toolType) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
+    // If the element does not have an image return undefined.
+    if (!enabledElement.image) {
       return;
     }
 
-    const imageIdToolState = toolState[enabledImage.image.imageId];
+    return getImageIdToolState(enabledElement.image.imageId, toolType);
+  }
+
+  // Here you can get state - used by tools as well as modules
+  // That save state persistently
+  function getImageIdToolState(imageId, toolType) {
+    // If we don't have any tool state for this imageId, return undefined
+    if (toolState.hasOwnProperty(imageId) === false) {
+      return;
+    }
+
+    const imageIdToolState = toolState[imageId];
 
     // If we don't have tool state for this type of tool, return undefined
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       return;
     }
 
-    const toolData = imageIdToolState[toolType];
-
-    return toolData;
+    return imageIdToolState[toolType];
   }
 
   // Clears all tool data from this toolStateManager.
-  function clearImageIdSpecificToolStateManager(element) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
+  function clearElementToolState(element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
+    if (!enabledElement.image) {
+      return;
+    }
+    clearImageIdToolState(enabledElement.imageId);
+  }
+
+  function clearImageIdToolState(imageId) {
+    if (toolState.hasOwnProperty(imageId) === false) {
       return;
     }
 
-    delete toolState[enabledImage.image.imageId];
+    delete toolState[imageId];
   }
 
   return {
-    get: getImageIdSpecificToolState,
-    add: addImageIdSpecificToolState,
-    clear: clearImageIdSpecificToolStateManager,
+    get: getElementToolState,
+    add: addElementToolState,
+    clear: clearElementToolState,
+    getImageIdToolState,
+    addImageIdToolState,
+    clearImageIdToolState,
     saveImageIdToolState,
     restoreImageIdToolState,
     saveToolState,

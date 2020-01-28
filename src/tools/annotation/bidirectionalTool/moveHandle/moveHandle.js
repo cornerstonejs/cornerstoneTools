@@ -1,6 +1,9 @@
 import external from './../../../../externalModules.js';
+import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
+import getActiveTool from '../../../../util/getActiveTool';
+import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
 
 export default function(
   mouseEventData,
@@ -10,7 +13,7 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
-  const element = mouseEventData.element;
+  const { element, image, buttons } = mouseEventData;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
@@ -19,7 +22,6 @@ export default function(
   const _dragCallback = event => {
     const eventData = event.detail;
 
-    handle.active = true;
     handle.hasMoved = true;
 
     if (handle.index === undefined || handle.index === null) {
@@ -37,7 +39,15 @@ export default function(
       handle.y = Math.min(handle.y, eventData.image.height);
     }
 
+    data.invalidated = true;
+
     external.cornerstone.updateImage(element);
+
+    const activeTool = getActiveTool(element, buttons, 'mouse');
+
+    if (activeTool instanceof BaseAnnotationTool) {
+      activeTool.updateCachedStats(image, element, data);
+    }
 
     const modifiedEventData = {
       toolType,
@@ -51,6 +61,9 @@ export default function(
       modifiedEventData
     );
   };
+
+  handle.active = true;
+  state.isToolLocked = true;
 
   element.addEventListener(EVENTS.MOUSE_DRAG, _dragCallback);
   element.addEventListener(EVENTS.TOUCH_DRAG, _dragCallback);
@@ -72,6 +85,9 @@ export default function(
   );
 
   const interactionEndCallback = () => {
+    handle.active = false;
+    state.isToolLocked = false;
+
     element.removeEventListener(
       external.cornerstone.EVENTS.IMAGE_RENDERED,
       imageRenderedHandler

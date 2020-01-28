@@ -1,9 +1,12 @@
-import external from './../externalModules.js';
+import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 // Drawing
 import { getNewContext, draw, setShadow, drawLine } from '../drawing/index.js';
-import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolStyle from '../stateManagement/toolStyle.js';
+import toolColors from '../stateManagement/toolColors.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('tools:ScaleOverlayTool');
 
 /**
  * @public
@@ -14,8 +17,8 @@ import toolColors from './../stateManagement/toolColors.js';
  * @extends Tools.Base.BaseTool
  */
 export default class ScaleOverlayTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ScaleOverlay',
       configuration: {
         minorTickLength: 12.5,
@@ -23,11 +26,8 @@ export default class ScaleOverlayTool extends BaseTool {
       },
       mixins: ['enabledOrDisabledBinaryTool'],
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   enabledCallback(element) {
@@ -68,10 +68,8 @@ export default class ScaleOverlayTool extends BaseTool {
 
     // Check whether pixel spacing is defined
     if (!rowPixelSpacing || !colPixelSpacing) {
-      console.warn(
-        `unable to define rowPixelSpacing or colPixelSpacing from data on ${
-          this.name
-        }'s renderToolData`
+      logger.warn(
+        `unable to define rowPixelSpacing or colPixelSpacing from data on ${this.name}'s renderToolData`
       );
 
       return;
@@ -145,8 +143,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.verticalLine.start,
         imageAttributes.verticalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );
@@ -159,8 +157,8 @@ export default class ScaleOverlayTool extends BaseTool {
         imageAttributes.horizontalLine.start,
         imageAttributes.horizontalLine.end,
         {
-          color,
-          lineWidth,
+          color: imageAttributes.color,
+          lineWidth: imageAttributes.lineWidth,
         },
         'canvas'
       );
@@ -171,9 +169,10 @@ export default class ScaleOverlayTool extends BaseTool {
 
 /**
  * Computes the max bound for scales on the image
- * @param  {} canvasSize
- * @param  {} horizontalReduction
- * @param  {} verticalReduction
+ * @param  {{width: number, height: number}} canvasSize
+ * @param  {number} horizontalReduction
+ * @param  {number} verticalReduction
+ * @returns {Object.<string, { x:number, y:number }>}
  */
 const computeScaleBounds = (
   canvasSize,
@@ -202,8 +201,10 @@ const computeScaleBounds = (
 };
 
 /**
- * @param  {} context
- * @param  {} imageAttributes
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element
+ * @param {Object} imageAttributes
+ * @returns {void}
  */
 const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
@@ -252,6 +253,12 @@ const drawVerticalScalebarIntervals = (context, element, imageAttributes) => {
   }
 };
 
+/**
+ * @param {CanvasRenderingContext2D} context
+ * @param {HTMLElement} element
+ * @param {Object} imageAttributes
+ * @returns {void}
+ */
 const drawHorizontalScalebarIntervals = (context, element, imageAttributes) => {
   let i = 0;
 

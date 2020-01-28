@@ -6,6 +6,7 @@
  * @param {HTMLElement} element The element to export.
  * @param {string} filename The name of the exported image.
  * @param {string} [mimetype = 'image/png'] The mimetype of the exported image.
+ * @returns {void}
  */
 export default (element, filename, mimetype = 'image/png') => {
   const canvas = element.querySelector('canvas');

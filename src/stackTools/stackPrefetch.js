@@ -3,12 +3,18 @@ import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
+import { getLogger } from '../util/logger.js';
+import triggerEvent from '../util/triggerEvent';
+import EVENTS from '../events.js';
+
+const logger = getLogger('stackTools:stackPrefetch');
 
 const toolType = 'stackPrefetch';
 const requestType = 'prefetch';
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
+  preserveExistingPool: false,
 };
 
 let resetPrefetchTimeout;
@@ -132,8 +138,10 @@ function prefetch(element) {
     return;
   }
 
-  // Clear the requestPool of prefetch requests
-  requestPoolManager.clearRequestStack(requestType);
+  // Clear the requestPool of prefetch requests, if needed.
+  if (!configuration.preserveExistingPool) {
+    requestPoolManager.clearRequestStack(requestType);
+  }
 
   // Identify the nearest imageIdIndex to the currentImageIdIndex
   const nearest = nearestIndex(
@@ -146,17 +154,41 @@ function prefetch(element) {
   const preventCache = false;
 
   function doneCallback(image) {
-    // Console.log('prefetch done: ' + image.imageId);
+    logger.log('prefetch done: %s', image.imageId);
     const imageIdIndex = stack.imageIds.indexOf(image.imageId);
 
     removeFromList(imageIdIndex);
+
+    triggerEvent(element, EVENTS.STACK_PREFETCH_IMAGE_LOADED, {
+      element,
+      imageId: image.imageId,
+      imageIndex: imageIdIndex,
+      stackPrefetch,
+      stack,
+    });
+
+    // If there are no more images to fetch
+    if (
+      !(
+        stackPrefetch.indicesToRequest &&
+        stackPrefetch.indicesToRequest.length > 0
+      )
+    ) {
+      triggerEvent(element, EVENTS.STACK_PREFETCH_DONE, {
+        element,
+        stackPrefetch,
+        stack,
+      });
+    }
   }
 
   // Retrieve the errorLoadingHandler if one exists
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
+    element
+  );
 
   function failCallback(error) {
-    console.log(`prefetch errored: ${error}`);
+    logger.log('prefetch errored: %o', error);
     if (errorLoadingHandler) {
       errorLoadingHandler(element, imageId, error, 'stackPrefetch');
     }
@@ -165,6 +197,7 @@ function prefetch(element) {
   // Prefetch images around the current image (before and after)
   let lowerIndex = nearest.low;
   let higherIndex = nearest.high;
+  const imageIdsToPrefetch = [];
 
   while (
     lowerIndex >= 0 ||
@@ -189,28 +222,26 @@ function prefetch(element) {
     if (shouldLoadLower) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[lowerIndex--];
       imageId = stack.imageIds[nextImageIdIndex];
-      requestPoolManager.addRequest(
-        element,
-        imageId,
-        requestType,
-        preventCache,
-        doneCallback,
-        failCallback
-      );
+      imageIdsToPrefetch.push(imageId);
     }
 
     if (shouldLoadHigher) {
       nextImageIdIndex = stackPrefetch.indicesToRequest[higherIndex++];
       imageId = stack.imageIds[nextImageIdIndex];
-      requestPoolManager.addRequest(
-        element,
-        imageId,
-        requestType,
-        preventCache,
-        doneCallback,
-        failCallback
-      );
+      imageIdsToPrefetch.push(imageId);
     }
+  }
+  // Load images in reverse order, by adding them at the beginning of the pool.
+  for (const imageToLoad of imageIdsToPrefetch.reverse()) {
+    requestPoolManager.addRequest(
+      element,
+      imageToLoad,
+      requestType,
+      preventCache,
+      doneCallback,
+      failCallback,
+      true
+    );
   }
 
   // Try to start the requestPool's grabbing procedure
@@ -295,7 +326,7 @@ function enable(element) {
 
   // Check if we are allowed to cache images in this stack
   if (stack.preventCache === true) {
-    console.warn(
+    logger.warn(
       'A stack that should not be cached was given the stackPrefetch'
     );
 

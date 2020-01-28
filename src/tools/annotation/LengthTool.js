@@ -1,4 +1,3 @@
-import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -14,6 +13,12 @@ import {
 import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import { lengthCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import throttle from '../../util/throttle';
+
+const logger = getLogger('tools:annotation:LengthTool');
 
 /**
  * @public
@@ -23,16 +28,19 @@ import lineSegDistance from './../../util/lineSegDistance.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class LengthTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: lengthCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -40,10 +48,8 @@ export default class LengthTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
-        `required eventData not supplied to tool ${
-          this.name
-        }'s createNewMeasurement`
+      logger.error(
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
       );
 
       return;
@@ -55,6 +61,7 @@ export default class LengthTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       handles: {
         start: {
           x,
@@ -94,12 +101,14 @@ export default class LengthTool extends BaseAnnotationTool {
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
+
+      return false;
     }
 
-    if (!validParameters || data.visible === false) {
+    if (data.visible === false) {
       return false;
     }
 
@@ -107,6 +116,23 @@ export default class LengthTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
       25
     );
+  }
+
+  updateCachedStats(image, element, data) {
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+    // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
+    const dx =
+      (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
+    const dy =
+      (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
+
+    // Calculate the length, and create the text variable with the millimeters or pixels suffix
+    const length = Math.sqrt(dx * dx + dy * dy);
+
+    // Store the length inside the tool for outside access
+    data.length = length;
+    data.invalidated = false;
   }
 
   renderToolData(evt) {
@@ -121,24 +147,9 @@ export default class LengthTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
-    const imagePlane = external.cornerstone.metaData.get(
-      'imagePlaneModule',
-      image.imageId
-    );
-    let rowPixelSpacing;
-    let colPixelSpacing;
-
-    if (imagePlane) {
-      rowPixelSpacing =
-        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-      colPixelSpacing =
-        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-    } else {
-      rowPixelSpacing = image.rowPixelSpacing;
-      colPixelSpacing = image.columnPixelSpacing;
-    }
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -165,19 +176,9 @@ export default class LengthTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
-
-        // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
-        const dx =
-          (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
-        const dy =
-          (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1);
-
-        // Calculate the length, and create the text variable with the millimeters or pixels suffix
-        const length = Math.sqrt(dx * dx + dy * dy);
-
-        // Store the length inside the tool for outside access
-        data.length = length;
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         if (!data.handles.textBox.hasMoved) {
           const coords = {
@@ -200,6 +201,15 @@ export default class LengthTool extends BaseAnnotationTool {
         // So that it sits beside the length tool handle
         const xOffset = 10;
 
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.length) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
+          }
+        }
+
         const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
         drawLinkedTextBox(
@@ -219,13 +229,15 @@ export default class LengthTool extends BaseAnnotationTool {
 
     function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
       // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = ' mm';
+      let suffix = 'mm';
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = ' pixels';
+        suffix = 'pixels';
       }
 
-      return `${data.length.toFixed(2)}${suffix}`;
+      data.unit = suffix;
+
+      return `${data.length.toFixed(2)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {

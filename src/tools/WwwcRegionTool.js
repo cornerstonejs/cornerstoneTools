@@ -5,6 +5,7 @@ import { draw, drawRect, getNewContext } from '../drawing/index.js';
 import clip from '../util/clip.js';
 import getLuminance from '../util/getLuminance.js';
 import toolColors from '../stateManagement/toolColors.js';
+import { wwwcRegionCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -16,19 +17,17 @@ import toolColors from '../stateManagement/toolColors.js';
  */
 export default class WwwcRegionTool extends BaseTool {
   /** @inheritdoc */
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'WwwcRegion',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         minWindowWidth: 10,
       },
+      svgCursor: wwwcRegionCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this._resetHandles();
 
     //
@@ -67,9 +66,9 @@ export default class WwwcRegionTool extends BaseTool {
   /**
    * Render hook: draws the WWWCRegion's "box" when selecting
    *
-   * @param {Cornerstone.event:cornerstoneimagerendered} evt cornerstoneimagerendered event
+   * @param {Cornerstone.event#cornerstoneimagerendered} evt cornerstoneimagerendered event
    * @memberof Tools.WwwcRegionTool
-   * @returns {undefined}
+   * @returns {void}
    */
   renderToolData(evt) {
     const eventData = evt.detail;
@@ -113,8 +112,8 @@ export default class WwwcRegionTool extends BaseTool {
    *
    * @private
    * @method _setHandlesAndUpdate
-   * @param {(CornerstoneTools.event:cornerstonetoolstouchdrag|CornerstoneTools.event:cornerstonetoolsmousedrag|CornerstoneTools.event:cornerstonetoolsmousemove)} evt  Interaction event emitted by an enabledElement
-   * @returns {undefined}
+   * @param {(CornerstoneTools.event#TOUCH_DRAG|CornerstoneTools.event#MOUSE_DRAG|CornerstoneTools.event#MOUSE_MOVE)} evt  Interaction event emitted by an enabledElement
+   * @returns {void}
    */
   _setHandlesAndUpdate(evt) {
     const element = evt.detail.element;
@@ -129,8 +128,8 @@ export default class WwwcRegionTool extends BaseTool {
    *
    * @private
    * @method _applyStrategy
-   * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
-   * @returns {undefined}
+   * @param {(CornerstoneTools.event#MOUSE_UP|CornerstoneTools.event#TOUCH_END)} evt Interaction event emitted by an enabledElement
+   * @returns {void}
    */
   _applyStrategy(evt) {
     if (
@@ -177,9 +176,9 @@ const _isEmptyObject = obj =>
  *
  * @private
  * @method _applyWWWCRegion
- * @param {(CornerstoneTools.event:cornerstonetoolsmouseup|CornerstoneTools.event:cornerstonetoolstouchend)} evt Interaction event emitted by an enabledElement
+ * @param {(CornerstoneTools.event#MOUSE_UP|CornerstoneTools.event#TOUCH_END)} evt Interaction event emitted by an enabledElement
  * @param {Object} config The tool's configuration object
- * @returns {undefined}
+ * @returns {void}
  */
 const _applyWWWCRegion = function(evt, config) {
   const eventData = evt.detail;

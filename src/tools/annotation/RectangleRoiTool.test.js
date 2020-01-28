@@ -1,12 +1,25 @@
 import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
+jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
+jest.mock('./../../importInternal.js', () => ({
   default: jest.fn(),
+}));
+
+jest.mock('./../../externalModules.js', () => ({
+  cornerstone: {
+    metaData: {
+      get: jest.fn(),
+    },
+    /* eslint-enable prettier/prettier */
+    getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
+    /* eslint-enable prettier/prettier */
+  },
 }));
 
 const badMouseEventData = 'hello world';
@@ -17,16 +30,17 @@ const goodMouseEventData = {
       y: 0,
     },
   },
+  viewport: {
+    rotation: 0,
+  },
+};
+
+const image = {
+  rowPixelSpacing: 0.8984375,
+  columnPixelSpacing: 0.8984375,
 };
 
 describe('RectangleRoiTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
-
   describe('default values', () => {
     it('has a default name of "RectangleRoi"', () => {
       const defaultName = 'RectangleRoi';
@@ -46,11 +60,12 @@ describe('RectangleRoiTool.js', () => {
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
       const instantiatedTool = new RectangleRoiTool();
+      const logger = getLogger();
 
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.mock.calls[0][0]).toContain(
+      expect(logger.error).toHaveBeenCalled();
+      expect(logger.error.mock.calls[0][0]).toContain(
         'required eventData not supplied to tool'
       );
     });
@@ -87,6 +102,18 @@ describe('RectangleRoiTool.js', () => {
       expect(endHandle.y).toBe(goodMouseEventData.currentPoints.image.y);
     });
 
+    it('returns a measurement with a initial rotation', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const toolMeasurement = instantiatedTool.createNewMeasurement(
+        goodMouseEventData
+      );
+
+      const initialRotation = toolMeasurement.handles.initialRotation;
+
+      expect(initialRotation).toBe(goodMouseEventData.viewport.rotation);
+    });
+
     it('returns a measurement with a textBox handle', () => {
       const instantiatedTool = new RectangleRoiTool();
 
@@ -112,11 +139,12 @@ describe('RectangleRoiTool.js', () => {
       const noHandlesMeasurementData = {
         handles: {},
       };
+      const logger = getLogger();
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
     it('returns false when measurement data is null or undefined', () => {
@@ -145,6 +173,46 @@ describe('RectangleRoiTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(false);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    it('should calculate and update annotation values', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 0,
+            y: 0,
+          },
+          end: {
+            x: 3,
+            y: 3,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
+
+      data.handles.start.x = 0;
+      data.handles.start.y = 0;
+      data.handles.end.x = 3;
+      data.handles.end.y = 2;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area.toFixed(2)).toEqual('4.84');
+      expect(data.cachedStats.mean.toFixed(2)).toEqual('68.17');
+      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
     });
   });
 

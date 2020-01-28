@@ -14,6 +14,7 @@ import clip from '../util/clip.js';
  * handler to an event
  * @param {HTMLElement} sourceElement - The source element for the index value
  * @param {HTMLElement} targetElement - The target element
+ * @returns {void}
  */
 export default function(synchronizer, sourceElement, targetElement) {
   // Ignore the case where the source and target are the same enabled element
@@ -41,9 +42,13 @@ export default function(synchronizer, sourceElement, targetElement) {
     return;
   }
 
-  const startLoadingHandler = loadHandlerManager.getStartLoadHandler();
-  const endLoadingHandler = loadHandlerManager.getEndLoadHandler();
-  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler();
+  const startLoadingHandler = loadHandlerManager.getStartLoadHandler(
+    targetElement
+  );
+  const endLoadingHandler = loadHandlerManager.getEndLoadHandler(targetElement);
+  const errorLoadingHandler = loadHandlerManager.getErrorLoadingHandler(
+    targetElement
+  );
 
   if (startLoadingHandler) {
     startLoadingHandler(targetElement);

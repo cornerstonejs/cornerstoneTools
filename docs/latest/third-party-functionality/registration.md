@@ -7,7 +7,7 @@ cornerstoneTools.register('module', 'helloWorldModule', myModule);
 cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
 ```
 
-By default, trying to register an item that would occupy and already registered 'type/name' `uri` will log a warning and cancel registration. If you wish to overwrite a uri, you may do so by adding `true` to the end of the register call:
+By default, trying to register an item that would occupy an already registered 'type/name' `uri` will log a warning and cancel registration. If you wish to overwrite a uri, you may do so by adding `true` to the end of the register call:
 
 ```js
 cornerstoneTools.register('mixin', 'evenMoreHelloWorld', mySuperiorMixin, true);

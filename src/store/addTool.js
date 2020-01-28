@@ -1,5 +1,8 @@
-import store from './index.js';
+import store, { getModule } from './index.js';
 import getToolForElement from './getToolForElement.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('addTool');
 
 /**
  * Adds a tool to an enabled element.
@@ -9,19 +12,19 @@ import getToolForElement from './getToolForElement.js';
  * @memberof CornerstoneTools
  *
  * @param {HTMLElement} element The element to add the tool to.
- * @param {BaseTool} apiTool The tool to add to the element.
- * @param {Object} [configuration] Override the default tool configuration
+ * @param {BaseTool} ApiTool The tool to add to the element.
+ * @param {Object} [props] Override the default tool props
  * @returns {undefined}
  */
-const addToolForElement = function(element, apiTool, configuration) {
+const addToolForElement = function(element, ApiTool, props) {
   // Instantiating the tool here makes it harder to accidentally add
   // The same tool (by reference) for multiple elements (which would reassign the tool
   // To a new element).
-  const tool = new apiTool(configuration);
+  const tool = new ApiTool(props);
   const toolAlreadyAddedToElement = getToolForElement(element, tool.name);
 
   if (toolAlreadyAddedToElement) {
-    console.warn(`${tool.name} has already been added to the target element`);
+    logger.warn('%s has already been added to the target element', tool.name);
 
     return;
   }
@@ -37,14 +40,14 @@ const addToolForElement = function(element, apiTool, configuration) {
  * @function addTool
  * @memberof CornerstoneTools
  *
- * @param {BaseTool} apiTool The tool to add to each element.
- * @param {Object} [configuration] Override the default tool configuration
+ * @param {BaseTool} ApiTool The tool to add to each element.
+ * @param {Object} [props] Override the default tool configuration
  * @returns {undefined}
  */
-const addTool = function(apiTool, configuration) {
-  _addToolGlobally(apiTool, configuration);
+const addTool = function(ApiTool, props) {
+  _addToolGlobally(ApiTool, props);
   store.state.enabledElements.forEach(element => {
-    addToolForElement(element, apiTool, configuration);
+    addToolForElement(element, ApiTool, props);
   });
 };
 
@@ -55,28 +58,30 @@ const addTool = function(apiTool, configuration) {
  * @private
  * @function addToolGlobally
  *
- * @param {BaseTool} apiTool
- * @param {Object} [configuration] Override the default tool configuration
+ * @param {BaseTool} ApiTool
+ * @param {Object} [props] Override the default tool configuration
  * @returns {undefined}
  */
-const _addToolGlobally = function(apiTool, configuration) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+const _addToolGlobally = function(ApiTool, props) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 
-  const tool = new apiTool(configuration);
+  const tool = new ApiTool(props);
   const toolAlreadyAddedGlobally =
     store.state.globalTools[tool.name] !== undefined;
 
   if (toolAlreadyAddedGlobally) {
-    console.warn(`${tool.name} has already been added globally`);
+    logger.warn('%s has already been added globally', tool.name);
 
     return;
   }
 
   store.state.globalTools[tool.name] = {
-    tool: apiTool,
-    configuration,
+    tool: ApiTool,
+    props,
     activeBindings: [],
   };
 };

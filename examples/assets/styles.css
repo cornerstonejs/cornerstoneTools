@@ -1,0 +1,41 @@
+.active-mode {
+  color: red;
+}
+
+.cornerstone-element-wrapper {
+  width: 100%;
+  margin: 15px auto 35px auto;
+  height: calc(100% - 130px);
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cornerstone-element {
+  display: block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex-basis: 320px;
+  min-width: 320px;
+  min-height: 320px;
+  flex-grow: 1;
+  border: 2px solid rgb(0, 164, 217);
+}
+
+.highlight {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+/* Custom Buttons  */
+button.button.set-tool-mode {
+  -webkit-transition: background-color 0.5s;
+  transition: background-color 0.5s;
+}
+
+.row-label {
+  margin: 0 20px 0 0;
+}

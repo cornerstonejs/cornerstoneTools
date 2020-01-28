@@ -5,8 +5,13 @@ import pointNearTool from './bidirectionalTool/pointNearTool.js';
 import renderToolData from './bidirectionalTool/renderToolData.js';
 import addNewMeasurement from './bidirectionalTool/addNewMeasurement.js';
 import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
-import preMouseDownCallback from './bidirectionalTool/preMouseDownCallback.js';
-import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js';
+import handleSelectedCallback from './bidirectionalTool/handleSelectedCallback.js';
+import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouseCallback.js';
+import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
+import { bidirectionalCursor } from '../cursors/index.js';
+import throttle from '../../util/throttle';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
@@ -21,32 +26,25 @@ const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
  */
 
 export default class BidirectionalTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const textBoxConfig = '';
-    const shadowConfig = '';
-
-    const defaultConfig = {
+  constructor(props) {
+    const defaultProps = {
       name: 'Bidirectional',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         changeMeasurementLocationCallback: emptyLocationCallback,
         getMeasurementLocationCallback: emptyLocationCallback,
-        textBox: textBoxConfig,
-        shadow: shadowConfig,
+        textBox: '',
+        shadow: '',
+        drawHandles: true,
         drawHandlesOnHover: true,
         additionalData: [],
       },
+      svgCursor: bidirectionalCursor,
     };
 
-    const mergedConfiguration = Object.assign(
-      defaultConfig.configuration,
-      configuration
-    );
-    const initialConfiguration = Object.assign(defaultConfig, {
-      configuration: mergedConfiguration,
-    });
+    super(props, defaultProps);
 
-    super(initialConfiguration);
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
     this.createNewMeasurement = createNewMeasurement.bind(this);
     this.pointNearTool = pointNearTool.bind(this);
@@ -54,7 +52,21 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.addNewMeasurement = addNewMeasurement.bind(this);
     this._moveCallback = _moveCallback.bind(this);
 
-    this.preMouseDownCallback = preMouseDownCallback.bind(this);
-    this.preTouchStartCallback = preTouchStartCallback.bind(this);
+    this.handleSelectedCallback = handleSelectedCallback.bind(this);
+    this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);
+    this.handleSelectedTouchCallback = handleSelectedTouchCallback.bind(this);
+  }
+
+  updateCachedStats(image, element, data) {
+    const pixelSpacing = getPixelSpacing(image);
+    const {
+      longestDiameter,
+      shortestDiameter,
+    } = calculateLongestAndShortestDiameters(data, pixelSpacing);
+
+    // Set measurement text to show lesion table
+    data.longestDiameter = longestDiameter;
+    data.shortestDiameter = shortestDiameter;
+    data.invalidated = false;
   }
 }

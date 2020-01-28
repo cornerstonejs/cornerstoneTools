@@ -5,6 +5,11 @@ import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
+import getActiveTool from '../util/getActiveTool';
+import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('manipulators:moveAllHandles');
 
 const _dragEvents = {
   mouse: [EVENTS.MOUSE_DRAG],
@@ -35,18 +40,19 @@ const _upOrEndEvents = {
  * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
  * @param {Object}   [options={}]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {function} [options.doneMovingCallback]
  * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {string}   [interactionType=mouse]
+ * @param {function} [doneMovingCallback]
  * @returns {undefined}
  */
 export default function(
   { element },
   toolName,
   annotation,
-  handle = null,
+  handle,
   options = {},
-  interactionType = 'mouse'
+  interactionType = 'mouse',
+  doneMovingCallback
 ) {
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
@@ -57,7 +63,13 @@ export default function(
     options
   );
 
-  const dragHandler = _dragHandler.bind(this, toolName, annotation, options);
+  const dragHandler = _dragHandler.bind(
+    this,
+    toolName,
+    annotation,
+    options,
+    interactionType
+  );
   // So we don't need to inline the entire `upOrEndHandler` function
   const upOrEndHandler = evt => {
     _upOrEndHandler(
@@ -69,7 +81,8 @@ export default function(
         dragHandler,
         upOrEndHandler,
       },
-      evt
+      evt,
+      doneMovingCallback
     );
   };
 
@@ -85,8 +98,14 @@ export default function(
   });
 }
 
-function _dragHandler(toolName, annotation, options = {}, evt) {
-  const { element, image } = evt.detail;
+function _dragHandler(
+  toolName,
+  annotation,
+  options = {},
+  interactionType,
+  evt
+) {
+  const { element, image, buttons } = evt.detail;
   const { x, y } = evt.detail.deltaPoints.image;
 
   annotation.active = true;
@@ -118,6 +137,12 @@ function _dragHandler(toolName, annotation, options = {}, evt) {
 
   external.cornerstone.updateImage(element);
 
+  const activeTool = getActiveTool(element, buttons, interactionType);
+
+  if (activeTool instanceof BaseAnnotationTool) {
+    activeTool.updateCachedStats(image, element, annotation);
+  }
+
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
@@ -137,7 +162,8 @@ function _upOrEndHandler(
   options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
-  evt
+  evt,
+  doneMovingCallback
 ) {
   const eventData = evt.detail;
   const element = evt.detail.element;
@@ -163,7 +189,14 @@ function _upOrEndHandler(
   }
 
   if (typeof options.doneMovingCallback === 'function') {
+    logger.warn(
+      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+    );
     options.doneMovingCallback();
+  }
+
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
   }
 
   external.cornerstone.updateImage(element);

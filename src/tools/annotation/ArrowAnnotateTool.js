@@ -2,12 +2,15 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 
+import EVENTS from './../../events.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import textStyle from './../../stateManagement/textStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
 import pointInsideBoundingBox from './../../util/pointInsideBoundingBox.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
+import triggerEvent from './../../util/triggerEvent.js';
+
 import {
   addToolState,
   removeToolState,
@@ -18,6 +21,7 @@ import { getNewContext, draw, setShadow } from './../../drawing/index.js';
 import drawArrow from './../../drawing/drawArrow.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
+import { arrowAnnotateCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -27,8 +31,8 @@ import { textBoxWidth } from './../../drawing/drawTextBox.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ArrowAnnotateTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'ArrowAnnotate',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -38,12 +42,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         drawHandlesOnHover: true,
         arrowFirst: true,
       },
+      svgCursor: arrowAnnotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.preventNewMeasurement = false;
   }
 
@@ -87,6 +89,10 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
       25
     );
+  }
+
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
   }
 
   renderToolData(evt) {
@@ -239,47 +245,38 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
 
-    const toolOptions = Object.assign(
-      {},
-      {
-        doneMovingCallback: () => {
-          if (measurementData.text === undefined) {
-            this.configuration.getTextCallback(text => {
-              if (text) {
-                measurementData.text = text;
-              } else {
-                removeToolState(element, this.name, measurementData);
-              }
-
-              measurementData.active = false;
-              external.cornerstone.updateImage(element);
-            });
-          }
-
-          external.cornerstone.updateImage(element);
-        },
-      },
-      this.options
-    );
-
     moveNewHandle(
       evt.detail,
       this.name,
       measurementData,
       measurementData.handles.end,
-      toolOptions,
-      interactionType
+      this.options,
+      interactionType,
+      () => {
+        if (measurementData.text === undefined) {
+          this.configuration.getTextCallback(text => {
+            if (text) {
+              measurementData.text = text;
+            } else {
+              removeToolState(element, this.name, measurementData);
+            }
+
+            measurementData.active = false;
+            external.cornerstone.updateImage(element);
+
+            triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+              toolType: this.name,
+              element,
+              measurementData,
+            });
+          }, evt.detail);
+        }
+        external.cornerstone.updateImage(element);
+      }
     );
   }
 
   doubleClickCallback(evt) {
-    if (
-      !Array.isArray(this.options.mouseButtonMask) ||
-      !this.options.mouseButtonMask.includes(evt.detail.buttons)
-    ) {
-      return;
-    }
-
     return this._updateTextForNearbyAnnotation(evt);
   }
 
@@ -305,6 +302,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       ) {
         data.active = true;
         external.cornerstone.updateImage(element);
+
         // Allow relabelling via a callback
         this.configuration.changeTextCallback(
           data,
@@ -321,15 +319,21 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  _doneChangingTextCallback(element, data, updatedText, deleteTool) {
+  _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
     if (deleteTool === true) {
-      removeToolState(element, this.name, data);
+      removeToolState(element, this.name, measurementData);
     } else {
-      data.text = updatedText;
+      measurementData.text = updatedText;
     }
 
-    data.active = false;
+    measurementData.active = false;
     external.cornerstone.updateImage(element);
+
+    triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+      toolType: this.name,
+      element,
+      measurementData,
+    });
   }
 }
 

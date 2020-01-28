@@ -1,8 +1,10 @@
 import ScaleOverlayTool from './ScaleOverlayTool.js';
-import external from './../externalModules.js';
+import external from '../externalModules.js';
 import { getNewContext } from '../drawing/index.js';
+import { getLogger } from '../util/logger.js';
 
-jest.mock('./../externalModules.js', () => ({
+jest.mock('../util/logger.js');
+jest.mock('../externalModules.js', () => ({
   cornerstone: {
     getEnabledElement: jest.fn(),
     updateImage: jest.fn(),
@@ -16,17 +18,8 @@ jest.mock('../drawing/index.js', () => ({
   getNewContext: jest.fn(),
 }));
 
-jest.mock('../import.js', () => ({
-  default: jest.fn(),
-}));
-
 // TODO: Not sure if this is the best place to test the tool's strategies?
 describe('ScaleOverlayTool.js', () => {
-  beforeEach(() => {
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
-
   describe('default values', () => {
     it('has a default name of "ScaleOverlay"', () => {
       const defaultName = 'ScaleOverlay';
@@ -108,6 +101,7 @@ describe('ScaleOverlayTool.js', () => {
         },
       };
       const instantiatedTool = new ScaleOverlayTool();
+      const logger = getLogger();
 
       getNewContext.mockReturnValue({});
       external.cornerstone.metaData.get = jest.fn();
@@ -115,8 +109,8 @@ describe('ScaleOverlayTool.js', () => {
 
       instantiatedTool.renderToolData(mockEvt);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain(
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain(
         "unable to define rowPixelSpacing or colPixelSpacing from data on ScaleOverlay's renderToolData"
       );
     });

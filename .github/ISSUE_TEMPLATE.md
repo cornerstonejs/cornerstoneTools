@@ -1,26 +1,24 @@
 ### Prerequisites
 
-* [ ] Are you running the latest version?
+* [ ] Which version are you using? (Is it latest?)
 * [ ] Are you reporting to the correct repository?
-* [ ] Did you perform a cursory search?
-
-For more information, see the `CONTRIBUTING` guide.
+* [ ] Did you search existing issues? (Were any related?)
 
 ### Description
 
-[Description of the bug or feature]
+<!-- Description of the bug or feature -->
 
-### Steps to Reproduce
+### Steps to Reproduce the issue
 
-1. [First Step]
-2. [Second Step]
-3. [and so on...]
+1. When I do X
+2. Then Y
+3. I see behavior Z
 
-**Expected behavior:** [What you expected to happen]
+**Expected behavior:** (What you expected to happen)
 
-**Actual behavior:** [What actually happened]
+**Actual behavior:** (What actually happened)
 
 
-### Codepen With Reproduction of Issue:
+### CodeSandbox With Reproduction of Issue:
 
-- [Basic Template](https://codepen.io/dannyrb/pen/OQQwza)
+- [Basic Template](https://codesandbox.io/s/cornerstone-basic-issue-template-9slk4)

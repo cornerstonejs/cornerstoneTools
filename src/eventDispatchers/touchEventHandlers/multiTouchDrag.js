@@ -1,5 +1,6 @@
 import { state } from '../../store/index.js';
 import getActiveToolsForElement from '../../store/getActiveToolsForElement.js';
+import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsableWithMultiPartTools.js';
 
 export default function(evt) {
   if (state.isToolLocked) {
@@ -20,6 +21,10 @@ export default function(evt) {
       typeof tool.multiTouchDragCallback === 'function' &&
       numPointers === tool.configuration.touchPointers
   );
+
+  if (state.isMultiPartToolActive) {
+    tools = filterToolsUseableWithMultiPartTools(tools);
+  }
 
   if (tools.length === 0) {
     return false;

@@ -1,14 +1,19 @@
 import external from './../../../externalModules.js';
+import EVENTS from './../../../events.js';
 import { moveNewHandle } from './../../../manipulators/index.js';
 import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
 import {
   addToolState,
   removeToolState,
 } from './../../../stateManagement/toolState.js';
+import triggerEvent from '../../../util/triggerEvent.js';
+import getActiveTool from '../../../util/getActiveTool';
+import BaseAnnotationTool from '../../base/BaseAnnotationTool';
+import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
-  const { element, image } = eventData;
+  const { element, image, buttons } = eventData;
   const config = this.configuration;
 
   if (checkPixelSpacing(image)) {
@@ -34,35 +39,52 @@ export default function(evt, interactionType) {
     this.name,
     measurementData,
     end,
-    {
-      doneMovingCallback: () => {
-        const { handles, longestDiameter, shortestDiameter } = measurementData;
-        const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
-        const longestDiameterSize = parseFloat(longestDiameter) || 0;
-        const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
-        const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
-        const isTooFast = new Date().getTime() - timestamp < 150;
+    {},
+    interactionType,
+    () => {
+      const { handles, longestDiameter, shortestDiameter } = measurementData;
+      const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
+      const longestDiameterSize = parseFloat(longestDiameter) || 0;
+      const shortestDiameterSize = parseFloat(shortestDiameter) || 0;
+      const isTooSmal = longestDiameterSize < 1 || shortestDiameterSize < 1;
+      const isTooFast = new Date().getTime() - timestamp < 150;
 
-        if (hasHandlesOutside || isTooSmal || isTooFast) {
-          // Delete the measurement
-          measurementData.cancelled = true;
-          removeToolState(element, this.name, measurementData);
-        } else {
-          // Set lesionMeasurementData Session
-          config.getMeasurementLocationCallback(
-            measurementData,
-            eventData,
-            doneCallback
-          );
-        }
+      if (hasHandlesOutside || isTooSmal || isTooFast) {
+        // Delete the measurement
+        measurementData.cancelled = true;
+        removeToolState(element, this.name, measurementData);
+      } else {
+        // Set lesionMeasurementData Session
+        config.getMeasurementLocationCallback(
+          measurementData,
+          eventData,
+          doneCallback
+        );
+      }
 
-        // Perpendicular line is not connected to long-line
-        perpendicularStart.locked = false;
+      // Update perpendicular line and disconnect it from the long-line
+      updatePerpendicularLineHandles(eventData, measurementData);
+      perpendicularStart.locked = false;
 
-        external.cornerstone.updateImage(element);
-      },
-    },
-    interactionType
+      measurementData.invalidated = true;
+
+      external.cornerstone.updateImage(element);
+
+      const activeTool = getActiveTool(element, buttons, interactionType);
+
+      if (activeTool instanceof BaseAnnotationTool) {
+        activeTool.updateCachedStats(image, element, measurementData);
+      }
+
+      const modifiedEventData = {
+        toolType: this.name,
+        element,
+        measurementData,
+      };
+
+      triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, modifiedEventData);
+      triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
+    }
   );
 }
 

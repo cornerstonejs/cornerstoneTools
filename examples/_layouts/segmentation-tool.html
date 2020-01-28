@@ -1,0 +1,34 @@
+---
+layout: default
+---
+
+<section class="section">
+  <div class="container">
+    <h1 class="title is-1">{{ page.title }}</h1>
+
+    {% include customButtons/modeButtons.html %} {% if page.customButtons %} {%
+    include customButtons/{{ page.customButtons }} %} {% endif %} {% include
+    customButtons/segmentationDataButtons.html %}
+
+    <div class="cornerstone-element-wrapper">
+      <div
+        class="cornerstone-element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+    </div>
+
+    {{ content }}
+  </div>
+</section>
+
+<script>
+    function _initInterface() {
+      initSegmentationColorsButtons();
+      initModeButtons();
+      {% if page.customButtons %}
+        {{ page.customButtons | remove: ".html" }}();
+      {% endif %}
+    }
+  {% include mainScript.js %}
+</script>

@@ -1,6 +1,9 @@
 import external from './../../../../externalModules.js';
+import { state } from '../../../../store/index.js';
 import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
+import getActiveTool from '../../../../util/getActiveTool';
+import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
 
 const touchEndEvents = [
   EVENTS.TOUCH_END,
@@ -18,7 +21,7 @@ export default function(
   doneMovingCallback,
   preventHandleOutsideImage
 ) {
-  const element = mouseEventData.element;
+  const { element, image, buttons } = mouseEventData;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
@@ -27,7 +30,6 @@ export default function(
   const touchDragCallback = event => {
     const eventData = event.detail;
 
-    handle.active = true;
     handle.hasMoved = true;
 
     if (handle.index === undefined || handle.index === null) {
@@ -45,21 +47,38 @@ export default function(
       handle.y = Math.min(handle.y, eventData.image.height);
     }
 
+    data.invalidated = true;
+
     external.cornerstone.updateImage(element);
 
-    const eventType = EVENTS.MEASUREMENT_MODIFIED;
+    const activeTool = getActiveTool(element, buttons, 'touch');
+
+    if (activeTool instanceof BaseAnnotationTool) {
+      activeTool.updateCachedStats(image, element, data);
+    }
+
     const modifiedEventData = {
       toolType,
       element,
       measurementData: data,
     };
 
-    external.cornerstone.triggerEvent(element, eventType, modifiedEventData);
+    external.cornerstone.triggerEvent(
+      element,
+      EVENTS.MEASUREMENT_MODIFIED,
+      modifiedEventData
+    );
   };
+
+  handle.active = true;
+  state.isToolLocked = true;
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
   const touchEndCallback = () => {
+    handle.active = false;
+    state.isToolLocked = false;
+
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
     touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);

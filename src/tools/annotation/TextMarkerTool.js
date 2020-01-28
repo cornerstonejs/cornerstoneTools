@@ -8,6 +8,7 @@ import {
   removeToolState,
   getToolState,
 } from './../../stateManagement/toolState.js';
+import { textMarkerCursor } from '../cursors/index.js';
 
 /**
  * @public
@@ -18,8 +19,8 @@ import {
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class TextMarkerTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'TextMarker',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
@@ -29,12 +30,10 @@ export default class TextMarkerTool extends BaseAnnotationTool {
         loop: false,
         changeTextCallback,
       },
+      svgCursor: textMarkerCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
     this.touchPressCallback = this._changeText.bind(this);
     this.doubleClickCallback = this._changeText.bind(this);
   }
@@ -116,6 +115,10 @@ export default class TextMarkerTool extends BaseAnnotationTool {
     const insideBoundingBox = pointInsideBoundingBox(data.handles.end, coords);
 
     return distanceToPoint < 10 || insideBoundingBox;
+  }
+
+  updateCachedStats() {
+    // Implementing to satisfy BaseAnnotationTool
   }
 
   renderToolData(evt) {
@@ -213,14 +216,22 @@ export default class TextMarkerTool extends BaseAnnotationTool {
 }
 
 /**
- * This function is a callback to be overwriten in order to provide the wante feature
+ * This function is a callback to be overwriten in order to provide the wanted feature
  * modal, overlay, popup or any kind of interaction with the user to be able to update
  * the text marker label.
  *
- * @param  {} data
- * @param  {} eventData
- * @param  {} doneChangingTextCallback
+ * @param  {Object} data
+ * @param  {Object} eventData
+ * @param  {doneChangingTextCallback} doneChangingTextCallback
+ * @returns {void}
  */
 const changeTextCallback = (data, eventData, doneChangingTextCallback) => {
+  // eslint-disable-next-line no-alert
   doneChangingTextCallback(data, prompt('Change your annotation:'));
 };
+
+/**
+ * @callback doneChangingTextCallback
+ * @param {Object} data
+ * @param {string} text - The new text
+ */

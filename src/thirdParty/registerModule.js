@@ -1,4 +1,7 @@
-import { state, modules } from '../store/index.js';
+import { modules } from '../store/index.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('thirdParty:registerModule');
 
 /**
  * Register a module.
@@ -11,21 +14,28 @@ import { state, modules } from '../store/index.js';
  * @param {Object} newModule The module to register.
  * @param {boolean} [overwrite] Whether a module should be overwritten,
  *                              should it have the same name.
+ * @returns {void}
  */
 export default function(name, newModule, overwrite = false) {
-  if (isModuleNameRegistered(name)) {
-    console.warn(`A module with the name ${name} is already registered`);
+  const alreadyRegistered = isModuleNameRegistered(name);
 
-    if (overwrite) {
-      console.warn(`Overwriting module ${name}`);
-    } else {
-      return;
-    }
+  if (alreadyRegistered && !overwrite) {
+    logger.warn('A module with the name %s is already registered', name);
+
+    return;
+  }
+
+  if (alreadyRegistered) {
+    logger.warn('Overwriting module %s', name);
   }
 
   modules[name] = newModule;
+
+  if (typeof modules[name].onRegisterCallback === 'function') {
+    modules[name].onRegisterCallback();
+  }
 }
 
 function isModuleNameRegistered(name) {
-  return Object.keys(modules).some(key => key === name);
+  return modules[name] !== undefined;
 }

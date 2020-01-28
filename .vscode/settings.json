@@ -1,4 +1,8 @@
 {
+  "prettier.disableLanguages": [
+    "html"
+  ],
+
   // ===
   // Spacing
   // ===
@@ -41,9 +45,7 @@
   // HTML
   // ===
 
-  "html.format.enable": false,
-  "html.suggest.angular1": false,
-  "html.suggest.ionic": false,
+  "html.format.enable": true,
 
   // ===
   // JS(ON)

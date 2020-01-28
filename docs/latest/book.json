@@ -12,7 +12,7 @@
   ],
   "pluginsConfig": {
     "edit-link": {
-      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs",
+      "base": "https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/latest",
       "label": "Edit This Page"
     },
     "github": {
@@ -32,8 +32,12 @@
           "text": "Version 2.x"
         },
         {
+          "value": "https://tools.cornerstonejs.org/history/v3/",
+          "text": "Version 3.x"
+        },
+        {
           "value": "https://tools.cornerstonejs.org/",
-          "text": "Version 3.x",
+          "text": "Version 4.x",
           "selected": true
         }
       ]
