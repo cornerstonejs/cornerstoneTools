@@ -13,6 +13,142 @@
 		 * You need to supply your own styling for the created magnifyTool div.
 		 * Note: The element wrapper needs `position: relative` for the positioning to work.
 		 */
+
+    .magnifyTool {
+      border: 4px white solid;
+      box-shadow: 2px 2px 10px #1e1e1e;
+      border-radius: 50%;
+      display: none;
+      cursor: none;
+      z-index: 100;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app">
+    <div class="wrapper">
+      <!-- Select Tool Category -->
+      <ul class="tool-category-list">
+        <li>
+          <a class="active" data-category="annotation" href="#">Annotation</a>
+        </li>
+        <li>
+          <a data-category="segmentation" href="#">Segmentation</a>
+        </li>
+        <li><a data-category="drag" href="#">Drag</a></li>
+        <li>
+          <a data-category="multitouch-pinch" href="#">Multi-Touch / Pinch (touch only)</a>
+        </li>
+        <li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+        <li><a data-category="double-tap" href="#">DoubleTap</a></li>
+        <li><a data-category="overlay" href="#">Overlay</a></li>
+      </ul>
+
+      <!-- Select Active Tool -->
+      <ul class="tool-category active" data-tool-category="annotation">
+        <li><a href="#" data-tool="ArrowAnnotate">ArrowAnnotate</a></li>
+        <li><a href="#" data-tool="Angle">Angle</a></li>
+        <li><a href="#" data-tool="Bidirectional">Bidirectional</a></li>
+        <li><a href="#" data-tool="CircleRoi">CircleRoi</a></li>
+        <li><a href="#" data-tool="CobbAngle">Cobb Angle</a></li>
+        <li><a href="#" data-tool="EllipticalRoi">EllipticalRoi</a></li>
+        <li><a href="#" data-tool="Eraser">Eraser</a></li>
+        <li><a href="#" data-tool="FreehandRoi">FreehandRoi</a></li>
+        <li>
+          <a href="#" data-tool="FreehandRoiSculptor">FreehandRoiSculptor</a>
+        </li>
+        <li><a href="#" data-tool="TextMarker">TextMarker</a></li>
+        <li><a href="#" data-tool="Length">Length</a></li>
+        <li><a href="#" data-tool="Probe">Probe</a></li>
+        <li><a href="#" data-tool="RectangleRoi">RectangleRoi</a></li>
+      </ul>
+
+      <ul class="tool-category" data-tool-category="segmentation">
+        <li>
+          <a href="#" data-tool="Brush">BrushTool</a>
+        </li>
+        <li>
+          <a href="#" data-tool="SphericalBrush">SphericalBrushTool</a>
+        </li>
+        <li>
+          <a href="#" data-tool="FreehandScissors">FreehandScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="RectangleScissors">RectangleScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="CircleScissors">CircleScissors</a>
+        </li>
+        <li>
+          <a href="#" data-tool="CorrectionScissors">CorrectionScissors</a>
+        </li>
+      </ul>
+
+      <ul class="tool-category" data-tool-category="drag">
+        <li><a href="#" data-tool="Crosshairs">Crosshairs</a></li>
+        <!-- <li><a href="#" data-tool="DragProbe">DragProbe</a></li> -->
+        <li><a href="#" data-tool="Magnify">Magnify</a></li>
+        <li><a href="#" data-tool="Pan">Pan</a></li>
+        <li><a href="#" data-tool="Rotate">Rotate</a></li>
+        <li><a href="#" data-tool="StackScroll">StackScroll</a></li>
+        <li><a href="#" data-tool="Wwwc">WWWC</a></li>
+        <li><a href="#" data-tool="WwwcRegion">WWWCRegion</a></li>
+        <li><a href="#" data-tool="Zoom">Zoom</a></li>
+        <li><a href="#" data-tool="DragProbe">DragProbe</a></li>
+      </ul>
+      <ul class="tool-category" data-tool-category="double-tap">
+        <li>
+          <a href="#" data-tool="DoubleTapFitToWindow">DoubleTapFitToWindow</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="multitouch-pinch">
+        <li>
+          <a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="RotateTouch" data-tool-type="pinch">RotateTouch</a>
+        </li>
+        <li>
+          <a href="#" data-tool="StackScrollMultiTouch" data-tool-type="multitouch">StackScrollMultiTouch</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="mousewheel">
+        <li>
+          <a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a>
+        </li>
+        <li>
+          <a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a>
+        </li>
+      </ul>
+      <ul class="tool-category" data-tool-category="overlay">
+        <li>
+          <label id="scaleOverlay" class="checkbox-label" for="scaleOverlayCheckbox">
+            ScaleOverlay <label class="label-on"> ON</label>
+            <label class="label-off"> OFF</label>
+          </label>
+          <input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-type="none"
+            type="checkbox" />
+        </li>
+        <li>
+          <label id="overlay" class="checkbox-label" for="overlayCheckbox">
+            Overlay <label class="label-on"> ON</label>
+            <label class="label-off"> OFF</label>
+          </label>
+          <input id="overlayCheckbox" class="hide" data-tool="Overlay" data-tool-type="none"
+            type="checkbox" />
+        </li>
+      </ul>
+
+      <!-- Our beautiful element targets -->
+      <div class="cornerstone-element-wrapper">
+        <a href="#" class="save-btn" data-index="0">Save</a>
+        <div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
+        <a href="#" class="save-btn" data-index="1">Save</a>
+        <div class="cornerstone-element" data-index="1" oncontextmenu="return false"></div>
       </div>
     </div>
   </div>
@@ -227,18 +363,17 @@
 
     cornerstoneTools.setToolDisabled(toolName);
 
-      toolCheckBox.addEventListener('change', evt => {
-        if (evt.currentTarget.checked) {
-          cornerstoneTools.setToolEnabled(toolName);
-        } else {
-          cornerstoneTools.setToolDisabled(toolName);
-        }
+    toolCheckBox.addEventListener('change', evt => {
+      if (evt.currentTarget.checked) {
+        cornerstoneTools.setToolEnabled(toolName);
+      } else {
+        cornerstoneTools.setToolDisabled(toolName);
+      }
 
-        const toolLabelId =
-          toolName.charAt(0).toLowerCase() + toolName.slice(1);
-        const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
-        toolLabel.classList.toggle('turned-on');
-      });
+      const toolLabelId =
+        toolName.charAt(0).toLowerCase() + toolName.slice(1);
+      const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
+      toolLabel.classList.toggle('turned-on');
     });
   });
 
