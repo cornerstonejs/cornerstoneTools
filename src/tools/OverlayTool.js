@@ -1,7 +1,5 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-// Drawing
-import { getNewContext } from '../drawing/index.js';
 
 /**
  *
@@ -46,18 +44,24 @@ export default class OverlayTool extends BaseTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { enabledElement, image, viewport } = eventData;
+    const { enabledElement, image, viewport, canvasContext } = eventData;
 
     if (!eventData || !enabledElement || !image) {
       return;
     }
 
-    const context = getNewContext(eventData.canvasContext.canvas);
-    const overlaysMeta = external.cornerstone.metaData.get(
+    const overlayPlaneMetadata = external.cornerstone.metaData.get(
       'overlayPlaneModule',
-      eventData.image.imageId
-    ) || { overlays: [] };
-    const overlays = overlaysMeta.overlays;
+      image.imageId
+    );
+
+    if (
+      !overlayPlaneMetadata ||
+      !overlayPlaneMetadata.overlays ||
+      !overlayPlaneMetadata.overlays.length
+    ) {
+      return;
+    }
 
     const viewportPixelSpacing = {
       column: viewport.displayedArea.columnPixelSpacing || 1,
@@ -70,35 +74,19 @@ export default class OverlayTool extends BaseTool {
       Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) *
       viewportPixelSpacing.row;
 
-    context.save();
-
-    overlays.forEach(overlay => {
+    overlayPlaneMetadata.overlays.forEach(overlay => {
       if (overlay.visible === false) {
         return;
       }
-      if (overlay.fillStyle === undefined) {
-        overlay.fillStyle = 'yellow';
-      }
+
       const layerCanvas = document.createElement('canvas');
 
       layerCanvas.width = imageWidth;
       layerCanvas.height = imageHeight;
-      const layerContext = layerCanvas.getContext('2d');
-      const transform = external.cornerstone.internal.getTransform(
-        enabledElement
-      );
 
-      layerContext.setTransform(
-        transform.m[0],
-        transform.m[1],
-        transform.m[2],
-        transform.m[3],
-        transform.m[4],
-        transform.m[5]
-      );
-      layerContext.save();
-      layerContext.setTransform(1, 0, 0, 1, 0, 0);
-      layerContext.fillStyle = overlay.fillStyle;
+      const layerContext = layerCanvas.getContext('2d');
+
+      layerContext.fillStyle = overlay.fillStyle || 'white';
 
       if (overlay.type === 'R') {
         layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
@@ -114,10 +102,9 @@ export default class OverlayTool extends BaseTool {
           }
         }
       }
-      layerContext.restore();
-      context.drawImage(layerCanvas, 0, 0);
-    });
 
-    context.restore();
+      // Draw the overlay layer onto the canvas
+      canvasContext.drawImage(layerCanvas, 0, 0);
+    });
   }
 }
