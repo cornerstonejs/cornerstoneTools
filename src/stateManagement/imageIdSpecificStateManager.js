@@ -101,7 +101,7 @@ function newImageIdSpecificToolStateManager() {
     if (!enabledElement.image) {
       return;
     }
-    clearImageIdToolState(enabledElement.imageId);
+    clearImageIdToolState(enabledElement.image.imageId);
   }
 
   function clearImageIdToolState(imageId) {
