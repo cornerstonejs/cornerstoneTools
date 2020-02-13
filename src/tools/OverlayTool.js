@@ -103,8 +103,12 @@ export default class OverlayTool extends BaseTool {
         }
       }
 
+      // Guard against non-number values
+      const overlayX = (!isNaN(parseFloat(overlay.x)) && isFinite(overlay.x)) ? overlay.x : 0;
+      const overlayY = (!isNaN(parseFloat(overlay.y)) && isFinite(overlay.y)) ? overlay.y : 0; 
+
       // Draw the overlay layer onto the canvas
-      canvasContext.drawImage(layerCanvas, overlay.x, overlay.y);
+      canvasContext.drawImage(layerCanvas, overlayX, overlayY);
     });
   }
 }
