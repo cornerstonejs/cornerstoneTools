@@ -250,7 +250,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         if (data.invalidated === true) {
           if (this.dataInvalidatedCallback) {
-            this.dataInvalidatedCallback(data);
+            this.dataInvalidatedCallback({
+              data: data,
+              imageId: image.imageId,
+            });
           }
         }
 
