@@ -78,7 +78,10 @@ function isLineRightOfPoint(point, lp1, lp2) {
 
   // If the lp1.x and lp2.x enclose point.x check gradient of line and see if
   // Point is above or below the line to calculate if it inside.
-  if (Math.sign(lPointY.gradient) * point.y > lPointY.value) {
+  if (
+    Math.sign(lPointY.gradient) * point.y >
+    Math.sign(lPointY.gradient) * lPointY.value
+  ) {
     return true;
   }
 
@@ -99,7 +102,7 @@ function isLineRightOfPoint(point, lp1, lp2) {
 function lineSegmentAtPoint(point, lp1, lp2) {
   const dydx = (lp2.y - lp1.y) / (lp2.x - lp1.x);
   const fx = {
-    value: lp1.x + dydx * (point.x - lp1.x),
+    value: lp1.y + dydx * (point.x - lp1.x),
     gradient: dydx,
   };
 

@@ -5,8 +5,11 @@ import addLabelmap3D from './addLabelmap3D';
 import addLabelmap2D from './addLabelmap2D';
 import external from '../../../externalModules';
 import state from './state';
-
+import ARRAY_TYPES from './arrayTypes';
+import { getModule } from '../../index.js';
 import { getLogger } from '../../../util/logger';
+
+const { UINT_16_ARRAY, FLOAT_32_ARRAY } = ARRAY_TYPES;
 
 const logger = getLogger('store:modules:segmentationModule:getLabelmap2D');
 
@@ -123,14 +126,34 @@ export function getLabelmap2DByImageIdIndex(
   columns
 ) {
   if (!labelmap3D.labelmaps2D[imageIdIndex]) {
+    const { configuration } = getModule('segmentation');
     const sliceLength = rows * columns;
-    const byteOffset = sliceLength * 2 * imageIdIndex; // 2 bytes/pixel
 
-    const pixelData = new Uint16Array(
-      labelmap3D.buffer,
-      byteOffset,
-      sliceLength
-    );
+    const elementOffset = sliceLength * imageIdIndex;
+
+    let pixelData;
+
+    switch (configuration.arrayType) {
+      case UINT_16_ARRAY:
+        pixelData = new Uint16Array(
+          labelmap3D.buffer,
+          elementOffset * 2, // 2 bytes/voxel
+          sliceLength
+        );
+
+        break;
+
+      case FLOAT_32_ARRAY:
+        pixelData = new Float32Array(
+          labelmap3D.buffer,
+          elementOffset * 4, // 4 bytes/voxel
+          sliceLength
+        );
+        break;
+
+      default:
+        throw new Error(`Unsupported Array Type ${configuration.arrayType}`);
+    }
 
     labelmap3D.labelmaps2D[imageIdIndex] = {
       pixelData,
