@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.6.2-d - 2019-11-06 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.12.3-a - 2020-02-20 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "720f4fb89b7314ccdf82";
+/******/ 	var hotCurrentHash = "86986448429489ffbce1";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -6975,7 +6975,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************!*\
   !*** ./index.js ***!
   \******************/
-/*! exports provided: AngleTool, ArrowAnnotateTool, BidirectionalTool, CircleRoiTool, CobbAngleTool, EllipticalRoiTool, FreehandRoiTool, LengthTool, ProbeTool, RectangleRoiTool, TextMarkerTool, BrushTool, SphericalBrushTool, RectangleScissorsTool, FreehandScissorsTool, CircleScissorsTool, CorrectionScissorsTool, CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, init, stackPrefetch, stackRenderers, playClip, stopClip, store, getModule, getToolForElement, addTool, addToolForElement, removeTool, removeToolForElement, setToolOptions, setToolOptionsForElement, isToolActiveForElement, setToolActive, setToolActiveForElement, setToolEnabled, setToolEnabledForElement, setToolDisabled, setToolDisabledForElement, setToolPassive, setToolPassiveForElement, addToolState, getToolState, removeToolState, clearToolState, setElementToolStateManager, getElementToolStateManager, textStyle, toolStyle, toolColors, toolCoordinates, stackSpecificStateManager, newStackSpecificToolStateManager, addStackStateManager, loadHandlerManager, newImageIdSpecificToolStateManager, globalImageIdSpecificToolStateManager, newFrameOfReferenceSpecificToolStateManager, globalFrameOfReferenceSpecificToolStateManager, forceEnabledElementResize, orientation, SaveAs, enableLogger, disableLogger, register, registerSome, wwwcSynchronizer, updateImageSynchronizer, Synchronizer, stackScrollSynchronizer, stackImagePositionSynchronizer, stackImagePositionOffsetSynchronizer, stackImageIndexSynchronizer, panZoomSynchronizer, requestPoolManager, importInternal, external, EVENTS, version, import, default */
+/*! exports provided: AngleTool, ArrowAnnotateTool, BidirectionalTool, CircleRoiTool, CobbAngleTool, EllipticalRoiTool, FreehandRoiTool, LengthTool, ProbeTool, RectangleRoiTool, TextMarkerTool, BrushTool, SphericalBrushTool, RectangleScissorsTool, FreehandScissorsTool, CircleScissorsTool, CorrectionScissorsTool, CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OverlayTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, init, stackPrefetch, stackRenderers, playClip, stopClip, store, getModule, getToolForElement, addTool, addToolForElement, removeTool, removeToolForElement, setToolOptions, setToolOptionsForElement, isToolActiveForElement, setToolActive, setToolActiveForElement, setToolEnabled, setToolEnabledForElement, setToolDisabled, setToolDisabledForElement, setToolPassive, setToolPassiveForElement, addToolState, getToolState, removeToolState, clearToolState, setElementToolStateManager, getElementToolStateManager, textStyle, toolStyle, toolColors, toolCoordinates, stackSpecificStateManager, newStackSpecificToolStateManager, addStackStateManager, loadHandlerManager, newImageIdSpecificToolStateManager, globalImageIdSpecificToolStateManager, newFrameOfReferenceSpecificToolStateManager, globalFrameOfReferenceSpecificToolStateManager, forceEnabledElementResize, orientation, SaveAs, enableLogger, disableLogger, register, registerSome, wwwcSynchronizer, updateImageSynchronizer, Synchronizer, stackScrollSynchronizer, stackImagePositionSynchronizer, stackImagePositionOffsetSynchronizer, stackImageIndexSynchronizer, panZoomSynchronizer, requestPoolManager, importInternal, external, EVENTS, version, import, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7028,6 +7028,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "FreehandRoiSculptorTool", function() { return _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["FreehandRoiSculptorTool"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MagnifyTool", function() { return _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["MagnifyTool"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OverlayTool", function() { return _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["OverlayTool"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OrientationMarkersTool", function() { return _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["OrientationMarkersTool"]; });
 
@@ -7376,6 +7378,7 @@ var cornerstoneTools = {
   EraserTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["EraserTool"],
   FreehandRoiSculptorTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["FreehandRoiSculptorTool"],
   MagnifyTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["MagnifyTool"],
+  OverlayTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["OverlayTool"],
   OrientationMarkersTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["OrientationMarkersTool"],
   PanMultiTouchTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["PanMultiTouchTool"],
   PanTool: _tools_index_js__WEBPACK_IMPORTED_MODULE_2__["PanTool"],
@@ -10799,19 +10802,23 @@ function newImageIdSpecificToolStateManager() {
   // As modules that restore saved state
 
 
-  function addImageIdSpecificToolState(element, toolType, data) {
+  function addElementToolState(element, toolType, data) {
     var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.getEnabledElement(element); // If we don't have an image for this element exit early
 
     if (!enabledElement.image) {
       return;
-    } // If we don't have any tool state for this imageId, add an empty object
-
-
-    if (toolState.hasOwnProperty(enabledElement.image.imageId) === false) {
-      toolState[enabledElement.image.imageId] = {};
     }
 
-    var imageIdToolState = toolState[enabledElement.image.imageId]; // If we don't have tool state for this type of tool, add an empty object
+    addImageIdToolState(enabledElement.image.imageId, toolType, data);
+  }
+
+  function addImageIdToolState(imageId, toolType, data) {
+    // If we don't have any tool state for this imageId, add an empty object
+    if (toolState.hasOwnProperty(imageId) === false) {
+      toolState[imageId] = {};
+    }
+
+    var imageIdToolState = toolState[imageId]; // If we don't have tool state for this type of tool, add an empty object
 
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       imageIdToolState[toolType] = {
@@ -10822,42 +10829,61 @@ function newImageIdSpecificToolStateManager() {
     var toolData = imageIdToolState[toolType]; // Finally, add this new tool to the state
 
     toolData.data.push(data);
+  }
+
+  function getElementToolState(element, toolType) {
+    var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.getEnabledElement(element); // If the element does not have an image return undefined.
+
+    if (!enabledElement.image) {
+      return;
+    }
+
+    return getImageIdToolState(enabledElement.image.imageId, toolType);
   } // Here you can get state - used by tools as well as modules
   // That save state persistently
 
 
-  function getImageIdSpecificToolState(element, toolType) {
-    var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.getEnabledElement(element); // If we don't have any tool state for this imageId, return undefined
-
-    if (!enabledElement.image || toolState.hasOwnProperty(enabledElement.image.imageId) === false) {
+  function getImageIdToolState(imageId, toolType) {
+    // If we don't have any tool state for this imageId, return undefined
+    if (toolState.hasOwnProperty(imageId) === false) {
       return;
     }
 
-    var imageIdToolState = toolState[enabledElement.image.imageId]; // If we don't have tool state for this type of tool, return undefined
+    var imageIdToolState = toolState[imageId]; // If we don't have tool state for this type of tool, return undefined
 
     if (imageIdToolState.hasOwnProperty(toolType) === false) {
       return;
     }
 
-    var toolData = imageIdToolState[toolType];
-    return toolData;
+    return imageIdToolState[toolType];
   } // Clears all tool data from this toolStateManager.
 
 
-  function clearImageIdSpecificToolStateManager(element) {
+  function clearElementToolState(element) {
     var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.getEnabledElement(element);
 
-    if (!enabledElement.image || toolState.hasOwnProperty(enabledElement.image.imageId) === false) {
+    if (!enabledElement.image) {
       return;
     }
 
-    delete toolState[enabledElement.image.imageId];
+    clearImageIdToolState(enabledElement.image.imageId);
+  }
+
+  function clearImageIdToolState(imageId) {
+    if (toolState.hasOwnProperty(imageId) === false) {
+      return;
+    }
+
+    delete toolState[imageId];
   }
 
   return {
-    get: getImageIdSpecificToolState,
-    add: addImageIdSpecificToolState,
-    clear: clearImageIdSpecificToolStateManager,
+    get: getElementToolState,
+    add: addElementToolState,
+    clear: clearElementToolState,
+    getImageIdToolState: getImageIdToolState,
+    addImageIdToolState: addImageIdToolState,
+    clearImageIdToolState: clearImageIdToolState,
     saveImageIdToolState: saveImageIdToolState,
     restoreImageIdToolState: restoreImageIdToolState,
     saveToolState: saveToolState,
@@ -11327,7 +11353,12 @@ function getToolState(element, toolType) {
 
 function removeToolState(element, toolType, data) {
   var toolStateManager = getElementToolStateManager(element);
-  var toolData = toolStateManager.get(element, toolType); // Find this tool data
+  var toolData = toolStateManager.get(element, toolType);
+
+  if (!toolData || !toolData.data || !toolData.data.length) {
+    return;
+  } // Find this tool data
+
 
   var indexOfData = -1;
 
@@ -12508,6 +12539,12 @@ function _changeActiveSegmentIndex(element) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return addLabelmap2D; });
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
+
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_0__["default"].UINT_16_ARRAY,
+    FLOAT_32_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_0__["default"].FLOAT_32_ARRAY;
 /**
  * Adds a `Labelmap2D` view of one frame of a `Labelmap3D`.
  *
@@ -12518,11 +12555,30 @@ __webpack_require__.r(__webpack_exports__);
  * @param  {number} columns             The number of columns in the image.
  * @returns {null}
  */
-function addLabelmap2D(brushStackState, labelmapIndex, imageIdIndex, rows, columns) {
-  var sliceLength = rows * columns;
-  var byteOffset = sliceLength * 2 * imageIdIndex; // 2 bytes/pixel
 
-  var pixelData = new Uint16Array(brushStackState.labelmaps3D[labelmapIndex].buffer, byteOffset, sliceLength);
+function addLabelmap2D(brushStackState, labelmapIndex, imageIdIndex, rows, columns) {
+  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_1__["getModule"])('segmentation'),
+      configuration = _getModule.configuration;
+
+  var sliceLength = rows * columns;
+  var elementOffset = sliceLength * imageIdIndex;
+  var pixelData;
+
+  switch (configuration.arrayType) {
+    case UINT_16_ARRAY:
+      pixelData = new Uint16Array(brushStackState.labelmaps3D[labelmapIndex].buffer, elementOffset * 2, // 2 bytes/voxel
+      sliceLength);
+      break;
+
+    case FLOAT_32_ARRAY:
+      pixelData = new Float32Array(brushStackState.labelmaps3D[labelmapIndex].buffer, elementOffset * 4, // 4 bytes/voxel
+      sliceLength);
+      break;
+
+    default:
+      throw new Error("Unsupported Array Type ".concat(configuration.arrayType));
+  }
+
   brushStackState.labelmaps3D[labelmapIndex].labelmaps2D[imageIdIndex] = {
     pixelData: pixelData,
     segmentsOnLabelmap: []
@@ -12541,6 +12597,12 @@ function addLabelmap2D(brushStackState, labelmapIndex, imageIdIndex, rows, colum
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return addLabelmap3D; });
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
+
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_0__["default"].UINT_16_ARRAY,
+    FLOAT_32_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_0__["default"].FLOAT_32_ARRAY;
 /**
  * AddLabelmap3D - Adds a `Labelmap3D` object to the `BrushStackState` object.
  *
@@ -12549,10 +12611,29 @@ __webpack_require__.r(__webpack_exports__);
  * @param  {number} size            The size of the ArrayBuffer in bytes/ 2.
  * @returns {null}
  */
+
 function addLabelmap3D(brushStackState, labelmapIndex, size) {
-  // Buffer size is multiplied by 2 as we are using 2 bytes/voxel for 65536 segments.
+  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_1__["getModule"])('segmentation'),
+      configuration = _getModule.configuration;
+
+  var bytesPerVoxel;
+
+  switch (configuration.arrayType) {
+    case UINT_16_ARRAY:
+      bytesPerVoxel = 2;
+      break;
+
+    case FLOAT_32_ARRAY:
+      bytesPerVoxel = 4;
+      break;
+
+    default:
+      throw new Error("Unsupported Array Type ".concat(configuration.arrayType));
+  } // Buffer size is multiplied by bytesPerVoxel to allocate enough space.
+
+
   brushStackState.labelmaps3D[labelmapIndex] = {
-    buffer: new ArrayBuffer(size * 2),
+    buffer: new ArrayBuffer(size * bytesPerVoxel),
     labelmaps2D: [],
     metadata: [],
     activeSegmentIndex: 1,
@@ -12562,6 +12643,23 @@ function addLabelmap3D(brushStackState, labelmapIndex, size) {
     redo: []
   };
 }
+
+/***/ }),
+
+/***/ "./store/modules/segmentationModule/arrayTypes.js":
+/*!********************************************************!*\
+  !*** ./store/modules/segmentationModule/arrayTypes.js ***!
+  \********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+var ARRAY_TYPES = {
+  UINT_16_ARRAY: 0,
+  FLOAT_32_ARRAY: 1
+};
+/* harmony default export */ __webpack_exports__["default"] = (ARRAY_TYPES);
 
 /***/ }),
 
@@ -12581,16 +12679,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getColorLUT", function() { return getColorLUT; });
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js");
 /* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _externalModules__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../externalModules */ "./externalModules.js");
-/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../util/logger */ "./util/logger.js");
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./store/modules/segmentationModule/state.js");
-/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
+/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../util/logger */ "./util/logger.js");
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./store/modules/segmentationModule/state.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
 
 
 
 
-
-var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_2__["getLogger"])('store:modules:segmentationModule:setColorLUT');
+var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_1__["getLogger"])('store:modules:segmentationModule:setColorLUT');
 /**
  * SetColorLUT - Sets the labelmap to a specfic LUT, or generates a new LUT.
  *
@@ -12602,7 +12698,7 @@ var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_2__["getLogger"])('sto
 function setColorLUT(colorLUTIndex) {
   var colorLUT = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [];
 
-  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_4__["getModule"])('segmentation'),
+  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_3__["getModule"])('segmentation'),
       configuration = _getModule.configuration;
 
   var segmentsPerLabelmap = configuration.segmentsPerLabelmap;
@@ -12620,7 +12716,7 @@ function setColorLUT(colorLUTIndex) {
 
 
   colorLUT.unshift([0, 0, 0, 0]);
-  _state__WEBPACK_IMPORTED_MODULE_3__["default"].colorLutTables[colorLUTIndex] = colorLUT;
+  _state__WEBPACK_IMPORTED_MODULE_2__["default"].colorLutTables[colorLUTIndex] = colorLUT;
 }
 function setColorLUTIndexForLabelmap3D(labelmap3D, colorLUTIndex) {
   labelmap3D.colorLUTIndex = colorLUTIndex;
@@ -12643,10 +12739,10 @@ function setColorForSegmentIndexOfColorLUT(labelmap3DOrColorLUTIndex, segmentInd
 }
 function getColorLUT(labelmap3DOrColorLUTIndex) {
   if (typeof labelmap3DOrColorLUTIndex === 'number') {
-    return _state__WEBPACK_IMPORTED_MODULE_3__["default"].colorLutTables[labelmap3DOrColorLUTIndex];
+    return _state__WEBPACK_IMPORTED_MODULE_2__["default"].colorLutTables[labelmap3DOrColorLUTIndex];
   }
 
-  return _state__WEBPACK_IMPORTED_MODULE_3__["default"].colorLutTables[labelmap3DOrColorLUTIndex.colorLUTIndex];
+  return _state__WEBPACK_IMPORTED_MODULE_2__["default"].colorLutTables[labelmap3DOrColorLUTIndex.colorLUTIndex];
 }
 /**
  * Checks the length of `colorLUT` compared to `segmnetsPerLabelmap` and flags up any warnings.
@@ -12770,7 +12866,10 @@ function getRGBAfromHSLA(hue) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-// Segmentation module configuration.
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_0__["default"].UINT_16_ARRAY; // Segmentation module configuration.
+
 var defaultConfiguration = {
   renderOutline: true,
   renderFill: true,
@@ -12778,14 +12877,15 @@ var defaultConfiguration = {
   radius: 10,
   minRadius: 1,
   maxRadius: 50,
-  segmentsPerLabelmap: 65535,
-  // Max is 65535 due to using 16-bit Unsigned ints.
   fillAlpha: 0.2,
   fillAlphaInactive: 0.1,
   outlineAlpha: 0.7,
   outlineAlphaInactive: 0.35,
   outlineWidth: 3,
-  storeHistory: true
+  storeHistory: true,
+  segmentsPerLabelmap: 65535,
+  // Max is 65535 due to using 16-bit Unsigned ints.
+  arrayType: UINT_16_ARRAY
 };
 /* harmony default export */ __webpack_exports__["default"] = (defaultConfiguration);
 
@@ -12984,7 +13084,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _addLabelmap2D__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./addLabelmap2D */ "./store/modules/segmentationModule/addLabelmap2D.js");
 /* harmony import */ var _externalModules__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../../externalModules */ "./externalModules.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./state */ "./store/modules/segmentationModule/state.js");
-/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../../../util/logger */ "./util/logger.js");
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
+/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../util/logger */ "./util/logger.js");
 
 
 
@@ -12993,7 +13095,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_7__["getLogger"])('store:modules:segmentationModule:getLabelmap2D');
+
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_7__["default"].UINT_16_ARRAY,
+    FLOAT_32_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_7__["default"].FLOAT_32_ARRAY;
+var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_9__["getLogger"])('store:modules:segmentationModule:getLabelmap2D');
 /**
  * Returns the active `labelmap3D` and the `currentImageIdIndex`. If a labelmap does
  * not get exist, creates a new one. Generates a `labelmap2D` for the `currentImageIndex`
@@ -13076,10 +13182,28 @@ function getLabelmap2D(elementOrEnabledElementUID) {
 
 function getLabelmap2DByImageIdIndex(labelmap3D, imageIdIndex, rows, columns) {
   if (!labelmap3D.labelmaps2D[imageIdIndex]) {
-    var sliceLength = rows * columns;
-    var byteOffset = sliceLength * 2 * imageIdIndex; // 2 bytes/pixel
+    var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_8__["getModule"])('segmentation'),
+        configuration = _getModule.configuration;
 
-    var pixelData = new Uint16Array(labelmap3D.buffer, byteOffset, sliceLength);
+    var sliceLength = rows * columns;
+    var elementOffset = sliceLength * imageIdIndex;
+    var pixelData;
+
+    switch (configuration.arrayType) {
+      case UINT_16_ARRAY:
+        pixelData = new Uint16Array(labelmap3D.buffer, elementOffset * 2, // 2 bytes/voxel
+        sliceLength);
+        break;
+
+      case FLOAT_32_ARRAY:
+        pixelData = new Float32Array(labelmap3D.buffer, elementOffset * 4, // 4 bytes/voxel
+        sliceLength);
+        break;
+
+      default:
+        throw new Error("Unsupported Array Type ".concat(configuration.arrayType));
+    }
+
     labelmap3D.labelmaps2D[imageIdIndex] = {
       pixelData: pixelData,
       segmentsOnLabelmap: Object(_getSegmentsOnPixeldata__WEBPACK_IMPORTED_MODULE_2__["default"])(pixelData)
@@ -13106,10 +13230,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../../stateManagement/toolState.js */ "./stateManagement/toolState.js");
 /* harmony import */ var _getLabelmaps3D__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getLabelmaps3D */ "./store/modules/segmentationModule/getLabelmaps3D.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./state */ "./store/modules/segmentationModule/state.js");
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
 
 
 
 
+
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_4__["default"].UINT_16_ARRAY,
+    FLOAT_32_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_4__["default"].FLOAT_32_ARRAY;
 /**
  * GetLabelmapBuffers - Returns the `buffer` of each `Labelmap3D` associated
  *                      with the `BrushStackState` displayed on the element, or a specific
@@ -13137,6 +13267,27 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
     return [];
   }
 
+  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_5__["getModule"])('segmentation'),
+      configuration = _getModule.configuration;
+
+  var type;
+  var bytesPerVoxel;
+
+  switch (configuration.arrayType) {
+    case UINT_16_ARRAY:
+      type = 'Uint16Array';
+      bytesPerVoxel = '2';
+      break;
+
+    case FLOAT_32_ARRAY:
+      type = 'Float32Array';
+      bytesPerVoxel = '4';
+      break;
+
+    default:
+      throw new Error("Unsupported Array Type ".concat(configuration.arrayType));
+  }
+
   var colorLutTables = _state__WEBPACK_IMPORTED_MODULE_3__["default"].colorLutTables;
 
   if (labelmapIndex !== undefined) {
@@ -13145,7 +13296,8 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
     if (labelmap3D) {
       return {
         labelmapIndex: labelmapIndex,
-        bytesPerVoxel: 2,
+        bytesPerVoxel: bytesPerVoxel,
+        type: type,
         buffer: labelmap3D.buffer,
         colorLUT: colorLutTables[labelmap3D.colorLUTIndex]
       };
@@ -13655,7 +13807,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getSegmentsOnPixelData; });
 /**
  * Returns an array of the segment indicies present on the `pixelData`.
- * @param  {UInt16Array} pixelData The pixel data array.
+ * @param  {UInt16Array|Float32Array} pixelData The pixel data array.
  */
 function getSegmentsOnPixelData(pixelData) {
   var segmentSet = new Set(pixelData);
@@ -13823,7 +13975,7 @@ __webpack_require__.r(__webpack_exports__);
  * A 3D labelmap object which stores the labelmap data for an entire stack of cornerstone images.
  *
  * @typedef {Object} Labelmap3D An object defining a 3D labelmap.
- * @property {ArrayBuffer}  buffer An array buffer to store the pixel data of the `Labelmap3D` (2 bytes/voxel).
+ * @property {ArrayBuffer}  buffer An array buffer to store the pixel data of the `Labelmap3D` (2 bytes/voxel for Uint16 and 4 bytes/voxel for Float32).
  * @property {Labelmap2D[]} labelmaps2D array of `labelmap2D` views on the `buffer`, indexed by in-stack
  *                          image positions.
  * @property {Object[]} metadata An array of metadata per segment. Metadata is optional and its form is
@@ -13841,7 +13993,7 @@ __webpack_require__.r(__webpack_exports__);
  * A 2D labelmap object which accesses only one frame's worth of data from its parent `Labelmap3D`.
  *
  * @typedef {Object} Labelmap2D An object defining a 2D view on a section of a `Labelmap3D`'s `buffer`.
- * @property {Uint16Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
+ * @property {Uint16Array|Float32Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
  * @property {number[]} segmentsOnLabelmap An array of segments present in the `pixelData`.
  */
 
@@ -14155,11 +14307,17 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./state */ "./store/modules/segmentationModule/state.js");
 /* harmony import */ var _getSegmentsOnPixeldata__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getSegmentsOnPixeldata */ "./store/modules/segmentationModule/getSegmentsOnPixeldata.js");
 /* harmony import */ var _util_segmentation__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../../../util/segmentation */ "./util/segmentation/index.js");
+/* harmony import */ var _arrayTypes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./arrayTypes */ "./store/modules/segmentationModule/arrayTypes.js");
+/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../../index.js */ "./store/index.js");
 
 
 
 
 
+
+
+var UINT_16_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_5__["default"].UINT_16_ARRAY,
+    FLOAT_32_ARRAY = _arrayTypes__WEBPACK_IMPORTED_MODULE_5__["default"].FLOAT_32_ARRAY;
 /**
  * Takes a 16-bit encoded `ArrayBuffer` and stores it as a `Labelmap3D` for the
  * `BrushStackState` associated with the element.
@@ -14214,6 +14372,10 @@ function setLabelmap3DByFirstImageId(firstImageId, buffer, labelmapIndex) {
   var numberOfFrames = arguments.length > 4 ? arguments[4] : undefined;
   var segmentsOnLabelmapArray = arguments.length > 5 ? arguments[5] : undefined;
   var colorLUTIndex = arguments.length > 6 && arguments[6] !== undefined ? arguments[6] : 0;
+
+  var _getModule = Object(_index_js__WEBPACK_IMPORTED_MODULE_6__["getModule"])('segmentation'),
+      configuration = _getModule.configuration;
+
   var brushStackState = _state__WEBPACK_IMPORTED_MODULE_2__["default"].series[firstImageId];
 
   if (!brushStackState) {
@@ -14236,10 +14398,24 @@ function setLabelmap3DByFirstImageId(firstImageId, buffer, labelmapIndex) {
   };
   var labelmaps2D = brushStackState.labelmaps3D[labelmapIndex].labelmaps2D;
   var slicelengthInBytes = buffer.byteLength / numberOfFrames;
-  var sliceLengthInUint16 = slicelengthInBytes / 2; // SliceLength in Uint16.
 
   for (var i = 0; i < numberOfFrames; i++) {
-    var pixelData = new Uint16Array(buffer, slicelengthInBytes * i, sliceLengthInUint16);
+    var pixelData = void 0;
+
+    switch (configuration.arrayType) {
+      case UINT_16_ARRAY:
+        pixelData = new Uint16Array(buffer, slicelengthInBytes * i, // 2 bytes/voxel
+        slicelengthInBytes / 2);
+        break;
+
+      case FLOAT_32_ARRAY:
+        pixelData = new Float32Array(buffer, slicelengthInBytes * i, slicelengthInBytes / 4);
+        break;
+
+      default:
+        throw new Error("Unsupported Array Type ".concat(configuration.arrayType));
+    }
+
     var segmentsOnLabelmap = segmentsOnLabelmapArray ? segmentsOnLabelmapArray[i] : Object(_getSegmentsOnPixeldata__WEBPACK_IMPORTED_MODULE_3__["default"])(pixelData);
 
     if (segmentsOnLabelmap && segmentsOnLabelmap.some(function (segment) {
@@ -18913,6 +19089,156 @@ var getOrientationMarkerPositions = function getOrientationMarkerPositions(eleme
 
 /***/ }),
 
+/***/ "./tools/OverlayTool.js":
+/*!******************************!*\
+  !*** ./tools/OverlayTool.js ***!
+  \******************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return OverlayTool; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/classCallCheck */ "../node_modules/@babel/runtime/helpers/classCallCheck.js");
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @babel/runtime/helpers/createClass */ "../node_modules/@babel/runtime/helpers/createClass.js");
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @babel/runtime/helpers/possibleConstructorReturn */ "../node_modules/@babel/runtime/helpers/possibleConstructorReturn.js");
+/* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js");
+/* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/inherits */ "../node_modules/@babel/runtime/helpers/inherits.js");
+/* harmony import */ var _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
+/* harmony import */ var _base_BaseTool_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/BaseTool.js */ "./tools/base/BaseTool.js");
+
+
+
+
+
+
+
+/**
+ *
+ * http://dicom.nema.org/dicom/2013/output/chtml/part03/sect_C.9.html
+ *
+ * @public
+ * @class Overlay
+ * @memberof Tools
+ *
+ * @classdesc Tool for displaying a scale overlay on the image.
+ * @extends Tools.Base.BaseTool
+ */
+
+var OverlayTool =
+/*#__PURE__*/
+function (_BaseTool) {
+  _babel_runtime_helpers_inherits__WEBPACK_IMPORTED_MODULE_4___default()(OverlayTool, _BaseTool);
+
+  function OverlayTool() {
+    var _this;
+
+    var configuration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, OverlayTool);
+
+    var defaultConfig = {
+      name: 'Overlay',
+      configuration: {},
+      mixins: ['enabledOrDisabledBinaryTool']
+    };
+    var initialConfiguration = Object.assign(defaultConfig, configuration);
+    _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(OverlayTool).call(this, initialConfiguration));
+    _this.initialConfiguration = initialConfiguration;
+    return _this;
+  }
+
+  _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(OverlayTool, [{
+    key: "enabledCallback",
+    value: function enabledCallback(element) {
+      this.forceImageUpdate(element);
+    }
+  }, {
+    key: "disabledCallback",
+    value: function disabledCallback(element) {
+      this.forceImageUpdate(element);
+    }
+  }, {
+    key: "forceImageUpdate",
+    value: function forceImageUpdate(element) {
+      var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.getEnabledElement(element);
+
+      if (enabledElement.image) {
+        _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
+      }
+    }
+  }, {
+    key: "renderToolData",
+    value: function renderToolData(evt) {
+      var eventData = evt.detail;
+      var enabledElement = eventData.enabledElement,
+          image = eventData.image,
+          viewport = eventData.viewport,
+          canvasContext = eventData.canvasContext;
+
+      if (!eventData || !enabledElement || !image) {
+        return;
+      }
+
+      var overlayPlaneMetadata = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.metaData.get('overlayPlaneModule', image.imageId);
+
+      if (!overlayPlaneMetadata || !overlayPlaneMetadata.overlays || !overlayPlaneMetadata.overlays.length) {
+        return;
+      }
+
+      var viewportPixelSpacing = {
+        column: viewport.displayedArea.columnPixelSpacing || 1,
+        row: viewport.displayedArea.rowPixelSpacing || 1
+      };
+      var imageWidth = Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) * viewportPixelSpacing.column;
+      var imageHeight = Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) * viewportPixelSpacing.row;
+      overlayPlaneMetadata.overlays.forEach(function (overlay) {
+        if (overlay.visible === false) {
+          return;
+        }
+
+        var layerCanvas = document.createElement('canvas');
+        layerCanvas.width = imageWidth;
+        layerCanvas.height = imageHeight;
+        var layerContext = layerCanvas.getContext('2d');
+        layerContext.fillStyle = overlay.fillStyle || 'white';
+
+        if (overlay.type === 'R') {
+          layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
+          layerContext.globalCompositeOperation = 'xor';
+        }
+
+        var i = 0;
+
+        for (var y = 0; y < overlay.rows; y++) {
+          for (var x = 0; x < overlay.columns; x++) {
+            if (overlay.pixelData[i++] > 0) {
+              layerContext.fillRect(x, y, 1, 1);
+            }
+          }
+        } // Guard against non-number values
+
+
+        var overlayX = !isNaN(parseFloat(overlay.x)) && isFinite(overlay.x) ? overlay.x : 0;
+        var overlayY = !isNaN(parseFloat(overlay.y)) && isFinite(overlay.y) ? overlay.y : 0; // Draw the overlay layer onto the canvas
+
+        canvasContext.drawImage(layerCanvas, overlayX, overlayY);
+      });
+    }
+  }]);
+
+  return OverlayTool;
+}(_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_6__["default"]);
+
+
+
+/***/ }),
+
 /***/ "./tools/PanMultiTouchTool.js":
 /*!************************************!*\
   !*** ./tools/PanMultiTouchTool.js ***!
@@ -21168,7 +21494,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_17__["angleCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_17__["angleCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(AngleTool).call(this, props, defaultProps));
     _this.preventNewMeasurement = false;
@@ -21302,7 +21631,11 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_14__["default"])(context, eventData, data.handles, handleOptions); // Update textbox stats
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_14__["default"])(context, eventData, data.handles, handleOptions);
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.rAngle) {
@@ -21681,7 +22014,12 @@ function (_BaseAnnotationTool) {
 
             measurementData.active = false;
             _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
-          });
+            Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_14__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].MEASUREMENT_MODIFIED, {
+              toolType: _this3.name,
+              element: element,
+              measurementData: measurementData
+            });
+          }, evt.detail);
         }
 
         _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
@@ -21725,15 +22063,20 @@ function (_BaseAnnotationTool) {
     }
   }, {
     key: "_doneChangingTextCallback",
-    value: function _doneChangingTextCallback(element, data, updatedText, deleteTool) {
+    value: function _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
       if (deleteTool === true) {
-        Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_15__["removeToolState"])(element, this.name, data);
+        Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_15__["removeToolState"])(element, this.name, measurementData);
       } else {
-        data.text = updatedText;
+        measurementData.text = updatedText;
       }
 
-      data.active = false;
+      measurementData.active = false;
       _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
+      Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_14__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].MEASUREMENT_MODIFIED, {
+        toolType: this.name,
+        element: element,
+        measurementData: measurementData
+      });
     }
   }]);
 
@@ -21838,6 +22181,7 @@ function (_BaseAnnotationTool) {
         getMeasurementLocationCallback: emptyLocationCallback,
         textBox: '',
         shadow: '',
+        drawHandles: true,
         drawHandlesOnHover: true,
         additionalData: []
       },
@@ -22388,7 +22732,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'CobbAngle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_18__["cobbAngleCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_18__["cobbAngleCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(CobbAngleTool).call(this, props, defaultProps));
     _this.hasIncomplete = false;
@@ -22532,7 +22879,11 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_13__["default"])(context, eventData, data.handles, handleOptions); // Draw the text
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_13__["default"])(context, eventData, data.handles, handleOptions);
+          } // Draw the text
+
 
           context.fillStyle = color;
           var text = data.value;
@@ -23563,22 +23914,35 @@ function (_BaseAnnotationTool) {
           if (config.alwaysShowHandles || data.active && data.polyBoundingBox) {
             // Render all handles
             options.handleRadius = config.activeHandleRadius;
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, data.handles.points, options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, data.handles.points, options);
+            }
           }
 
           if (data.canComplete) {
             // Draw large handle at the origin if can complete drawing
             options.handleRadius = config.completeHandleRadius;
             var handle = data.handles.points[0];
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [handle], options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [handle], options);
+            }
           }
 
           if (data.active && !data.polyBoundingBox) {
             // Draw handle at origin and at mouse if actively drawing
             options.handleRadius = config.activeHandleRadius;
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, config.mouseLocation.handles, options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, config.mouseLocation.handles, options);
+            }
+
             var firstHandle = data.handles.points[0];
-            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [firstHandle], options);
+
+            if (_this2.configuration.drawHandles) {
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [firstHandle], options);
+            }
           } // Update textbox stats
 
 
@@ -24897,7 +25261,8 @@ function defaultFreehandConfiguration() {
     alwaysShowHandles: false,
     invalidColor: 'crimson',
     currentHandle: 0,
-    currentTool: -1
+    currentTool: -1,
+    drawHandles: true
   };
 }
 
@@ -24984,7 +25349,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["lengthCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["lengthCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(LengthTool).call(this, props, defaultProps));
     _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_16__["default"])(_this.updateCachedStats, 110);
@@ -25122,7 +25490,10 @@ function (_BaseAnnotationTool) {
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover
           };
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, eventData, data.handles, handleOptions);
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, eventData, data.handles, handleOptions);
+          }
 
           if (!data.handles.textBox.hasMoved) {
             var coords = {
@@ -25271,7 +25642,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["probeCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["probeCursor"],
+      configuration: {
+        drawHandles: true
+      }
     };
     _this = _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_2___default()(this, _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_3___default()(ProbeTool).call(this, props, defaultProps));
     _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_17__["default"])(_this.updateCachedStats, 110);
@@ -25380,12 +25754,16 @@ function (_BaseAnnotationTool) {
         }
 
         Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["draw"])(context, function (context) {
-          var color = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_9__["default"].getColorIfActive(data); // Draw the handles
+          var color = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_9__["default"].getColorIfActive(data);
 
-          Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_12__["default"])(context, eventData, data.handles, {
-            handleRadius: handleRadius,
-            color: color
-          }); // Update textbox stats
+          if (_this2.configuration.drawHandles) {
+            // Draw the handles
+            Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_12__["default"])(context, eventData, data.handles, {
+              handleRadius: handleRadius,
+              color: color
+            });
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.cachedStats) {
@@ -25525,8 +25903,10 @@ function (_BaseAnnotationTool) {
     var defaultProps = {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: {// showMinMax: false,
+      configuration: {
+        drawHandles: true // showMinMax: false,
         // showHounsfieldUnits: true
+
       },
       svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_15__["rectangleRoiCursor"]
     };
@@ -25662,8 +26042,12 @@ function (_BaseAnnotationTool) {
 
           Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawRect"])(context, element, data.handles.start, data.handles.end, {
             color: color
-          }, 'pixel', data.handles.initialRotation); // drawHandles(context, eventData, data.handles, handleOptions);
-          // Update textbox stats
+          }, 'pixel', data.handles.initialRotation);
+
+          if (_this2.configuration.drawHandles) {
+            Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawHandles"])(context, eventData, data.handles, handleOptions);
+          } // Update textbox stats
+
 
           if (data.invalidated === true) {
             if (data.cachedStats) {
@@ -27857,9 +28241,12 @@ __webpack_require__.r(__webpack_exports__);
         drawHandlesIfActive: drawHandlesOnHover
       }; // Draw the handles
 
-      Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, eventData, data.handles, handleOptions); // Draw the textbox
+      if (_this.configuration.drawHandles) {
+        Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, eventData, data.handles, handleOptions);
+      } // Draw the textbox
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
+
 
       var xOffset = 10;
 
@@ -29623,7 +30010,7 @@ var segCircleFillOutsideCursor = new _MouseCursor_js__WEBPACK_IMPORTED_MODULE_0_
 /*!************************!*\
   !*** ./tools/index.js ***!
   \************************/
-/*! exports provided: CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, default */
+/*! exports provided: CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OverlayTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -29646,50 +30033,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _MagnifyTool_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./MagnifyTool.js */ "./tools/MagnifyTool.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "MagnifyTool", function() { return _MagnifyTool_js__WEBPACK_IMPORTED_MODULE_5__["default"]; });
 
-/* harmony import */ var _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./OrientationMarkersTool.js */ "./tools/OrientationMarkersTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OrientationMarkersTool", function() { return _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_6__["default"]; });
+/* harmony import */ var _OverlayTool_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./OverlayTool.js */ "./tools/OverlayTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OverlayTool", function() { return _OverlayTool_js__WEBPACK_IMPORTED_MODULE_6__["default"]; });
 
-/* harmony import */ var _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./PanMultiTouchTool.js */ "./tools/PanMultiTouchTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PanMultiTouchTool", function() { return _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_7__["default"]; });
+/* harmony import */ var _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./OrientationMarkersTool.js */ "./tools/OrientationMarkersTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "OrientationMarkersTool", function() { return _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_7__["default"]; });
 
-/* harmony import */ var _PanTool_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./PanTool.js */ "./tools/PanTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PanTool", function() { return _PanTool_js__WEBPACK_IMPORTED_MODULE_8__["default"]; });
+/* harmony import */ var _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./PanMultiTouchTool.js */ "./tools/PanMultiTouchTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PanMultiTouchTool", function() { return _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_8__["default"]; });
 
-/* harmony import */ var _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./ReferenceLinesTool.js */ "./tools/ReferenceLinesTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ReferenceLinesTool", function() { return _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_9__["default"]; });
+/* harmony import */ var _PanTool_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./PanTool.js */ "./tools/PanTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PanTool", function() { return _PanTool_js__WEBPACK_IMPORTED_MODULE_9__["default"]; });
 
-/* harmony import */ var _RotateTool_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./RotateTool.js */ "./tools/RotateTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RotateTool", function() { return _RotateTool_js__WEBPACK_IMPORTED_MODULE_10__["default"]; });
+/* harmony import */ var _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./ReferenceLinesTool.js */ "./tools/ReferenceLinesTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ReferenceLinesTool", function() { return _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_10__["default"]; });
 
-/* harmony import */ var _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./RotateTouchTool.js */ "./tools/RotateTouchTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RotateTouchTool", function() { return _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_11__["default"]; });
+/* harmony import */ var _RotateTool_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./RotateTool.js */ "./tools/RotateTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RotateTool", function() { return _RotateTool_js__WEBPACK_IMPORTED_MODULE_11__["default"]; });
 
-/* harmony import */ var _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./ScaleOverlayTool.js */ "./tools/ScaleOverlayTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScaleOverlayTool", function() { return _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_12__["default"]; });
+/* harmony import */ var _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./RotateTouchTool.js */ "./tools/RotateTouchTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "RotateTouchTool", function() { return _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_12__["default"]; });
 
-/* harmony import */ var _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./StackScrollMouseWheelTool.js */ "./tools/StackScrollMouseWheelTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollMouseWheelTool", function() { return _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_13__["default"]; });
+/* harmony import */ var _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./ScaleOverlayTool.js */ "./tools/ScaleOverlayTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ScaleOverlayTool", function() { return _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_13__["default"]; });
 
-/* harmony import */ var _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./StackScrollMultiTouchTool.js */ "./tools/StackScrollMultiTouchTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollMultiTouchTool", function() { return _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_14__["default"]; });
+/* harmony import */ var _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./StackScrollMouseWheelTool.js */ "./tools/StackScrollMouseWheelTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollMouseWheelTool", function() { return _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_14__["default"]; });
 
-/* harmony import */ var _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./StackScrollTool.js */ "./tools/StackScrollTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollTool", function() { return _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_15__["default"]; });
+/* harmony import */ var _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./StackScrollMultiTouchTool.js */ "./tools/StackScrollMultiTouchTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollMultiTouchTool", function() { return _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_15__["default"]; });
 
-/* harmony import */ var _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./WwwcRegionTool.js */ "./tools/WwwcRegionTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WwwcRegionTool", function() { return _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_16__["default"]; });
+/* harmony import */ var _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./StackScrollTool.js */ "./tools/StackScrollTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "StackScrollTool", function() { return _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_16__["default"]; });
 
-/* harmony import */ var _WwwcTool_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./WwwcTool.js */ "./tools/WwwcTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WwwcTool", function() { return _WwwcTool_js__WEBPACK_IMPORTED_MODULE_17__["default"]; });
+/* harmony import */ var _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./WwwcRegionTool.js */ "./tools/WwwcRegionTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WwwcRegionTool", function() { return _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_17__["default"]; });
 
-/* harmony import */ var _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./ZoomMouseWheelTool.js */ "./tools/ZoomMouseWheelTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomMouseWheelTool", function() { return _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_18__["default"]; });
+/* harmony import */ var _WwwcTool_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./WwwcTool.js */ "./tools/WwwcTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "WwwcTool", function() { return _WwwcTool_js__WEBPACK_IMPORTED_MODULE_18__["default"]; });
 
-/* harmony import */ var _ZoomTool_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./ZoomTool.js */ "./tools/ZoomTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomTool", function() { return _ZoomTool_js__WEBPACK_IMPORTED_MODULE_19__["default"]; });
+/* harmony import */ var _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./ZoomMouseWheelTool.js */ "./tools/ZoomMouseWheelTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomMouseWheelTool", function() { return _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_19__["default"]; });
 
-/* harmony import */ var _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./ZoomTouchPinchTool.js */ "./tools/ZoomTouchPinchTool.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomTouchPinchTool", function() { return _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_20__["default"]; });
+/* harmony import */ var _ZoomTool_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./ZoomTool.js */ "./tools/ZoomTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomTool", function() { return _ZoomTool_js__WEBPACK_IMPORTED_MODULE_20__["default"]; });
+
+/* harmony import */ var _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./ZoomTouchPinchTool.js */ "./tools/ZoomTouchPinchTool.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "ZoomTouchPinchTool", function() { return _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_21__["default"]; });
+
 
 
 
@@ -29722,21 +30113,22 @@ __webpack_require__.r(__webpack_exports__);
   EraserTool: _EraserTool_js__WEBPACK_IMPORTED_MODULE_3__["default"],
   FreehandRoiSculptorTool: _FreehandRoiSculptorTool_js__WEBPACK_IMPORTED_MODULE_4__["default"],
   MagnifyTool: _MagnifyTool_js__WEBPACK_IMPORTED_MODULE_5__["default"],
-  OrientationMarkersTool: _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_6__["default"],
-  PanMultiTouchTool: _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_7__["default"],
-  PanTool: _PanTool_js__WEBPACK_IMPORTED_MODULE_8__["default"],
-  ReferenceLinesTool: _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_9__["default"],
-  RotateTool: _RotateTool_js__WEBPACK_IMPORTED_MODULE_10__["default"],
-  RotateTouchTool: _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_11__["default"],
-  ScaleOverlayTool: _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_12__["default"],
-  StackScrollMouseWheelTool: _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_13__["default"],
-  StackScrollMultiTouchTool: _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_14__["default"],
-  StackScrollTool: _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_15__["default"],
-  WwwcRegionTool: _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_16__["default"],
-  WwwcTool: _WwwcTool_js__WEBPACK_IMPORTED_MODULE_17__["default"],
-  ZoomMouseWheelTool: _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_18__["default"],
-  ZoomTool: _ZoomTool_js__WEBPACK_IMPORTED_MODULE_19__["default"],
-  ZoomTouchPinchTool: _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_20__["default"]
+  OverlayTool: _OverlayTool_js__WEBPACK_IMPORTED_MODULE_6__["default"],
+  OrientationMarkersTool: _OrientationMarkersTool_js__WEBPACK_IMPORTED_MODULE_7__["default"],
+  PanMultiTouchTool: _PanMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_8__["default"],
+  PanTool: _PanTool_js__WEBPACK_IMPORTED_MODULE_9__["default"],
+  ReferenceLinesTool: _ReferenceLinesTool_js__WEBPACK_IMPORTED_MODULE_10__["default"],
+  RotateTool: _RotateTool_js__WEBPACK_IMPORTED_MODULE_11__["default"],
+  RotateTouchTool: _RotateTouchTool_js__WEBPACK_IMPORTED_MODULE_12__["default"],
+  ScaleOverlayTool: _ScaleOverlayTool_js__WEBPACK_IMPORTED_MODULE_13__["default"],
+  StackScrollMouseWheelTool: _StackScrollMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_14__["default"],
+  StackScrollMultiTouchTool: _StackScrollMultiTouchTool_js__WEBPACK_IMPORTED_MODULE_15__["default"],
+  StackScrollTool: _StackScrollTool_js__WEBPACK_IMPORTED_MODULE_16__["default"],
+  WwwcRegionTool: _WwwcRegionTool_js__WEBPACK_IMPORTED_MODULE_17__["default"],
+  WwwcTool: _WwwcTool_js__WEBPACK_IMPORTED_MODULE_18__["default"],
+  ZoomMouseWheelTool: _ZoomMouseWheelTool_js__WEBPACK_IMPORTED_MODULE_19__["default"],
+  ZoomTool: _ZoomTool_js__WEBPACK_IMPORTED_MODULE_20__["default"],
+  ZoomTouchPinchTool: _ZoomTouchPinchTool_js__WEBPACK_IMPORTED_MODULE_21__["default"]
 });
 
 /***/ }),
@@ -30737,7 +31129,7 @@ function correction(evt, operationData) {
  * Snap the freehand points to the labelmap grid and attach a label for each node.
  *
  * @param  {Object[]} points An array of points drawn by the user.
- * @param  {UInt16Array} pixelData The 2D labelmap.
+ * @param  {UInt16Array|Float32Array} pixelData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @returns {Object[]}
  */
@@ -30821,8 +31213,8 @@ function checkIfSimpleScissorOperation(nodes, segmentIndex) {
  * The algorithm is described in full length in Tobias Heimann's diploma thesis (MBI Technical Report 145, p. 37 - 40).
  *
  * @param  {Object} operation The operation.
- * @param  {UInt16Array} pixelData The 2D labelmap.
- * @param  {UInt16Array} workingLabelMap A copy of the labelmap for processing purposes.
+ * @param  {UInt16Array|Float32Array} pixelData The 2D labelmap.
+ * @param  {UInt16Array|Float32Array} workingLabelMap A copy of the labelmap for processing purposes.
  * @param  {number} segmentIndex The label of the tool being used.
  * @param  {Object} evt The cornerstone event.
  */
@@ -32659,7 +33051,7 @@ function useColors() {
 
 
 function formatArgs(args) {
-  args[0] = "".concat((this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' '), "+").concat(debugLib.humanize(this.diff));
+  args[0] = "".concat((this.useColors ? '%c' : '') + this.namespace + (this.useColors ? ' %c' : ' ') + args[0] + (this.useColors ? '%c ' : ' '), "+").concat(setupDebug.humanize(this.diff));
 
   if (!this.useColors) {
     return;
@@ -34277,7 +34669,7 @@ function isLineRightOfPoint(point, lp1, lp2) {
   var lPointY = lineSegmentAtPoint(point, lp1, lp2); // If the lp1.x and lp2.x enclose point.x check gradient of line and see if
   // Point is above or below the line to calculate if it inside.
 
-  if (Math.sign(lPointY.gradient) * point.y > lPointY.value) {
+  if (Math.sign(lPointY.gradient) * point.y > Math.sign(lPointY.gradient) * lPointY.value) {
     return true;
   }
 
@@ -34299,7 +34691,7 @@ function isLineRightOfPoint(point, lp1, lp2) {
 function lineSegmentAtPoint(point, lp1, lp2) {
   var dydx = (lp2.y - lp1.y) / (lp2.x - lp1.x);
   var fx = {
-    value: lp1.x + dydx * (point.x - lp1.x),
+    value: lp1.y + dydx * (point.x - lp1.x),
     gradient: dydx
   };
   return fx;
@@ -37131,7 +37523,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.6.2-d');
+/* harmony default export */ __webpack_exports__["default"] = ('4.12.3-a');
 
 /***/ })
 
