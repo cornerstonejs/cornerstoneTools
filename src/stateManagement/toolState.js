@@ -80,6 +80,11 @@ function getToolState(element, toolType) {
 function removeToolState(element, toolType, data) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolType);
+
+  if (!toolData || !toolData.data || !toolData.data.length) {
+    return;
+  }
+
   // Find this tool data
   let indexOfData = -1;
 
