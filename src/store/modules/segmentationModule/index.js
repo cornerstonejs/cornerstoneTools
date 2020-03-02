@@ -58,7 +58,7 @@ import setRadius from './setRadius';
  * A 3D labelmap object which stores the labelmap data for an entire stack of cornerstone images.
  *
  * @typedef {Object} Labelmap3D An object defining a 3D labelmap.
- * @property {ArrayBuffer}  buffer An array buffer to store the pixel data of the `Labelmap3D` (2 bytes/voxel).
+ * @property {ArrayBuffer}  buffer An array buffer to store the pixel data of the `Labelmap3D` (2 bytes/voxel for Uint16 and 4 bytes/voxel for Float32).
  * @property {Labelmap2D[]} labelmaps2D array of `labelmap2D` views on the `buffer`, indexed by in-stack
  *                          image positions.
  * @property {Object[]} metadata An array of metadata per segment. Metadata is optional and its form is
@@ -76,7 +76,7 @@ import setRadius from './setRadius';
  * A 2D labelmap object which accesses only one frame's worth of data from its parent `Labelmap3D`.
  *
  * @typedef {Object} Labelmap2D An object defining a 2D view on a section of a `Labelmap3D`'s `buffer`.
- * @property {Uint16Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
+ * @property {Uint16Array|Float32Array} pixelData A 2D view on a section of the parent `Labelmap3D`'s `buffer`.
  * @property {number[]} segmentsOnLabelmap An array of segments present in the `pixelData`.
  */
 
