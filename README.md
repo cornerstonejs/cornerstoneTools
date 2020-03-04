@@ -115,7 +115,7 @@ If you need to support the `IE11` Browser, you will need to provide polyfills as
 
 [**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-<p>Changes have been made to support: 1. Hiding metrics as annotations are drawn, disabling the mobile drawing offset, and hiding the handles.</p>
+<p>Changes have been made to support: 1. Hiding metrics as annotations are drawn, disabling the mobile drawing offset, and hiding the handles (changing the default configuration value).</p>
 
 <h3>Deployment Steps</h3>
 <p>

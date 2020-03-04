@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 4.12.3-a - 2020-02-20 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 4.12.3-b - 2020-03-04 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "86986448429489ffbce1";
+/******/ 	var hotCurrentHash = "7e9a895019d1ad759c48";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -25904,7 +25904,7 @@ function (_BaseAnnotationTool) {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        drawHandles: true // showMinMax: false,
+        drawHandles: false // showMinMax: false,
         // showHounsfieldUnits: true
 
       },
@@ -37523,7 +37523,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('4.12.3-a');
+/* harmony default export */ __webpack_exports__["default"] = ('4.12.3-b');
 
 /***/ })
 
