@@ -1,7 +1,7 @@
 ## Directorties
 node_modules
 coverage/
-#dist/
+dist/
 docs/_book/
 
 ## Files
