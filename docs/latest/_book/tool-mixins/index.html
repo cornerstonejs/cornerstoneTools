@@ -1,0 +1,1060 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>Tool Mixins · cornerstone-tools</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-versions/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-theme-cornerstone/cornerstone.css">
+                
+            
+        
+
+    
+
+    
+        
+        <link rel="stylesheet" href="../styles/website.css">
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="./" />
+    
+    
+    <link rel="prev" href="../tool-types/" />
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" >
+            
+                <a target="_blank" href="https://github.com/cornerstonejs/cornerstoneTools/releases">
+            
+                    
+                    Release Notes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" >
+            
+                <a target="_blank" href="https://tools.cornerstonejs.org/examples">
+            
+                    
+                    Examples
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Essentials</li>
+        
+        
+    
+        <li class="chapter " data-level="2.1" data-path="../installation.html">
+            
+                <a href="../installation.html">
+            
+                    
+                    Installation
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="2.2.1" data-path="../">
+            
+                <a href="../#what-is-cornerstone-tools-js">
+            
+                    
+                    What is CornerstoneTools.js?
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.2" data-path="../">
+            
+                <a href="../#getting-started">
+            
+                    
+                    Getting Started
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.3" data-path="../">
+            
+                <a href="../#configuration">
+            
+                    
+                    Configuration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.4" data-path="../">
+            
+                <a href="../#adding-and-using-tools">
+            
+                    
+                    Adding and Using Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="2.2.5" data-path="../">
+            
+                <a href="../#next-steps">
+            
+                    
+                    Next Steps
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="2.3" data-path="../contributing.html">
+            
+                <a href="../contributing.html">
+            
+                    
+                    Contributing
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Tools In-Depth</li>
+        
+        
+    
+        <li class="chapter " data-level="3.1" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/">
+            
+                    
+                    Anatomy of a Tool
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.1.1" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#modes">
+            
+                    
+                    Modes
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.2" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#configuration">
+            
+                    
+                    Configuration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.3" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#interaction-types">
+            
+                    
+                    Interaction Types
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.4" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#strategies">
+            
+                    
+                    Strategies
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.5" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#mixins">
+            
+                    
+                    Mixins
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.1.6" data-path="../anatomy-of-a-tool/">
+            
+                <a href="../anatomy-of-a-tool/#measurement-data">
+            
+                    
+                    Measurement Data
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2" data-path="../tool-types/">
+            
+                <a href="../tool-types/">
+            
+                    
+                    Tool Types
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.2.1" data-path="../tool-types/">
+            
+                <a href="../tool-types/#base-tool">
+            
+                    
+                    Base Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.2" data-path="../tool-types/">
+            
+                <a href="../tool-types/#base-annotation-tool">
+            
+                    
+                    Base Annotation Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.3" data-path="../tool-types/">
+            
+                <a href="../tool-types/#base-brush-tool">
+            
+                    
+                    Base Brush Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.2.4" data-path="../tool-types/">
+            
+                <a href="../tool-types/#segmentation-tool">
+            
+                    
+                    Segmentation Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter active" data-level="3.3" data-path="./">
+            
+                <a href="./">
+            
+                    
+                    Tool Mixins
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.3.1" data-path="./">
+            
+                <a href="./#binary-tools">
+            
+                    
+                    Binary Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.3.2" data-path="./">
+            
+                <a href="./#segmentation-mixins">
+            
+                    
+                    Segmentation Mixins
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/">
+            
+                    
+                    Custom Tools
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.4.1" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/#choosing-a-base-class">
+            
+                    
+                    Choosing a Base Class
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.2" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/#creating-your-tool">
+            
+                    
+                    Creating your Tool
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.3" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/#adding-mixins">
+            
+                    
+                    Adding Mixins
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.4" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/#mode-change-callbacks">
+            
+                    
+                    Mode Change Callbacks
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.4.5" data-path="../custom-tools/">
+            
+                <a href="../custom-tools/#event-dispatcher-callbacks">
+            
+                    
+                    Event Dispatcher Callbacks
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5" data-path="../modules/">
+            
+                <a href="../modules/">
+            
+                    
+                    Modules
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.5.1" data-path="../modules/">
+            
+                <a href="../modules/#global-configuration">
+            
+                    
+                    GlobalConfiguration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.2" data-path="../modules/">
+            
+                <a href="../modules/#cursors">
+            
+                    
+                    Cursor
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.5.3" data-path="../modules/">
+            
+                <a href="../modules/#segmentation">
+            
+                    
+                    Segmentation
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6" data-path="../third-party-functionality/">
+            
+                <a href="../third-party-functionality/">
+            
+                    
+                    Third-Party Functionality
+            
+                </a>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="3.6.1" data-path="../third-party-functionality/">
+            
+                <a href="../third-party-functionality/#item-types">
+            
+                    
+                    Item Types
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6.2" data-path="../third-party-functionality/">
+            
+                <a href="../third-party-functionality/#registration">
+            
+                    
+                    Registration
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6.3" data-path="../third-party-functionality/">
+            
+                <a href="../third-party-functionality/#imports">
+            
+                    
+                    Imports
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="3.6.4" data-path="../third-party-functionality/">
+            
+                <a href="../third-party-functionality/#tools">
+            
+                    
+                    Tools
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Migrating</li>
+        
+        
+    
+        <li class="chapter " data-level="4.1" data-path="../migration/">
+            
+                <a href="../migration/#2x">
+            
+                    
+                    Migration from 2.x
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="4.2" data-path="../migration/">
+            
+                <a href="../migration/#1x">
+            
+                    
+                    Migration from 1.x
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+    
+        
+        <li class="header">Misc</li>
+        
+        
+    
+        <li class="chapter " data-level="5.1" data-path="../debugging/">
+            
+                <a href="../debugging/">
+            
+                    
+                    Debugging
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.2" >
+            
+                <a target="_blank" href="https://tools.cornerstonejs.org/api/">
+            
+                    
+                    API
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.3" >
+            
+                <span>
+            
+                    
+                    3rd Party Tool Directory
+            
+                </span>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="5.4" >
+            
+                <span>
+            
+                    
+                    Custom Tool Example Repositories
+            
+                </span>
+            
+
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+  
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >Tool Mixins</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <h1 id="tool-mixins">Tool Mixins</h1>
+<p>Tool Mixins are ways to construct tools via composition using reusable components. In a mixin may include a set of methods which are applied to the class upon instantiation. You can register a mixin by its name in your tool without needing to import it (as this is dealt with inside <code>BaseTool</code>). For example:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">FreehandRoiSculptorTool</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">BaseTool</span> </span>{
+  <span class="hljs-keyword">constructor</span>(props = {}) {
+    <span class="hljs-keyword">const</span> defaultProps = {
+      <span class="hljs-comment">// ...</span>
+      mixins: [<span class="hljs-string">&apos;activeOrDisabledBinaryTool&apos;</span>],
+      <span class="hljs-comment">// ...</span>
+    };
+    <span class="hljs-comment">//...</span>
+  }
+  <span class="hljs-comment">//...</span>
+}
+</code></pre>
+<p>By adding the mixin to the list of <code>mixins</code> in the default props, it becomes a core feature of the tool. It is possible, however, to pass a mixin at runtime upon class instantiation to alter the behaviour of the resulting tool.</p>
+<p>Mixins have one optional special method <code>initilizeMixin</code>. If the <code>intializeMixin</code> method is present in a mixin, it will be called once when the mixin is attached to the tool.</p>
+<h2 id="binary-tools">Binary Tools </h2>
+<p>In general, Tools can be in four <a href="../anatomy-of-a-tool/#modes">modes</a>: <code>Active</code> , <code>Passive</code>, <code>Enabled</code> or <code>Disabled</code>. However, for some Tools only a subset of these are required/useful. For example, an overlay that can only be toggled on/off only makes sense to be <code>Enabled</code> or <code>Disabled</code> (e.g. <code>ScaleOverlayTool</code>). Using a binary mixin will re-direct the unused modes so that the caller of api doesn&apos;t have to worry about this.</p>
+<h3 id="enabledordisabledbinarytool">enabledOrDisabledBinaryTool</h3>
+<p>A Tool with the <code>enabledOrDisabledBinaryTool</code> mixin can only be <code>Enabled</code> or <code>Disabled</code> (e.g. <code>ScaleOverlayTool</code>).
+If the Tool is set <code>Active</code>, the mode will be redirected to <code>Enabled</code>.
+If the Tool is set <code>Passive</code>, the mode will be redirected to <code>Disabled</code>.</p>
+<h3 id="activeordisabledbinarytool">activeOrDisabledBinaryTool</h3>
+<p>A Tool with the <code>activeOrDisabledBinaryTool</code> mixin can only be <code>Active</code> or <code>Disabled</code> (e.g. <code>FreehandSculpterMouseTool</code>).
+If the Tool is set <code>Enabled</code>, the mode will be redirected to <code>Active</code>.
+If the Tool is set <code>Passive</code>, the mode will be redirected to <code>Disabled</code>.</p>
+<h2 id="segmentation-mixins">Segmentation Mixins </h2>
+<p><a href="../tool-types/#segmentation-tool">&quot;Segmentation Tools&quot;</a> are <code>BaseTool</code>s that implement a segmentation mixin.</p>
+<p>The role of a segmentation mixin is to provide a deliniation mechanism, which generates an <code>operationData</code> object which is passed to the active strategy alongside the cornerstone event.</p>
+<p>Examples of segmentation mixins could be:</p>
+<ul>
+<li>User draws a shape as input.</li>
+<li>User clicks one or more seed points as input on one frame.</li>
+<li>User clicks at the top and bottom of a region of interest (on different frames) in an axial series.</li>
+</ul>
+<p>Although segmentation tools may have very specific uses (e.g. the last example above could be used as seeds for an AI-powered spine segmentation, by providing the spine&apos;s extent), segmentation mixins themselves are intended to be reusable in many contexts. Other than their intended use case, segmentation mixins are functionally just mixins in the context of <code>cornerstoneTools</code>, so can be <a href="../third-party-functionality/">injected by plugins like any other mixin</a>.</p>
+<p>As the deliniation mechanisms can vary from simple to complex, the only requirement of a segmentation mixin is that it must call <code>BaseTool</code>&apos;s <code>this.applyActiveStrategy(evt, operationData)</code> with the <code>operationData</code> it produces at the end of the delination cycle.</p>
+<p>Taking the <code>circleSegmentationMixin</code> as an example:</p>
+<pre><code class="lang-js"><span class="hljs-comment">/**
+ * @mixin circleSegmentationMixin - Segmentation operations for circles.
+ * @memberof Mixins
+ */</span>
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> {
+  postTouchStartCallback: _startOutliningRegion,
+  postMouseDownCallback: _startOutliningRegion,
+  mouseClickCallback: _startOutliningRegion,
+  touchDragCallback: _setHandlesAndUpdate,
+  mouseDragCallback: _setHandlesAndUpdate,
+  mouseMoveCallback: _setHandlesAndUpdate,
+  touchEndCallback: _applyStrategy,
+  mouseUpCallback: _applyStrategy,
+  initializeMixin: _resetHandles,
+  renderToolData,
+};
+</code></pre>
+<p>This mixin implements a &quot;drag-to-define-a-circle&quot; deliniation mechanism, and as such plugs its methods into <code>BaseTool</code> API for dealing with appropriate user input such as down/touch, drag and release for both mouse and touch interactions.</p>
+<p>The <code>renderToolData</code> function renders the circle to the canvas whilst dilineation is in process.</p>
+<p>The <code>_applyStrategy</code> function here calls <code>BaseTool</code>&apos;s <code>applyActiveStrategy</code> method:</p>
+<pre><code class="lang-js"><span class="hljs-comment">//src/mixins/segmentation/circleSegmentationMixin.js</span>
+
+<span class="hljs-comment">// ...</span>
+<span class="hljs-keyword">const</span> operationData = {
+  points,
+  pixelData,
+  segmentIndex: labelmap3D.activeSegmentIndex,
+  segmentationMixinType: <span class="hljs-string">`circleSegmentationMixin`</span>,
+};
+
+<span class="hljs-keyword">this</span>.applyActiveStrategy(evt, operationData);
+<span class="hljs-comment">// ...</span>
+</code></pre>
+<p>Here the <code>operationData</code> contains information about the deliniation. The <code>segmentationMixinType</code> property just defines a key that tells the strategy what sort of <code>operationData</code> it is recieving, so that it knows what to process, or can throw if it can&apos;t process operations from that mixin. E.g.:</p>
+<pre><code class="lang-js"><span class="hljs-comment">//src/util/segmentation/operations/fillInsideCircle.js</span>
+
+<span class="hljs-comment">// ...</span>
+<span class="hljs-keyword">if</span> (operationData.segmentationMixinType !== <span class="hljs-string">`circleSegmentationMixin`</span>) {
+  logger.error(
+    <span class="hljs-string">`fillInsideCircle operation requires circleSegmentationMixin operationData, recieved <span class="hljs-subst">${
+      operationData.segmentationMixinType
+    }</span>`</span>
+  );
+
+  <span class="hljs-keyword">return</span>;
+}
+<span class="hljs-comment">// ...</span>
+</code></pre>
+<h3 id="core-segmentation-mixins">Core Segmentation Mixins</h3>
+<p>Here are the segmentation mixins present in the core <code>cornerstoneTools</code> library. They power the various scissor and correction tools.</p>
+<h4 id="circlesegmentationmixin">circleSegmentationMixin</h4>
+<p>The <code>circleSegmentationMixin</code> allows the user to draw a circle on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool&apos;s <code>activeStrategy</code> with the following <code>operationData</code>:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> operationData = {
+  points,
+  pixelData,
+  segmentIndex: labelmap3D.activeSegmentIndex,
+  segmentationMixinType: <span class="hljs-string">`circleSegmentationMixin`</span>,
+};
+</code></pre>
+<p>Where:</p>
+<ul>
+<li>points - An object with two points <code>start</code> and <code>end</code> containing the (<code>x</code>,<code>y</code>) coordinates of the centre of the circle and a point on its edge.</li>
+<li><code>pixelData</code> - The <code>pixelData</code> of the <code>Labelmap2D</code> that corresponds with the image.</li>
+<li>The <code>segmentIndex</code> to apply the operation to.</li>
+<li><code>segmentationMixinType</code> - The mixin identifier.</li>
+</ul>
+<h4 id="freehandsegmentationmixin--polylinesegmentationmixin">freehandSegmentationMixin / polylineSegmentationMixin</h4>
+<p>The <code>freehandSegmentationMixin</code> allows the user to draw a freehand polygon on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool&apos;s <code>activeStrategy</code> with the following <code>operationData</code>:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> operationData = {
+  points,
+  pixelData,
+  segmentIndex: labelmap3D.activeSegmentIndex,
+  segmentationMixinType: <span class="hljs-string">`circleSegmentationMixin`</span>,
+};
+</code></pre>
+<p>Where:</p>
+<ul>
+<li>points - An array of points containing the (<code>x</code>,<code>y</code>) coordinates of the nodes along its points.</li>
+<li><code>pixelData</code> - The <code>pixelData</code> of the <code>Labelmap2D</code> that corresponds with the image.</li>
+<li>The <code>segmentIndex</code> to apply the operation to.</li>
+<li><code>segmentationMixinType</code> - The mixin identifier.</li>
+</ul>
+<p>The <code>freehandSegmentationMixin</code>&apos;s <code>renderTooldata</code> method connects the first and last point whilst drawing, signifying a closed polygon to the user. If you wish to display just the open polyline for a Tool whilst deliniating, use the <code>polylineSegmentationMixin</code> instead, which implements the <code>freehandSegmentationMixin</code> but overrides its <code>renderToolData</code> method to display just the line.</p>
+<h4 id="rectanglesegmentationmixin">rectangleSegmentationMixin</h4>
+<p>The <code>rectangleSegmentationMixin</code> allows the user to draw a rectangle on a single frame of a series via a touch/mouse drag. On mouse up/touch end, the mixin calls the Tool&apos;s <code>activeStrategy</code> with the following <code>operationData</code>:</p>
+<pre><code class="lang-js"><span class="hljs-keyword">const</span> operationData = {
+  points,
+  pixelData,
+  segmentIndex: labelmap3D.activeSegmentIndex,
+  segmentationMixinType: <span class="hljs-string">`circleSegmentationMixin`</span>,
+};
+</code></pre>
+<p>Where:</p>
+<ul>
+<li>points - An array with two points containing the (<code>x</code>,<code>y</code>) coordinates of the top left and the bottom right of the rectangle.</li>
+<li><code>pixelData</code> - The <code>pixelData</code> of the <code>Labelmap2D</code> that corresponds with the image.</li>
+<li>The <code>segmentIndex</code> to apply the operation to.</li>
+<li><code>segmentationMixinType</code> - The mixin identifier.</li>
+</ul>
+
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+
+            </div>
+
+            
+                
+                <a href="../tool-types/#segmentation-tool" class="navigation navigation-prev " aria-label="Previous page: Segmentation Tool">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="./#binary-tools" class="navigation navigation-next " aria-label="Next page: Binary Tools">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"Tool Mixins","level":"3.3","depth":1,"next":{"title":"Binary Tools","level":"3.3.1","depth":2,"anchor":"#binary-tools","path":"tool-mixins/index.md","ref":"tool-mixins/index.md#binary-tools","articles":[]},"previous":{"title":"Segmentation Tool","level":"3.2.4","depth":2,"anchor":"#segmentation-tool","path":"tool-types/index.md","ref":"tool-types/index.md#segmentation-tool","articles":[]},"dir":"ltr"},"config":{"plugins":["edit-link","theme-cornerstone","-fontsettings","github","ga","sitemap","versions","livereload"],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"github":{"url":"https://github.com/cornerstonejs/cornerstoneTools"},"livereload":{},"search":{},"theme-cornerstone":{},"lunr":{"maxIndexSize":1000000,"ignoreSpecialCharacters":false},"highlight":{},"sitemap":{"hostname":"https://tools.cornerstonejs.org"},"ga":{"configuration":"auto","token":"UA-110573590-1"},"versions":{"type":"branches","gitbookConfigURL":"https://raw.githubusercontent.com/cornerstonejs/cornerstoneTools/master/docs/book.json","options":[{"value":"https://tools.cornerstonejs.org/history/v2/","text":"Version 2.x"},{"value":"https://tools.cornerstonejs.org/history/v3/","text":"Version 3.x"},{"value":"https://tools.cornerstonejs.org/","text":"Version 4.x","selected":true}]},"sharing":{"facebook":false,"twitter":false,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"Edit This Page","base":"https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/latest"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"variables":{},"title":"cornerstone-tools","links":{"sharing":{"facebook":false,"twitter":false}},"gitbook":">3.0.0"},"file":{"path":"tool-mixins/index.md","mtime":"2019-08-28T15:03:15.594Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2019-08-29T13:31:36.695Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-edit-link/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-github/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-ga/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-versions/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-livereload/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search-engine.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/lunr.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-lunr/search-lunr.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+
+    </body>
+</html>
+

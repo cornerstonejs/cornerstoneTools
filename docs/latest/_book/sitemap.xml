@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<url> <loc>https://tools.cornerstonejs.org/./</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/installation.html</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/./</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/contributing.html</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/anatomy-of-a-tool/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/tool-types/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/tool-mixins/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/custom-tools/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/modules/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/third-party-functionality/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/migration/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/debugging/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/./</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/installation.html</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/./</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/contributing.html</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/anatomy-of-a-tool/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/tool-types/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/tool-mixins/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/custom-tools/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/modules/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/third-party-functionality/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/migration/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+<url> <loc>https://tools.cornerstonejs.org/debugging/</loc> <changefreq>weekly</changefreq> <priority>0.5</priority> </url>
+</urlset>
