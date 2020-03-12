@@ -129,7 +129,6 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   }
 
   setStyle(style) {
-    console.log('SET FREEHANDROITOOL STYLE:', style);
     this.style = style;
   }
 

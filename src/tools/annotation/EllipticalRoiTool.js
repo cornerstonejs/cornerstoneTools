@@ -68,7 +68,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   }
 
   setStyle(style) {
-    console.log('SET ELLIPTICALROITOOL STYLE:', style);
     this.style = style;
   }
 
@@ -224,8 +223,18 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           continue;
         }
 
+        const isCurrentRoi = this.isOnCurrentRoi(data);
+
+        const color = isCurrentRoi
+          ? this.style.activeSaved.color
+          : this.style.activeUnsaved.color;
+
+        const lineWidth =
+          isCurrentRoi || this.isOnPassiveRoi(data)
+            ? this.style.activeSaved.lineWidth
+            : this.style.passiveSaved.lineWidth;
+
         // Configure
-        const color = data.roi.color;
         const handleOptions = {
           color,
           handleRadius,
@@ -233,9 +242,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         };
 
         setShadow(context, this.configuration);
-
-        const lineWidth =
-          this.isOnCurrentRoi(data) || this.isOnPassiveRoi(data) ? 5 : 3;
 
         // Draw
         drawEllipse(
@@ -251,14 +257,14 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
 
-        if (this.isOnCurrentRoi(data)) {
+        if (isCurrentRoi) {
           drawHandles(context, eventData, data.handles, handleOptions);
         }
 
         if (data.invalidated === true) {
           if (this.dataInvalidatedCallback) {
             this.dataInvalidatedCallback({
-              data: data,
+              data,
               imageId: image.imageId,
             });
           }
