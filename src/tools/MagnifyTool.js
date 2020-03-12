@@ -79,13 +79,35 @@ export default class MagnifyTool extends BaseTool {
     this._removeZoomElement();
   }
 
+  _getCanvasOffset(magnifySize, canvasLocation, canvasWidth) {
+    const halfCanvasSize = Math.floor(canvasWidth / 2);
+    const halfMagnifySize = Math.floor(magnifySize / 2);
+    let left = 0;
+    const top = -halfMagnifySize;
+
+    if (canvasLocation.y < magnifySize) {
+      const verticalOffsetImpact =
+        halfMagnifySize *
+        ((canvasLocation.y - halfMagnifySize) / halfMagnifySize);
+      const factor = canvasLocation.x < halfCanvasSize ? 1 : -1;
+      let offset = halfMagnifySize * factor;
+
+      if (canvasLocation.y > halfMagnifySize) {
+        offset -= verticalOffsetImpact * factor;
+      }
+
+      left = offset;
+    }
+
+    return {
+      left,
+      top,
+    };
+  }
+
   _drawMagnificationTool(evt) {
     const element = evt.detail.element;
-    const magnifyCanvas = element.querySelector('.magnifyTool');
-
-    if (!magnifyCanvas) {
-      this._createMagnificationCanvas(element);
-    }
+    const magnifyCanvas = this._createMagnificationCanvas(element);
 
     if (this.zoomCanvas === undefined) {
       return;
@@ -109,6 +131,20 @@ export default class MagnifyTool extends BaseTool {
       canvas.height
     );
     const magnificationLevel = this.configuration.magnificationLevel;
+
+    const canvasWidth = element.clientWidth;
+    const canvasOffset = this._getCanvasOffset(
+      magnifySize,
+      canvasLocation,
+      canvasWidth
+    );
+    let offsetTop = 0;
+    let offsetLeft = 0;
+
+    if (evt.detail.isTouchEvent) {
+      offsetTop = canvasOffset.top;
+      offsetLeft = canvasOffset.left;
+    }
 
     magnifyCanvas.width = magnifySize;
     magnifyCanvas.height = magnifySize;
@@ -152,10 +188,9 @@ export default class MagnifyTool extends BaseTool {
     );
 
     // Place the magnification tool at the same location as the pointer
-    const touchOffset = evt.detail.isTouchEvent ? 120 : 0;
     const magnifyPosition = {
-      top: Math.max(canvasLocation.y - 0.5 * magnifySize - touchOffset, 0),
-      left: Math.max(canvasLocation.x - 0.5 * magnifySize, 0),
+      top: Math.max(canvasLocation.y - 0.5 * magnifySize + offsetTop, 0),
+      left: Math.max(canvasLocation.x - 0.5 * magnifySize + offsetLeft, 0),
     };
 
     // Get full magnifier dimensions with borders
@@ -241,13 +276,15 @@ export default class MagnifyTool extends BaseTool {
    * @private
    *
    * @param {*} element
-   * @returns {void}
+   * @returns {*} Existing canvas element or the one just created
    */
   _createMagnificationCanvas(element) {
+    let magnifyCanvas = element.querySelector('.magnifyTool');
+
     // If the magnifying glass canvas doesn't already exist
-    if (element.querySelector('.magnifyTool') === null) {
+    if (magnifyCanvas === null) {
       // Create a canvas and append it as a child to the element
-      const magnifyCanvas = document.createElement('canvas');
+      magnifyCanvas = document.createElement('canvas');
 
       // The magnifyTool class is used to find the canvas later on
       // Make sure position is absolute so the canvas can follow the mouse / touch
@@ -258,6 +295,8 @@ export default class MagnifyTool extends BaseTool {
       magnifyCanvas.style.display = 'none';
       element.appendChild(magnifyCanvas);
     }
+
+    return magnifyCanvas;
   }
 
   /**

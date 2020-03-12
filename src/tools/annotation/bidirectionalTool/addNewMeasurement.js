@@ -23,6 +23,7 @@ export default function(evt, interactionType) {
   const measurementData = this.createNewMeasurement(eventData);
 
   const doneCallback = () => {
+    measurementData.isCreating = false;
     measurementData.active = false;
     external.cornerstone.updateImage(element);
   };

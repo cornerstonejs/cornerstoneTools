@@ -5,6 +5,7 @@ import pointNearTool from './bidirectionalTool/pointNearTool.js';
 import renderToolData from './bidirectionalTool/renderToolData.js';
 import addNewMeasurement from './bidirectionalTool/addNewMeasurement.js';
 import _moveCallback from './bidirectionalTool/mouseMoveCallback.js';
+import preTouchStartCallback from './bidirectionalTool/preTouchStartCallback.js';
 import handleSelectedCallback from './bidirectionalTool/handleSelectedCallback.js';
 import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouseCallback.js';
 import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
@@ -12,6 +13,13 @@ import { bidirectionalCursor } from '../cursors/index.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
+
+import EVENTS from '../../events.js';
+import {
+  getToolState,
+  removeToolState,
+} from '../../stateManagement/toolState.js';
+import external from '../../externalModules.js';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
   doneCallback();
@@ -37,7 +45,9 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         shadow: '',
         drawHandles: true,
         drawHandlesOnHover: true,
-        additionalData: [],
+        touchMagnifySize: 0,
+        touchMagnificationLevel: 2,
+        drawActiveTouchHandles: false,
       },
       svgCursor: bidirectionalCursor,
     };
@@ -51,6 +61,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
     this.renderToolData = renderToolData.bind(this);
     this.addNewMeasurement = addNewMeasurement.bind(this);
     this._moveCallback = _moveCallback.bind(this);
+    this.preTouchStartCallback = preTouchStartCallback.bind(this);
 
     this.handleSelectedCallback = handleSelectedCallback.bind(this);
     this.handleSelectedMouseCallback = handleSelectedMouseCallback.bind(this);

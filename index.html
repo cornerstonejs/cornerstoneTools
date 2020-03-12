@@ -147,8 +147,6 @@
       <div class="cornerstone-element-wrapper">
         <a href="#" class="save-btn" data-index="0">Save</a>
         <div class="cornerstone-element" data-index="0" oncontextmenu="return false"></div>
-        <a href="#" class="save-btn" data-index="1">Save</a>
-        <div class="cornerstone-element" data-index="1" oncontextmenu="return false"></div>
       </div>
     </div>
   </div>
@@ -377,15 +375,6 @@
     });
   });
 
-  // Activate first tool
-  cornerstoneTools.setToolActive(
-    cornerstoneTools.store.state.tools[0].name,
-    {
-      mouseButtonMask: 1,
-      isTouchActive: true,
-    }
-  );
-
   const setToolCategoryActive = categoryName => {
     Array.from(toolCategoryLinks).forEach(toolLink => {
       if (categoryName === toolLink.getAttribute('data-category')) {
@@ -486,6 +475,21 @@
     }
     return 0;
   };
+
+  // Activate first tool
+  const activeToolName = cornerstoneTools.store.state.tools[2].name;
+  const mouseButtonMask = 1;
+  setButtonActive(activeToolName, mouseButtonMask);
+  cornerstoneTools.setToolActive(
+    activeToolName,
+    {
+      mouseButtonMask,
+      isTouchActive: true,
+    }
+  );
+
+  // Change the touch proximity
+  cornerstoneTools.store.state.touchProximity = 15
 </script>
 
 </html>

@@ -55,7 +55,7 @@ export default function(evt) {
 
       unselectAllHandles(data.handles);
       handle.moving = true;
-      touchMoveHandle(eventData, this.name, data, handle, () =>
+      touchMoveHandle.call(this, eventData, this.name, data, handle, () =>
         handleDoneMove(handle)
       );
       preventPropagation(evt);

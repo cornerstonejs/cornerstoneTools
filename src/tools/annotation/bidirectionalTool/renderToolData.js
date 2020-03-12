@@ -1,4 +1,5 @@
 /* eslint no-loop-func: 0 */ // --> OFF
+import { state } from '../../../store/index.js';
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
@@ -14,10 +15,26 @@ import {
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
 import getPixelSpacing from '../../../util/getPixelSpacing';
 
-export default function(evt) {
-  const eventData = evt.detail;
-  const { element, canvasContext, image } = eventData;
+export default function renderToolData(event) {
+  const eventData = event.detail;
+  const zoomElement = this.magnify && this.magnify.zoomElement;
+
+  renderToolDataForElement.call(this, eventData);
+
+  if (zoomElement) {
+    const zoomEventData = Object.assign({}, eventData, {
+      element: zoomElement,
+      canvasContext: getNewContext(this.magnify.zoomCanvas),
+    });
+
+    renderToolDataForElement.call(this, zoomEventData, true);
+  }
+}
+
+const renderToolDataForElement = function(eventData, isZoomElement = false) {
+  const { image, element, canvasContext } = eventData;
   const { handleRadius, drawHandlesOnHover } = this.configuration;
+  const { drawActiveTouchHandles } = this.configuration;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -47,7 +64,9 @@ export default function(evt) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    const isActiveColor = data.active || data.activeTouch;
+
+    color = isActiveColor ? activeColor : toolColors.getToolColor();
 
     // Calculate the data measurements
     if (data.invalidated === true) {
@@ -89,6 +108,12 @@ export default function(evt) {
         drawHandlesIfActive: drawHandlesOnHover,
       };
 
+      // Draw bigger handles when active on touch devices
+      if (drawActiveTouchHandles && data.activeTouch && !isZoomElement) {
+        handleOptions.handleRadius = state.touchProximity;
+        handleOptions.drawHandlesIfActive = false;
+      }
+
       // Draw the handles
       if (this.configuration.drawHandles) {
         drawHandles(context, eventData, data.handles, handleOptions);
@@ -120,7 +145,7 @@ export default function(evt) {
       );
     });
   }
-}
+};
 
 const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   let suffix = ' mm';

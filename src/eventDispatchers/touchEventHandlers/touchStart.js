@@ -113,7 +113,7 @@ export default function(evt) {
     const firstToolNearPoint = annotationToolsWithPointNearTouch[0];
     const toolState = getToolState(element, firstToolNearPoint.name);
     const firstAnnotationNearPoint = toolState.data.find(data =>
-      firstToolNearPoint.pointNearTool(element, data, coords)
+      firstToolNearPoint.pointNearTool(element, data, coords, 'touch')
     );
 
     firstToolNearPoint.toolSelectedCallback(
