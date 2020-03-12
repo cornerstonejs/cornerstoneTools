@@ -85,6 +85,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this._editTouchDragCallback = this._editTouchDragCallback.bind(this);
 
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
+
+    this.style = null;
   }
 
   createNewMeasurement(eventData) {
@@ -124,6 +126,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
   setCurrentRoi(roi) {
     this.roi = roi;
+  }
+
+  setStyle(style) {
+    console.log('SET FREEHANDROITOOL STYLE:', style);
+    this.style = style;
   }
 
   /**

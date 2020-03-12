@@ -59,10 +59,17 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     super(props, defaultProps);
 
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
+
+    this.style = null;
   }
 
   setCurrentRoi(roi) {
     this.roi = roi;
+  }
+
+  setStyle(style) {
+    console.log('SET ELLIPTICALROITOOL STYLE:', style);
+    this.style = style;
   }
 
   setPassiveRoi(roi) {
