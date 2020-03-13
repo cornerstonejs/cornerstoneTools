@@ -237,22 +237,18 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           this.toolRoiSavedStatuses
         );
 
-        let style = null;
-
-        if (isRoiSelected) {
-          style = this.style.selected;
-        } else {
-          style = isCurrentRoi
-            ? isRoiSaved
-              ? this.style.activeSaved
-              : this.style.activeUnsaved
-            : isRoiSaved
-            ? this.style.passiveSaved
-            : this.style.passiveUnsaved;
-        }
+        const style = isCurrentRoi
+          ? isRoiSaved
+            ? this.style.activeSaved
+            : this.style.activeUnsaved
+          : isRoiSaved
+          ? this.style.passiveSaved
+          : this.style.passiveUnsaved;
 
         const color = style.color;
-        const lineWidth = style.lineWidth;
+        const lineWidth = isRoiSelected
+          ? this.style.selectedLineWidth
+          : style.lineWidth;
 
         // Configure
         const handleOptions = {
