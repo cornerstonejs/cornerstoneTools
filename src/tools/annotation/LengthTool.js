@@ -230,12 +230,12 @@ export default class LengthTool extends BaseAnnotationTool {
     // - SideEffect: Updates annotation 'suffix'
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
-      
+
       // measured value is not defined, return empty string
-      if(!measuredValue) {
-       return ""; 
+      if (!measuredValue) {
+        return '';
       }
-      
+
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = 'mm';
 
@@ -259,12 +259,16 @@ export default class LengthTool extends BaseAnnotationTool {
   }
 }
 
-  /**
-   *
-   */
-  function _sanitizeMeasuredValue(value) {
-    const parsedValue = Number(value);
-    const isNumber = !isNaN(parsedValue);
+/**
+ * Attempts to sanitize a value by casting as a number; if unable to cast,
+ * we return `undefined`
+ *
+ * @param {*} value
+ * @returns a number or undefined
+ */
+function _sanitizeMeasuredValue(value) {
+  const parsedValue = Number(value);
+  const isNumber = !isNaN(parsedValue);
 
-    return isNumber ? parsedValue : undefined;
-  }
+  return isNumber ? parsedValue : undefined;
+}
