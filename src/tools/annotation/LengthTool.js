@@ -227,7 +227,7 @@ export default class LengthTool extends BaseAnnotationTool {
       });
     }
 
-    //
+    // - SideEffect: Updates annotation 'suffix'
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
       
@@ -257,6 +257,7 @@ export default class LengthTool extends BaseAnnotationTool {
       return [handles.start, midpoint, handles.end];
     }
   }
+}
 
   /**
    *
@@ -267,5 +268,3 @@ export default class LengthTool extends BaseAnnotationTool {
 
     return isNumber ? parsedValue : undefined;
   }
-
-}
