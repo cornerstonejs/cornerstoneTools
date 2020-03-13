@@ -61,6 +61,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
     this.style = null;
+    this.toolRoiSavedStatuses = null;
   }
 
   setCurrentRoi(roi) {
@@ -69,6 +70,10 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
   setStyle(style) {
     this.style = style;
+  }
+
+  setToolRoiSavedStatuses(toolRoiSavedStatuses) {
+    this.toolRoiSavedStatuses = toolRoiSavedStatuses;
   }
 
   setPassiveRoi(roi) {
@@ -225,7 +230,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         const isCurrentRoi = this.isOnCurrentRoi(data);
 
-        const isRoiSaved = data.roi.isSaved;
+        const isRoiSaved = this.isRoiSaved(data.roi, this.toolRoiSavedStatuses);
 
         const style = isCurrentRoi
           ? isRoiSaved
@@ -338,6 +343,18 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
   isOnCurrentRoi(data) {
     return this.roi && this.roi.id === data.roi.id;
+  }
+
+  isRoiSaved(roi, toolRoiSavedStatuses) {
+    if (!toolRoiSavedStatuses) {
+      return true;
+    }
+
+    const isSaved = toolRoiSavedStatuses.savedToolRoiIds.some(
+      id => id === roi.id
+    );
+
+    return isSaved;
   }
 
   isOnPassiveRoi(data) {
