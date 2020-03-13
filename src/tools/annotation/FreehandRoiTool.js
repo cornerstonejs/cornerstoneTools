@@ -87,6 +87,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
     this.style = null;
+    this.selectedToolRoiId = null;
   }
 
   createNewMeasurement(eventData) {
@@ -132,6 +133,9 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.style = style;
   }
 
+  setSelectedToolRoiId(id) {
+    this.selectedToolRoiId = id;
+  }
   /**
    *
    *
@@ -352,6 +356,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     return data.roi.id === this.roi.id;
   }
 
+  isRoiSelected(roi) {
+    return roi.id === this.selectedToolRoiId;
+  }
+
   /**
    *
    *
@@ -388,20 +396,37 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
-        let color = data.roi.color;
-        let fillColor;
+        const isActive = data.active;
+        const isSelected = this.isRoiSelected(data.roi);
 
-        if (data.active) {
-          if (data.handles.invalidHandlePlacement) {
-            color = config.invalidColor;
-            fillColor = config.invalidColor;
-          } else {
-            color = data.roi.color;
-            fillColor = data.roi.fillColor;
-          }
-        } else {
-          fillColor = data.roi.fillColor;
+        const colorStyle = this.style.color;
+        let color = isSelected
+          ? colorStyle.selected
+          : isActive
+          ? colorStyle.active
+          : colorStyle.passive;
+
+        if (data.handles.invalidHandlePlacement) {
+          color = config.invalidColor;
         }
+
+        // Todo is this required?
+        const fillColor = color;
+
+        const lineWidthStyle = this.style.lineWidth;
+
+        const lineWidth = isSelected
+          ? lineWidthStyle.selected
+          : isActive
+          ? lineWidthStyle.active
+          : lineWidthStyle.passive;
+
+        const handleStyle = this.style.handleSize;
+        const handleRadius = isSelected
+          ? handleStyle.selected
+          : isActive
+          ? handleStyle.active
+          : handleStyle.passive;
 
         if (data.handles.points.length) {
           for (let j = 0; j < data.handles.points.length; j++) {
@@ -414,6 +439,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
               lines.push(config.mouseLocation.handles.start);
             }
             drawJoinedLines(context, element, data.handles.points[j], lines, {
+              lineWidth,
               color,
             });
           }
@@ -431,13 +457,13 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           (config.alwaysShowHandles || (data.active && data.polyBoundingBox))
         ) {
           // Render all handles
-          options.handleRadius = config.activeHandleRadius;
+          options.handleRadius = handleRadius;
           drawHandles(context, eventData, data.handles.points, options);
         }
 
         if (data.canComplete) {
           // Draw large handle at the origin if can complete drawing
-          options.handleRadius = config.completeHandleRadius;
+          options.handleRadius = 1.5 * handleRadius;
           const handle = data.handles.points[0];
 
           drawHandles(context, eventData, [handle], options);
@@ -445,7 +471,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         if (data.active && !data.polyBoundingBox) {
           // Draw handle at origin and at mouse if actively drawing
-          options.handleRadius = config.activeHandleRadius;
+          options.handleRadius = handleRadius;
           drawHandles(
             context,
             eventData,
