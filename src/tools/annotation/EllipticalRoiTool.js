@@ -240,15 +240,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           ? this.style.passiveSaved
           : this.style.passiveUnsaved;
 
-        console.log(
-          'CRNSTN: ROI:',
-          data.roi,
-          '\nisCurrentRoi:',
-          isCurrentRoi,
-          '\nisRoiSaved:',
-          isRoiSaved
-        );
-
         const color = style.color;
         const lineWidth = style.lineWidth;
 
