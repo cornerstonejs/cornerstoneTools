@@ -232,13 +232,24 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         const isRoiSaved = this.isRoiSaved(data.roi, this.toolRoiSavedStatuses);
 
-        const style = isCurrentRoi
-          ? isRoiSaved
-            ? this.style.activeSaved
-            : this.style.activeUnsaved
-          : isRoiSaved
-          ? this.style.passiveSaved
-          : this.style.passiveUnsaved;
+        const isRoiSelected = this.isRoiSelected(
+          data.roi,
+          this.toolRoiSavedStatuses
+        );
+
+        let style = null;
+
+        if (isRoiSelected) {
+          style = this.style.selected;
+        } else {
+          style = isCurrentRoi
+            ? isRoiSaved
+              ? this.style.activeSaved
+              : this.style.activeUnsaved
+            : isRoiSaved
+            ? this.style.passiveSaved
+            : this.style.passiveUnsaved;
+        }
 
         const color = style.color;
         const lineWidth = style.lineWidth;
@@ -346,6 +357,16 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     );
 
     return isSaved;
+  }
+
+  isRoiSelected(roi, toolRoiSavedStatuses) {
+    if (!toolRoiSavedStatuses) {
+      return false;
+    }
+
+    const isSelected = toolRoiSavedStatuses.selectedToolRoiId === roi.id;
+
+    return isSelected;
   }
 
   isOnPassiveRoi(data) {
