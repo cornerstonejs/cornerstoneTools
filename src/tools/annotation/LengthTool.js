@@ -227,7 +227,15 @@ export default class LengthTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
+    //
+    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+      const measuredValue = _sanitizeMeasuredValue(annotation.length);
+      
+      // measured value is not defined, return empty string
+      if(!measuredValue) {
+       return ""; 
+      }
+      
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = 'mm';
 
@@ -235,9 +243,9 @@ export default class LengthTool extends BaseAnnotationTool {
         suffix = 'pixels';
       }
 
-      data.unit = suffix;
+      annotation.unit = suffix;
 
-      return `${data.length.toFixed(2)} ${suffix}`;
+      return `${measuredValue.toFixed(2)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
@@ -249,4 +257,15 @@ export default class LengthTool extends BaseAnnotationTool {
       return [handles.start, midpoint, handles.end];
     }
   }
+
+  /**
+   *
+   */
+  function _sanitizeMeasuredValue(value) {
+    const parsedValue = Number(value);
+    const isNumber = !isNaN(parsedValue);
+
+    return isNumber ? parsedValue : undefined;
+  }
+
 }
