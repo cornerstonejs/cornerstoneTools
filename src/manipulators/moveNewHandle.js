@@ -98,6 +98,43 @@ export default function(
     element.addEventListener(eventType, moveHandler);
   });
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  function onElementDisabled({ detail: { element: disabledElement } }) {
+    // We only want to handle annotations that are in an 'intermediate' mode
+    if (!handle.active) {
+      return;
+    }
+
+    // "Release" the handle
+    annotation.active = false;
+    annotation.invalidated = true;
+    handle.active = false;
+    state.isToolLocked = false;
+
+    // Remove event listeners
+    _moveEvents[interactionType].forEach(eventType => {
+      disabledElement.removeEventListener(eventType, moveHandler);
+    });
+    _moveEndEvents[interactionType].forEach(eventType => {
+      disabledElement.removeEventListener(eventType, moveEndHandler);
+    });
+    disabledElement.removeEventListener(
+      EVENTS.TOUCH_START,
+      _stopImmediatePropagation
+    );
+
+    // For some reason cornerstone crashes if we do this
+    // external.cornerstone.events.removeEventListener(
+    //   external.cornerstone.EVENTS.ELEMENT_DISABLED,
+    //   onElementDisabled
+    // );
+
+    removeToolState(disabledElement, toolName, annotation);
+  }
+  external.cornerstone.events.addEventListener(
+    external.cornerstone.EVENTS.ELEMENT_DISABLED,
+    onElementDisabled
+  );
 }
 
 function _moveHandler(
