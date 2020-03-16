@@ -25,6 +25,11 @@ export const state = {
   preventHandleOutsideImage: false,
   // Cursor
   svgCursorUrl: null,
+  //
+};
+
+const _internalState = {
+  inFlightManipulatorsForJamesDannyAndBruno: {},
 };
 
 export const getters = {
@@ -44,7 +49,39 @@ export const getters = {
     ),
 };
 
-export const setters = {};
+export const setters = {
+  addInFlightManipulatorThing: (annotationUuid, cancelFn) => {
+    const inFlightManipulators =
+      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
+
+    inFlightManipulators[annotationUuid] = cancelFn;
+  },
+  // Single
+  removeInFlightManipulatorThing: annotationUuid => {
+    const inFlightManipulators =
+      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
+
+    const cancelFn = inFlightManipulators[annotationUuid]();
+
+    if (cancelFn) {
+      cancelFn();
+    }
+
+    delete inFlightManipulators[annotationUuid];
+  },
+  // All
+  cancelAllInFlightManipulatorThings: () => {
+    const inFlightManipulators =
+      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
+    const allInFlightAnnotationUuids = Object.keys(inFlightManipulators);
+
+    allInFlightAnnotationUuids.forEach(uuid =>
+      setters.removeInFlightManipulatorThing(uuid)
+    );
+  },
+};
+
+// CsTools.store.state.setters.cancelAllInFlightManipulatorThings
 
 export const modules = {
   segmentation,
@@ -60,4 +97,5 @@ export default {
   modules,
   state,
   getters,
+  setters,
 };

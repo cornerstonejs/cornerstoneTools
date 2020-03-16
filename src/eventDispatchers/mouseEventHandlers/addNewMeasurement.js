@@ -4,6 +4,7 @@ import { addToolState } from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
 import { getLogger } from '../../util/logger.js';
 import triggerEvent from '../../util/triggerEvent.js';
+import uuidv4 from '../../util/uuidv4.js';
 
 const logger = getLogger('eventDispatchers:mouseEventHandlers');
 
@@ -21,6 +22,8 @@ export default function(evt, tool) {
   }
 
   // Associate this data with this imageId so we can render it and manipulate it
+  // NOTE: Should we move `uuidv4` association to `addToolState`?
+  measurementData.uuid = uuidv4();
   addToolState(element, tool.name, measurementData);
 
   external.cornerstone.updateImage(element);

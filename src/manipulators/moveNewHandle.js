@@ -4,7 +4,7 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
-import { state } from './../store/index.js';
+import { state, setters } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
@@ -23,6 +23,7 @@ const _moveEndEvents = {
 
 /**
  * Move a new handle
+ *
  * @public
  * @method moveNewHandle
  * @memberof Manipulators
@@ -73,7 +74,8 @@ export default function(
         moveHandler,
         moveEndHandler,
       },
-      evt
+      evt,
+      doneMovingCallback
     );
   }
   // So we don't need to inline the entire `moveEndEventHandler` function
@@ -98,23 +100,49 @@ export default function(
     element.addEventListener(eventType, moveHandler);
   });
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  // Start tracking in-flight listeners
+  //
 }
 
+/**
+ * Updates annotation as the "pointer" is moved/dragged
+ * Emits `cornerstonetoolsmeasurementmodified` events
+ */
 function _moveHandler(
   toolName,
   annotation,
   handle,
   options,
   interactionType,
-  { moveEndHandler },
-  evt
+  { moveHandler, moveEndHandler },
+  evt,
+  doneMovingCallback
 ) {
   const { currentPoints, image, element, buttons } = evt.detail;
-  // Add moveEndEvent Handler when move trigger
 
+  // Handle "END"
   _moveEndEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveEndHandler);
   });
+
+  // Or... Handle "CANCEL"
+  setters.addInFlightManipulatorThing(
+    annotation.uuid,
+    _cancelEventHandlers.bind(
+      null,
+      annotation,
+      handle,
+      interactionType,
+      {
+        moveHandler,
+        moveEndHandler,
+      },
+      element,
+      doneMovingCallback
+    )
+  );
+
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -150,6 +178,10 @@ function _moveHandler(
   triggerEvent(element, eventType, modifiedEventData);
 }
 
+/**
+ * "Unlocks" tool dispatchets and deregisters event listeners when "pointer" is released
+ * Potentially some validation of annotation
+ */
 function _moveEndHandler(
   toolName,
   annotation,
@@ -169,42 +201,12 @@ function _moveEndHandler(
     interactionType === 'touch' ? page.y + fingerOffset : page.y
   );
 
-  // "Release" the handle
-  annotation.active = false;
-  annotation.invalidated = true;
-  handle.active = false;
+  // Update handle location
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
-  state.isToolLocked = false;
 
-  // Remove event listeners
-  _moveEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveHandler);
-  });
-  _moveEndEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveEndHandler);
-  });
-  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
-
-  // TODO: WHY?
-  // Why would a Touch_Pinch or Touch_Press be associated with a new handle?
-  if (evt.type === EVENTS.TOUCH_PINCH || evt.type === EVENTS.TOUCH_PRESS) {
-    handle.active = false;
-    external.cornerstone.updateImage(element);
-    if (typeof options.doneMovingCallback === 'function') {
-      logger.warn(
-        '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
-      );
-
-      options.doneMovingCallback();
-    }
-
-    if (typeof doneMovingCallback === 'function') {
-      doneMovingCallback();
-    }
-
-    return;
-  }
+  // TODO: Think of a better name; this also triggers event cancelation
+  setters.removeInFlightManipulatorThing(annotation.uuid);
 
   if (options.preventHandleOutsideImage) {
     clipToBox(handle, evt.detail.image);
@@ -218,14 +220,45 @@ function _moveEndHandler(
     removeToolState(element, toolName, annotation);
   }
 
-  if (typeof options.doneMovingCallback === 'function') {
-    logger.warn(
-      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
-    );
-
-    options.doneMovingCallback();
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback();
   }
 
+  // Update Image
+  external.cornerstone.updateImage(element);
+}
+
+// AnnotationId?
+// element, eventType, function
+
+// TODO: Because this is `moveNewHandle`, can we safely delete annotation here, unlike in other
+// TODO: Handlers where it may be conditional?
+function _cancelEventHandlers(
+  annotation,
+  handle,
+  // Options,
+  interactionType,
+  { moveHandler, moveEndHandler },
+  element,
+  doneMovingCallback
+) {
+  // "Release" the handle
+  annotation.active = false;
+  annotation.invalidated = true;
+  handle.active = false;
+  state.isToolLocked = false;
+
+  // Remove event listeners
+  _moveEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveHandler);
+  });
+  _moveEndEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveEndHandler);
+  });
+  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  // TODO: How should we handle `doneMovingCallback`?
+  // TODO: If it's a promise (resolve/reject), do we need to respond?
   if (typeof doneMovingCallback === 'function') {
     doneMovingCallback();
   }

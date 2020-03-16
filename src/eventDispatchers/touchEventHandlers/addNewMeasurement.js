@@ -9,6 +9,7 @@ import {
 } from '../../stateManagement/toolState.js';
 import triggerEvent from '../../util/triggerEvent.js';
 import { getLogger } from '../../util/logger.js';
+import uuidv4 from '../../util/uuidv4.js';
 
 const logger = getLogger('eventDispatchers:touchEventHandlers');
 
@@ -26,6 +27,8 @@ export default function(evt, tool) {
     return;
   }
 
+  // NOTE: Should we move `uuidv4` association to `addToolState`?
+  measurementData.uuid = uuidv4();
   addToolState(element, tool.name, measurementData);
 
   // Todo: Looks like we're handling the "up" of the tap?
