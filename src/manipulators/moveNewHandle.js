@@ -123,11 +123,10 @@ export default function(
       _stopImmediatePropagation
     );
 
-    // For some reason cornerstone crashes if we do this
-    // external.cornerstone.events.removeEventListener(
-    //   external.cornerstone.EVENTS.ELEMENT_DISABLED,
-    //   onElementDisabled
-    // );
+    external.cornerstone.events.removeEventListener(
+      external.cornerstone.EVENTS.ELEMENT_DISABLED,
+      onElementDisabled
+    );
 
     removeToolState(disabledElement, toolName, annotation);
   }
