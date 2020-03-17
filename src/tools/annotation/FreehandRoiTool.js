@@ -136,6 +136,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   setSelectedToolRoiId(id) {
     this.selectedToolRoiId = id;
   }
+
   /**
    *
    *
@@ -396,7 +397,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
-        const isActive = data.active;
+        const isActive = this.contourBelongsToCurentRoi(data);
+        const isHighlighted = data.active;
         const isSelected = this.isRoiSelected(data.roi);
 
         const colorStyle = this.style.color;
@@ -415,18 +417,20 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         const lineWidthStyle = this.style.lineWidth;
 
-        const lineWidth = isSelected
+        let lineWidth = isSelected
           ? lineWidthStyle.selected
           : isActive
           ? lineWidthStyle.active
           : lineWidthStyle.passive;
 
         const handleStyle = this.style.handleSize;
-        const handleRadius = isSelected
+        let handleRadius = isSelected
           ? handleStyle.selected
           : isActive
           ? handleStyle.active
           : handleStyle.passive;
+
+        handleRadius = isHighlighted ? 1.5 * handleRadius : handleRadius;
 
         if (data.handles.points.length) {
           for (let j = 0; j < data.handles.points.length; j++) {
@@ -453,7 +457,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         };
 
         if (
-          this.contourBelongsToCurentRoi(data) &&
+          isActive &&
           (config.alwaysShowHandles || (data.active && data.polyBoundingBox))
         ) {
           // Render all handles
@@ -1770,11 +1774,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
   set invalidColor(value) {
     /*
-      It'd be easy to check if the color was e.g. a valid rgba color. However
-      it'd be difficult to check if the color was a named CSS color without
-      bloating the library, so we don't. If the canvas can't intepret the color
-      it'll show up grey.
-    */
+          It'd be easy to check if the color was e.g. a valid rgba color. However
+          it'd be difficult to check if the color was a named CSS color without
+          bloating the library, so we don't. If the canvas can't intepret the color
+          it'll show up grey.
+        */
 
     this.configuration.invalidColor = value;
     external.cornerstone.updateImage(this.element);
