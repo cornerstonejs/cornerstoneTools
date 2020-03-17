@@ -1,0 +1,6 @@
+{
+  "exec": "npm run build:altis",
+  "watch": ["src/*"],
+  "ext": "js, html, css, json",
+  "delay": "100"
+}
