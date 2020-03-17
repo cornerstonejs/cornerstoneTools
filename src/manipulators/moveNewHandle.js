@@ -21,6 +21,9 @@ const _moveEndEvents = {
   touch: [EVENTS.TOUCH_END, EVENTS.TOUCH_PINCH, EVENTS.TAP],
 };
 
+// Factory function
+// begin, end, cancel
+
 /**
  * Move a new handle
  *
@@ -127,6 +130,18 @@ function _moveHandler(
   });
 
   // Or... Handle "CANCEL"
+  // TODO: instead of annotation uuid, evt.cornerstoneElement.uuid
+  // TODO: Add module setter/command that cancels all or per cornerstoneEnabledElement
+  // TODO: -- Expose/document "Setters" for this cancel behavior?
+  // TODO: In a module, use the hook called by `removeEnabledElement` to deregister
+  // TODO: SETUP IN all other manipulators
+  // TODO: cancelManipulations if `cornerstonenewimage` event is fired
+
+  // When cancelling... What is our active tool?
+  // `isToolLocked` ... Track which (annotation) tool is being manipulated
+  // If not "completed", removeToolState (maybe an `isComplete` flag)
+  // 5 locations: MEASUREMENT_COMPLETED
+  // Firing event... Sets `isCompleted` flag for annotation uuid
   setters.addInFlightManipulatorThing(
     annotation.uuid,
     _cancelEventHandlers.bind(

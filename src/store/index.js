@@ -28,6 +28,8 @@ export const state = {
   //
 };
 
+// ActiveManipulations
+
 const _internalState = {
   inFlightManipulatorsForJamesDannyAndBruno: {},
 };
