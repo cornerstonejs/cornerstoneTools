@@ -1,5 +1,6 @@
 // Modules
 import segmentation from './modules/segmentationModule';
+import manipulatorState from './modules/manipulatorStateModule';
 import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
@@ -28,12 +29,6 @@ export const state = {
   //
 };
 
-// ActiveManipulations
-
-const _internalState = {
-  inFlightManipulatorsForJamesDannyAndBruno: {},
-};
-
 export const getters = {
   mouseTools: () =>
     state.tools.filter(tool =>
@@ -51,44 +46,11 @@ export const getters = {
     ),
 };
 
-export const setters = {
-  addInFlightManipulatorThing: (annotationUuid, cancelFn) => {
-    const inFlightManipulators =
-      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
-
-    inFlightManipulators[annotationUuid] = cancelFn;
-  },
-  // Single
-  removeInFlightManipulatorThing: annotationUuid => {
-    const inFlightManipulators =
-      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
-
-    const cancelFn = inFlightManipulators[annotationUuid]();
-
-    if (cancelFn) {
-      cancelFn();
-    }
-
-    delete inFlightManipulators[annotationUuid];
-  },
-  // All
-  cancelAllInFlightManipulatorThings: () => {
-    const inFlightManipulators =
-      _internalState.inFlightManipulatorsForJamesDannyAndBruno;
-    const allInFlightAnnotationUuids = Object.keys(inFlightManipulators);
-
-    allInFlightAnnotationUuids.forEach(uuid =>
-      setters.removeInFlightManipulatorThing(uuid)
-    );
-  },
-};
-
-// CsTools.store.state.setters.cancelAllInFlightManipulatorThings
-
 export const modules = {
   segmentation,
   cursor,
   globalConfiguration,
+  manipulatorState,
 };
 
 export function getModule(moduleName) {
@@ -99,5 +61,4 @@ export default {
   modules,
   state,
   getters,
-  setters,
 };
