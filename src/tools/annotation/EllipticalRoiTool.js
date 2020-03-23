@@ -327,7 +327,7 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, mean, stdDev, min, max, meanStdDevSUV } = {},
+  { area, mean, stdDev, min, max, meanStdDevSUV, circumference } = {},
   modality,
   hasPixelSpacing,
   options = {}
@@ -388,6 +388,7 @@ function _createTextBoxContent(
   }
 
   textLines.push(_formatArea(area, hasPixelSpacing));
+  textLines.push(_formatCircumference(circumference, hasPixelSpacing));
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
@@ -407,6 +408,21 @@ function _formatArea(area, hasPixelSpacing) {
     : ` px${String.fromCharCode(178)}`;
 
   return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+}
+
+/**
+ *
+ *
+ * @param {*} circumference
+ * @param {*} hasPixelSpacing
+ * @returns {string} The formatted label for showing circumference
+ */
+function _formatCircumference(circumference, hasPixelSpacing) {
+  const suffixLength = hasPixelSpacing ? ` mm` : ` px`;
+
+  return `Circumference: ${numbersWithCommas(
+    circumference.toFixed(2)
+  )}${suffixLength}`;
 }
 
 /**
@@ -456,6 +472,23 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     ((ellipseCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2) *
     ((ellipseCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
 
+  // Calculate the circumference from the ellipse dimensions and pixel spacing
+  const a = ellipseCoordinates.height / 2;
+  const b = ellipseCoordinates.width / 2;
+
+  // ramanujan approximation 1 https://www.mathsisfun.com/geometry/ellipse-perimeter.html
+  const cir1 = Math.sqrt(0.5 * (a * a + b * b)) * (Math.PI * 2);
+
+  // ramanujan approximation 2 https://www.mathsisfun.com/geometry/ellipse-perimeter.html
+  // this is the one we are displaying
+  const circumference =
+    Math.PI * (3 * (a + b) - Math.sqrt((3 * a + b) * (a + 3 * b)));
+
+  // HC may be calculated from BPD and occipitofrontal diameter (OFD)
+  // https://radiopaedia.org/articles/head-circumference
+  // HC = 1.62 * (BPD + OFD)
+  const HC = 1.62 * (ellipseCoordinates.height + ellipseCoordinates.width);
+
   return {
     area: area || 0,
     count: ellipseMeanStdDev.count || 0,
@@ -465,6 +498,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,
+    circumference: circumference || 0,
   };
 }
 
