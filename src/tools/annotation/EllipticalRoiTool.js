@@ -489,6 +489,19 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // HC = 1.62 * (BPD + OFD)
   const HC = 1.62 * (ellipseCoordinates.height + ellipseCoordinates.width);
 
+  console.log(
+    'ellipse a:',
+    a,
+    'b:',
+    b,
+    'raj1:',
+    cir1.toFixed(2),
+    'raj2:',
+    circumference.toFixed(2),
+    'HC:',
+    HC.toFixed(2)
+  );
+
   return {
     area: area || 0,
     count: ellipseMeanStdDev.count || 0,
