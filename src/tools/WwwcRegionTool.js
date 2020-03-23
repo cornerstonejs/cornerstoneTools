@@ -220,6 +220,9 @@ const _applyWWWCRegion = function(evt, config) {
   );
   viewport.voi.windowCenter = minMaxMean.mean;
 
+  // Unset any existing VOI LUT
+  viewport.voiLUT = undefined;
+
   external.cornerstone.setViewport(element, viewport);
   external.cornerstone.updateImage(element);
 };
