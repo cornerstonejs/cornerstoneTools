@@ -11,21 +11,20 @@ import getActiveTool from '../../../util/getActiveTool';
 import BaseAnnotationTool from '../../base/BaseAnnotationTool';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
+/**
+ * We override `addNewMeasurement` as it's the only way to use a manipulator other than
+ * `moveHandle` or `moveNewHandle`. `addNewMeasurement` is called by an "eventDispatcher"
+ * and is responsible for creating new measurement data.
+ *
+ * @param {*} evt
+ * @param {*} interactionType
+ * @returns {undefined}
+ */
 export default function(evt, interactionType) {
   const eventData = evt.detail;
   const { element, image, buttons } = eventData;
-  const config = this.configuration;
-
-  if (checkPixelSpacing(image)) {
-    return;
-  }
 
   const measurementData = this.createNewMeasurement(eventData);
-
-  const doneCallback = () => {
-    measurementData.active = false;
-    external.cornerstone.updateImage(element);
-  };
 
   // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, this.name, measurementData);
@@ -80,22 +79,3 @@ export default function(evt, interactionType) {
     }
   );
 }
-
-const checkPixelSpacing = image => {
-  const imagePlane = external.cornerstone.metaData.get(
-    'imagePlaneModule',
-    image.imageId
-  );
-  let rowPixelSpacing = image.rowPixelSpacing;
-  let colPixelSpacing = image.columnPixelSpacing;
-
-  if (imagePlane) {
-    rowPixelSpacing =
-      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing =
-      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-  }
-
-  // LT-29 Disable Target Measurements when pixel spacing is not available
-  return !rowPixelSpacing || !colPixelSpacing;
-};
