@@ -5,7 +5,6 @@ const outputPath = path.join(rootPath, 'dist');
 const bannerPlugin = require('./plugins/banner');
 
 module.exports = {
-  mode: 'development',
   context: context,
   entry: {
     cornerstoneTools: path.join(context, 'index.js'),
