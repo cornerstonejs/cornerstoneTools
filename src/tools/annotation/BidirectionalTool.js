@@ -14,9 +14,6 @@ import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calc
 import { state } from '../../store/index.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 
-const emptyLocationCallback = (measurementData, eventData, doneCallback) =>
-  doneCallback();
-
 /**
  * @public
  * @class BidirectionalTool
@@ -32,8 +29,6 @@ export default class BidirectionalTool extends BaseAnnotationTool {
       name: 'Bidirectional',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
-        changeMeasurementLocationCallback: emptyLocationCallback,
-        getMeasurementLocationCallback: emptyLocationCallback,
         textBox: '',
         shadow: '',
         drawHandles: true,
