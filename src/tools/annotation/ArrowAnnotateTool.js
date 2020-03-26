@@ -271,7 +271,15 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             });
           }, evt.detail);
         }
+
         external.cornerstone.updateImage(element);
+
+        const modifiedEventData = {
+          toolType: this.name,
+          element,
+          measurementData,
+        };
+        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       }
     );
   }
