@@ -8,8 +8,11 @@ import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
+import { getModule } from '../store';
 
 const logger = getLogger('manipulators:moveHandle');
+
+const manipulatorStateModule = getModule('manipulatorState');
 
 const runAnimation = {
   value: false,
@@ -89,10 +92,27 @@ export default function(
         dragHandler,
         upOrEndHandler,
       },
-      evt,
       doneMovingCallback
     );
   };
+
+  manipulatorStateModule.setters.addActiveManipulatorForElement(
+    element,
+    _cancelEventHandler.bind(
+      null,
+      toolName,
+      evtDetail,
+      annotation,
+      handle,
+      options,
+      interactionType,
+      {
+        dragHandler,
+        upOrEndHandler,
+      },
+      doneMovingCallback
+    )
+  );
 
   handle.active = true;
   annotation.active = true;
@@ -179,6 +199,29 @@ function _dragHandler(
   triggerEvent(element, eventType, modifiedEventData);
 }
 
+function _cancelEventHandler(
+  toolName,
+  evtDetail,
+  annotation,
+  handle,
+  options = {},
+  interactionType,
+  { dragHandler, upOrEndHandler },
+  doneMovingCallback
+) {
+  _endHandler(
+    toolName,
+    evtDetail,
+    annotation,
+    handle,
+    options,
+    interactionType,
+    { dragHandler, upOrEndHandler },
+    doneMovingCallback,
+    false
+  );
+}
+
 function _upOrEndHandler(
   toolName,
   evtDetail,
@@ -187,18 +230,42 @@ function _upOrEndHandler(
   options = {},
   interactionType,
   { dragHandler, upOrEndHandler },
-  evt,
   doneMovingCallback
 ) {
-  const image = evtDetail.currentPoints.image;
-  const element = evt.detail.element;
+  const { element } = evtDetail;
+  manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
+
+  _endHandler(
+    toolName,
+    evtDetail,
+    annotation,
+    handle,
+    options,
+    interactionType,
+    { dragHandler, upOrEndHandler },
+    doneMovingCallback,
+    true
+  );
+}
+
+function _endHandler(
+  toolName,
+  evtDetail,
+  annotation,
+  handle,
+  options = {},
+  interactionType,
+  { dragHandler, upOrEndHandler },
+  doneMovingCallback,
+  success = true
+) {
+  const element = evtDetail.element;
 
   handle.active = false;
   annotation.active = false;
-  // TODO: A way to not flip this for textboxes on annotations
   annotation.invalidated = true;
-  state.isToolLocked = false;
   runAnimation.value = false;
+  state.isToolLocked = false;
 
   // Remove Event Listeners
   _dragEvents[interactionType].forEach(eventType => {
@@ -216,23 +283,23 @@ function _upOrEndHandler(
     removeToolState(element, toolName, annotation);
   }
 
-  // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
-  if (evt.type === EVENTS.TOUCH_PRESS) {
-    evt.detail.handlePressed = annotation;
-    handle.x = image.x; // Original Event
-    handle.y = image.y;
-  }
+  // // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
+  // if (evt.type === EVENTS.TOUCH_PRESS) {
+  //   evt.detail.handlePressed = annotation;
+  //   handle.x = image.x; // Original Event
+  //   handle.y = image.y;
+  // }
 
   if (typeof options.doneMovingCallback === 'function') {
     logger.warn(
       '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
     );
 
-    options.doneMovingCallback();
+    options.doneMovingCallback(success);
   }
 
   if (typeof doneMovingCallback === 'function') {
-    doneMovingCallback();
+    doneMovingCallback(success);
   }
 
   external.cornerstone.updateImage(element);

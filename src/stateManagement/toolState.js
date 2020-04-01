@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
+import uuidv4 from '../util/uuidv4.js';
 
 /**
  * Returns the toolstate for a specific element.
@@ -37,6 +38,7 @@ function getElementToolStateManager(element) {
 function addToolState(element, toolType, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
+  measurementData.uuid = measurementData.uuid || uuidv4();
   toolStateManager.add(element, toolType, measurementData);
 
   const eventType = EVENTS.MEASUREMENT_ADDED;
