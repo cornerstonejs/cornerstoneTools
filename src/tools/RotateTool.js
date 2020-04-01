@@ -29,7 +29,6 @@ export default class RotateTool extends BaseTool {
   }
 
   postTouchStartCallback(evt) {
-    console.log('rotate tool post touch start', evt);
     this.initialRotation = evt.detail.viewport.rotation;
   }
 
@@ -42,7 +41,6 @@ export default class RotateTool extends BaseTool {
   }
 
   postMouseDownCallback(evt) {
-    console.log('rotate tool post mouse down', evt);
     this.initialRotation = evt.detail.viewport.rotation;
   }
 
@@ -60,7 +58,6 @@ function defaultStrategy(evt) {
     ? viewport.initialRotation
     : 0;
 
-  console.log('initial rotation', initialRotation, viewport.initialRotation);
   // Calculate the center of the image
   const rect = element.getBoundingClientRect(element);
   const { clientWidth: width, clientHeight: height } = element;
