@@ -20,7 +20,6 @@ export default function(evt, tool) {
     return;
   }
 
-  // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, tool.name, measurementData);
 
   external.cornerstone.updateImage(element);

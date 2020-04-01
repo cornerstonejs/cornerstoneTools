@@ -252,20 +252,38 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       measurementData.handles.end,
       this.options,
       interactionType,
-      () => {
-        if (measurementData.text === undefined) {
-          this.configuration.getTextCallback(text => {
-            if (text) {
-              measurementData.text = text;
-            } else {
-              removeToolState(element, this.name, measurementData);
-            }
+      success => {
+        if (success) {
+          if (measurementData.text === undefined) {
+            this.configuration.getTextCallback(text => {
+              if (text) {
+                measurementData.text = text;
+              } else {
+                removeToolState(element, this.name, measurementData);
+              }
 
-            measurementData.active = false;
-            external.cornerstone.updateImage(element);
-          });
+              measurementData.active = false;
+              external.cornerstone.updateImage(element);
+
+              triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+                toolType: this.name,
+                element,
+                measurementData,
+              });
+            }, evt.detail);
+          }
+        } else {
+          removeToolState(element, this.name, measurementData);
         }
+
         external.cornerstone.updateImage(element);
+
+        const modifiedEventData = {
+          toolType: this.name,
+          element,
+          measurementData,
+        };
+        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       }
     );
   }
@@ -296,6 +314,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       ) {
         data.active = true;
         external.cornerstone.updateImage(element);
+
         // Allow relabelling via a callback
         this.configuration.changeTextCallback(
           data,
@@ -312,15 +331,21 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     }
   }
 
-  _doneChangingTextCallback(element, data, updatedText, deleteTool) {
+  _doneChangingTextCallback(element, measurementData, updatedText, deleteTool) {
     if (deleteTool === true) {
-      removeToolState(element, this.name, data);
+      removeToolState(element, this.name, measurementData);
     } else {
-      data.text = updatedText;
+      measurementData.text = updatedText;
     }
 
-    data.active = false;
+    measurementData.active = false;
     external.cornerstone.updateImage(element);
+
+    triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
+      toolType: this.name,
+      element,
+      measurementData,
+    });
   }
 }
 

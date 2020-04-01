@@ -8,8 +8,11 @@ import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
+import { getModule } from '../store';
 
 const logger = getLogger('manipulators:moveAllHandles');
+
+const manipulatorStateModule = getModule('manipulatorState');
 
 const _dragEvents = {
   mouse: [EVENTS.MOUSE_DRAG],
@@ -86,6 +89,19 @@ export default function(
     );
   };
 
+  manipulatorStateModule.setters.addActiveManipulatorForElement(
+    element,
+    _cancelEventHandler.bind(
+      null,
+      annotation,
+      options,
+      interactionType,
+      { dragHandler, upOrEndHandler },
+      element,
+      doneMovingCallback
+    )
+  );
+
   annotation.active = true;
   state.isToolLocked = true;
 
@@ -156,6 +172,25 @@ function _dragHandler(
   evt.stopPropagation();
 }
 
+function _cancelEventHandler(
+  annotation,
+  options = {},
+  interactionType,
+  { dragHandler, upOrEndHandler },
+  element,
+  doneMovingCallback
+) {
+  _endHandler(
+    annotation,
+    options,
+    interactionType,
+    { dragHandler, upOrEndHandler },
+    element,
+    doneMovingCallback,
+    false
+  );
+}
+
 function _upOrEndHandler(
   toolName,
   annotation,
@@ -166,8 +201,37 @@ function _upOrEndHandler(
   doneMovingCallback
 ) {
   const eventData = evt.detail;
-  const element = evt.detail.element;
+  const { element } = eventData;
+  manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
+  // If any handle is outside the image, delete the tool data
+  if (
+    options.deleteIfHandleOutsideImage &&
+    anyHandlesOutsideImage(eventData, annotation.handles)
+  ) {
+    removeToolState(element, toolName, annotation);
+  }
+
+  _endHandler(
+    annotation,
+    options,
+    interactionType,
+    { dragHandler, upOrEndHandler },
+    element,
+    doneMovingCallback,
+    true
+  );
+}
+
+function _endHandler(
+  annotation,
+  options = {},
+  interactionType,
+  { dragHandler, upOrEndHandler },
+  element,
+  doneMovingCallback,
+  success = true
+) {
   annotation.active = false;
   annotation.invalidated = true;
   state.isToolLocked = false;
@@ -180,23 +244,15 @@ function _upOrEndHandler(
     element.removeEventListener(eventType, upOrEndHandler);
   });
 
-  // If any handle is outside the image, delete the tool data
-  if (
-    options.deleteIfHandleOutsideImage &&
-    anyHandlesOutsideImage(eventData, annotation.handles)
-  ) {
-    removeToolState(element, toolName, annotation);
-  }
-
   if (typeof options.doneMovingCallback === 'function') {
     logger.warn(
       '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
     );
-    options.doneMovingCallback();
+    options.doneMovingCallback(success);
   }
 
   if (typeof doneMovingCallback === 'function') {
-    doneMovingCallback();
+    doneMovingCallback(success);
   }
 
   external.cornerstone.updateImage(element);

@@ -33,6 +33,9 @@ export default class LengthTool extends BaseAnnotationTool {
       name: 'Length',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: lengthCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -173,7 +176,9 @@ export default class LengthTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         if (!data.handles.textBox.hasMoved) {
           const coords = {
@@ -222,7 +227,15 @@ export default class LengthTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
+    // - SideEffect: Updates annotation 'suffix'
+    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+      const measuredValue = _sanitizeMeasuredValue(annotation.length);
+
+      // measured value is not defined, return empty string
+      if (!measuredValue) {
+        return '';
+      }
+
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = 'mm';
 
@@ -230,9 +243,9 @@ export default class LengthTool extends BaseAnnotationTool {
         suffix = 'pixels';
       }
 
-      data.unit = suffix;
+      annotation.unit = suffix;
 
-      return `${data.length.toFixed(2)} ${suffix}`;
+      return `${measuredValue.toFixed(2)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
@@ -244,4 +257,18 @@ export default class LengthTool extends BaseAnnotationTool {
       return [handles.start, midpoint, handles.end];
     }
   }
+}
+
+/**
+ * Attempts to sanitize a value by casting as a number; if unable to cast,
+ * we return `undefined`
+ *
+ * @param {*} value
+ * @returns a number or undefined
+ */
+function _sanitizeMeasuredValue(value) {
+  const parsedValue = Number(value);
+  const isNumber = !isNaN(parsedValue);
+
+  return isNumber ? parsedValue : undefined;
 }
