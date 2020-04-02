@@ -65,6 +65,7 @@ export default function(
   const { element } = eventData;
 
   annotation.active = true;
+
   handle.active = true;
   state.isToolLocked = true;
 
