@@ -60,6 +60,8 @@ export default function(
     options
   );
 
+  options.hasMoved = false;
+
   const { element } = eventData;
 
   annotation.active = true;
@@ -134,6 +136,8 @@ function _moveHandler(
   evt
 ) {
   const { currentPoints, image, element, buttons } = evt.detail;
+
+  options.hasMoved = true;
 
   const page = currentPoints.page;
   const fingerOffset = -57;
@@ -217,6 +221,10 @@ function _moveEndHandler(
 ) {
   const eventData = evt.detail;
   const { element, currentPoints } = eventData;
+
+  if (options.hasMoved === false) {
+    return;
+  }
 
   const page = currentPoints.page;
   const fingerOffset = -57;

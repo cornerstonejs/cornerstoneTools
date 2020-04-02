@@ -56,24 +56,6 @@ function removeEnabledElementCallback(element) {
   removeActiveManipulatorForElement(element);
 }
 
-//
-
-// const enabledElements = cornerstoneTools.store.state.enabledElements;
-
-// const cancelActiveManipulatorsForElement = cornerstoneTools.getModule(
-//   'manipulatorState'
-// ).setters.cancelActiveManipulatorsForElement;
-
-// enabledElements.forEach(element => {
-//   element.addEventListener('keydown', evt => {
-//     if (evt.keyCode === 27) {
-//       cancelActiveManipulatorsForElement(element);
-//     }
-//   });
-// });
-
-///
-
 function enabledElementCallback(element) {
   const { NEW_IMAGE } = external.cornerstone.EVENTS;
 
