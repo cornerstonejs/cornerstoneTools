@@ -56,8 +56,6 @@ function removeEnabledElementCallback(element) {
   removeActiveManipulatorForElement(element);
 }
 
-//
-
 // const enabledElements = cornerstoneTools.store.state.enabledElements;
 
 // const cancelActiveManipulatorsForElement = cornerstoneTools.getModule(
@@ -72,7 +70,7 @@ function removeEnabledElementCallback(element) {
 //   });
 // });
 
-///
+// /
 
 function enabledElementCallback(element) {
   const { NEW_IMAGE } = external.cornerstone.EVENTS;
