@@ -8,7 +8,7 @@ import {
 } from './../../../stateManagement/toolState.js';
 import triggerEvent from '../../../util/triggerEvent.js';
 import getActiveTool from '../../../util/getActiveTool';
-import BaseAnnotationTool from '../../base/BaseAnnotationTool';
+import BidirectionalTool from '../BidirectionalTool';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 export default function(evt, interactionType) {
@@ -72,7 +72,7 @@ export default function(evt, interactionType) {
 
       const activeTool = getActiveTool(element, buttons, interactionType);
 
-      if (activeTool instanceof BaseAnnotationTool) {
+      if (activeTool instanceof BidirectionalTool) {
         activeTool.updateCachedStats(image, element, measurementData);
       }
 
