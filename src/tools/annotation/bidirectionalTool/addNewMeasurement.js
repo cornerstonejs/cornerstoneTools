@@ -14,6 +14,7 @@ import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandl
 export default function(evt, interactionType) {
   const eventData = evt.detail;
   const { element, image, buttons } = eventData;
+
   const config = this.configuration;
 
   if (checkPixelSpacing(image)) {
