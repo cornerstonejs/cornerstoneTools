@@ -59,7 +59,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
 
   updateCachedStats(image, element, data) {
     // Prevent updating other tools' data
-    if (data.toolType !== this.name) {
+    if (data.toolName !== this.name) {
       return;
     }
 
