@@ -11,8 +11,8 @@ import {
  * @constructor newStackSpecificToolStateManager
  * @memberof StateManagement
  *
- * @param  {string[]} toolNames       The tool names to apply to the stack.
- * @param  {Object} oldStateManager The imageIdSpecificStateManager.
+ * @param {string[]} toolNames     List of tools that should have state shared across a stack (a display set) of images
+ * @param {Object} oldStateManager The imageIdSpecificStateManager.
  * @returns {Object} A stackSpecificToolStateManager instance.
  */
 function newStackSpecificToolStateManager(toolNames, oldStateManager) {
