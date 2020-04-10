@@ -80,7 +80,7 @@ export default function(
     interactionType
   );
   // So we don't need to inline the entire `upOrEndHandler` function
-  const upOrEndHandler = evt => {
+  const upOrEndHandler = () => {
     _upOrEndHandler(
       toolName,
       evtDetail,
@@ -192,6 +192,7 @@ function _dragHandler(
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
+    toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
     element,
     measurementData: annotation,
   };
@@ -216,7 +217,10 @@ function _cancelEventHandler(
     handle,
     options,
     interactionType,
-    { dragHandler, upOrEndHandler },
+    {
+      dragHandler,
+      upOrEndHandler,
+    },
     doneMovingCallback,
     false
   );
@@ -233,6 +237,7 @@ function _upOrEndHandler(
   doneMovingCallback
 ) {
   const { element } = evtDetail;
+
   manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
   _endHandler(
@@ -242,7 +247,10 @@ function _upOrEndHandler(
     handle,
     options,
     interactionType,
-    { dragHandler, upOrEndHandler },
+    {
+      dragHandler,
+      upOrEndHandler,
+    },
     doneMovingCallback,
     true
   );

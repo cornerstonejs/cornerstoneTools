@@ -266,7 +266,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
               external.cornerstone.updateImage(element);
 
               triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
-                toolType: this.name,
+                toolName: this.name,
+                toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
                 element,
                 measurementData,
               });
@@ -279,10 +280,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         external.cornerstone.updateImage(element);
 
         const modifiedEventData = {
-          toolType: this.name,
+          toolName: this.name,
+          toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
           element,
           measurementData,
         };
+
         triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       }
     );
@@ -342,7 +345,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     external.cornerstone.updateImage(element);
 
     triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
-      toolType: this.name,
+      toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     });

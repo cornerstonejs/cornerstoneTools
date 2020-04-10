@@ -4,7 +4,7 @@ import * as toolOptions from './toolOptions.js';
  * Mirrors the API of toolOptions, but stores the options in an inefficient yet
  * simple way. Mirrored calls modify the model's internal state, make the
  * corresponding call to toolOptions, and then ensures that the model's internal
- * state matches the global toolOptions state at every toolType and element.
+ * state matches the global toolOptions state at every toolName and element.
  */
 class ToolOptionsModel {
   constructor() {
@@ -19,20 +19,20 @@ class ToolOptionsModel {
     this.check();
   }
 
-  toolTypeName(i) {
-    return `toolType${i}`;
+  toolNameValue(i) {
+    return `toolName${i}`;
   }
 
-  ixOf(toolType, element) {
-    return toolType * 10 + element;
+  ixOf(toolName, element) {
+    return toolName * 10 + element;
   }
 
   check() {
-    for (let toolType = 0; toolType < 10; toolType++) {
+    for (let toolName = 0; toolName < 10; toolName++) {
       for (let element = 0; element < 10; element++) {
-        expect(this.options[this.ixOf(toolType, element)]).toEqual(
+        expect(this.options[this.ixOf(toolName, element)]).toEqual(
           toolOptions.getToolOptions(
-            this.toolTypeName(toolType),
+            this.toolNameValue(toolName),
             this.elements[element]
           )
         );
@@ -40,12 +40,12 @@ class ToolOptionsModel {
     }
   }
 
-  getToolOptions(toolType, element) {
-    const ret = this.options[this.ixOf(toolType, element)];
+  getToolOptions(toolName, element) {
+    const ret = this.options[this.ixOf(toolName, element)];
 
     expect(ret).toEqual(
       toolOptions.getToolOptions(
-        this.toolTypeName(toolType),
+        this.toolNameValue(toolName),
         this.elements[element]
       )
     );
@@ -54,37 +54,37 @@ class ToolOptionsModel {
     return ret;
   }
 
-  setToolOptions(toolType, element, options) {
+  setToolOptions(toolName, element, options) {
     toolOptions.setToolOptions(
-      this.toolTypeName(toolType),
+      this.toolNameValue(toolName),
       this.elements[element],
       options
     );
-    this.options[this.ixOf(toolType, element)] = options;
+    this.options[this.ixOf(toolName, element)] = options;
     this.check();
   }
 
-  clearToolOptions(toolType, element) {
+  clearToolOptions(toolName, element) {
     toolOptions.clearToolOptions(
-      this.toolTypeName(toolType),
+      this.toolNameValue(toolName),
       this.elements[element]
     );
-    this.options[this.ixOf(toolType, element)] = {};
+    this.options[this.ixOf(toolName, element)] = {};
     this.check();
   }
 
-  clearToolOptionsByToolType(toolType) {
-    toolOptions.clearToolOptionsByToolType(this.toolTypeName(toolType));
+  clearToolOptionsByToolName(toolName) {
+    toolOptions.clearToolOptionsByToolName(this.toolNameValue(toolName));
     for (let element = 0; element < 10; element++) {
-      this.options[this.ixOf(toolType, element)] = {};
+      this.options[this.ixOf(toolName, element)] = {};
     }
     this.check();
   }
 
   clearToolOptionsByElement(element) {
     toolOptions.clearToolOptionsByElement(this.elements[element]);
-    for (let toolType = 0; toolType < 10; toolType++) {
-      this.options[this.ixOf(toolType, element)] = {};
+    for (let toolName = 0; toolName < 10; toolName++) {
+      this.options[this.ixOf(toolName, element)] = {};
     }
     this.check();
   }
@@ -123,9 +123,9 @@ describe('toolOptions manipulation', function() {
     model.clearToolOptions(1, 2);
     expect(model.getToolOptions(1, 2)).toEqual({});
     model.clearToolOptionsByElement(2);
-    model.clearToolOptionsByToolType(1);
+    model.clearToolOptionsByToolName(1);
     model.getToolOptions(1, 6);
-    model.clearToolOptionsByToolType(4);
+    model.clearToolOptionsByToolName(4);
     model.getToolOptions(4, 4);
   });
 });

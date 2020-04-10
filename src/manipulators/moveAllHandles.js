@@ -96,7 +96,10 @@ export default function(
       annotation,
       options,
       interactionType,
-      { dragHandler, upOrEndHandler },
+      {
+        dragHandler,
+        upOrEndHandler,
+      },
       element,
       doneMovingCallback
     )
@@ -162,6 +165,7 @@ function _dragHandler(
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
+    toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
     element,
     measurementData: annotation,
   };
@@ -184,7 +188,10 @@ function _cancelEventHandler(
     annotation,
     options,
     interactionType,
-    { dragHandler, upOrEndHandler },
+    {
+      dragHandler,
+      upOrEndHandler,
+    },
     element,
     doneMovingCallback,
     false
@@ -202,6 +209,7 @@ function _upOrEndHandler(
 ) {
   const eventData = evt.detail;
   const { element } = eventData;
+
   manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
   // If any handle is outside the image, delete the tool data
@@ -216,7 +224,10 @@ function _upOrEndHandler(
     annotation,
     options,
     interactionType,
-    { dragHandler, upOrEndHandler },
+    {
+      dragHandler,
+      upOrEndHandler,
+    },
     element,
     doneMovingCallback,
     true
