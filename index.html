@@ -104,24 +104,24 @@
       </ul>
       <ul class="tool-category" data-tool-category="multitouch-pinch">
         <li>
-          <a href="#" data-tool="PanMultiTouch" data-tool-type="multitouch">PanMultiTouch</a>
+          <a href="#" data-tool="PanMultiTouch" data-tool-interaction="multitouch">PanMultiTouch</a>
         </li>
         <li>
-          <a href="#" data-tool="ZoomTouchPinch" data-tool-type="pinch">ZoomTouchPinch</a>
+          <a href="#" data-tool="ZoomTouchPinch" data-tool-interaction="pinch">ZoomTouchPinch</a>
         </li>
         <li>
-          <a href="#" data-tool="RotateTouch" data-tool-type="pinch">RotateTouch</a>
+          <a href="#" data-tool="RotateTouch" data-tool-interaction="pinch">RotateTouch</a>
         </li>
         <li>
-          <a href="#" data-tool="StackScrollMultiTouch" data-tool-type="multitouch">StackScrollMultiTouch</a>
+          <a href="#" data-tool="StackScrollMultiTouch" data-tool-interaction="multitouch">StackScrollMultiTouch</a>
         </li>
       </ul>
       <ul class="tool-category" data-tool-category="mousewheel">
         <li>
-          <a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a>
+          <a href="#" data-tool="StackScrollMouseWheel" data-tool-interaction="wheel">StackScrollMouseWheel</a>
         </li>
         <li>
-          <a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a>
+          <a href="#" data-tool="ZoomMouseWheel" data-tool-interaction="wheel">ZoomMouseWheel</a>
         </li>
       </ul>
       <ul class="tool-category" data-tool-category="overlay">
@@ -130,8 +130,15 @@
             ScaleOverlay <label class="label-on"> ON</label>
             <label class="label-off"> OFF</label>
           </label>
-          <input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-type="none"
+          <input id="scaleOverlayCheckbox" class="hide" data-tool="ScaleOverlay" data-tool-interaction="none"
             type="checkbox" />
+        </li>
+        <li>
+          <label id="overlay" class="checkbox-label" for="overlayCheckbox">
+            Overlay <label class="label-on"> ON</label>
+            <label class="label-off"> OFF</label>
+          </label>
+          <input id="overlayCheckbox" class="hide" data-tool="Overlay" data-tool-interaction="none" type="checkbox" />
         </li>
       </ul>
 
@@ -261,7 +268,7 @@
         type,
         // The tool type
         `color: ${color}; font-family: monospace;`,
-        event.detail.toolType || event.detail.toolName,
+        event.detail.toolInteraction || event.detail.toolName,
         '',
         getData(event.detail)
         // event.detail
@@ -328,8 +335,8 @@
         ? evt.buttons
         : convertMouseEventWhichToButtons(evt.which);
 
-      const toolType = evt.target.getAttribute('data-tool-type');
-      setButtonActive(toolName, mouseButtonMask, toolType);
+      const toolInteraction = evt.target.getAttribute('data-tool-interaction');
+      setButtonActive(toolName, mouseButtonMask, toolInteraction);
       cornerstoneTools.setToolActive(toolName, {
         mouseButtonMask,
         isTouchActive: true,
@@ -361,7 +368,10 @@
       } else {
         cornerstoneTools.setToolDisabled(toolName);
       }
-      const toolLabel = document.querySelector('#scaleOverlay');
+
+      const toolLabelId =
+        toolName.charAt(0).toLowerCase() + toolName.slice(1);
+      const toolLabel = document.querySelector(`#${toolLabelId}`); //scaleOverlay or overlay
       toolLabel.classList.toggle('turned-on');
     });
   });
@@ -398,22 +408,22 @@
     });
   };
 
-  const setButtonActive = (toolName, mouseButtonMask, toolType) => {
+  const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
     Array.from(toolButtons).forEach(toolBtn => {
       // Classes we need to set & remove
       let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
       let touchIcon = `touch-1`;
 
-      // Update classes depending on the toolType we clicked
-      if (toolType === 'none') {
+      // Update classes depending on the toolInteraction we clicked
+      if (toolInteraction === 'none') {
         return;
-      } else if (toolType === 'multitouch') {
+      } else if (toolInteraction === 'multitouch') {
         mouseButtonIcon = null;
         touchIcon = 'touch-2';
-      } else if (toolType === 'pinch') {
+      } else if (toolInteraction === 'pinch') {
         mouseButtonIcon = null;
         touchIcon = 'touch-pinch';
-      } else if (toolType === 'wheel') {
+      } else if (toolInteraction === 'wheel') {
         mouseButtonIcon = 'mousebutton-wheel';
         touchIcon = null;
       }

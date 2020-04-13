@@ -63,7 +63,7 @@ export default function correction(evt, operationData) {
  * Snap the freehand points to the labelmap grid and attach a label for each node.
  *
  * @param  {Object[]} points An array of points drawn by the user.
- * @param  {UInt16Array} pixelData The 2D labelmap.
+ * @param  {UInt16Array|Float32Array} pixelData The 2D labelmap.
  * @param  {Object} evt The cornerstone event.
  * @returns {Object[]}
  */
@@ -142,8 +142,8 @@ function checkIfSimpleScissorOperation(nodes, segmentIndex) {
  * The algorithm is described in full length in Tobias Heimann's diploma thesis (MBI Technical Report 145, p. 37 - 40).
  *
  * @param  {Object} operation The operation.
- * @param  {UInt16Array} pixelData The 2D labelmap.
- * @param  {UInt16Array} workingLabelMap A copy of the labelmap for processing purposes.
+ * @param  {UInt16Array|Float32Array} pixelData The 2D labelmap.
+ * @param  {UInt16Array|Float32Array} workingLabelMap A copy of the labelmap for processing purposes.
  * @param  {number} segmentIndex The label of the tool being used.
  * @param  {Object} evt The cornerstone event.
  */

@@ -3,7 +3,7 @@
 The segmentation module deals with centralisation of 3D labelmap data for each stack of cornerstone images. The data is centralized for two reasons:
 
 - Cornerstone data stored per imageId is of a 2D format, and labelmaps are very much 3D structures. Having the data for an entire 3D labelmap centralized, and 2D and 3D representations of it being accessible by cornerstone as needed provides the flexibility to perfom both 2D and 3D operations without having to re-aggregate data each time.
-- Storing the 3D labelmap in one `ArrayBuffer` allows for better interoperability and harmonous integration with 3D platforms, such as [vtk-js](https://kitware.github.io/vtk-js/).
+- Storing the 3D labelmap in one `ArrayBuffer` allows for better interoperability and harmonous integration with 3D platforms, such as [vtk-js](https://kitware.github.io/vtk-js/). If using a WebGL library such as `vtk-js`, it is recommended you set the use of `Float32Array` segmentations in the segmentation module configuration.
 
 ### Data Structure
 
@@ -26,9 +26,9 @@ Each `Labelmap3D` object can contain multiple non-overlapping segments. To use h
 
 A `Labelmap3D` is a single, non-overlapping labelmap with the following properties:
 
-- `buffer`: An `ArrayBuffer` where the labels for each voxel are stored sequentially in increasing x, y, z. It has the same orientation as the stack, so increasing `z` is increasing `imageIdIndex` in the stack. Each label is stored as 2 bytes, allowing for up to `65535` unique segments (+ 0 being empty/unlabelled).
+- `buffer`: An `ArrayBuffer` where the labels for each voxel are stored sequentially in increasing x, y, z. It has the same orientation as the stack, so increasing `z` is increasing `imageIdIndex` in the stack. By default, each label is stored as 2 bytes (encoded as Uint16Array), allowing for up to `65535` unique segments (+ 0 being empty/unlabelled). By setting the segmentation configuration property `arrayType` to `Float32Array` you can instead store the labelmap as a format more harmonious with `vtkjs`. `vtkjs` has to convert non-`Float32Array`s when generating textures to pass to the GPU, and this is very costly. If you are using vtkjs in your application its highly recommended to use `Float32Array`s for segmentations for decreased texture building times. This is especially noticable when using the `vtkjs` paint widget, for example.
 - `labelmaps2D`: An array of `labelmap2D` views on the `buffer`, indexed by in-stack `imageIdIndex`. The `labelmaps2D` array is initially empty, and each view is defined only if data is added to it, and should be removed if set empty (all zero labels). This makes it easy for the segmentation renderer, I/O libraries such as [`dcmjs`](https://github.com/dcmjs-org/dcmjs), and tools to localise the extent of segments without having to scan through every label in the stack.
-- `metadata`: An array of metadata objects per segment. Metadata is optional and its form is application specific. You may want a simple name for your label in your UI, or you may want more complex objects referencing standard libraries for anatomical region. The metadata is not used internally for `cornerstoneTools`, but acts a logical place to keep such data for your application.
+- `metadata`: An array of metadata objects per segment. Metadata is optional and its form is application specific. You may want a simple name for your label in your UI, or you may want more complex objects referencing standard libraries for anatomical region. The metadata is not used internally by `cornerstoneTools`, but acts an optional logical place to keep such data for your application.
 - `activeSegmentIndex`: The index of the segment to be created/modified when using `BaseBrushTool`s or segmentation tools, when th labelmap is active.
 - `colorLUTIndex`: The index of the colorLUT to use when rendering the labelmap.
 - `segmentsHidden`: An array of segments to hide from the canvas. Initially empty to save space, set an index to `true` to hide the corresponding segment.
@@ -37,8 +37,8 @@ A `Labelmap3D` is a single, non-overlapping labelmap with the following properti
 
 A `Labelmap2D` is a 2D view of one frame of the segmentation, it is the object primarily interacted with from the cornerstone canvas, and has the following properties:
 
-- `pixelData`: a `Uint16Array` view of a portion of the parent `Labelmap3D`'s `buffer`, corresponding to the frame.
-- `segmentsOnLabelmap`: An array of segments present in the `pixelData`. Whenever a tool or external manipulates the `pixelData` viewed by th `Labelmap2D`, this list should be updated. This is generally very cheap to do on the fly, e.g. after a scissor action or after a full brush stroke, but speeds up IO dramatically when compressing data to DICOMSEG, for instance, as you can work out how much memory needs to be allocated with very simple checks.
+- `pixelData`: a `Uint16Array` or `Float32Array` view of a portion of the parent `Labelmap3D`'s `buffer`, corresponding to the frame. Array type depends on the segmentation module's `arrayType` setting.
+- `segmentsOnLabelmap`: An array of segments present in the `pixelData`. Whenever a tool or external manipulates the `pixelData` viewed by the `Labelmap2D`, this list should be updated. This is generally very cheap to do on the fly, e.g. after a scissor action or after a full brush stroke, but speeds up IO dramatically when compressing data to DICOMSEG, for instance, as you can work out how much memory needs to be allocated with very simple checks.
 
 ### Usage within cornerstoneTools
 

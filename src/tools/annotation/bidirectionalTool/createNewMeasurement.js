@@ -16,7 +16,8 @@ export default function(mouseEventData) {
   const { x, y } = mouseEventData.currentPoints.image;
   // Create the measurement data for this tool with the end handle activated
   const measurementData = {
-    toolType: this.name,
+    toolName: this.name,
+    toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
     isCreating: true,
     visible: true,
     active: true,

@@ -6,6 +6,7 @@ import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   getToolState,
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -312,7 +313,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     let measurementData;
     let toMoveHandle;
-    let doneMovingCallback;
+    let doneMovingCallback = success => {
+      // DoneMovingCallback for first measurement.
+      if (!success) {
+        removeToolState(element, this.name, measurementData);
+
+        return;
+      }
+    };
 
     // Search for incomplete measurements
     const element = evt.detail.element;
@@ -337,10 +345,18 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       };
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
-      doneMovingCallback = () => {
+      doneMovingCallback = success => {
+        // DoneMovingCallback for second measurement
+        if (!success) {
+          removeToolState(element, this.name, measurementData);
+
+          return;
+        }
+
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
         const eventData = {
-          toolType: this.name,
+          toolName: this.name,
+          toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
           element,
           measurementData,
         };

@@ -47,7 +47,7 @@ export default {
 `BaseAnnotationTool`s use `manipulators` to interact with the annotation's `handle`s data in a particular way. If you need to build a custom interaction mechanism you envision using more than once, you may want to make a custom manipulator. A manipulator is just a `function`. They have rather freeform structure, but principally take `eventData` and `toolData` and perform an operation, e.g.:
 
 ```js
-export default function(eventData, toolType, data, handle, someCallback) {
+export default function(eventData, toolName, data, handle, someCallback) {
   // Implementation, Do something with the handle.
   // ...
   someCallback();

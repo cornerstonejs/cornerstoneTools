@@ -11,11 +11,11 @@ import {
  * @constructor newStackSpecificToolStateManager
  * @memberof StateManagement
  *
- * @param  {string[]} toolTypes       The tool types to apply to the stack.
- * @param  {Object} oldStateManager The imageIdSpecificStateManager.
+ * @param {string[]} toolNames     List of tools that should have state shared across a stack (a display set) of images
+ * @param {Object} oldStateManager The imageIdSpecificStateManager.
  * @returns {Object} A stackSpecificToolStateManager instance.
  */
-function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
+function newStackSpecificToolStateManager(toolNames, oldStateManager) {
   let toolState = {};
 
   function saveToolState() {
@@ -28,43 +28,43 @@ function newStackSpecificToolStateManager(toolTypes, oldStateManager) {
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
-  function addStackSpecificToolState(element, toolType, data) {
+  function addStackSpecificToolState(element, toolName, data) {
     // If this is a tool type to apply to the stack, do so
-    if (toolTypes.indexOf(toolType) >= 0) {
-      // If we don't have tool state for this type of tool, add an empty object
-      if (toolState.hasOwnProperty(toolType) === false) {
-        toolState[toolType] = {
+    if (toolNames.indexOf(toolName) >= 0) {
+      // If we don't have tool state for this tool name, add an empty object
+      if (toolState.hasOwnProperty(toolName) === false) {
+        toolState[toolName] = {
           data: [],
         };
       }
 
-      const toolData = toolState[toolType];
+      const toolData = toolState[toolName];
 
       // Finally, add this new tool to the state
       toolData.data.push(data);
     } else {
       // Call the imageId specific tool state manager
-      return oldStateManager.add(element, toolType, data);
+      return oldStateManager.add(element, toolName, data);
     }
   }
 
   // Here you can get state - used by tools as well as modules
   // That save state persistently
-  function getStackSpecificToolState(element, toolType) {
+  function getStackSpecificToolState(element, toolName) {
     // If this is a tool type to apply to the stack, do so
-    if (toolTypes.indexOf(toolType) >= 0) {
-      // If we don't have tool state for this type of tool, add an empty object
-      if (toolState.hasOwnProperty(toolType) === false) {
-        toolState[toolType] = {
+    if (toolNames.indexOf(toolName) >= 0) {
+      // If we don't have tool state for this tool name, add an empty object
+      if (toolState.hasOwnProperty(toolName) === false) {
+        toolState[toolName] = {
           data: [],
         };
       }
 
-      return toolState[toolType];
+      return toolState[toolName];
     }
 
     // Call the imageId specific tool state manager
-    return oldStateManager.get(element, toolType);
+    return oldStateManager.get(element, toolName);
   }
 
   const stackSpecificToolStateManager = {
