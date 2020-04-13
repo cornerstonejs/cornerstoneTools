@@ -71,4 +71,7 @@ function basicLevelingStrategy(evt) {
     eventData.viewport.voi.windowWidth += deltaY;
     eventData.viewport.voi.windowCenter += deltaX;
   }
+
+  // Unset any existing VOI LUT
+  eventData.viewport.voiLUT = undefined;
 }

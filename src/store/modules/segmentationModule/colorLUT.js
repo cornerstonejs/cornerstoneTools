@@ -1,4 +1,3 @@
-import external from '../../../externalModules';
 import { getLogger } from '../../../util/logger';
 import state from './state';
 import { getModule } from '../../index.js';

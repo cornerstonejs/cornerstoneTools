@@ -75,6 +75,7 @@ describe('setToolModeForElement', () => {
     expect(triggerEvent).toBeCalledWith(element, changeEvent, {
       options,
       toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
       type: changeEvent,
     });
   });

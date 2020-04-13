@@ -20,7 +20,6 @@ export default function(evt, tool) {
     return;
   }
 
-  // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, tool.name, measurementData);
 
   external.cornerstone.updateImage(element);
@@ -41,6 +40,7 @@ export default function(evt, tool) {
       const eventType = EVENTS.MEASUREMENT_COMPLETED;
       const eventData = {
         toolName: tool.name,
+        toolType: tool.name, // Deprecation notice: toolType will be replaced by toolName
         element,
         measurementData,
       };

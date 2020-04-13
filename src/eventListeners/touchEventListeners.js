@@ -23,7 +23,7 @@ let lastScale = 1.0,
 const pressDelay = 700,
   pressMaxDistance = 5;
 
-const toolType = 'touchInput';
+const inputName = 'touchInput';
 
 function onTouch(e) {
   const element = e.currentTarget || e.srcEvent.currentTarget;
@@ -578,11 +578,13 @@ function enable(element) {
     element.addEventListener(eventType, onTouch, { passive: false });
   });
 
-  const options = getToolOptions(toolType, element);
+  // TODO: Check why we are using tool options if it's not a tool
+  const options = getToolOptions(inputName, element);
 
   options.hammer = mc;
 
-  setToolOptions(toolType, element, options);
+  // TODO: Check why we are using tool options if it's not a tool
+  setToolOptions(inputName, element, options);
 }
 
 function disable(element) {
@@ -594,7 +596,8 @@ function disable(element) {
     element.removeEventListener(eventType, onTouch);
   });
 
-  const options = getToolOptions(toolType, element);
+  // TODO: Check why we are using tool options if it's not a tool
+  const options = getToolOptions(inputName, element);
   const mc = options.hammer;
 
   if (mc) {

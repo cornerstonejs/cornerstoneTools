@@ -1635,6 +1635,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };
@@ -1646,6 +1647,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_COMPLETED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };

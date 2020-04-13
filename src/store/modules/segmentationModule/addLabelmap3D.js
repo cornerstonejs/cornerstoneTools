@@ -1,3 +1,8 @@
+import ARRAY_TYPES from './arrayTypes';
+import { getModule } from '../../index.js';
+
+const { UINT_16_ARRAY, FLOAT_32_ARRAY } = ARRAY_TYPES;
+
 /**
  * AddLabelmap3D - Adds a `Labelmap3D` object to the `BrushStackState` object.
  *
@@ -7,9 +12,26 @@
  * @returns {null}
  */
 export default function addLabelmap3D(brushStackState, labelmapIndex, size) {
-  // Buffer size is multiplied by 2 as we are using 2 bytes/voxel for 65536 segments.
+  const { configuration } = getModule('segmentation');
+  let bytesPerVoxel;
+
+  switch (configuration.arrayType) {
+    case UINT_16_ARRAY:
+      bytesPerVoxel = 2;
+
+      break;
+
+    case FLOAT_32_ARRAY:
+      bytesPerVoxel = 4;
+      break;
+
+    default:
+      throw new Error(`Unsupported Array Type ${configuration.arrayType}`);
+  }
+
+  // Buffer size is multiplied by bytesPerVoxel to allocate enough space.
   brushStackState.labelmaps3D[labelmapIndex] = {
-    buffer: new ArrayBuffer(size * 2),
+    buffer: new ArrayBuffer(size * bytesPerVoxel),
     labelmaps2D: [],
     metadata: [],
     activeSegmentIndex: 1,

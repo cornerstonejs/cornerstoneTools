@@ -8,8 +8,11 @@ import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
+import { getModule } from '../store/';
 
 const logger = getLogger('manipulators:moveNewHandle');
+
+const manipulatorStateModule = getModule('manipulatorState');
 
 const _moveEvents = {
   mouse: [EVENTS.MOUSE_MOVE, EVENTS.MOUSE_DRAG],
@@ -23,11 +26,12 @@ const _moveEndEvents = {
 
 /**
  * Move a new handle
+ *
  * @public
  * @method moveNewHandle
  * @memberof Manipulators
  *
- * @param {*} evtDetail
+ * @param {*} eventData
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
@@ -39,7 +43,7 @@ const _moveEndEvents = {
  * @returns {void}
  */
 export default function(
-  evtDetail,
+  eventData,
   toolName,
   annotation,
   handle,
@@ -56,25 +60,17 @@ export default function(
     options
   );
 
-  const element = evtDetail.element;
+  options.hasMoved = false;
+
+  const { element } = eventData;
 
   annotation.active = true;
+
   handle.active = true;
   state.isToolLocked = true;
 
   function moveHandler(evt) {
-    _moveHandler(
-      toolName,
-      annotation,
-      handle,
-      options,
-      interactionType,
-      {
-        moveHandler,
-        moveEndHandler,
-      },
-      evt
-    );
+    _moveHandler(toolName, annotation, handle, options, interactionType, evt);
   }
   // So we don't need to inline the entire `moveEndEventHandler` function
   function moveEndHandler(evt) {
@@ -93,28 +89,69 @@ export default function(
     );
   }
 
+  // Factory function
+  // begin, end, cancel
+  // Or... Handle "CANCEL"
+  // TODO: SETUP IN all other manipulators
+
   // Add event listeners
   _moveEvents[interactionType].forEach(eventType => {
     element.addEventListener(eventType, moveHandler);
   });
   element.addEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  _moveEndEvents[interactionType].forEach(eventType => {
+    element.addEventListener(eventType, moveEndHandler);
+  });
+
+  // When cancelling... What is our active tool?
+  // `isToolLocked` ... Track which (annotation) tool is being manipulated
+  // If not "completed", removeToolState (maybe an `isComplete` flag)
+  // 5 locations: MEASUREMENT_COMPLETED
+  // Firing event... Sets `isCompleted` flag for annotation uuid
+  manipulatorStateModule.setters.addActiveManipulatorForElement(
+    element,
+    _cancelEventHandler.bind(
+      null,
+      annotation,
+      handle,
+      options,
+      interactionType,
+      {
+        moveHandler,
+        moveEndHandler,
+      },
+      element,
+      doneMovingCallback
+    )
+  );
 }
 
+/**
+ * Updates annotation as the "pointer" is moved/dragged
+ * Emits `cornerstonetoolsmeasurementmodified` events
+ *
+ * @param {string} toolName
+ * @param {*} annotation
+ * @param {*} handle
+ * @param {*} options
+ * @param {string} interactionType
+ * @param {*} evt
+ *
+ * @returns {void}
+ */
 function _moveHandler(
   toolName,
   annotation,
   handle,
   options,
   interactionType,
-  { moveEndHandler },
   evt
 ) {
   const { currentPoints, image, element, buttons } = evt.detail;
-  // Add moveEndEvent Handler when move trigger
 
-  _moveEndEvents[interactionType].forEach(eventType => {
-    element.addEventListener(eventType, moveEndHandler);
-  });
+  options.hasMoved = true;
+
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -143,11 +180,47 @@ function _moveHandler(
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
+    toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
     element,
     measurementData: annotation,
   };
 
   triggerEvent(element, eventType, modifiedEventData);
+}
+
+function _endHandler(
+  interactionType,
+  options,
+  element,
+  { moveHandler, moveEndHandler },
+  doneMovingCallback,
+  success = true
+) {
+  // Remove event listeners
+  _moveEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveHandler);
+  });
+  _moveEndEvents[interactionType].forEach(eventType => {
+    element.removeEventListener(eventType, moveEndHandler);
+  });
+  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+
+  state.isToolLocked = false;
+
+  if (typeof doneMovingCallback === 'function') {
+    doneMovingCallback(success);
+  }
+
+  if (typeof options.doneMovingCallback === 'function') {
+    logger.warn(
+      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+    );
+
+    options.doneMovingCallback(success);
+  }
+
+  // Update Image
+  external.cornerstone.updateImage(element);
 }
 
 function _moveEndHandler(
@@ -160,7 +233,13 @@ function _moveEndHandler(
   evt,
   doneMovingCallback
 ) {
-  const { element, currentPoints } = evt.detail;
+  const eventData = evt.detail;
+  const { element, currentPoints } = eventData;
+
+  if (options.hasMoved === false) {
+    return;
+  }
+
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -175,36 +254,28 @@ function _moveEndHandler(
   handle.active = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
-  state.isToolLocked = false;
 
-  // Remove event listeners
-  _moveEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveHandler);
-  });
-  _moveEndEvents[interactionType].forEach(eventType => {
-    element.removeEventListener(eventType, moveEndHandler);
-  });
-  element.removeEventListener(EVENTS.TOUCH_START, _stopImmediatePropagation);
+  manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
   // TODO: WHY?
   // Why would a Touch_Pinch or Touch_Press be associated with a new handle?
-  if (evt.type === EVENTS.TOUCH_PINCH || evt.type === EVENTS.TOUCH_PRESS) {
-    handle.active = false;
-    external.cornerstone.updateImage(element);
-    if (typeof options.doneMovingCallback === 'function') {
-      logger.warn(
-        '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
-      );
+  // if (evt.type === EVENTS.TOUCH_PINCH || evt.type === EVENTS.TOUCH_PRESS) {
+  //   handle.active = false;
+  //   external.cornerstone.updateImage(element);
+  //   if (typeof options.doneMovingCallback === 'function') {
+  //     logger.warn(
+  //       '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
+  //     );
 
-      options.doneMovingCallback();
-    }
+  //     options.doneMovingCallback(success);
+  //   }
 
-    if (typeof doneMovingCallback === 'function') {
-      doneMovingCallback();
-    }
+  //   if (typeof doneMovingCallback === 'function') {
+  //     doneMovingCallback(success);
+  //   }
 
-    return;
-  }
+  //   return;
+  // }
 
   if (options.preventHandleOutsideImage) {
     clipToBox(handle, evt.detail.image);
@@ -218,20 +289,44 @@ function _moveEndHandler(
     removeToolState(element, toolName, annotation);
   }
 
-  if (typeof options.doneMovingCallback === 'function') {
-    logger.warn(
-      '`options.doneMovingCallback` has been depricated. See https://github.com/cornerstonejs/cornerstoneTools/pull/915 for details.'
-    );
+  _endHandler(
+    interactionType,
+    options,
+    element,
+    {
+      moveHandler,
+      moveEndHandler,
+    },
+    doneMovingCallback,
+    true
+  );
+}
 
-    options.doneMovingCallback();
-  }
+function _cancelEventHandler(
+  annotation,
+  handle,
+  options,
+  interactionType,
+  { moveHandler, moveEndHandler },
+  element,
+  doneMovingCallback
+) {
+  // "Release" the handle
+  annotation.active = false;
+  annotation.invalidated = true;
+  handle.active = false;
 
-  if (typeof doneMovingCallback === 'function') {
-    doneMovingCallback();
-  }
-
-  // Update Image
-  external.cornerstone.updateImage(element);
+  _endHandler(
+    interactionType,
+    options,
+    element,
+    {
+      moveHandler,
+      moveEndHandler,
+    },
+    doneMovingCallback,
+    false
+  );
 }
 
 /**

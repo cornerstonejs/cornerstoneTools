@@ -2,6 +2,7 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { globalImageIdSpecificToolStateManager } from './imageIdSpecificStateManager.js';
 import triggerEvent from '../util/triggerEvent.js';
+import uuidv4 from '../util/uuidv4.js';
 
 /**
  * Returns the toolstate for a specific element.
@@ -30,18 +31,20 @@ function getElementToolStateManager(element) {
  * @method addToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolType      The toolType of the state.
+ * @param  {string} toolName      The name of the tool the state belongs to.
  * @param  {Object} measurementData The data to store in the state.
  * @returns {undefined}
  */
-function addToolState(element, toolType, measurementData) {
+function addToolState(element, toolName, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
-  toolStateManager.add(element, toolType, measurementData);
+  measurementData.uuid = measurementData.uuid || uuidv4();
+  toolStateManager.add(element, toolName, measurementData);
 
   const eventType = EVENTS.MEASUREMENT_ADDED;
   const eventData = {
-    toolType,
+    toolName,
+    toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
     element,
     measurementData,
   };
@@ -58,13 +61,13 @@ function addToolState(element, toolType, measurementData) {
  * @name getToolState
  *
  * @param  {HTMLElement} element The element.
- * @param  {string} toolType The toolType of the state.
- * @returns {Object}          The element's state for the given toolType.
+ * @param  {string} toolName The name of the tool the state belongs to.
+ * @returns {Object}          The element's state for the given toolName.
  */
-function getToolState(element, toolType) {
+function getToolState(element, toolName) {
   const toolStateManager = getElementToolStateManager(element);
 
-  return toolStateManager.get(element, toolType);
+  return toolStateManager.get(element, toolName);
 }
 
 /**
@@ -73,13 +76,18 @@ function getToolState(element, toolType) {
  * @method removeToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolType      The toolType of the state.
+ * @param  {string} toolName      The name of the tool the state belongs to.
  * @param  {Object} data          The data to remove from the toolStateManager.
  * @returns {undefined}
  */
-function removeToolState(element, toolType, data) {
+function removeToolState(element, toolName, data) {
   const toolStateManager = getElementToolStateManager(element);
-  const toolData = toolStateManager.get(element, toolType);
+  const toolData = toolStateManager.get(element, toolName);
+
+  if (!toolData || !toolData.data || !toolData.data.length) {
+    return;
+  }
+
   // Find this tool data
   let indexOfData = -1;
 
@@ -94,7 +102,8 @@ function removeToolState(element, toolType, data) {
 
     const eventType = EVENTS.MEASUREMENT_REMOVED;
     const eventData = {
-      toolType,
+      toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData: data,
     };
@@ -105,17 +114,17 @@ function removeToolState(element, toolType, data) {
 
 /**
  * Removes all toolState from the toolStateManager corresponding to
- * the toolType and element.
+ * the toolName and element.
  * @public
  * @method clearToolState
  *
  * @param  {HTMLElement} element  The element.
- * @param  {string} toolType      The toolType of the state.
+ * @param  {string} toolName      The name of the tool the state belongs to.
  * @returns {undefined}
  */
-function clearToolState(element, toolType) {
+function clearToolState(element, toolName) {
   const toolStateManager = getElementToolStateManager(element);
-  const toolData = toolStateManager.get(element, toolType);
+  const toolData = toolStateManager.get(element, toolName);
 
   // If any toolData actually exists, clear it
   if (toolData !== undefined) {

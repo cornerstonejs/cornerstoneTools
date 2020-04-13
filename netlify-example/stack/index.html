@@ -20,8 +20,8 @@
 
 			<!-- Select Active Tool -->
 			<ul class="tool-category active" data-tool-category="tools">
-				<li><a href="#" data-tool="StackScroll" data-tool-type="drag">Mouse stack</a></li>
-				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="StackScroll" data-tool-interaction="drag">Mouse stack</a></li>
+				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-interaction="wheel">StackScrollMouseWheel</a></li>
 			</ul>
 
 			<!-- Our beautiful element targets -->
@@ -103,13 +103,13 @@
 			}
 
 			toolBtn.addEventListener('click', (evt) => {
-				const toolType = evt.target.getAttribute('data-tool-type')
+				const toolInteraction = evt.target.getAttribute('data-tool-interaction')
 				const isInActive = !evt.target.classList.contains('active');
 				if (isInActive) {
-					setButtonActive(toolName, mouseButtonMask, toolType);
+					setButtonActive(toolName, mouseButtonMask, toolInteraction);
 					cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 				} else {
-					setButtonInActive(evt.target, mouseButtonMask, toolType);
+					setButtonInActive(evt.target, mouseButtonMask, toolInteraction);
 					cornerstoneTools.setToolDisabled(toolName);
 				}
 			});
@@ -176,7 +176,7 @@
 		});
 	}
 
-	const setButtonActive = (toolName, mouseButtonMask, toolType) => {
+	const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
 		const toolButtons = document.querySelectorAll('a[data-tool]');
 
 		Array.from(toolButtons).forEach(toolBtn => {
@@ -184,16 +184,16 @@
 			let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
 			let touchIcon = `touch-1`
 
-			// Update classes depending on the toolType we clicked
-			if (toolType === 'none') {
+			// Update classes depending on the toolInteraction we clicked
+			if (toolInteraction === 'none') {
 				return;
-			} else if (toolType === 'multitouch') {
+			} else if (toolInteraction === 'multitouch') {
 				mouseButtonIcon = null;
 				touchIcon = 'touch-2';
-			} else if (toolType === 'pinch') {
+			} else if (toolInteraction === 'pinch') {
 				mouseButtonIcon = null;
 				touchIcon = 'touch-pinch';
-			} else if (toolType === 'wheel') {
+			} else if (toolInteraction === 'wheel') {
 				mouseButtonIcon = 'mousebutton-wheel';
 				touchIcon = null;
 			}
@@ -223,20 +223,20 @@
 		});
 	}
 
-	const setButtonInActive = (toolBtn, mouseButtonMask, toolType) => {
+	const setButtonInActive = (toolBtn, mouseButtonMask, toolInteraction) => {
 		let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
 		let touchIcon = `touch-1`
 
-		// Update classes depending on the toolType we clicked
-		if (toolType === 'none') {
+		// Update classes depending on the toolInteraction we clicked
+		if (toolInteraction === 'none') {
 			return;
-		} else if (toolType === 'multitouch') {
+		} else if (toolInteraction === 'multitouch') {
 			mouseButtonIcon = null;
 			touchIcon = 'touch-2';
-		} else if (toolType === 'pinch') {
+		} else if (toolInteraction === 'pinch') {
 			mouseButtonIcon = null;
 			touchIcon = 'touch-pinch';
-		} else if (toolType === 'wheel') {
+		} else if (toolInteraction === 'wheel') {
 			mouseButtonIcon = 'mousebutton-wheel';
 			touchIcon = null;
 		}
