@@ -90,7 +90,9 @@ export default function(evt) {
       };
 
       // Draw the handles
-      drawHandles(context, eventData, data.handles, handleOptions);
+      if (this.configuration.drawHandles) {
+        drawHandles(context, eventData, data.handles, handleOptions);
+      }
 
       // Draw the textbox
       // Move the textbox slightly to the right and upwards

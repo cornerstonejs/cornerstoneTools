@@ -1,5 +1,6 @@
 // Modules
 import segmentation from './modules/segmentationModule';
+import manipulatorState from './modules/manipulatorStateModule';
 import cursor from './modules/cursorModule.js';
 import globalConfiguration from './modules/globalConfigurationModule.js';
 import external from '../externalModules.js';
@@ -25,6 +26,7 @@ export const state = {
   preventHandleOutsideImage: false,
   // Cursor
   svgCursorUrl: null,
+  //
 };
 
 export const getters = {
@@ -44,12 +46,11 @@ export const getters = {
     ),
 };
 
-export const setters = {};
-
 export const modules = {
   segmentation,
   cursor,
   globalConfiguration,
+  manipulatorState,
 };
 
 export function getModule(moduleName) {

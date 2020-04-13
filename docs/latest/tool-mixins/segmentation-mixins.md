@@ -93,7 +93,7 @@ const operationData = {
 
 Where:
 
-- points - An object with two points `start` and `end` containing the (`x`,`y`) coordinates of the centre of the circle and a point on its edge.
+- `points` - An object with two points `start` and `end` containing the (`x`,`y`) coordinates of the centre of the circle and a point on its edge.
 - `pixelData` - The `pixelData` of the `Labelmap2D` that corresponds with the image.
 - The `segmentIndex` to apply the operation to.
 - `segmentationMixinType` - The mixin identifier.
@@ -113,7 +113,7 @@ const operationData = {
 
 Where:
 
-- points - An array of points containing the (`x`,`y`) coordinates of the nodes along its points.
+- `points` - An array of points containing the (`x`,`y`) coordinates of the nodes along its points.
 - `pixelData` - The `pixelData` of the `Labelmap2D` that corresponds with the image.
 - The `segmentIndex` to apply the operation to.
 - `segmentationMixinType` - The mixin identifier.
@@ -135,7 +135,7 @@ const operationData = {
 
 Where:
 
-- points - An array with two points containing the (`x`,`y`) coordinates of the top left and the bottom right of the rectangle.
+- `points` - An array with two points containing the (`x`,`y`) coordinates of the top left and the bottom right of the rectangle.
 - `pixelData` - The `pixelData` of the `Labelmap2D` that corresponds with the image.
 - The `segmentIndex` to apply the operation to.
 - `segmentationMixinType` - The mixin identifier.

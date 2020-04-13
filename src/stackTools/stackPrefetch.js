@@ -9,7 +9,7 @@ import EVENTS from '../events.js';
 
 const logger = getLogger('stackTools:stackPrefetch');
 
-const toolType = 'stackPrefetch';
+const toolName = 'stackPrefetch';
 const requestType = 'prefetch';
 
 let configuration = {
@@ -79,7 +79,7 @@ function prefetch(element) {
   const stack = stackData.data[0];
 
   // Get the stackPrefetch tool data
-  const stackPrefetchData = getToolState(element, toolType);
+  const stackPrefetchData = getToolState(element, toolName);
 
   if (!stackPrefetchData) {
     return;
@@ -278,7 +278,7 @@ function getPromiseRemovedHandler(element) {
       return;
     }
 
-    const stackPrefetchData = getToolState(element, toolType);
+    const stackPrefetchData = getToolState(element, toolName);
 
     if (
       !stackPrefetchData ||
@@ -311,7 +311,7 @@ function onImageUpdated(e) {
 
 function enable(element) {
   // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-  const stackPrefetchDataArray = getToolState(element, toolType);
+  const stackPrefetchDataArray = getToolState(element, toolName);
 
   stackPrefetchDataArray.data = [];
 
@@ -347,7 +347,7 @@ function enable(element) {
 
   stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
 
-  addToolState(element, toolType, stackPrefetchData);
+  addToolState(element, toolName, stackPrefetchData);
 
   prefetch(element);
 
@@ -386,7 +386,7 @@ function disable(element) {
     promiseRemovedHandler
   );
 
-  const stackPrefetchData = getToolState(element, toolType);
+  const stackPrefetchData = getToolState(element, toolName);
   // If there is actually something to disable, disable it
 
   if (stackPrefetchData && stackPrefetchData.data.length) {

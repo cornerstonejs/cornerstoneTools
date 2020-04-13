@@ -2,6 +2,10 @@ import getElement from './getElement';
 import { getToolState } from '../../../stateManagement/toolState.js';
 import getLabelmaps3D from './getLabelmaps3D';
 import state from './state';
+import ARRAY_TYPES from './arrayTypes';
+import { getModule } from '../../index.js';
+
+const { UINT_16_ARRAY, FLOAT_32_ARRAY } = ARRAY_TYPES;
 
 /**
  * GetLabelmapBuffers - Returns the `buffer` of each `Labelmap3D` associated
@@ -28,6 +32,27 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
     return [];
   }
 
+  const { configuration } = getModule('segmentation');
+
+  let type;
+  let bytesPerVoxel;
+
+  switch (configuration.arrayType) {
+    case UINT_16_ARRAY:
+      type = 'Uint16Array';
+      bytesPerVoxel = '2';
+
+      break;
+
+    case FLOAT_32_ARRAY:
+      type = 'Float32Array';
+      bytesPerVoxel = '4';
+      break;
+
+    default:
+      throw new Error(`Unsupported Array Type ${configuration.arrayType}`);
+  }
+
   const colorLutTables = state.colorLutTables;
 
   if (labelmapIndex !== undefined) {
@@ -36,7 +61,8 @@ function getLabelmapBuffers(elementOrEnabledElementUID, labelmapIndex) {
     if (labelmap3D) {
       return {
         labelmapIndex,
-        bytesPerVoxel: 2,
+        bytesPerVoxel,
+        type,
         buffer: labelmap3D.buffer,
         colorLUT: colorLutTables[labelmap3D.colorLUTIndex],
       };

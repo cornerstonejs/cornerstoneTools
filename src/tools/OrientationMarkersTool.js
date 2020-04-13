@@ -62,6 +62,7 @@ export default class OrientationMarkersTool extends BaseTool {
       left: textBoxWidth(context, markers.left, 0),
       right: textBoxWidth(context, markers.right, 0),
       bottom: textBoxWidth(context, markers.bottom, 0),
+      height: textBoxWidth(context, 'M', 0), // Trick to get an approximation of the height of the text
     };
 
     drawTopLeftText(context, markers, coords, textWidths, color);
@@ -92,7 +93,7 @@ const drawBottomRightText = (context, markers, coords, textWidths, color) => {
   drawTextBox(
     context,
     markers.right,
-    coords.right.x - textWidths.right / 2,
+    coords.right.x - textWidths.right,
     coords.right.y,
     color
   );
@@ -100,7 +101,7 @@ const drawBottomRightText = (context, markers, coords, textWidths, color) => {
     context,
     markers.bottom,
     coords.bottom.x - textWidths.bottom / 2,
-    coords.bottom.y,
+    coords.bottom.y - textWidths.height,
     color
   );
 };

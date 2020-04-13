@@ -230,7 +230,6 @@
   ];
   */
 
-
   const imageIds = [
     'example://1',
     'example://2'
@@ -331,8 +330,8 @@
         : convertMouseEventWhichToButtons(evt.which);
       // TODO: Let's make this happen automagically for mask/touch conflicts?
       setAllToolsPassive();
-      const toolType = evt.target.getAttribute('data-tool-type');
-      setButtonActive(toolName, mouseButtonMask, toolType);
+      const toolInteraction = evt.target.getAttribute('data-tool-interaction');
+      setButtonActive(toolName, mouseButtonMask, toolInteraction);
       cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 
       evt.preventDefault();
@@ -370,22 +369,22 @@
     });
   };
 
-  const setButtonActive = (toolName, mouseButtonMask, toolType) => {
+  const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
     Array.from(toolButtons).forEach(toolBtn => {
       // Classes we need to set & remove
       let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
       let touchIcon = `touch-1`;
 
-      // Update classes depending on the toolType we clicked
-      if (toolType === 'none') {
+      // Update classes depending on the toolInteraction we clicked
+      if (toolInteraction === 'none') {
         return;
-      } else if (toolType === 'multitouch') {
+      } else if (toolInteraction === 'multitouch') {
         mouseButtonIcon = null;
         touchIcon = 'touch-2';
-      } else if (toolType === 'pinch') {
+      } else if (toolInteraction === 'pinch') {
         mouseButtonIcon = null;
         touchIcon = 'touch-pinch';
-      } else if (toolType === 'wheel') {
+      } else if (toolInteraction === 'wheel') {
         mouseButtonIcon = 'mousebutton-wheel';
         touchIcon = null;
       }

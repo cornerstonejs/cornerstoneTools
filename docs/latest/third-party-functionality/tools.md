@@ -2,7 +2,7 @@
 
 Third-party tools may be easily created by `import`ing the required base tool Type and extending it.
 
-For instance, if we wanted to package the `HelloWorldTool` we made in the [Custom Tools](custom-tools/index.md) section into a third-party tool:
+For instance, if we wanted to package the `HelloWorldTool` that we created in the [Custom Tools](custom-tools/index.md) section into a third-party tool:
 
 ```js
 const BaseTool = cornerstoneTools.importInternal('base/BaseTool');

@@ -410,7 +410,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
           // Render all handles
           options.handleRadius = config.activeHandleRadius;
-          drawHandles(context, eventData, data.handles.points, options);
+
+          if (this.configuration.drawHandles) {
+            drawHandles(context, eventData, data.handles.points, options);
+          }
         }
 
         if (data.canComplete) {
@@ -418,22 +421,29 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           options.handleRadius = config.completeHandleRadius;
           const handle = data.handles.points[0];
 
-          drawHandles(context, eventData, [handle], options);
+          if (this.configuration.drawHandles) {
+            drawHandles(context, eventData, [handle], options);
+          }
         }
 
         if (data.active && !data.polyBoundingBox) {
           // Draw handle at origin and at mouse if actively drawing
           options.handleRadius = config.activeHandleRadius;
-          drawHandles(
-            context,
-            eventData,
-            config.mouseLocation.handles,
-            options
-          );
+
+          if (this.configuration.drawHandles) {
+            drawHandles(
+              context,
+              eventData,
+              config.mouseLocation.handles,
+              options
+            );
+          }
 
           const firstHandle = data.handles.points[0];
 
-          drawHandles(context, eventData, [firstHandle], options);
+          if (this.configuration.drawHandles) {
+            drawHandles(context, eventData, [firstHandle], options);
+          }
         }
 
         // Update textbox stats
@@ -1627,6 +1637,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };
@@ -1638,6 +1649,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_COMPLETED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };
@@ -1815,6 +1827,7 @@ function defaultFreehandConfiguration() {
     invalidColor: 'crimson',
     currentHandle: 0,
     currentTool: -1,
+    drawHandles: true,
   };
 }
 

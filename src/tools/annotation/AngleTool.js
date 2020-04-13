@@ -4,6 +4,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import {
   addToolState,
   getToolState,
+  removeToolState,
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
@@ -43,6 +44,9 @@ export default class AngleTool extends BaseAnnotationTool {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: angleCursor,
+      configuration: {
+        drawHandles: true,
+      },
     };
 
     super(props, defaultProps);
@@ -198,7 +202,9 @@ export default class AngleTool extends BaseAnnotationTool {
           drawHandlesIfActive: drawHandlesOnHover,
         };
 
-        drawHandles(context, eventData, data.handles, handleOptions);
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {
@@ -298,8 +304,17 @@ export default class AngleTool extends BaseAnnotationTool {
       measurementData.handles.middle,
       this.options,
       interactionType,
-      () => {
+      success => {
         measurementData.active = false;
+
+        if (!success) {
+          removeToolState(element, this.name, measurementData);
+
+          this.preventNewMeasurement = false;
+
+          return;
+        }
+
         measurementData.handles.end.active = true;
 
         external.cornerstone.updateImage(element);
@@ -312,10 +327,29 @@ export default class AngleTool extends BaseAnnotationTool {
           measurementData.handles.end,
           this.options,
           interactionType,
-          () => {
-            measurementData.active = false;
+          success => {
+            if (success) {
+              measurementData.active = false;
+              external.cornerstone.updateImage(element);
+            } else {
+              removeToolState(element, this.name, measurementData);
+            }
+
             this.preventNewMeasurement = false;
             external.cornerstone.updateImage(element);
+
+            const modifiedEventData = {
+              toolName: this.name,
+              toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
+              element,
+              measurementData,
+            };
+
+            triggerEvent(
+              element,
+              EVENTS.MEASUREMENT_COMPLETED,
+              modifiedEventData
+            );
           }
         );
       }

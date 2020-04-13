@@ -47,7 +47,7 @@ export default {
 `BaseAnnotationTool`s use `manipulators` to interact with the annotation's `handle`s data in a particular way. If you need to build a custom interaction mechanism you envision using more than once, you may want to make a custom manipulator. A manipulator is just a `function`. They have rather freeform structure, but principally take `eventData` and `toolData` and perform an operation, e.g.:
 
 ```js
-export default function(eventData, toolType, data, handle, someCallback) {
+export default function(eventData, toolName, data, handle, someCallback) {
   // Implementation, Do something with the handle.
   // ...
   someCallback();
@@ -66,7 +66,7 @@ export default function() {
 
 ### Modules
 
-`Module` are objects that store global data, which may be shared between multiple tools, effect multiple cornerstone elements, etc. Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). You can learn more about modules [here](../modules/index.md) Here is a simple toy example of a module with state, setters and getters:
+`Module` are objects that store global data, which may be shared between multiple tools, effect multiple cornerstone elements, etc. Most modules will have getters and setters, unless they only contain primitives (e.g. the module's state is only comprised of `boolean` toggles). You can learn more about modules [here](../modules/index.md). Here is a simple toy example of a module with state, setters and getters:
 
 ```js
 const configuration = {
