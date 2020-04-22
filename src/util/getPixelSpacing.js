@@ -9,14 +9,14 @@ export default function getPixelSpacing(image) {
   if (imagePlane) {
     return {
       rowPixelSpacing:
-        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing,
+        imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing || 1,
       colPixelSpacing:
-        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing,
+        imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing || 1,
     };
   }
 
   return {
-    rowPixelSpacing: image.rowPixelSpacing,
-    colPixelSpacing: image.columnPixelSpacing,
+    rowPixelSpacing: image.rowPixelSpacing || 1,
+    colPixelSpacing: image.columnPixelSpacing || 1,
   };
 }
