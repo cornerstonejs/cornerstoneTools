@@ -319,8 +319,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     // Retrieve the pixel spacing values, and if they are not
     // Real non-zero values, set them to 1
-    const { columnPixelSpacing, rowPixelSpacing } = getPixelSpacing(image);
-    const scaling = (columnPixelSpacing || 1) * (rowPixelSpacing || 1);
+    const { colPixelSpacing, rowPixelSpacing } = getPixelSpacing(image);
+    const scaling = (colPixelSpacing || 1) * (rowPixelSpacing || 1);
 
     const area = freehandArea(data.handles.points, scaling);
 
