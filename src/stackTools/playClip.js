@@ -4,7 +4,7 @@ import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 
-const toolType = 'playClip';
+const toolName = 'playClip';
 
 /**
  * [private] Turns a Frame Time Vector (0018,1065) array into a normalized array of timeouts. Each element
@@ -129,7 +129,7 @@ function playClip(element, framesPerSecond) {
 
   const stackData = stackToolData.data[0];
 
-  const playClipToolData = getToolState(element, toolType);
+  const playClipToolData = getToolState(element, toolName);
 
   if (
     !playClipToolData ||
@@ -148,7 +148,7 @@ function playClip(element, framesPerSecond) {
       reverse: false,
       loop: true,
     };
-    addToolState(element, toolType, playClipData);
+    addToolState(element, toolName, playClipData);
   } else {
     playClipData = playClipToolData.data[0];
     // Make sure the specified clip is not running before any property update
@@ -287,7 +287,7 @@ function playClip(element, framesPerSecond) {
  * @returns {void}
  */
 function stopClip(element) {
-  const playClipToolData = getToolState(element, toolType);
+  const playClipToolData = getToolState(element, toolName);
 
   if (
     !playClipToolData ||

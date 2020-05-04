@@ -4,7 +4,7 @@ import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
 import { clipToBox } from '../util/clip.js';
-import { state, setters } from './../store/index.js';
+import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
@@ -31,7 +31,7 @@ const _moveEndEvents = {
  * @method moveNewHandle
  * @memberof Manipulators
  *
- * @param {*} evtDetail
+ * @param {*} eventData
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
@@ -60,9 +60,12 @@ export default function(
     options
   );
 
+  options.hasMoved = false;
+
   const { element } = eventData;
 
   annotation.active = true;
+
   handle.active = true;
   state.isToolLocked = true;
 
@@ -114,7 +117,10 @@ export default function(
       handle,
       options,
       interactionType,
-      { moveHandler, moveEndHandler },
+      {
+        moveHandler,
+        moveEndHandler,
+      },
       element,
       doneMovingCallback
     )
@@ -124,6 +130,15 @@ export default function(
 /**
  * Updates annotation as the "pointer" is moved/dragged
  * Emits `cornerstonetoolsmeasurementmodified` events
+ *
+ * @param {string} toolName
+ * @param {*} annotation
+ * @param {*} handle
+ * @param {*} options
+ * @param {string} interactionType
+ * @param {*} evt
+ *
+ * @returns {void}
  */
 function _moveHandler(
   toolName,
@@ -134,6 +149,8 @@ function _moveHandler(
   evt
 ) {
   const { currentPoints, image, element, buttons } = evt.detail;
+
+  options.hasMoved = true;
 
   const page = currentPoints.page;
   const fingerOffset = -57;
@@ -163,6 +180,7 @@ function _moveHandler(
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,
+    toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
     element,
     measurementData: annotation,
   };
@@ -218,6 +236,10 @@ function _moveEndHandler(
   const eventData = evt.detail;
   const { element, currentPoints } = eventData;
 
+  if (options.hasMoved === false) {
+    return;
+  }
+
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -271,7 +293,10 @@ function _moveEndHandler(
     interactionType,
     options,
     element,
-    { moveHandler, moveEndHandler },
+    {
+      moveHandler,
+      moveEndHandler,
+    },
     doneMovingCallback,
     true
   );
@@ -295,7 +320,10 @@ function _cancelEventHandler(
     interactionType,
     options,
     element,
-    { moveHandler, moveEndHandler },
+    {
+      moveHandler,
+      moveEndHandler,
+    },
     doneMovingCallback,
     false
   );

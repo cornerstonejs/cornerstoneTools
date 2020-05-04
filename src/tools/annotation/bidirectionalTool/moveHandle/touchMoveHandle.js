@@ -15,7 +15,7 @@ const touchEndEvents = [
 
 export default function(
   mouseEventData,
-  toolType,
+  toolName,
   data,
   handle,
   doneMovingCallback,
@@ -58,7 +58,8 @@ export default function(
     }
 
     const modifiedEventData = {
-      toolType,
+      toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData: data,
     };

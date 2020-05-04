@@ -272,7 +272,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     let measurementData;
     let toMoveHandle;
     let doneMovingCallback = success => {
-      // doneMovingCallback for first measurement.
+      // DoneMovingCallback for first measurement.
       if (!success) {
         removeToolState(element, this.name, measurementData);
 
@@ -304,7 +304,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       toMoveHandle = measurementData.handles.end2;
       this.hasIncomplete = false;
       doneMovingCallback = success => {
-        // doneMovingCallback for second measurement
+        // DoneMovingCallback for second measurement
         if (!success) {
           removeToolState(element, this.name, measurementData);
 
@@ -313,7 +313,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
         const eventData = {
-          toolType: this.name,
+          toolName: this.name,
+          toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
           element,
           measurementData,
         };

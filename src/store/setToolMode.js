@@ -266,6 +266,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
     const statusChangeEventData = {
       options,
       toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
       type: changeEvent,
     };
 
