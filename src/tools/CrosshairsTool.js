@@ -27,9 +27,9 @@ export default class CrosshairsTool extends BaseTool {
     super(props, defaultProps);
 
     this.eventHandler = this._chooseLocation.bind(this);
-    this.mouseClickCallback = this.eventHandler; // Ok
-    this.mouseDragCallback = this.eventHandler; // Ok
-    this.touchDragCallback = this.eventHandler; // Ok
+    this.mouseClickCallback = this.eventHandler;
+    this.mouseDragCallback = this.eventHandler;
+    this.touchDragCallback = this.eventHandler;
     this.postTouchStartCallback = this.eventHandler;
   }
 
@@ -75,7 +75,7 @@ export default class CrosshairsTool extends BaseTool {
     const enabledElements = synchronizationContext.getSourceElements();
 
     // Iterate over each synchronized element
-    enabledElements.forEach(function(targetElement) {
+    enabledElements.forEach(function (targetElement) {
       // Don't do anything if the target is the same as the source
       if (targetElement === sourceElement) {
         return;
@@ -93,7 +93,7 @@ export default class CrosshairsTool extends BaseTool {
       const stackData = stackToolDataSource.data[0];
 
       // Find within the element's stack the closest image plane to selected location
-      stackData.imageIds.forEach(function(imageId, index) {
+      stackData.imageIds.forEach(function (imageId, index) {
         const imagePlane = external.cornerstone.metaData.get(
           'imagePlaneModule',
           imageId
@@ -159,7 +159,7 @@ export default class CrosshairsTool extends BaseTool {
         }
 
         loader.then(
-          function(image) {
+          function (image) {
             const viewport = external.cornerstone.getViewport(targetElement);
 
             stackData.currentImageIdIndex = newImageIdIndex;
@@ -168,7 +168,7 @@ export default class CrosshairsTool extends BaseTool {
               endLoadingHandler(targetElement, image);
             }
           },
-          function(error) {
+          function (error) {
             const imageId = stackData.imageIds[newImageIdIndex];
 
             if (errorLoadingHandler) {
