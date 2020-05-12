@@ -43,6 +43,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       svgCursor: cobbAngleCursor,
       configuration: {
         drawHandles: true,
+        setTextCallback: null, // This is a callback function, which has param of current value to displayed in string format and should return final value to be displayed
       },
     };
 
@@ -222,7 +223,11 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // Draw the text
         context.fillStyle = color;
 
-        const text = data.value;
+        let text = data.value;
+
+        if (this.configuration.setTextCallback) {
+          text = this.configuration.setTextCallback(data.value);
+        }
 
         if (!data.handles.textBox.hasMoved) {
           const textCoords = {
