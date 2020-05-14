@@ -112,24 +112,9 @@ export default class AngleTool extends BaseAnnotationTool {
   }
 
   updateCachedStats(image, element, data) {
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
-
-    const sideA = {
-      x:
-        (data.handles.middle.x - data.handles.start.x) * (colPixelSpacing || 1),
-      y:
-        (data.handles.middle.y - data.handles.start.y) * (rowPixelSpacing || 1),
-    };
-
-    const sideB = {
-      x: (data.handles.end.x - data.handles.middle.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.middle.y) * (rowPixelSpacing || 1),
-    };
-
-    const sideC = {
-      x: (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1),
-    };
+    const sideA = getSide(image, data.handles.middle, data.handles.start);
+    const sideB = getSide(image, data.handles.end, data.handles.middle);
+    const sideC = getSide(image, data.handles.end, data.handles.middle);
 
     const sideALength = length(sideA);
     const sideBLength = length(sideB);
@@ -361,4 +346,13 @@ export default class AngleTool extends BaseAnnotationTool {
 
 function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+}
+
+function getSide(image, handleEnd, handleStart) {
+  const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+  return {
+    x: (handleEnd.x - handleStart.x) * (colPixelSpacing || 1),
+    y: (handleEnd.y - handleStart.y) * (rowPixelSpacing || 1),
+  };
 }
