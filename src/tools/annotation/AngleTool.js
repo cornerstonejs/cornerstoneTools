@@ -115,18 +115,20 @@ export default class AngleTool extends BaseAnnotationTool {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const sideA = {
-      x: (data.handles.middle.x - data.handles.start.x) * (colPixelSpacing || 1),
-      y: (data.handles.middle.y - data.handles.start.y) * (rowPixelSpacing || 1)
+      x:
+        (data.handles.middle.x - data.handles.start.x) * (colPixelSpacing || 1),
+      y:
+        (data.handles.middle.y - data.handles.start.y) * (rowPixelSpacing || 1),
     };
 
     const sideB = {
       x: (data.handles.end.x - data.handles.middle.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.middle.y) * (rowPixelSpacing || 1)
+      y: (data.handles.end.y - data.handles.middle.y) * (rowPixelSpacing || 1),
     };
 
     const sideC = {
       x: (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1)
+      y: (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1),
     };
 
     const sideALength = length(sideA);
