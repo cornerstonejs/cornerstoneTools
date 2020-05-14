@@ -116,19 +116,29 @@ export default class AngleTool extends BaseAnnotationTool {
 
     const sideA = {
       x:
-        (data.handles.middle.x - data.handles.start.x) * (colPixelSpacing || 1),
+        (data.handles.middle.x - data.handles.start.x) *
+        (colPixelSpacing || 1),
       y:
-        (data.handles.middle.y - data.handles.start.y) * (rowPixelSpacing || 1),
+        (data.handles.middle.y - data.handles.start.y) *
+        (rowPixelSpacing || 1)
     };
 
     const sideB = {
-      x: (data.handles.end.x - data.handles.middle.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.middle.y) * (rowPixelSpacing || 1),
+      x:
+        (data.handles.end.x - data.handles.middle.x) *
+        (colPixelSpacing || 1),
+      y:
+        (data.handles.end.y - data.handles.middle.y) *
+        (rowPixelSpacing || 1)
     };
 
     const sideC = {
-      x: (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1),
-      y: (data.handles.end.y - data.handles.start.y) * (rowPixelSpacing || 1),
+      x:
+        (data.handles.end.x - data.handles.start.x) *
+        (colPixelSpacing || 1),
+      y:
+        (data.handles.end.y - data.handles.start.y) *
+        (rowPixelSpacing || 1)
     };
 
     const sideALength = length(sideA);
@@ -174,7 +184,7 @@ export default class AngleTool extends BaseAnnotationTool {
         continue;
       }
 
-      draw(context, context => {
+      draw(context, (context) => {
         setShadow(context, this.configuration);
 
         // Differentiate the color of activation tool
@@ -306,7 +316,7 @@ export default class AngleTool extends BaseAnnotationTool {
       measurementData.handles.middle,
       this.options,
       interactionType,
-      success => {
+      (success) => {
         measurementData.active = false;
 
         if (!success) {
@@ -329,7 +339,7 @@ export default class AngleTool extends BaseAnnotationTool {
           measurementData.handles.end,
           this.options,
           interactionType,
-          success => {
+          (success) => {
             if (success) {
               measurementData.active = false;
               external.cornerstone.updateImage(element);
