@@ -133,16 +133,16 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     const dx1 =
       (Math.ceil(data.handles.start.x) - Math.ceil(data.handles.end.x)) *
-      colPixelSpacing;
+      (colPixelSpacing || 1);
     const dy1 =
       (Math.ceil(data.handles.start.y) - Math.ceil(data.handles.end.y)) *
-      rowPixelSpacing;
+      (rowPixelSpacing || 1);
     const dx2 =
       (Math.ceil(data.handles.start2.x) - Math.ceil(data.handles.end2.x)) *
-      colPixelSpacing;
+      (colPixelSpacing || 1);
     const dy2 =
       (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
-      rowPixelSpacing;
+      (rowPixelSpacing || 1);
 
     let angle = Math.acos(
       Math.abs(
