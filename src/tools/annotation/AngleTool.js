@@ -114,7 +114,7 @@ export default class AngleTool extends BaseAnnotationTool {
   updateCachedStats(image, element, data) {
     const sideA = getSide(image, data.handles.middle, data.handles.start);
     const sideB = getSide(image, data.handles.end, data.handles.middle);
-    const sideC = getSide(image, data.handles.end, data.handles.middle);
+    const sideC = getSide(image, data.handles.end, data.handles.start);
 
     const sideALength = length(sideA);
     const sideBLength = length(sideB);
