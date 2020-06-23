@@ -96,7 +96,7 @@ function setLabelmap3DByFirstImageId(
     labelmaps2D: [],
     metadata,
     activeSegmentIndex: 1,
-    colorLUTIndex: 0,
+    colorLUTIndex,
     segmentsHidden: [],
     undo: [],
     redo: [],
