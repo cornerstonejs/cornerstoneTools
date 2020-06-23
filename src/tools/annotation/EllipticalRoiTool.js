@@ -350,11 +350,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return true;
     }
 
-    const isSaved = toolRoiSavedStatuses.savedToolRoiIds.some(
-      id => id === roi.id
-    );
-
-    return isSaved;
+    return toolRoiSavedStatuses.savedToolRoiIds.some(id => id === roi.id);
   }
 
   isRoiSelected(roi, toolRoiSavedStatuses) {
@@ -362,9 +358,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
-    const isSelected = toolRoiSavedStatuses.selectedToolRoiId === roi.id;
-
-    return isSelected;
+    return toolRoiSavedStatuses.selectedToolRoiId === roi.id;
   }
 
   isOnPassiveRoi(roi) {
