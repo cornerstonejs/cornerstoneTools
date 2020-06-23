@@ -88,7 +88,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     this.style = null;
     this.selectedToolRoiId = null;
-    this.hiddenToolRoiIds = [];
+    this.visibleToolRoiIds = [];
   }
 
   createNewMeasurement(eventData) {
@@ -135,9 +135,9 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   }
 
   setToolRoiStates(roiStates) {
-    let { selectedContourToolRoiId, hiddenToolRoiIds } = roiStates;
+    let { selectedContourToolRoiId, visibleToolRoiIds } = roiStates;
     this.selectedToolRoiId = selectedContourToolRoiId;
-    this.hiddenToolRoiIds = hiddenToolRoiIds;
+    this.visibleToolRoiIds = visibleToolRoiIds;
   }
 
   /**
@@ -369,7 +369,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       return false;
     }
 
-    return !this.hiddenToolRoiIds.includes(roi.id);
+    return this.visibleToolRoiIds.includes(roi.id);
   }
 
   /**

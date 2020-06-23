@@ -57,7 +57,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
     this.style = null;
-    this.hiddenToolRoiIds = [];
+    this.visibleToolRoiIds = [];
     this.toolRoiSavedStatuses = null;
   }
 
@@ -70,9 +70,9 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   }
 
   setToolRoiStates(roiStates) {
-    let { toolRoiSavedStatuses, hiddenToolRoiIds } = roiStates;
+    let { toolRoiSavedStatuses, visibleToolRoiIds } = roiStates;
     this.toolRoiSavedStatuses = toolRoiSavedStatuses;
-    this.hiddenToolRoiIds = hiddenToolRoiIds;
+    this.visibleToolRoiIds = visibleToolRoiIds;
   }
 
   setPassiveRoi(roi) {
@@ -371,7 +371,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       return false;
     }
 
-    return !this.hiddenToolRoiIds.includes(roi.id);
+    return this.visibleToolRoiIds.includes(roi.id);
   }
 
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
