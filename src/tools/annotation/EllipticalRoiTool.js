@@ -224,16 +224,18 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
 
-        if (data.visible === false) {
+        let { roi } = data;
+
+        if (!roi || data.visible === false) {
           continue;
         }
 
-        const isCurrentRoi = this.isOnCurrentRoi(data);
+        const isCurrentRoi = this.isOnCurrentRoi(roi);
 
-        const isRoiSaved = this.isRoiSaved(data.roi, this.toolRoiSavedStatuses);
+        const isRoiSaved = this.isRoiSaved(roi, this.toolRoiSavedStatuses);
 
         const isRoiSelected = this.isRoiSelected(
-          data.roi,
+          roi,
           this.toolRoiSavedStatuses
         );
 
@@ -339,8 +341,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     });
   }
 
-  isOnCurrentRoi(data) {
-    return this.roi && this.roi.id === data.roi.id;
+  isOnCurrentRoi(roi) {
+    return this.roi && this.roi.id === roi.id;
   }
 
   isRoiSaved(roi, toolRoiSavedStatuses) {
@@ -365,8 +367,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     return isSelected;
   }
 
-  isOnPassiveRoi(data) {
-    return this.passiveRoi && this.passiveRoi.id === data.roi.id;
+  isOnPassiveRoi(roi) {
+    return this.passiveRoi && this.passiveRoi.id === roi.id;
   }
 
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
