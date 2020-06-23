@@ -941,7 +941,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const config = this.configuration;
     const data = toolState.data[config.currentTool];
 
-    if (!this.contourBelongsToCurentRoi(data)) {
+    if (!this.contourBelongsToCurrentRoi(data)) {
       return;
     }
 
