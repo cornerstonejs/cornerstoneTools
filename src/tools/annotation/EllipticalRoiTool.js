@@ -69,7 +69,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     this.style = style;
   }
 
-  setToolRoiSavedStatuses(roiStates) {
+  setToolRoiStates(roiStates) {
     let { toolRoiSavedStatuses, hiddenToolRoiIds } = roiStates;
     this.toolRoiSavedStatuses = toolRoiSavedStatuses;
     this.hiddenToolRoiIds = hiddenToolRoiIds;
