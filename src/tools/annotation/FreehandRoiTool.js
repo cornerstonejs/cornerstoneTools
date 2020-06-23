@@ -88,6 +88,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     this.style = null;
     this.selectedToolRoiId = null;
+    this.hiddenToolRoiIds = [];
   }
 
   createNewMeasurement(eventData) {
@@ -133,8 +134,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.style = style;
   }
 
-  setSelectedToolRoiId(id) {
-    this.selectedToolRoiId = id;
+  setToolRoiStates(roiStates) {
+    let { selectedContourToolRoiId, hiddenToolRoiIds } = roiStates;
+    this.selectedToolRoiId = selectedContourToolRoiId;
+    this.hiddenToolRoiIds = hiddenToolRoiIds;
   }
 
   /**
@@ -349,16 +352,24 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     data.invalidated = false;
   }
 
-  contourBelongsToCurentRoi(data) {
+  contourBelongsToCurrentRoi(roi) {
     if (!this.roi) {
       return false;
     }
 
-    return data.roi.id === this.roi.id;
+    return roi.id === this.roi.id;
   }
 
   isRoiSelected(roi) {
     return roi.id === this.selectedToolRoiId;
+  }
+
+  isRoiVisible(roi) {
+    if (!roi) {
+      return false;
+    }
+
+    return !this.hiddenToolRoiIds.includes(roi.id);
   }
 
   /**
@@ -392,14 +403,18 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     for (let i = 0; i < toolState.data.length; i++) {
       const data = toolState.data[i];
 
-      if (data.visible === false) {
+      let { roi } = data;
+
+      let isRoiVisible = this.isRoiVisible(roi);
+
+      if (!roi || !isRoiVisible || data.visible === false) {
         continue;
       }
 
       draw(context, context => {
-        const isActive = this.contourBelongsToCurentRoi(data);
+        const isActive = this.contourBelongsToCurrentRoi(roi);
         const isHighlighted = data.active;
-        const isSelected = this.isRoiSelected(data.roi);
+        const isSelected = this.isRoiSelected(roi);
 
         const colorStyle = this.style.color;
         let color = isSelected
