@@ -1,26 +1,22 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
-
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
-import toolColors from './../../stateManagement/toolColors.js';
-
 // Drawing
 import {
-  getNewContext,
   draw,
-  setShadow,
   drawEllipse,
   drawHandles,
   drawLinkedTextBox,
+  getNewContext,
+  setShadow,
 } from './../../drawing/index.js';
-
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
 import {
-  pointInEllipse,
   calculateEllipseStatistics,
+  pointInEllipse,
 } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
@@ -29,8 +25,8 @@ import { ellipticalRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import {
-  moveHandleNearImagePoint,
   moveAnnotation,
+  moveHandleNearImagePoint,
 } from '../../util/findAndMoveHelpers.js';
 
 const logger = getLogger('tools:annotation:EllipticalRoiTool');
