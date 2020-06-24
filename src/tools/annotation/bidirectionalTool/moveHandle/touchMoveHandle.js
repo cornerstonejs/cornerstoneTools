@@ -4,6 +4,9 @@ import EVENTS from './../../../../events.js';
 import setHandlesPosition from './setHandlesPosition.js';
 import getActiveTool from '../../../../util/getActiveTool';
 import BaseAnnotationTool from '../../../base/BaseAnnotationTool';
+import { MagnifyTool } from '../../../index.js';
+
+const { IMAGE_RENDERED } = external.cornerstone.EVENTS;
 
 const touchEndEvents = [
   EVENTS.TOUCH_END,
@@ -12,6 +15,16 @@ const touchEndEvents = [
   EVENTS.TOUCH_PRESS,
   EVENTS.TAP,
 ];
+
+function waitForImageRendered(element, callback) {
+  const renderedCallback = () => {
+    element.removeEventListener(IMAGE_RENDERED, renderedCallback);
+
+    callback();
+  };
+
+  element.addEventListener(IMAGE_RENDERED, renderedCallback);
+}
 
 export default function(
   mouseEventData,
@@ -22,6 +35,14 @@ export default function(
   preventHandleOutsideImage
 ) {
   const { element, image, buttons } = mouseEventData;
+  const isTextBoxHandle = handle === data.handles.textBox;
+  const magnify = new MagnifyTool({
+    configuration: {
+      magnifySize: Math.floor(element.clientWidth / 2),
+    },
+  });
+
+  window.magnify = magnify;
   const distanceFromTool = {
     x: handle.x - mouseEventData.currentPoints.image.x,
     y: handle.y - mouseEventData.currentPoints.image.y,
@@ -48,6 +69,19 @@ export default function(
     }
 
     data.invalidated = true;
+
+    waitForImageRendered(element, () => {
+      if (!state.isToolLocked || isTextBoxHandle) {
+        return;
+      }
+
+      if (!magnify.zoomElement) {
+        magnify._drawZoomedElement(event);
+      }
+
+      magnify._drawMagnificationTool(event);
+      external.cornerstone.updateImage(magnify.zoomElement);
+    });
 
     external.cornerstone.updateImage(element);
 
@@ -76,14 +110,31 @@ export default function(
 
   element.addEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
 
+  const currentImage = external.cornerstone.getImage(element);
+  const imageRenderedHandler = () => {
+    const newImage = external.cornerstone.getImage(element);
+
+    // Check if the rendered image changed during measurement modifying and stop it if so
+    if (newImage.imageId !== currentImage.imageId) {
+      touchEndCallback();
+    }
+  };
+
+  // Bind the event listener for image rendering
+  element.addEventListener(IMAGE_RENDERED, imageRenderedHandler);
+
   const touchEndCallback = () => {
     handle.active = false;
     state.isToolLocked = false;
 
+    element.removeEventListener(IMAGE_RENDERED, imageRenderedHandler);
     element.removeEventListener(EVENTS.TOUCH_DRAG, touchDragCallback);
     touchEndEvents.forEach(eventType => {
       element.removeEventListener(eventType, touchEndCallback);
     });
+
+    magnify._removeZoomElement();
+    magnify._destroyMagnificationCanvas(element);
 
     external.cornerstone.updateImage(element);
 
