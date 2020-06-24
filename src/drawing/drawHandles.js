@@ -45,30 +45,29 @@ export default function(context, evtDetail, handles, options = {}) {
       : toolStyle.getToolWidth();
     const fillStyle = options.fill;
 
-    path(
-      context,
-      {
-        lineWidth,
-        fillStyle,
-      },
-      context => {
-        const handleCanvasCoords = external.cornerstone.pixelToCanvas(
-          element,
-          handle
-        );
+    const pathOptions = { lineWidth, fillStyle };
 
-        // Handle's radisu, then tool's radius, then default radius
-        const handleRadius =
-          handle.radius || options.handleRadius || state.handleRadius;
+    if (options.lineDash) {
+      pathOptions.lineDash = options.lineDash;
+    }
 
-        context.arc(
-          handleCanvasCoords.x,
-          handleCanvasCoords.y,
-          handleRadius,
-          0,
-          2 * Math.PI
-        );
-      }
-    );
+    path(context, pathOptions, context => {
+      const handleCanvasCoords = external.cornerstone.pixelToCanvas(
+        element,
+        handle
+      );
+
+      // Handle's radisu, then tool's radius, then default radius
+      const handleRadius =
+        handle.radius || options.handleRadius || state.handleRadius;
+
+      context.arc(
+        handleCanvasCoords.x,
+        handleCanvasCoords.y,
+        handleRadius,
+        0,
+        2 * Math.PI
+      );
+    });
   }
 }

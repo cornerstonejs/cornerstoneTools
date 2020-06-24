@@ -27,6 +27,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 /**
  * @public
@@ -46,6 +47,7 @@ export default class AngleTool extends BaseAnnotationTool {
       svgCursor: angleCursor,
       configuration: {
         drawHandles: true,
+        renderDashed: false,
       },
     };
 
@@ -137,9 +139,14 @@ export default class AngleTool extends BaseAnnotationTool {
   renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      renderDashed,
+    } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     if (!toolData) {
       return;
@@ -174,12 +181,18 @@ export default class AngleTool extends BaseAnnotationTool {
           data.handles.middle
         );
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         drawJoinedLines(
           context,
           eventData.element,
           data.handles.start,
           [data.handles.middle, data.handles.end],
-          { color }
+          lineOptions
         );
 
         // Draw the handles
