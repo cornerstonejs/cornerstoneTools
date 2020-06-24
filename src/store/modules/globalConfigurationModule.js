@@ -4,6 +4,7 @@ const configuration = {
   globalToolSyncEnabled: false,
   showSVGCursors: false,
   autoResizeViewports: true,
+  lineDash: [4, 4],
 };
 
 export default {
