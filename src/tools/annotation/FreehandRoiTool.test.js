@@ -25,8 +25,8 @@ jest.mock('./../../externalModules.js', () => ({
       get: type => {
         if (type === 'imagePlaneModule') {
           return {
-            rowPixelSpacing: 1,
-            columnPixelSpacing: 1,
+            rowPixelSpacing: 2,
+            columnPixelSpacing: 2,
           };
         }
 
@@ -453,6 +453,6 @@ describe('updateCachedStats', () => {
     };
 
     instantiatedTool.updateCachedStats(image, element, data);
-    expect(data.area).toBe(0.5);
+    expect(data.area).toBe(2);
   });
 });
