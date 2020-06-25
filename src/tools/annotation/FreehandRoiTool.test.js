@@ -431,18 +431,18 @@ describe('updateCachedStats', () => {
     const data = {
       handles: {
         points: [
-          new FreehandHandleData({
+          {
             x: 0.0,
             y: 0.0,
-          }),
-          new FreehandHandleData({
+          },
+          {
             x: 0.0,
             y: 1.0,
-          }),
-          new FreehandHandleData({
+          },
+          {
             x: 1.0,
             y: 1.0,
-          }),
+          },
         ],
       },
     };
