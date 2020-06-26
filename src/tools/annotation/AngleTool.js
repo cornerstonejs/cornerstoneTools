@@ -27,6 +27,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 /**
  * @public
@@ -46,6 +47,7 @@ export default class AngleTool extends BaseAnnotationTool {
       svgCursor: angleCursor,
       configuration: {
         drawHandles: true,
+        renderDashed: false,
       },
     };
 
@@ -112,22 +114,9 @@ export default class AngleTool extends BaseAnnotationTool {
   }
 
   updateCachedStats(image, element, data) {
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
-
-    const sideA = {
-      x: (data.handles.middle.x - data.handles.start.x) * colPixelSpacing,
-      y: (data.handles.middle.y - data.handles.start.y) * rowPixelSpacing,
-    };
-
-    const sideB = {
-      x: (data.handles.end.x - data.handles.middle.x) * colPixelSpacing,
-      y: (data.handles.end.y - data.handles.middle.y) * rowPixelSpacing,
-    };
-
-    const sideC = {
-      x: (data.handles.end.x - data.handles.start.x) * colPixelSpacing,
-      y: (data.handles.end.y - data.handles.start.y) * rowPixelSpacing,
-    };
+    const sideA = getSide(image, data.handles.middle, data.handles.start);
+    const sideB = getSide(image, data.handles.end, data.handles.middle);
+    const sideC = getSide(image, data.handles.end, data.handles.start);
 
     const sideALength = length(sideA);
     const sideBLength = length(sideB);
@@ -154,9 +143,11 @@ export default class AngleTool extends BaseAnnotationTool {
       handleRadius,
       drawHandlesIfActive,
       drawHandlesOnHover,
+      renderDashed,
     } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     if (!toolData) {
       return;
@@ -192,14 +183,18 @@ export default class AngleTool extends BaseAnnotationTool {
           data.handles.middle
         );
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         drawJoinedLines(
           context,
           eventData.element,
           data.handles.start,
           [data.handles.middle, data.handles.end],
-          {
-            color,
-          }
+          lineOptions
         );
 
         // Draw the handles
@@ -367,4 +362,13 @@ export default class AngleTool extends BaseAnnotationTool {
 
 function length(vector) {
   return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+}
+
+function getSide(image, handleEnd, handleStart) {
+  const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+
+  return {
+    x: (handleEnd.x - handleStart.x) * (colPixelSpacing || 1),
+    y: (handleEnd.y - handleStart.y) * (rowPixelSpacing || 1),
+  };
 }
