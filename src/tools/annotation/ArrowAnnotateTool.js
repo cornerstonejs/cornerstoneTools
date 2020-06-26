@@ -30,6 +30,7 @@ import drawArrow from './../../drawing/drawArrow.js';
 import drawHandles from './../../drawing/drawHandles.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
 import { arrowAnnotateCursor } from '../cursors/index.js';
+import { getModule } from '../../store/index';
 
 // Logger
 import { getLogger } from '../../util/logger.js';
@@ -51,6 +52,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       configuration: {
         // hideTextBox: false,
         // textBoxOnHover: false,
+        getTextCallback,
+        changeTextCallback,
+        drawHandles: false,
+        drawHandlesOnHover: true,
+        arrowFirst: true,
+        renderDashed: false,
       },
       svgCursor: arrowAnnotateCursor,
     };
@@ -127,7 +134,11 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const { element, enabledElement } = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      renderDashed,
+    } = this.configuration;
 
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(element, this.name);
@@ -141,6 +152,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const context = getNewContext(canvas);
 
     const lineWidth = toolStyle.getToolWidth();
+
+    let lineDash;
+
+    if (renderDashed) {
+      lineDash = getModule('globalConfiguration').configuration.lineDash;
+    }
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -171,7 +188,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             handleEndCanvas,
             handleStartCanvas,
             color,
-            lineWidth
+            lineWidth,
+            lineDash
           );
         } else {
           drawArrow(
@@ -179,7 +197,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
             handleStartCanvas,
             handleEndCanvas,
             color,
-            lineWidth
+            lineWidth,
+            lineDash
           );
         }
 

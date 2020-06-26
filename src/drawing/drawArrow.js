@@ -12,9 +12,10 @@ import drawJoinedLines from './drawJoinedLines.js';
  * @param  {Object} end       The end position.
  * @param  {string} color     The color of the arrow.
  * @param  {number} lineWidth The width of the arrow line.
+ * @param  {number[]|| undefined} [lineDash] The optional lineDash style.
  * @returns {undefined}
  */
-export default function(context, start, end, color, lineWidth) {
+export default function(context, start, end, color, lineWidth, lineDash) {
   // Variables to be used when creating the arrow
   const headLength = 10;
 
@@ -25,6 +26,10 @@ export default function(context, start, end, color, lineWidth) {
     color,
     lineWidth,
   };
+
+  if (lineDash) {
+    options.lineDash = lineDash;
+  }
 
   drawLine(context, undefined, start, end, options, 'canvas');
   options = {

@@ -17,6 +17,7 @@ import getRGBPixels from '../../util/getRGBPixels.js';
 import calculateSUV from '../../util/calculateSUV.js';
 import { probeCursor } from '../cursors/index.js';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 // Logger
 import { getLogger } from '../../util/logger.js';
@@ -40,6 +41,7 @@ export default class ProbeTool extends BaseAnnotationTool {
         // hideTextBox: false,
         // textBoxOnHover: false,
         drawHandles: true,
+        renderDashed: false,
       },
       svgCursor: probeCursor,
     };
@@ -148,7 +150,7 @@ export default class ProbeTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius } = this.configuration;
+    const { handleRadius, renderDashed } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -159,6 +161,7 @@ export default class ProbeTool extends BaseAnnotationTool {
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
     const fontHeight = textStyle.getFontSize();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -172,10 +175,13 @@ export default class ProbeTool extends BaseAnnotationTool {
 
         if (this.configuration.drawHandles) {
           // Draw the handles
-          drawHandles(context, eventData, data.handles, {
-            handleRadius,
-            color,
-          });
+          let handleOptions = { handleRadius, color };
+
+          if (renderDashed) {
+            handleOptions.lineDash = lineDash;
+          }
+
+          drawHandles(context, eventData, data.handles, handleOptions);
         }
 
         // Hide TextBox

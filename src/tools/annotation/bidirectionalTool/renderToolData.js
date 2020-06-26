@@ -1,6 +1,7 @@
 /* eslint no-loop-func: 0 */ // --> OFF
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
+import { getModule } from '../../../store/index';
 
 // State
 import textColors from './../../../stateManagement/textColors.js';
@@ -21,7 +22,9 @@ import getPixelSpacing from '../../../util/getPixelSpacing';
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
-  const { handleRadius, drawHandlesOnHover } = this.configuration;
+  const { handleRadius, drawHandlesOnHover, renderDashed } = this.configuration;
+
+  const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -74,19 +77,29 @@ export default function(evt) {
         textBox,
       } = data.handles;
 
+      const lineOptions = { color };
+      const perpendicularLineOptions = { color, strokeWidth };
+
+      if (renderDashed) {
+        lineOptions.lineDash = lineDash;
+        perpendicularLineOptions.lineDash = lineDash;
+      }
+
       // Draw the measurement line
-      drawLine(context, element, start, end, {
-        color,
-      });
+      drawLine(context, element, start, end, lineOptions);
 
       // Draw perpendicular line
       const strokeWidth = lineWidth;
 
       updatePerpendicularLineHandles(eventData, data);
-      drawLine(context, element, perpendicularStart, perpendicularEnd, {
-        color,
-        strokeWidth,
-      });
+
+      drawLine(
+        context,
+        element,
+        perpendicularStart,
+        perpendicularEnd,
+        perpendicularLineOptions
+      );
 
       // Draw the handles
       const handleOptions = {

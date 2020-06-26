@@ -28,6 +28,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { ellipticalRoiCursor } from '../cursors/index.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import { getModule } from '../../store/index';
 
 // Logger
 import { getLogger } from '../../util/logger.js';
@@ -52,6 +53,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         // showHounsfieldUnits: true,
         // hideTextBox: true,
         // textBoxOnHover: false,
+        renderDashed: false,
       },
       svgCursor: ellipticalRoiCursor,
     };
@@ -189,7 +191,12 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const { image, element } = eventData;
     const lineWidth = toolStyle.getToolWidth();
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      renderDashed,
+    } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
@@ -221,15 +228,19 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
         setShadow(context, this.configuration);
 
+        const ellipseOptions = { color };
+
+        if (renderDashed) {
+          ellipseOptions.lineDash = lineDash;
+        }
+
         // Draw
         drawEllipse(
           context,
           element,
           data.handles.start,
           data.handles.end,
-          {
-            color,
-          },
+          ellipseOptions,
           'pixel',
           data.handles.initialRotation
         );

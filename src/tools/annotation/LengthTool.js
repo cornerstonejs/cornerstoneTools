@@ -19,6 +19,7 @@ import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 // Logger
 import { getLogger } from '../../util/logger.js';
@@ -41,6 +42,7 @@ export default class LengthTool extends BaseAnnotationTool {
         // hideTextBox: false,
         // textBoxOnHover: false,
         drawHandles: true,
+        renderDashed: false,
       },
       svgCursor: lengthCursor,
     };
@@ -149,7 +151,11 @@ export default class LengthTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      renderDashed,
+    } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -162,6 +168,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -176,10 +183,20 @@ export default class LengthTool extends BaseAnnotationTool {
 
         const color = toolColors.getColorIfActive(data);
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         // Draw the measurement line
-        drawLine(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
+        drawLine(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          lineOptions
+        );
 
         // Draw the handles
         const handleOptions = {
