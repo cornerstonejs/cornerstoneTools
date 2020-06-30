@@ -37,6 +37,10 @@ export default function(evt, tool) {
     tool.options,
     'mouse',
     () => {
+      if (measurementData.cancelled) {
+        return;
+      }
+
       const eventType = EVENTS.MEASUREMENT_COMPLETED;
       const eventData = {
         toolName: tool.name,
