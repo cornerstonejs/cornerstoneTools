@@ -1,6 +1,6 @@
 import external from './../externalModules.js';
 import toolStyle from './../stateManagement/toolStyle.js';
-import toolColors from './../stateManagement/toolColors.js';
+import toolHandlesColors from './../stateManagement/toolHandlesColors.js';
 import path from './path.js';
 import { state } from './../store/index.js';
 
@@ -22,9 +22,6 @@ import { state } from './../store/index.js';
  */
 export default function(context, evtDetail, handles, options = {}) {
   const element = evtDetail.element;
-  const defaultColor = toolColors.getToolColor();
-
-  context.strokeStyle = options.color || defaultColor;
 
   const handleKeys = Object.keys(handles);
 
@@ -32,10 +29,20 @@ export default function(context, evtDetail, handles, options = {}) {
     const handleKey = handleKeys[i];
     const handle = handles[handleKey];
 
+    // Stroke Style
+    context.strokeStyle =
+      options.color || toolHandlesColors.getColorIfActive(handle);
+
     if (handle.drawnIndependently === true) {
       continue;
     }
 
+    // Draw the handles on hover
+    if (options.drawHandlesOnHover === true && !options.active) {
+      continue;
+    }
+
+    // Draw the handles if active
     if (options.drawHandlesIfActive === true && !handle.active) {
       continue;
     }
@@ -43,7 +50,8 @@ export default function(context, evtDetail, handles, options = {}) {
     const lineWidth = handle.active
       ? toolStyle.getActiveWidth()
       : toolStyle.getToolWidth();
-    const fillStyle = options.fill;
+    const fillStyle =
+      options.fill || handle.fill || toolHandlesColors.getFillColor();
 
     const pathOptions = { lineWidth, fillStyle };
 

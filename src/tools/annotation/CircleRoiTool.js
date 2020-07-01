@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolHandlesColors from '../../stateManagement/toolHandlesColors.js';
 import { getModule } from '../../store/index';
 
 // Drawing
@@ -170,6 +171,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
     const {
       handleRadius,
+      drawHandlesIfActive,
       drawHandlesOnHover,
       renderDashed,
     } = this.configuration;
@@ -196,13 +198,29 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
-        const color = toolColors.getColorIfActive(data);
+        let color = toolColors.getColorIfActive(data);
         const handleOptions = {
-          color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
+        // Handles
+        const handleKeys = Object.keys(data.handles);
+
+        for (let i = 0; i < handleKeys.length; i++) {
+          const handleKey = handleKeys[i];
+          const handle = data.handles[handleKey];
+
+          if (typeof handle === 'object' && (data.active || handle.active)) {
+            color = toolColors.getActiveColor();
+
+            handleOptions.active = true;
+            handleOptions.color = toolHandlesColors.getColorIfActive(handle);
+          }
+        }
+
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         const startCanvas = external.cornerstone.pixelToCanvas(
@@ -234,6 +252,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           'pixel'
         );
 
+        // Draw the handles
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats

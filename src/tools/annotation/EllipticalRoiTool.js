@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolHandlesColors from '../../stateManagement/toolHandlesColors.js';
 
 // Drawing
 import {
@@ -182,6 +183,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const {
       handleRadius,
+      drawHandlesIfActive,
       drawHandlesOnHover,
       renderDashed,
     } = this.configuration;
@@ -207,13 +209,29 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
-        const color = toolColors.getColorIfActive(data);
+        let color = toolColors.getColorIfActive(data);
         const handleOptions = {
-          color,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
+        // Handles
+        const handleKeys = Object.keys(data.handles);
+
+        for (let i = 0; i < handleKeys.length; i++) {
+          const handleKey = handleKeys[i];
+          const handle = data.handles[handleKey];
+
+          if (typeof handle === 'object' && (data.active || handle.active)) {
+            color = toolColors.getActiveColor();
+
+            handleOptions.active = true;
+            handleOptions.color = toolHandlesColors.getColorIfActive(handle);
+          }
+        }
+
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         const ellipseOptions = { color };
@@ -232,6 +250,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           'pixel',
           data.handles.initialRotation
         );
+
+        // Draw the handles
         drawHandles(context, eventData, data.handles, handleOptions);
 
         // Update textbox stats

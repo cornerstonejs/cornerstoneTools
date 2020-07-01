@@ -387,7 +387,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           fillColor = toolColors.getToolColor();
         }
 
-        let options = { color };
+        const options = { color };
 
         if (renderDashed) {
           options.lineDash = lineDash;
@@ -418,48 +418,47 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         }
 
         // Draw handles
-
-        options = {
+        const handleOptions = {
           color,
           fill: fillColor,
         };
 
         if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {
           // Render all handles
-          options.handleRadius = config.activeHandleRadius;
+          handleOptions.handleRadius = config.activeHandleRadius;
 
           if (this.configuration.drawHandles) {
-            drawHandles(context, eventData, data.handles.points, options);
+            drawHandles(context, eventData, data.handles.points, handleOptions);
           }
         }
 
         if (data.canComplete) {
           // Draw large handle at the origin if can complete drawing
-          options.handleRadius = config.completeHandleRadius;
+          handleOptions.handleRadius = config.completeHandleRadius;
           const handle = data.handles.points[0];
 
           if (this.configuration.drawHandles) {
-            drawHandles(context, eventData, [handle], options);
+            drawHandles(context, eventData, [handle], handleOptions);
           }
         }
 
         if (data.active && !data.polyBoundingBox) {
           // Draw handle at origin and at mouse if actively drawing
-          options.handleRadius = config.activeHandleRadius;
+          handleOptions.handleRadius = config.activeHandleRadius;
 
           if (this.configuration.drawHandles) {
             drawHandles(
               context,
               eventData,
               config.mouseLocation.handles,
-              options
+              handleOptions
             );
           }
 
           const firstHandle = data.handles.points[0];
 
           if (this.configuration.drawHandles) {
-            drawHandles(context, eventData, [firstHandle], options);
+            drawHandles(context, eventData, [firstHandle], handleOptions);
           }
         }
 

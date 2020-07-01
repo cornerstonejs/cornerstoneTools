@@ -141,6 +141,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const {
       handleRadius,
+      drawHandlesIfActive,
       drawHandlesOnHover,
       renderDashed,
     } = this.configuration;
@@ -166,10 +167,17 @@ export default class LengthTool extends BaseAnnotationTool {
       }
 
       draw(context, context => {
+        // Configure
+        const color = toolColors.getColorIfActive(data);
+        const handleOptions = {
+          active: data.active,
+          handleRadius,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
+        };
+
         // Configurable shadow
         setShadow(context, this.configuration);
-
-        const color = toolColors.getColorIfActive(data);
 
         const lineOptions = { color };
 
@@ -185,13 +193,6 @@ export default class LengthTool extends BaseAnnotationTool {
           data.handles.end,
           lineOptions
         );
-
-        // Draw the handles
-        const handleOptions = {
-          color,
-          handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
-        };
 
         if (this.configuration.drawHandles) {
           drawHandles(context, eventData, data.handles, handleOptions);
@@ -248,7 +249,7 @@ export default class LengthTool extends BaseAnnotationTool {
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
-      // measured value is not defined, return empty string
+      // Measured value is not defined, return empty string
       if (!measuredValue) {
         return '';
       }

@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import toolHandlesColors from '../../stateManagement/toolHandlesColors.js';
 
 // Drawing
 import {
@@ -170,6 +171,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const {
       handleRadius,
+      drawHandlesIfActive,
       drawHandlesOnHover,
       renderDashed,
     } = this.configuration;
@@ -197,11 +199,13 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         // Configure
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
-          color,
+          active: data.active,
           handleRadius,
-          drawHandlesIfActive: drawHandlesOnHover,
+          drawHandlesIfActive,
+          drawHandlesOnHover,
         };
 
+        // Configurable shadow
         setShadow(context, this.configuration);
 
         const rectOptions = { color };

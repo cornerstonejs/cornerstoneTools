@@ -161,6 +161,7 @@ import {
 import { default as textStyle } from './stateManagement/textStyle.js';
 import { default as toolStyle } from './stateManagement/toolStyle.js';
 import { default as toolColors } from './stateManagement/toolColors.js';
+import { default as toolHandlesColors } from './stateManagement/toolHandlesColors.js';
 import { default as toolCoordinates } from './stateManagement/toolCoordinates.js';
 import {
   stackSpecificStateManager,
@@ -287,6 +288,7 @@ const cornerstoneTools = {
   textStyle,
   toolStyle,
   toolColors,
+  toolHandlesColors,
   toolCoordinates,
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
@@ -396,6 +398,7 @@ export {
   textStyle,
   toolStyle,
   toolColors,
+  toolHandlesColors,
   toolCoordinates,
   stackSpecificStateManager,
   newStackSpecificToolStateManager,
