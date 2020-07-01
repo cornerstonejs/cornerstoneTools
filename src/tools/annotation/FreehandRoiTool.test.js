@@ -39,7 +39,9 @@ describe('FreehandRoiTool.js', function() {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = { name: 'customToolName' };
+      const customToolName = {
+        name: 'customToolName',
+      };
       const instantiatedTool = new FreehandRoiTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);

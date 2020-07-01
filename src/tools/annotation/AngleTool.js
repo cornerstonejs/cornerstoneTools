@@ -1,6 +1,8 @@
 import external from './../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+
 // State
+import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   getToolState,
@@ -8,8 +10,10 @@ import {
 } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+
 // Manipulators
 import { moveNewHandle } from './../../manipulators/index.js';
+
 // Drawing
 import {
   getNewContext,
@@ -29,6 +33,11 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 
+// Logger
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('tools:annotation:AngleTool');
+
 /**
  * @public
  * @class AngleTool
@@ -44,11 +53,13 @@ export default class AngleTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'Angle',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      svgCursor: angleCursor,
       configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
         drawHandles: true,
         renderDashed: false,
       },
+      svgCursor: angleCursor,
     };
 
     super(props, defaultProps);
@@ -59,11 +70,25 @@ export default class AngleTool extends BaseAnnotationTool {
   }
 
   createNewMeasurement(eventData) {
+    const goodEventData =
+      eventData && eventData.currentPoints && eventData.currentPoints.image;
+
+    if (!goodEventData) {
+      logger.error(
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
+      );
+
+      return;
+    }
+
+    const config = this.configuration || {};
+
     // Create the measurement data for this tool with the end handle activated
     return {
       visible: true,
       active: true,
-      color: undefined,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
       handles: {
         start: {
@@ -86,11 +111,15 @@ export default class AngleTool extends BaseAnnotationTool {
         },
         textBox: {
           active: false,
+          color: undefined,
+          activeColor: undefined,
           hasMoved: false,
           movesIndependently: false,
           drawnIndependently: true,
           allowedOutsideImage: true,
           hasBoundingBox: true,
+          hide: false,
+          hover: false,
         },
       },
     };
@@ -206,6 +235,20 @@ export default class AngleTool extends BaseAnnotationTool {
           drawHandles(context, eventData, data.handles, handleOptions);
         }
 
+        // Hide TextBox
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
+          return;
+        }
+        // TextBox OnHover
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
+          return;
+        }
+
         // Update textbox stats
         if (data.invalidated === true) {
           if (data.rAngle) {
@@ -249,6 +292,9 @@ export default class AngleTool extends BaseAnnotationTool {
             data.handles.textBox.y = coords.y;
           }
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawLinkedTextBox(
             context,
             eventData.element,
@@ -256,7 +302,7 @@ export default class AngleTool extends BaseAnnotationTool {
             text,
             data.handles,
             textBoxAnchorPoints,
-            color,
+            textColor,
             lineWidth,
             0,
             true

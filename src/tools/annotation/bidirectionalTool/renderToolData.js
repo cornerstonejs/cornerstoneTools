@@ -3,9 +3,13 @@ import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 import { getModule } from '../../../store/index';
 
+// State
+import textColors from './../../../stateManagement/textColors.js';
+import { getToolState } from './../../../stateManagement/toolState.js';
 import toolStyle from './../../../stateManagement/toolStyle.js';
 import toolColors from './../../../stateManagement/toolColors.js';
-import { getToolState } from './../../../stateManagement/toolState.js';
+
+// Drawing
 import {
   getNewContext,
   draw,
@@ -109,6 +113,20 @@ export default function(evt) {
         drawHandles(context, eventData, data.handles, handleOptions);
       }
 
+      // Hide TextBox
+      if (this.configuration.hideTextBox || data.handles.textBox.hide) {
+        return;
+      }
+      // TextBox OnHover
+      data.handles.textBox.hasBoundingBox =
+        !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
+      if (
+        (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+        !data.active
+      ) {
+        return;
+      }
+
       // Draw the textbox
       // Move the textbox slightly to the right and upwards
       // So that it sits beside the length tool handle
@@ -121,6 +139,9 @@ export default function(evt) {
       ];
       const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
+      // Text Colors
+      const textColor = textColors.getColorIfActive(data);
+
       drawLinkedTextBox(
         context,
         element,
@@ -128,7 +149,7 @@ export default function(evt) {
         textLines,
         data.handles,
         textBoxAnchorPoints,
-        color,
+        textColor,
         lineWidth,
         xOffset,
         true

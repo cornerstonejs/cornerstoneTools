@@ -61,7 +61,9 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('can be created with a custom tool name', () => {
-      const customToolName = { name: 'customToolName' };
+      const customToolName = {
+        name: 'customToolName',
+      };
       const instantiatedTool = new CircleRoiTool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);

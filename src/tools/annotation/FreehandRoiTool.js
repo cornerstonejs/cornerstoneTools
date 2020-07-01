@@ -1,7 +1,9 @@
 import EVENTS from './../../events.js';
 import external from './../../externalModules.js';
 import BaseAnnotationTool from './../base/BaseAnnotationTool.js';
+
 // State
+import textColors from './../../stateManagement/textColors.js';
 import {
   addToolState,
   getToolState,
@@ -11,8 +13,10 @@ import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
 import { state } from '../../store/index.js';
 import triggerEvent from '../../util/triggerEvent.js';
+
 // Manipulators
 import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
+
 // Implementation Logic
 import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
 import calculateSUV from '../../util/calculateSUV.js';
@@ -26,9 +30,11 @@ import { clipToBox } from '../../util/clip.js';
 import { hideToolCursor, setToolCursor } from '../../store/setToolCursor.js';
 import { freehandRoiCursor } from '../cursors/index.js';
 import freehandUtils from '../../util/freehand/index.js';
-import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
+
+// Logger
+import { getLogger } from '../../util/logger.js';
 
 const logger = getLogger('tools:annotation:FreehandRoiTool');
 
@@ -53,9 +59,14 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const defaultProps = {
       name: 'FreehandRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
-      configuration: defaultFreehandConfiguration(),
+      configuration: {
+        // hideTextBox: false,
+        // textBoxOnHover: false,
+      },
       svgCursor: freehandRoiCursor,
     };
+
+    Object.assign(defaultProps.configuration, defaultFreehandConfiguration());
 
     super(props, defaultProps);
 
@@ -100,26 +111,30 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
       return;
     }
 
-    const measurementData = {
+    const config = this.configuration || {};
+
+    return {
       visible: true,
       active: true,
+      color: config.color,
+      activeColor: config.activeColor,
       invalidated: true,
-      color: undefined,
       handles: {
         points: [],
+        textBox: {
+          active: false,
+          color: undefined,
+          activeColor: undefined,
+          hasMoved: false,
+          movesIndependently: false,
+          drawnIndependently: true,
+          allowedOutsideImage: true,
+          hasBoundingBox: true,
+          hide: false,
+          hover: false,
+        },
       },
     };
-
-    measurementData.handles.textBox = {
-      active: false,
-      hasMoved: false,
-      movesIndependently: false,
-      drawnIndependently: true,
-      allowedOutsideImage: true,
-      hasBoundingBox: true,
-    };
-
-    return measurementData;
   }
 
   /**
@@ -472,6 +487,20 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           }
         }
 
+        // Hide TextBox
+        if (this.configuration.hideTextBox || data.handles.textBox.hide) {
+          return;
+        }
+        // TextBox OnHover
+        data.handles.textBox.hasBoundingBox =
+          !this.configuration.textBoxOnHover && !data.handles.textBox.hover;
+        if (
+          (this.configuration.textBoxOnHover || data.handles.textBox.hover) &&
+          !data.active
+        ) {
+          return;
+        }
+
         // Only render text if polygon ROI has been completed and freehand 'shiftKey' mode was not used:
         if (data.polyBoundingBox && !data.handles.textBox.freehand) {
           // If the textbox has not been moved by the user, it should be displayed on the right-most
@@ -487,6 +516,9 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
           const text = textBoxText.call(this, data);
 
+          // Text Colors
+          const textColor = textColors.getColorIfActive(data);
+
           drawLinkedTextBox(
             context,
             element,
@@ -494,7 +526,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
             text,
             data.handles.points,
             textBoxAnchorPoints,
-            color,
+            textColor,
             lineWidth,
             0,
             true
