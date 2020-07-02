@@ -39,7 +39,6 @@ export default function(context, evtDetail, handles, options = {}) {
     if (options.drawHandlesIfActive === true && !handle.active) {
       continue;
     }
-
     if (options.hideHandlesIfMoving && handle.moving) {
       continue;
     }
