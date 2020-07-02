@@ -64,6 +64,7 @@ export default function(
   };
 
   handle.active = true;
+  handle.moving = true;
   state.isToolLocked = true;
 
   element.addEventListener(EVENTS.MOUSE_DRAG, _dragCallback);

@@ -136,9 +136,7 @@ describe('EllipticalRoiTool.js', () => {
     // Todo: Not sure we want all of our methods to check for valid params.
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
       const instantiatedTool = new EllipticalRoiTool();
-      const noHandlesMeasurementData = {
-        handles: {},
-      };
+      const noHandlesMeasurementData = {};
       const logger = getLogger();
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);

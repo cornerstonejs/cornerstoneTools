@@ -115,6 +115,7 @@ export default function(
   );
 
   handle.active = true;
+  handle.moving = true;
   annotation.active = true;
   state.isToolLocked = true;
 
@@ -270,6 +271,7 @@ function _endHandler(
   const element = evtDetail.element;
 
   handle.active = false;
+  handle.moving = false;
   annotation.active = false;
   annotation.invalidated = true;
   runAnimation.value = false;
