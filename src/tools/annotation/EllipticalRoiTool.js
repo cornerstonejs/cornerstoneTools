@@ -109,6 +109,16 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
 
+    if (!validParameters) {
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
+      );
+    }
+
+    if (!validParameters || data.visible === false) {
+      return false;
+    }
+
     const handleNearImagePoint = getHandleNearImagePoint(
       element,
       data.handles,
@@ -118,16 +128,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     if (handleNearImagePoint) {
       return true;
-    }
-
-    if (!validParameters) {
-      logger.warn(
-        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
-      );
-    }
-
-    if (!validParameters || data.visible === false) {
-      return false;
     }
 
     const distance = interactionType === 'mouse' ? 15 : 25;
