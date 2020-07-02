@@ -286,6 +286,7 @@ function _moveEndHandler(
     options.deleteIfHandleOutsideImage &&
     anyHandlesOutsideImage(evt.detail, annotation.handles)
   ) {
+    annotation.cancelled = true;
     removeToolState(element, toolName, annotation);
   }
 

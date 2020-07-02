@@ -24,6 +24,7 @@ import throttle from './../../util/throttle.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import { getModule } from '../../store/index';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -42,6 +43,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         drawHandles: true,
+        renderDashed: false,
         // showMinMax: false,
         // showHounsfieldUnits: true
       },
@@ -165,7 +167,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const { image, element } = eventData;
     const lineWidth = toolStyle.getToolWidth();
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      renderDashed,
+    } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
@@ -197,15 +204,19 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
         setShadow(context, this.configuration);
 
+        const rectOptions = { color };
+
+        if (renderDashed) {
+          rectOptions.lineDash = lineDash;
+        }
+
         // Draw
         drawRect(
           context,
           element,
           data.handles.start,
           data.handles.end,
-          {
-            color,
-          },
+          rectOptions,
           'pixel',
           data.handles.initialRotation
         );
