@@ -107,6 +107,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
+
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
