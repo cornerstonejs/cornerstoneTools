@@ -48,6 +48,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
+        hideHandlesIfMoving: true,
+        drawHandlesOnHover: false,
         renderDashed: false,
       },
       svgCursor: ellipticalRoiCursor,
@@ -183,6 +185,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
@@ -212,6 +215,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         setShadow(context, this.configuration);

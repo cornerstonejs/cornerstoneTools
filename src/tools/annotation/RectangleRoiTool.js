@@ -43,6 +43,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: true,
+        hideHandlesIfMoving: true,
         renderDashed: false,
         // showMinMax: false,
         // showHounsfieldUnits: true
@@ -171,6 +173,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
@@ -200,6 +203,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         setShadow(context, this.configuration);

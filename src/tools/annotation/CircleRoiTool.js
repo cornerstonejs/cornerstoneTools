@@ -46,6 +46,8 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       svgCursor: circleRoiCursor,
       configuration: {
         renderDashed: false,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: true,
       },
     };
 
@@ -171,6 +173,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
     const newContext = getNewContext(canvasContext.canvas);
@@ -201,6 +204,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         setShadow(context, this.configuration);

@@ -39,8 +39,9 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       configuration: {
         getTextCallback,
         changeTextCallback,
-        drawHandles: false,
+        drawHandles: true,
         drawHandlesOnHover: true,
+        hideHandlesIfMoving: true,
         arrowFirst: true,
         renderDashed: false,
       },
@@ -102,6 +103,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
 
@@ -170,6 +172,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {

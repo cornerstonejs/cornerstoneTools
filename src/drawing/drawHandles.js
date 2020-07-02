@@ -40,6 +40,10 @@ export default function(context, evtDetail, handles, options = {}) {
       continue;
     }
 
+    if (options.hideHandlesIfMoving && handle.moving) {
+      continue;
+    }
+
     const lineWidth = handle.active
       ? toolStyle.getActiveWidth()
       : toolStyle.getToolWidth();
