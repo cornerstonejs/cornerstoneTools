@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint';
 
 // Drawing
 import {
@@ -107,6 +108,17 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
     const validParameters = hasStartAndEndHandles;
+
+    const handleNearImagePoint = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      6
+    );
+
+    if (handleNearImagePoint) {
+      return true;
+    }
 
     if (!validParameters) {
       logger.warn(
