@@ -46,8 +46,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       svgCursor: circleRoiCursor,
       configuration: {
         renderDashed: false,
-        drawHandlesOnHover: false,
-        hideHandlesIfMoving: true,
+        hideHandlesIfMoving: false,
       },
     };
 

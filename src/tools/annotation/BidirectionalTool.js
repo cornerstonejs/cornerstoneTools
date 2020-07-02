@@ -37,7 +37,7 @@ export default class BidirectionalTool extends BaseAnnotationTool {
         shadow: '',
         drawHandles: true,
         drawHandlesOnHover: true,
-        hideHandlesIfMoving: true,
+        hideHandlesIfMoving: false,
         renderDashed: false,
         additionalData: [],
       },

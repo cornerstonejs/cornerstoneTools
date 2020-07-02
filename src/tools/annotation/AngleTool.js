@@ -47,8 +47,8 @@ export default class AngleTool extends BaseAnnotationTool {
       svgCursor: angleCursor,
       configuration: {
         drawHandles: true,
-        drawHandlesOnHover: true,
-        hideHandlesIfMoving: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
     };

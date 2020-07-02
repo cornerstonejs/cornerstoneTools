@@ -44,8 +44,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       svgCursor: cobbAngleCursor,
       configuration: {
         drawHandles: true,
-        drawHandlesOnHover: true,
-        hideHandlesIfMoving: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
     };

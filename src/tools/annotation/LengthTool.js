@@ -36,8 +36,8 @@ export default class LengthTool extends BaseAnnotationTool {
       svgCursor: lengthCursor,
       configuration: {
         drawHandles: true,
-        drawHandlesOnHover: true,
-        hideHandlesIfMoving: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
     };

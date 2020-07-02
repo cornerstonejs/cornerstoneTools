@@ -49,8 +49,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
-        hideHandlesIfMoving: true,
         drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
       svgCursor: ellipticalRoiCursor,
