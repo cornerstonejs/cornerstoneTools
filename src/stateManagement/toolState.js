@@ -84,6 +84,10 @@ function removeToolState(element, toolName, data) {
   const toolStateManager = getElementToolStateManager(element);
   const toolData = toolStateManager.get(element, toolName);
 
+  debugger;
+  console.log('toolData');
+  console.log(toolData);
+
   if (!toolData || !toolData.data || !toolData.data.length) {
     return;
   }
@@ -96,6 +100,8 @@ function removeToolState(element, toolName, data) {
       indexOfData = i;
     }
   }
+
+  console.log(`indexOfData: ${indexOfData}`);
 
   if (indexOfData !== -1) {
     toolData.data.splice(indexOfData, 1);
