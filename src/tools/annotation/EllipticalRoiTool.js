@@ -375,13 +375,13 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   }
 
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-    if (this.isOnCurrentRoi(toolData)) {
+    if (this.isOnCurrentRoi(toolData.roi)) {
       moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
     }
   }
 
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
-    if (this.isOnCurrentRoi(annotation)) {
+    if (this.isOnCurrentRoi(annotation.roi)) {
       moveAnnotation(evt, this, annotation, interactionType);
     }
   }
