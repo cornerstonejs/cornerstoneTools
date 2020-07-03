@@ -42,7 +42,12 @@ export default function(evt, interactionType) {
     end,
     {},
     interactionType,
-    () => {
+    success => {
+      if (!success) {
+        removeToolState(element, this.name, measurementData);
+
+        return;
+      }
       const { handles, longestDiameter, shortestDiameter } = measurementData;
       const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
       const longestDiameterSize = parseFloat(longestDiameter) || 0;
