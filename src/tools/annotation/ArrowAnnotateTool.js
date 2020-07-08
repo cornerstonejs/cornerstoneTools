@@ -289,20 +289,24 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
               });
             }, evt.detail);
           }
+
+          const modifiedEventData = {
+            toolName: this.name,
+            toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
+            element,
+            measurementData,
+          };
+
+          triggerEvent(
+            element,
+            EVENTS.MEASUREMENT_COMPLETED,
+            modifiedEventData
+          );
         } else {
           removeToolState(element, this.name, measurementData);
         }
 
         external.cornerstone.updateImage(element);
-
-        const modifiedEventData = {
-          toolName: this.name,
-          toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
-          element,
-          measurementData,
-        };
-
-        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       }
     );
   }
