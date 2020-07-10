@@ -27,6 +27,7 @@ import { cobbAngleCursor } from '../cursors/index.js';
 import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
+import { getModule } from '../../store/index';
 
 /**
  * @public
@@ -43,6 +44,9 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       svgCursor: cobbAngleCursor,
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
+        renderDashed: false,
       },
     };
 
@@ -159,7 +163,12 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      hideHandlesIfMoving,
+      renderDashed,
+    } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -171,6 +180,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const context = getNewContext(eventData.canvasContext.canvas);
 
     const lineWidth = toolStyle.getToolWidth();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const font = textStyle.getFont();
 
     for (let i = 0; i < toolData.data.length; i++) {
@@ -186,14 +196,18 @@ export default class CobbAngleTool extends BaseAnnotationTool {
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         drawLine(
           context,
           eventData.element,
           data.handles.start,
           data.handles.end,
-          {
-            color,
-          }
+          lineOptions
         );
 
         if (data.complete) {
@@ -202,9 +216,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
             eventData.element,
             data.handles.start2,
             data.handles.end2,
-            {
-              color,
-            }
+            lineOptions
           );
         }
 
@@ -213,6 +225,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {

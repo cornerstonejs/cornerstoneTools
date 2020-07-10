@@ -66,6 +66,7 @@ export default function(
 
   annotation.active = true;
 
+  handle.moving = true;
   handle.active = true;
   state.isToolLocked = true;
 
@@ -252,6 +253,7 @@ function _moveEndHandler(
   annotation.active = false;
   annotation.invalidated = true;
   handle.active = false;
+  handle.moving = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
@@ -286,6 +288,7 @@ function _moveEndHandler(
     options.deleteIfHandleOutsideImage &&
     anyHandlesOutsideImage(evt.detail, annotation.handles)
   ) {
+    annotation.cancelled = true;
     removeToolState(element, toolName, annotation);
   }
 

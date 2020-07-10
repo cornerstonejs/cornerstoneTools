@@ -27,6 +27,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 /**
  * @public
@@ -46,6 +47,9 @@ export default class AngleTool extends BaseAnnotationTool {
       svgCursor: angleCursor,
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
+        renderDashed: false,
       },
     };
 
@@ -114,7 +118,7 @@ export default class AngleTool extends BaseAnnotationTool {
   updateCachedStats(image, element, data) {
     const sideA = getSide(image, data.handles.middle, data.handles.start);
     const sideB = getSide(image, data.handles.end, data.handles.middle);
-    const sideC = getSide(image, data.handles.end, data.handles.middle);
+    const sideC = getSide(image, data.handles.end, data.handles.start);
 
     const sideALength = length(sideA);
     const sideBLength = length(sideB);
@@ -137,9 +141,15 @@ export default class AngleTool extends BaseAnnotationTool {
   renderToolData(evt) {
     const eventData = evt.detail;
     const enabledElement = eventData.enabledElement;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      hideHandlesIfMoving,
+      renderDashed,
+    } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
     const toolData = getToolState(evt.currentTarget, this.name);
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     if (!toolData) {
       return;
@@ -174,12 +184,18 @@ export default class AngleTool extends BaseAnnotationTool {
           data.handles.middle
         );
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         drawJoinedLines(
           context,
           eventData.element,
           data.handles.start,
           [data.handles.middle, data.handles.end],
-          { color }
+          lineOptions
         );
 
         // Draw the handles
@@ -187,6 +203,7 @@ export default class AngleTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {

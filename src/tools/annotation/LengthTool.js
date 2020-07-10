@@ -17,6 +17,7 @@ import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -35,6 +36,9 @@ export default class LengthTool extends BaseAnnotationTool {
       svgCursor: lengthCursor,
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
+        renderDashed: false,
       },
     };
 
@@ -137,7 +141,12 @@ export default class LengthTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      hideHandlesIfMoving,
+      renderDashed,
+    } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -150,6 +159,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -164,16 +174,27 @@ export default class LengthTool extends BaseAnnotationTool {
 
         const color = toolColors.getColorIfActive(data);
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         // Draw the measurement line
-        drawLine(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
+        drawLine(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          lineOptions
+        );
 
         // Draw the handles
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {
