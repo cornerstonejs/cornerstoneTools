@@ -1057,6 +1057,12 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     this._deactivateModify(element);
 
+    //in the event that the tool data was deleted via mouse click, early out here to prevent errors downstream
+    const currentTool = this.configuration.currentTool;
+    if (!toolState.data.hasOwnProperty(currentTool)) {
+      return;
+    }
+
     this._dropHandle(eventData, toolState);
     this._endDrawing(element);
 
@@ -1076,12 +1082,6 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   _dropHandle(eventData, toolState) {
     const config = this.configuration;
     const currentTool = config.currentTool;
-
-    //prevent throwing when a contour is deleted via right click
-    if (!toolState.data.hasOwnProperty(currentTool)) {
-      return;
-    }
-
     const handles = toolState.data[currentTool].handles;
     const points = handles.points;
 
