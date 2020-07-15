@@ -1076,6 +1076,12 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   _dropHandle(eventData, toolState) {
     const config = this.configuration;
     const currentTool = config.currentTool;
+
+    //prevent throwing when a contour is deleted via right click
+    if (!toolState.data.hasOwnProperty(currentTool)) {
+      return;
+    }
+
     const handles = toolState.data[currentTool].handles;
     const points = handles.points;
 
