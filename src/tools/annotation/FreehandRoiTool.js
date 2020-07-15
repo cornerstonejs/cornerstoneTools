@@ -89,6 +89,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.style = null;
     this.selectedToolRoiId = null;
     this.visibleToolRoiIds = [];
+    this.contourSelectedCallback = null;
   }
 
   createNewMeasurement(eventData) {
@@ -138,6 +139,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     let { selectedContourToolRoiId, visibleToolRoiIds } = roiStates;
     this.selectedToolRoiId = selectedContourToolRoiId;
     this.visibleToolRoiIds = visibleToolRoiIds;
+  }
+
+  setContourSelectedCallback(contourSelectedCallback) {
+    this.contourSelectedCallback = contourSelectedCallback;
   }
 
   /**
@@ -641,6 +646,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
     const { element } = evt.detail;
     const toolState = getToolState(element, this.name);
+
+    if (this.contourSelectedCallback) {
+      this.contourSelectedCallback(evt.detail);
+    }
 
     if (handle.hasBoundingBox) {
       // Use default move handler.
