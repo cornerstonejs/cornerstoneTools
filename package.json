@@ -20,7 +20,8 @@
     "node": ">=8.16.0"
   },
   "scripts": {
-    "build:altis": "npm run clean:dist && npm run build:dev",
+    "build:altis": "npm run prepublishOnly && npm run copynota",
+    "copynota": "cp -a \"./dist/.\" \"../../web-dev/packages/nota/node_modules/cornerstone-tools/dist\"",
     "watch:altis": "nodemon",
     "build": "npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
