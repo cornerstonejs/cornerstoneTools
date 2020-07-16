@@ -648,7 +648,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const toolState = getToolState(element, this.name);
 
     let isLeftMousePress = buttons === 2;
-    if (isLeftMousePress && this.onContourRightClicked) {
+    let isActiveContour = this.contourBelongsToCurrentRoi(toolData.roi);
+    if (isLeftMousePress && isActiveContour && this.onContourRightClicked) {
       this.onContourRightClicked({ toolData, event });
       return;
     }
