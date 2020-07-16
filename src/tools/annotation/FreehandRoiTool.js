@@ -644,12 +644,12 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   }
 
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-    const { element, buttons } = evt.detail;
+    const { element, buttons, event } = evt.detail;
     const toolState = getToolState(element, this.name);
 
     let isLeftMousePress = buttons === 2;
     if (isLeftMousePress && this.onContourRightClicked) {
-      this.onContourRightClicked(toolData);
+      this.onContourRightClicked({ toolData, event });
       return;
     }
 
