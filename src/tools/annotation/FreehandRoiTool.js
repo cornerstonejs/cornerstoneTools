@@ -649,7 +649,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     let isLeftMousePress = buttons === 2;
     if (isLeftMousePress && this.contourSelectedCallback) {
-      this.contourSelectedCallback({ toolData, evt, interactionType });
+      this.contourSelectedCallback(toolData);
       return;
     }
 
