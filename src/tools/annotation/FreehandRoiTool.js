@@ -89,7 +89,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.style = null;
     this.selectedToolRoiId = null;
     this.visibleToolRoiIds = [];
-    this.contourSelectedCallback = null;
+    this.onContourRightClicked = null;
   }
 
   createNewMeasurement(eventData) {
@@ -141,8 +141,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.visibleToolRoiIds = visibleToolRoiIds;
   }
 
-  setContourSelectedCallback(contourSelectedCallback) {
-    this.contourSelectedCallback = contourSelectedCallback;
+  setOnContourRightClicked(onContourRightClicked) {
+    this.onContourRightClicked = onContourRightClicked;
   }
 
   /**
@@ -648,8 +648,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const toolState = getToolState(element, this.name);
 
     let isLeftMousePress = buttons === 2;
-    if (isLeftMousePress && this.contourSelectedCallback) {
-      this.contourSelectedCallback(toolData);
+    if (isLeftMousePress && this.onContourRightClicked) {
+      this.onContourRightClicked(toolData);
       return;
     }
 
