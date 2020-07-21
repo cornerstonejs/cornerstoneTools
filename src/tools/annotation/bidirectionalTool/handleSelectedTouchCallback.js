@@ -6,9 +6,12 @@ import {
   removeToolState,
   getToolState,
 } from './../../../stateManagement/toolState.js';
-import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
-import { moveAllHandles } from './../../../manipulators/index.js';
+import {
+  moveAllHandles,
+  anyHandlesOutsideDisplayedArea,
+  anyHandlesOutsideImage,
+  getHandleNearImagePoint,
+} from './../../../manipulators/index.js';
 import touchMoveHandle from './moveHandle/touchMoveHandle.js';
 
 export default function(evt) {
@@ -20,7 +23,10 @@ export default function(evt) {
 
   const handleDoneMove = handle => {
     data.invalidated = true;
-    if (anyHandlesOutsideImage(eventData, data.handles)) {
+    if (
+      anyHandlesOutsideImage(eventData, data.handles) ||
+      anyHandlesOutsideDisplayedArea(eventData, data.handles)
+    ) {
       // Delete the measurement
       removeToolState(element, this.name, data);
     }

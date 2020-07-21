@@ -1,9 +1,10 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
+import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { clipToBox } from '../util/clip.js';
+import { clip, clipToBox } from '../util/clip.js';
 import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
@@ -46,7 +47,9 @@ const _upOrEndEvents = {
  * @param {*} annotation
  * @param {*} handle
  * @param {*} [options={}]
+ * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
+ * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
  * @param {Boolean}  [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
  * @param {function} doneMovingCallback
@@ -64,7 +67,11 @@ export default function(
   // Use global defaults, unless overidden by provided options
   options = Object.assign(
     {
+      deleteIfHandleOutsideDisplayedArea:
+        state.deleteIfHandleOutsideDisplayedArea,
       deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
+      preventHandleOutsideDisplayedArea:
+        state.preventHandleOutsideDisplayedArea,
       preventHandleOutsideImage: state.preventHandleOutsideImage,
     },
     options
@@ -161,7 +168,7 @@ function _dragHandler(
   interactionType,
   evt
 ) {
-  const { image, currentPoints, element, buttons } = evt.detail;
+  const { viewport, image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
   const fingerOffset = -57;
   const targetLocation = external.cornerstone.pageToPixel(
@@ -178,7 +185,12 @@ function _dragHandler(
   // TODO: A way to not flip this for textboxes on annotations
   annotation.invalidated = true;
 
-  if (options.preventHandleOutsideImage) {
+  if (options.preventHandleOutsideDisplayedArea) {
+    const { tlhc, brhc } = viewport.displayedArea;
+
+    handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
+    handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
+  } else if (options.preventHandleOutsideImage) {
     clipToBox(handle, image);
   }
 
@@ -287,8 +299,10 @@ function _endHandler(
 
   // If any handle is outside the image, delete the tool data
   if (
-    options.deleteIfHandleOutsideImage &&
-    anyHandlesOutsideImage(evtDetail, annotation.handles)
+    (options.deleteIfHandleOutsideDisplayedArea &&
+      anyHandlesOutsideDisplayedArea(evtDetail, annotation.handles)) ||
+    (options.deleteIfHandleOutsideImage &&
+      anyHandlesOutsideImage(evtDetail, annotation.handles))
   ) {
     removeToolState(element, toolName, annotation);
   }
