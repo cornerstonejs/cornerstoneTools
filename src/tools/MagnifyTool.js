@@ -3,7 +3,6 @@ import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
 import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
 import { magnifyCursor } from './cursors/index.js';
-import { isDebuggerStatement } from '@babel/types';
 
 /**
  * @public
