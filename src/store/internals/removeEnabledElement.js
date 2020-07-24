@@ -77,7 +77,6 @@ const _removeAllToolsForElement = function(enabledElement) {
       setToolDisabledForElement(tool.element, tool.name);
     }
   });
-
   store.state.tools = store.state.tools.filter(
     tool => tool.element !== enabledElement
   );
