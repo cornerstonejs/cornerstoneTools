@@ -3,6 +3,7 @@ import { getNewContext } from '../drawing/index.js';
 import BaseTool from './base/BaseTool.js';
 import { hideToolCursor, setToolCursor } from '../store/setToolCursor.js';
 import { magnifyCursor } from './cursors/index.js';
+import { isDebuggerStatement } from '@babel/types';
 
 /**
  * @public
@@ -228,7 +229,7 @@ export default class MagnifyTool extends BaseTool {
    */
   _removeZoomElement() {
     if (this.zoomElement !== undefined) {
-      external.cornerstone.disable(this.zoomCanvas);
+      external.cornerstone.disable(this.zoomElement);
       this.zoomElement = undefined;
       this.zoomCanvas = undefined;
     }
