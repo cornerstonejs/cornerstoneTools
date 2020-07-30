@@ -46,6 +46,13 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     this.activeMouseUpCallback = this.activeMouseUpCallback.bind(this);
     this.activeTouchEndCallback = this.activeTouchEndCallback.bind(this);
     this.activeMouseDragCallback = this.activeMouseDragCallback.bind(this);
+
+    this.pushPending = false;
+    this.onRoiPushed = null;
+  }
+
+  setOnRoiPushed(onRoiPushed) {
+    this.onRoiPushed = onRoiPushed;
   }
 
   renderToolData(evt) {
@@ -159,6 +166,11 @@ export default class FreehandRoiSculptorTool extends BaseTool {
    */
   activeMouseUpCallback(evt) {
     this._activeEnd(evt);
+
+    if (this.onRoiPushed && this.pushPending) {
+      this.onRoiPushed();
+      this.pushPending = false;
+    }
   }
 
   /**
@@ -422,6 +434,8 @@ export default class FreehandRoiSculptorTool extends BaseTool {
       // If any handles have been pushed very close together or even overlap,
       // Combine these into a single handle.
       this._consolidateHandles();
+
+      this.pushPending = true;
     }
   }
 
