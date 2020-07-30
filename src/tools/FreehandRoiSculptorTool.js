@@ -168,7 +168,7 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     this._activeEnd(evt);
 
     if (this.onRoiPushed && this.pushPending) {
-      this.onRoiPushed();
+      this.onRoiPushed(evt);
       this.pushPending = false;
     }
   }
