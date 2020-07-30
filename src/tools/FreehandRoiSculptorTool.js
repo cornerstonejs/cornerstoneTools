@@ -50,10 +50,15 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     this.pushPending = false;
     this.pendingPushedRoi = null;
     this.onRoiPushed = null;
+    this.roi = null;
   }
 
   setOnRoiPushed(onRoiPushed) {
     this.onRoiPushed = onRoiPushed;
+  }
+
+  setCurrentRoi(roi) {
+    this.roi = roi;
   }
 
   renderToolData(evt) {
@@ -149,7 +154,14 @@ export default class FreehandRoiSculptorTool extends BaseTool {
       return;
     }
 
-    const points = toolState.data[config.currentTool].handles.points;
+    let { roi, handles } = toolState.data[config.currentTool];
+
+    // dont sculpt rois that aren't selected
+    if (!roi || !this.roi || roi.id !== this.roi.id) {
+      return;
+    }
+
+    const points = handles.points;
 
     // Set the mouseLocation handle
     this._getMouseLocation(eventData);
