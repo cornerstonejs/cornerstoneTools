@@ -48,6 +48,7 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     this.activeMouseDragCallback = this.activeMouseDragCallback.bind(this);
 
     this.pushPending = false;
+    this.pendingPushedRoi = null;
     this.onRoiPushed = null;
   }
 
@@ -167,9 +168,15 @@ export default class FreehandRoiSculptorTool extends BaseTool {
   activeMouseUpCallback(evt) {
     this._activeEnd(evt);
 
-    if (this.onRoiPushed && this.pushPending) {
-      this.onRoiPushed(evt);
+    if (this.onRoiPushed && this.pushPending && this.pendingPushedRoi) {
+      let {
+        detail: {
+          image: { imageId },
+        },
+      } = evt;
+      this.onRoiPushed({ imageId, roi: this.pendingPushedRoi });
       this.pushPending = false;
+      this.pendingPushedRoi = null;
     }
   }
 
@@ -360,6 +367,8 @@ export default class FreehandRoiSculptorTool extends BaseTool {
 
     for (let i = 0; i < data.length; i++) {
       if (i === toolIndex) {
+        let { roi } = data[i];
+        this.pendingPushedRoi = roi;
         data[i].active = true;
       } else {
         data[i].active = false;
