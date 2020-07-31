@@ -388,6 +388,22 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     }
   }
 
+  forceInitialiseSculpting(event, toolIndex) {
+    const eventData = event.detail;
+    const { element } = eventData;
+
+    const config = this.configuration;
+    if (config.currentTool === toolIndex) {
+      return;
+    }
+
+    config.currentTool = toolIndex;
+
+    hideToolCursor(element);
+
+    this.activateTool(eventData, config);
+  }
+
   /**
    * Choose the tool radius from the mouse position relative to the active freehand
    * tool, and begin sculpting.
@@ -399,7 +415,6 @@ export default class FreehandRoiSculptorTool extends BaseTool {
   _initialiseSculpting(evt) {
     const eventData = evt.detail;
     const config = this.configuration;
-    const element = eventData.element;
 
     if (config.currentTool === null) {
       this._selectFreehandTool(eventData);
@@ -408,6 +423,12 @@ export default class FreehandRoiSculptorTool extends BaseTool {
         return;
       }
     }
+
+    this.activateTool(eventData, config);
+  }
+
+  activateTool(eventData, config) {
+    let { element } = eventData;
 
     this._active = true;
 
@@ -420,7 +441,7 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     this._activateFreehandTool(element, config.currentTool);
     this._activateSculpt(element);
 
-    external.cornerstone.updateImage(eventData.element);
+    external.cornerstone.updateImage(element);
   }
 
   /**
