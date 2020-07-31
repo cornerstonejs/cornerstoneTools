@@ -97,19 +97,9 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     }
   }
 
-  doubleClickCallback(evt) {
-    const eventData = evt.detail;
+  doubleClickCallback(evt) {}
 
-    this._selectFreehandTool(eventData);
-    external.cornerstone.updateImage(eventData.element);
-  }
-
-  doubleTapCallback(evt) {
-    const eventData = evt.detail;
-
-    this._selectFreehandTool(eventData);
-    external.cornerstone.updateImage(eventData.element);
-  }
+  doubleTapCallback(evt) {}
 
   preTouchStartCallback(evt) {
     this._initialiseSculpting(evt);
