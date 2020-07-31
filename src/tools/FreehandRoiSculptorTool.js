@@ -97,9 +97,19 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     }
   }
 
-  doubleClickCallback(evt) {}
+  doubleClickCallback(evt) {
+    const eventData = evt.detail;
 
-  doubleTapCallback(evt) {}
+    this._selectFreehandTool(eventData);
+    external.cornerstone.updateImage(eventData.element);
+  }
+
+  doubleTapCallback(evt) {
+    const eventData = evt.detail;
+
+    this._selectFreehandTool(eventData);
+    external.cornerstone.updateImage(eventData.element);
+  }
 
   preTouchStartCallback(evt) {
     this._initialiseSculpting(evt);
@@ -345,6 +355,22 @@ export default class FreehandRoiSculptorTool extends BaseTool {
     );
 
     if (closestToolIndex === undefined) {
+      return;
+    }
+
+    const toolState = getToolState(element, this.referencedToolName);
+    if (!toolState) {
+      return;
+    }
+
+    const { data } = toolState;
+
+    let { roi } = data[closestToolIndex];
+    if (!roi) {
+      return;
+    }
+
+    if (!this.roi || this.roi.id !== roi.id) {
       return;
     }
 
