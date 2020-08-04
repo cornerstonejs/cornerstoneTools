@@ -130,23 +130,21 @@ export default function(
   // ==========================
   // ========  TOUCH ==========
   // ==========================
-  if (interactionType === 'touch') {
+  const touchOffset = state.handleTouchOffset;
+
+  if (interactionType === 'touch' && (touchOffset.x || touchOffset.y)) {
     runAnimation.value = true;
     const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    // Average pixel width of index finger is 45-57 pixels
-    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-    const fingerDistance = -57;
-
-    const aboveFinger = {
-      x: evtDetail.currentPoints.page.x,
-      y: evtDetail.currentPoints.page.y + fingerDistance,
+    const positionWithOffset = {
+      x: evtDetail.currentPoints.page.x + touchOffset.x,
+      y: evtDetail.currentPoints.page.y + touchOffset.y,
     };
 
     const targetLocation = external.cornerstone.pageToPixel(
       element,
-      aboveFinger.x,
-      aboveFinger.y
+      positionWithOffset.x,
+      positionWithOffset.y
     );
 
     _animate(handle, runAnimation, enabledElement, targetLocation);
@@ -163,11 +161,11 @@ function _dragHandler(
 ) {
   const { image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const touchOffset = state.handleTouchOffset;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
-    page.x,
-    interactionType === 'touch' ? page.y + fingerOffset : page.y
+    interactionType === 'touch' ? page.x + touchOffset.x : page.x,
+    interactionType === 'touch' ? page.y + touchOffset.y : page.y
   );
 
   runAnimation.value = false;
