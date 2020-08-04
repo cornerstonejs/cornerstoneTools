@@ -28,6 +28,7 @@ import { freehandRoiCursor } from '../cursors/index.js';
 import freehandUtils from '../../util/freehand/index.js';
 import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 const logger = getLogger('tools:annotation:FreehandRoiTool');
 
@@ -360,6 +361,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const lineWidth = toolStyle.getToolWidth();
+    const { renderDashed } = config;
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolState.data.length; i++) {
       const data = toolState.data[i];
@@ -384,25 +387,39 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           fillColor = toolColors.getToolColor();
         }
 
-        if (data.handles.points.length) {
-          for (let j = 0; j < data.handles.points.length; j++) {
-            const lines = [...data.handles.points[j].lines];
-            const points = data.handles.points;
+        let options = { color };
 
-            if (j === points.length - 1 && !data.polyBoundingBox) {
-              // If it's still being actively drawn, keep the last line to
-              // The mouse location
-              lines.push(config.mouseLocation.handles.start);
-            }
-            drawJoinedLines(context, element, data.handles.points[j], lines, {
-              color,
-            });
+        if (renderDashed) {
+          options.lineDash = lineDash;
+        }
+
+        if (data.handles.points.length) {
+          const points = data.handles.points;
+
+          drawJoinedLines(context, element, points[0], points, options);
+
+          if (data.polyBoundingBox) {
+            drawJoinedLines(
+              context,
+              element,
+              points[points.length - 1],
+              [points[0]],
+              options
+            );
+          } else {
+            drawJoinedLines(
+              context,
+              element,
+              points[points.length - 1],
+              [config.mouseLocation.handles.start],
+              options
+            );
           }
         }
 
         // Draw handles
 
-        const options = {
+        options = {
           color,
           fill: fillColor,
         };
@@ -1637,6 +1654,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_MODIFIED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };
@@ -1648,6 +1666,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const eventType = EVENTS.MEASUREMENT_COMPLETED;
     const eventData = {
       toolName: this.name,
+      toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
       element,
       measurementData,
     };
@@ -1826,6 +1845,7 @@ function defaultFreehandConfiguration() {
     currentHandle: 0,
     currentTool: -1,
     drawHandles: true,
+    renderDashed: false,
   };
 }
 

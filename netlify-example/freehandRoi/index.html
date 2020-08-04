@@ -20,16 +20,16 @@
 			</ul>
 
 			<!-- Select Active Tool -->
-      <ul class="tool-category active" data-tool-category="tools">
-        <li><a href="#" data-tool="FreehandRoi">FreehandRoi</a></li>
-        <li><a href="#" data-tool="FreehandRoiSculptor">FreehandRoiSculptor</a></li>
-        <li><a href="#" id="saveToolState">Save Freehand</a></li>
-        <li><a href="#" id="clearToolState">Clear Freehand</a></li>
-        <li><a href="#" id="loadToolState">Load Freehand State</a></li>
-      </ul>
+			<ul class="tool-category active" data-tool-category="tools">
+				<li><a href="#" data-tool="FreehandRoi">FreehandRoi</a></li>
+				<li><a href="#" data-tool="FreehandRoiSculptor">FreehandRoiSculptor</a></li>
+				<li><a href="#" id="saveToolState">Save Freehand</a></li>
+				<li><a href="#" id="clearToolState">Clear Freehand</a></li>
+				<li><a href="#" id="loadToolState">Load Freehand State</a></li>
+			</ul>
 			<ul class="tool-category" data-tool-category="mousewheel">
-				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-type="wheel">StackScrollMouseWheel</a></li>
-				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-type="wheel">ZoomMouseWheel</a></li>
+				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-interaction="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-interaction="wheel">ZoomMouseWheel</a></li>
 			</ul>
 
 			<!-- Our beautiful element targets -->
@@ -187,7 +187,8 @@
 							<td>
 								<input type="range" id="hoverCursorFadeAlpha" min="0" max="255">
 							</td>
-							<td>hoverCursorFadeAlpha - The alpha of the cursor when distant from the region, if showCursorOnHover and limitRadiusOutsideRegion are enabled.</td>
+							<td>hoverCursorFadeAlpha - The alpha of the cursor when distant from the region, if showCursorOnHover and
+								limitRadiusOutsideRegion are enabled.</td>
 						</tr>
 						<tr>
 							<td>
@@ -301,8 +302,8 @@
 			const mouseButtonMask = evt.buttons
 				? evt.buttons
 				: convertMouseEventWhichToButtons(evt.which)
-			const toolType = evt.target.getAttribute('data-tool-type')
-			setButtonActive(toolName, mouseButtonMask, toolType);
+			const toolInteraction = evt.target.getAttribute('data-tool-interaction')
+			setButtonActive(toolName, mouseButtonMask, toolInteraction);
 			cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
 
 			evt.preventDefault();
@@ -335,22 +336,22 @@
 		});
 	}
 
-	const setButtonActive = (toolName, mouseButtonMask, toolType) => {
+	const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
 		Array.from(toolButtons).forEach(toolBtn => {
 			// Classes we need to set & remove
 			let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
 			let touchIcon = `touch-1`
 
-			// Update classes depending on the toolType we clicked
-			if (toolType === 'none') {
+			// Update classes depending on the toolInteraction we clicked
+			if (toolInteraction === 'none') {
 				return;
-			} else if (toolType === 'multitouch') {
+			} else if (toolInteraction === 'multitouch') {
 				mouseButtonIcon = null;
 				touchIcon = 'touch-2';
-			} else if (toolType === 'pinch') {
+			} else if (toolInteraction === 'pinch') {
 				mouseButtonIcon = null;
 				touchIcon = 'touch-pinch';
-			} else if (toolType === 'wheel') {
+			} else if (toolInteraction === 'wheel') {
 				mouseButtonIcon = 'mousebutton-wheel';
 				touchIcon = null;
 			}
@@ -403,7 +404,7 @@
 	const freehandRoiTool = cornerstoneTools.getToolForElement(element, 'FreehandRoi');
 	const freehandRoiSculpterTool = cornerstoneTools.getToolForElement(element, 'FreehandRoiSculptor');
 
-	function freehandApiCall (opperation) {
+	function freehandApiCall(opperation) {
 		switch (opperation) {
 			case 'always-show-handles':
 				const alwaysShowHandles = freehandRoiTool.alwaysShowHandles;
@@ -467,24 +468,24 @@
 	});
 
 	hoverCursorFadeAlphaSlider.addEventListener('input', event => {
-		const normalisedAlpha = Number(event.target.value)/255.0;
+		const normalisedAlpha = Number(event.target.value) / 255.0;
 
 		freehandRoiSculptorTool.hoverCursorFadeAlpha = normalisedAlpha;
 	});
 
 	hoverCursorFadeDistanceSlider.addEventListener('input', event => {
 		// Slider transformed from (100 <-> 200) to (1.0 <-> 2.0).
-		const realValue = Math.floor(Number(event.target.value)/100.0);
+		const realValue = Math.floor(Number(event.target.value) / 100.0);
 
 		freehandRoiSculptorTool.hoverCursorFadeDistance = realValue;
 	});
 
-  const saveToolStateButton = document.getElementById('saveToolState');
-  const clearToolStateButton = document.getElementById('clearToolState');
-  const loadToolStateButton = document.getElementById('loadToolState');
-  let toolState = null;
+	const saveToolStateButton = document.getElementById('saveToolState');
+	const clearToolStateButton = document.getElementById('clearToolState');
+	const loadToolStateButton = document.getElementById('loadToolState');
+	let toolState = null;
 
-  saveToolStateButton.addEventListener('click', event => {
+	saveToolStateButton.addEventListener('click', event => {
 		const toolStateString = JSON.stringify(cornerstoneTools.getToolState(element, freehandRoiTool.name));
 
 		if (toolStateString) {
@@ -493,37 +494,37 @@
 		} else {
 			alert("nothing to save!");
 		}
-  });
+	});
 
-  clearToolStateButton.addEventListener('click', event => {
-    cornerstoneTools.clearToolState(element, freehandRoiTool.name);
+	clearToolStateButton.addEventListener('click', event => {
+		cornerstoneTools.clearToolState(element, freehandRoiTool.name);
 
-    cornerstone.updateImage(element);
-  });
+		cornerstone.updateImage(element);
+	});
 
-  loadToolStateButton.addEventListener('click', event => {
-    if (toolState) {
-      cornerstoneTools.clearToolState(element, freehandRoiTool.name);
+	loadToolStateButton.addEventListener('click', event => {
+		if (toolState) {
+			cornerstoneTools.clearToolState(element, freehandRoiTool.name);
 
-      toolState.data.forEach((data) => {
-        cornerstoneTools.addToolState(element, freehandRoiTool.name, data);
-      })
+			toolState.data.forEach((data) => {
+				cornerstoneTools.addToolState(element, freehandRoiTool.name, data);
+			})
 
 			cornerstone.updateImage(element);
 			alert('loaded');
-    } else {
-			alert ('Nothing has been saved!');
+		} else {
+			alert('Nothing has been saved!');
 		}
-  });
+	});
 
-  element.addEventListener('keydown', event => {
-  	if (event.keyCode === 27) {
-	  	freehandRoiTool.cancelDrawing(element);
-  	}
-  	if (event.keyCode === 13) {
-  		freehandRoiTool.completeDrawing(element)
-  	}
-  });
+	element.addEventListener('keydown', event => {
+		if (event.keyCode === 27) {
+			freehandRoiTool.cancelDrawing(element);
+		}
+		if (event.keyCode === 13) {
+			freehandRoiTool.completeDrawing(element)
+		}
+	});
 
 </script>
 

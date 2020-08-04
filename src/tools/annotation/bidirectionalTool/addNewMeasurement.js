@@ -8,12 +8,13 @@ import {
 } from './../../../stateManagement/toolState.js';
 import triggerEvent from '../../../util/triggerEvent.js';
 import getActiveTool from '../../../util/getActiveTool';
-import BaseAnnotationTool from '../../base/BaseAnnotationTool';
+import BidirectionalTool from '../BidirectionalTool';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
 
 export default function(evt, interactionType) {
   const eventData = evt.detail;
   const { element, image, buttons } = eventData;
+
   const config = this.configuration;
 
   if (checkPixelSpacing(image)) {
@@ -41,7 +42,12 @@ export default function(evt, interactionType) {
     end,
     {},
     interactionType,
-    () => {
+    success => {
+      if (!success) {
+        removeToolState(element, this.name, measurementData);
+
+        return;
+      }
       const { handles, longestDiameter, shortestDiameter } = measurementData;
       const hasHandlesOutside = anyHandlesOutsideImage(eventData, handles);
       const longestDiameterSize = parseFloat(longestDiameter) || 0;
@@ -72,12 +78,13 @@ export default function(evt, interactionType) {
 
       const activeTool = getActiveTool(element, buttons, interactionType);
 
-      if (activeTool instanceof BaseAnnotationTool) {
+      if (activeTool instanceof BidirectionalTool) {
         activeTool.updateCachedStats(image, element, measurementData);
       }
 
       const modifiedEventData = {
-        toolType: this.name,
+        toolName: this.name,
+        toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
         element,
         measurementData,
       };

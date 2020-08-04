@@ -6,7 +6,7 @@ jest.mock('./../externalModules.js');
 describe('imageIdSpecificStateManager.add', () => {
   it('creates the toolState and adds the data', () => {
     const stateManager = newImageIdSpecificToolStateManager();
-    const toolType = 'TestTool';
+    const toolName = 'TestTool';
     const imageId = 'abc123';
     const testElement = {
       image: {
@@ -17,16 +17,16 @@ describe('imageIdSpecificStateManager.add', () => {
     externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
       () => testElement
     );
-    stateManager.add(testElement, toolType, 'data1');
+    stateManager.add(testElement, toolName, 'data1');
 
     const allToolState = stateManager.saveToolState();
 
-    expect(allToolState[imageId][toolType].data).toContain('data1');
+    expect(allToolState[imageId][toolName].data).toContain('data1');
   });
 
   it('adds data to the existing toolState', () => {
     const stateManager = newImageIdSpecificToolStateManager();
-    const toolType = 'TestTool';
+    const toolName = 'TestTool';
     const imageId = 'abc123';
     const testElement = {
       image: {
@@ -40,15 +40,15 @@ describe('imageIdSpecificStateManager.add', () => {
 
     // Setup with some intial data
     stateManager.restoreImageIdToolState(imageId, {
-      [toolType]: { data: ['initialData'] },
+      [toolName]: { data: ['initialData'] },
     });
     // Add more data
-    stateManager.add(testElement, toolType, 'addedData');
+    stateManager.add(testElement, toolName, 'addedData');
 
     // Check the results
     const allToolState = stateManager.saveToolState();
 
-    expect(allToolState[imageId][toolType].data).toEqual(
+    expect(allToolState[imageId][toolName].data).toEqual(
       expect.arrayContaining(['initialData', 'addedData'])
     );
   });
@@ -56,7 +56,7 @@ describe('imageIdSpecificStateManager.add', () => {
   describe('when the image is not yet defined', () => {
     it('returns without adding the data', () => {
       const stateManager = newImageIdSpecificToolStateManager();
-      const toolType = 'TestTool';
+      const toolName = 'TestTool';
       const imageId = 'abc123';
       const testElement = {
         image: undefined,
@@ -67,7 +67,7 @@ describe('imageIdSpecificStateManager.add', () => {
       );
 
       // Add more data
-      stateManager.add(testElement, toolType, 'testData');
+      stateManager.add(testElement, toolName, 'testData');
 
       // Check the results
       const allToolState = stateManager.saveToolState();

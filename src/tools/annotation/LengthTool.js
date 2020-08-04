@@ -17,6 +17,7 @@ import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -35,6 +36,9 @@ export default class LengthTool extends BaseAnnotationTool {
       svgCursor: lengthCursor,
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
+        renderDashed: false,
       },
     };
 
@@ -137,7 +141,12 @@ export default class LengthTool extends BaseAnnotationTool {
 
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      hideHandlesIfMoving,
+      renderDashed,
+    } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -150,6 +159,7 @@ export default class LengthTool extends BaseAnnotationTool {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -164,16 +174,27 @@ export default class LengthTool extends BaseAnnotationTool {
 
         const color = toolColors.getColorIfActive(data);
 
+        const lineOptions = { color };
+
+        if (renderDashed) {
+          lineOptions.lineDash = lineDash;
+        }
+
         // Draw the measurement line
-        drawLine(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
+        drawLine(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          lineOptions
+        );
 
         // Draw the handles
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {
@@ -227,7 +248,15 @@ export default class LengthTool extends BaseAnnotationTool {
       });
     }
 
-    function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
+    // - SideEffect: Updates annotation 'suffix'
+    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+      const measuredValue = _sanitizeMeasuredValue(annotation.length);
+
+      // measured value is not defined, return empty string
+      if (!measuredValue) {
+        return '';
+      }
+
       // Set the length text suffix depending on whether or not pixelSpacing is available
       let suffix = 'mm';
 
@@ -235,9 +264,9 @@ export default class LengthTool extends BaseAnnotationTool {
         suffix = 'pixels';
       }
 
-      data.unit = suffix;
+      annotation.unit = suffix;
 
-      return `${data.length.toFixed(2)} ${suffix}`;
+      return `${measuredValue.toFixed(2)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
@@ -249,4 +278,18 @@ export default class LengthTool extends BaseAnnotationTool {
       return [handles.start, midpoint, handles.end];
     }
   }
+}
+
+/**
+ * Attempts to sanitize a value by casting as a number; if unable to cast,
+ * we return `undefined`
+ *
+ * @param {*} value
+ * @returns a number or undefined
+ */
+function _sanitizeMeasuredValue(value) {
+  const parsedValue = Number(value);
+  const isNumber = !isNaN(parsedValue);
+
+  return isNumber ? parsedValue : undefined;
 }
