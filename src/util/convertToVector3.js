@@ -14,8 +14,10 @@ export default function convertToVector3(arrayOrVector3) {
   if (arrayOrVector3 instanceof cornerstoneMath.Vector3) {
     return arrayOrVector3;
   }
-  const keys = Object.keys(arrayOrVector3)
-  if(keys.includes('x') && keys.includes('y') && keys.includes('z')){
+
+  const keys = Object.keys(arrayOrVector3);
+
+  if (keys.includes('x') && keys.includes('y') && keys.includes('z')) {
     return new cornerstoneMath.Vector3(
       arrayOrVector3.x,
       arrayOrVector3.y,
