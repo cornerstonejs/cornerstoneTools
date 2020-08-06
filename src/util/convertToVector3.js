@@ -15,6 +15,16 @@ export default function convertToVector3(arrayOrVector3) {
     return arrayOrVector3;
   }
 
+  const keys = Object.keys(arrayOrVector3);
+
+  if (keys.includes('x') && keys.includes('y') && keys.includes('z')) {
+    return new cornerstoneMath.Vector3(
+      arrayOrVector3.x,
+      arrayOrVector3.y,
+      arrayOrVector3.z
+    );
+  }
+
   return new cornerstoneMath.Vector3(
     arrayOrVector3[0],
     arrayOrVector3[1],
