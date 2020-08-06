@@ -75,7 +75,6 @@ export default function(context, textLines, x, y, color, options = {}) {
 
     // Draw the background box with padding
     if (options.centering) {
-      // Draw the background box with padding
       if (options.centering.x === true) {
         x -= boundingBox.width / 2;
       }
