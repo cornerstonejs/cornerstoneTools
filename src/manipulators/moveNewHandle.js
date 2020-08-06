@@ -154,11 +154,11 @@ function _moveHandler(
   options.hasMoved = true;
 
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const touchOffset = state.handleTouchOffset;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
-    interactionType === 'touch' ? page.x + fingerOffset : page.x,
-    interactionType === 'touch' ? page.y + fingerOffset : page.y
+    interactionType === 'touch' ? page.x + touchOffset.x : page.x,
+    interactionType === 'touch' ? page.y + touchOffset.y : page.y
   );
 
   annotation.invalidated = true;
@@ -242,11 +242,11 @@ function _moveEndHandler(
   }
 
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const touchOffset = state.handleTouchOffset;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
-    interactionType === 'touch' ? page.x + fingerOffset : page.x,
-    interactionType === 'touch' ? page.y + fingerOffset : page.y
+    interactionType === 'touch' ? page.x + touchOffset.x : page.x,
+    interactionType === 'touch' ? page.y + touchOffset.y : page.y
   );
 
   // "Release" the handle
