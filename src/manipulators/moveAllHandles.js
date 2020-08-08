@@ -10,6 +10,7 @@ import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
 import { getModule } from '../store';
+import getHandleMovingOptions from './getHandleMovingOptions.js';
 
 const logger = getLogger('manipulators:moveAllHandles');
 
@@ -56,22 +57,11 @@ export default function(
   toolName,
   annotation,
   handle,
-  options = {},
+  options,
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  // Use global defaults, unless overidden by provided options
-  options = Object.assign(
-    {
-      deleteIfHandleOutsideDisplayedArea:
-        state.deleteIfHandleOutsideDisplayedArea,
-      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
-      preventHandleOutsideDisplayedArea:
-        state.preventHandleOutsideDisplayedArea,
-      preventHandleOutsideImage: state.preventHandleOutsideImage,
-    },
-    options
-  );
+  options = getHandleMovingOptions(options);
 
   const dragHandler = _dragHandler.bind(
     this,
