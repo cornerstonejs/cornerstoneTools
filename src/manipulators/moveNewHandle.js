@@ -1,8 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea';
-import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
-import { removeToolState } from '../stateManagement/toolState.js';
+import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
 import triggerEvent from '../util/triggerEvent.js';
 import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
@@ -146,7 +144,7 @@ function _moveHandler(
   interactionType,
   evt
 ) {
-  const { currentPoints, viewport, image, element, buttons } = evt.detail;
+  const { currentPoints, image, element, buttons } = evt.detail;
 
   options.hasMoved = true;
 
@@ -275,17 +273,7 @@ function _moveEndHandler(
   // }
 
   clipHandle(handle, options);
-
-  // If any handle is outside the image, delete the tool data
-  if (
-    (options.deleteIfHandleOutsideDisplayedArea &&
-      anyHandlesOutsideDisplayedArea(evt.detail, annotation.handles)) ||
-    (options.deleteIfHandleOutsideImage &&
-      anyHandlesOutsideImage(evt.detail, annotation.handles))
-  ) {
-    annotation.cancelled = true;
-    removeToolState(element, toolName, annotation);
-  }
+  deleteIfHandleOutsideLimits(toolName, annotation, options);
 
   _endHandler(
     interactionType,

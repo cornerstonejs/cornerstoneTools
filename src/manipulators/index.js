@@ -1,6 +1,7 @@
 import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea.js';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import clipHandle from './clipHandle.js';
+import deleteIfHandleOutsideDisplayedArea from './deleteIfHandleOutsideDisplayedArea.js';
 import getHandleMovingOptions from './getHandleMovingOptions.js';
 import getHandleNearImagePoint from './getHandleNearImagePoint.js';
 import handleActivator from './handleActivator.js';
@@ -12,6 +13,7 @@ export {
   anyHandlesOutsideDisplayedArea,
   anyHandlesOutsideImage,
   clipHandle,
+  deleteIfHandleOutsideDisplayedArea,
   getHandleMovingOptions,
   getHandleNearImagePoint,
   handleActivator,

@@ -1,8 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea.js';
-import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
-import { removeToolState } from '../stateManagement/toolState.js';
+import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
 import triggerEvent from '../util/triggerEvent.js';
 import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
@@ -280,15 +278,7 @@ function _endHandler(
     element.removeEventListener(eventType, upOrEndHandler);
   });
 
-  // If any handle is outside the image, delete the tool data
-  if (
-    (options.deleteIfHandleOutsideDisplayedArea &&
-      anyHandlesOutsideDisplayedArea(evtDetail, annotation.handles)) ||
-    (options.deleteIfHandleOutsideImage &&
-      anyHandlesOutsideImage(evtDetail, annotation.handles))
-  ) {
-    removeToolState(element, toolName, annotation);
-  }
+  deleteIfHandleOutsideLimits(toolName, annotation, options);
 
   // // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
   // if (evt.type === EVENTS.TOUCH_PRESS) {

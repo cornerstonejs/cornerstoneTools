@@ -1,8 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea.js';
-import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
-import { removeToolState } from '../stateManagement/toolState.js';
+import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
 import triggerEvent from '../util/triggerEvent.js';
 import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
@@ -201,15 +199,7 @@ function _upOrEndHandler(
 
   manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
-  // If any handle is outside the image or displayArea, delete the tool data
-  if (
-    (options.deleteIfHandleOutsideDisplayedArea &&
-      anyHandlesOutsideDisplayedArea(eventData, annotation.handles)) ||
-    (options.deleteIfHandleOutsideImage &&
-      anyHandlesOutsideImage(eventData, annotation.handles))
-  ) {
-    removeToolState(element, toolName, annotation);
-  }
+  deleteIfHandleOutsideLimits(toolName, annotation, options);
 
   _endHandler(
     annotation,

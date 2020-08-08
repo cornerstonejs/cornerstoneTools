@@ -1,18 +1,13 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
-import { state } from '../../store/index.js';
 import {
   moveNewHandle,
-  anyHandlesOutsideDisplayedArea,
-  anyHandlesOutsideImage,
+  getHandleMovingOptions,
 } from '../../manipulators/index.js';
-import {
-  addToolState,
-  removeToolState,
-} from '../../stateManagement/toolState.js';
+import { addToolState } from '../../stateManagement/toolState.js';
 import triggerEvent from '../../util/triggerEvent.js';
 import { getLogger } from '../../util/logger.js';
-import getDefault from '../../util/getDefault.js';
+import deleteIfHandleOutsideLimits from '../../manipulators/deleteIfHandleOutsideLimits.js';
 
 const logger = getLogger('eventDispatchers:touchEventHandlers');
 
@@ -41,24 +36,9 @@ export default function(evt, tool) {
     handles.end.active = false;
     handles.end.highlight = false;
 
-    const deleteIfHandleOutsideDisplayedArea = getDefault(
-      tool.options.deleteIfHandleOutsideDisplayedArea,
-      state.deleteIfHandleOutsideDisplayedArea
-    );
-    const deleteIfHandleOutsideImage = getDefault(
-      tool.options.deleteIfHandleOutsideImage,
-      state.deleteIfHandleOutsideImage
-    );
+    const options = getHandleMovingOptions(tool.options);
 
-    if (
-      (deleteIfHandleOutsideDisplayedArea &&
-        anyHandlesOutsideDisplayedArea(touchEventData, handles)) ||
-      (deleteIfHandleOutsideImage &&
-        anyHandlesOutsideImage(touchEventData, handles))
-    ) {
-      // Delete the measurement
-      removeToolState(element, tool.name, measurementData);
-    }
+    deleteIfHandleOutsideLimits(tool.name, measurementData, options);
 
     external.cornerstone.updateImage(element);
 
