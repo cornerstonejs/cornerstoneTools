@@ -1,4 +1,4 @@
-import getHandleMovingOptions from './getHandleMovingOptions';
+import { clipToBox, clip } from '../util/clip';
 
 /**
  * Clip the handle inside the image or displayed area's boundaries depending on

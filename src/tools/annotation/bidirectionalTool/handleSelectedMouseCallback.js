@@ -2,15 +2,12 @@
 import external from './../../../externalModules.js';
 import { state } from '../../../store/index.js';
 import EVENTS from './../../../events.js';
+import { getToolState } from './../../../stateManagement/toolState.js';
 import {
-  removeToolState,
-  getToolState,
-} from './../../../stateManagement/toolState.js';
-import {
+  deleteIfHandleOutsideLimits,
   moveAllHandles,
-  anyHandlesOutsideDisplayedArea,
-  anyHandlesOutsideImage,
   getHandleNearImagePoint,
+  getHandleMovingOptions,
 } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
@@ -25,14 +22,11 @@ export default function(evt) {
   const distanceThreshold = state.clickProximity;
 
   const handleDoneMove = handle => {
+    const options = getHandleMovingOptions(this.options);
+
     data.invalidated = true;
-    if (
-      anyHandlesOutsideImage(eventData, data.handles) ||
-      anyHandlesOutsideDisplayedArea(eventData, data.handles)
-    ) {
-      // Delete the measurement
-      removeToolState(element, this.name, data);
-    }
+
+    deleteIfHandleOutsideLimits(this.name, data, options);
 
     // Update the handles to keep selected state
     if (handle) {

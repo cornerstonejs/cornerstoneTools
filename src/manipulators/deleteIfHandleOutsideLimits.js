@@ -1,4 +1,8 @@
 import { removeToolState } from '../stateManagement/toolState.js';
+import {
+  anyHandlesOutsideDisplayedArea,
+  anyHandlesOutsideImage,
+} from './index.js';
 
 /**
  * Delete the measurement if it has any handle outside the image or displayed

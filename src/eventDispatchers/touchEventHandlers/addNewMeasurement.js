@@ -1,13 +1,13 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
 import {
+  deleteIfHandleOutsideLimits,
   moveNewHandle,
   getHandleMovingOptions,
 } from '../../manipulators/index.js';
 import { addToolState } from '../../stateManagement/toolState.js';
 import triggerEvent from '../../util/triggerEvent.js';
 import { getLogger } from '../../util/logger.js';
-import deleteIfHandleOutsideLimits from '../../manipulators/deleteIfHandleOutsideLimits.js';
 
 const logger = getLogger('eventDispatchers:touchEventHandlers');
 
