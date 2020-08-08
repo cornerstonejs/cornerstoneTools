@@ -138,7 +138,7 @@ function _dragHandler(toolName, annotation, options, interactionType, evt) {
     handle.x += x;
     handle.y += y;
 
-    clipHandle(handle, options);
+    clipHandle(evt.detail, handle, options);
   }
 
   external.cornerstone.updateImage(element);
@@ -199,7 +199,7 @@ function _upOrEndHandler(
 
   manipulatorStateModule.setters.removeActiveManipulatorForElement(element);
 
-  deleteIfHandleOutsideLimits(toolName, annotation, options);
+  deleteIfHandleOutsideLimits(eventData, toolName, annotation, options);
 
   _endHandler(
     annotation,

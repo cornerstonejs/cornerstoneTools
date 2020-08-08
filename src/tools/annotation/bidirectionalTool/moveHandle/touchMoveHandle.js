@@ -40,7 +40,7 @@ export default function(
       setHandlesPosition(handle, eventData, data, distanceFromTool);
     }
 
-    clipHandle(handle, { preventHandleOutsideImage });
+    clipHandle(eventData, handle, { preventHandleOutsideImage });
 
     data.invalidated = true;
 

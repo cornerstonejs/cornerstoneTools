@@ -38,7 +38,12 @@ export default function(evt, tool) {
 
     const options = getHandleMovingOptions(tool.options);
 
-    deleteIfHandleOutsideLimits(tool.name, measurementData, options);
+    deleteIfHandleOutsideLimits(
+      touchEventData,
+      tool.name,
+      measurementData,
+      options
+    );
 
     external.cornerstone.updateImage(element);
 

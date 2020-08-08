@@ -26,7 +26,7 @@ export default function(evt) {
 
     data.invalidated = true;
 
-    deleteIfHandleOutsideLimits(this.name, data, options);
+    deleteIfHandleOutsideLimits(eventData, this.name, data, options);
 
     // Update the handles to keep selected state
     if (handle) {

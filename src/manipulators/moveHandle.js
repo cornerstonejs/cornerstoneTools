@@ -173,7 +173,7 @@ function _dragHandler(
   // TODO: A way to not flip this for textboxes on annotations
   annotation.invalidated = true;
 
-  clipHandle(handle, options);
+  clipHandle(evt.detail, handle, options);
 
   external.cornerstone.updateImage(element);
 
@@ -278,7 +278,7 @@ function _endHandler(
     element.removeEventListener(eventType, upOrEndHandler);
   });
 
-  deleteIfHandleOutsideLimits(toolName, annotation, options);
+  deleteIfHandleOutsideLimits(evtDetail, toolName, annotation, options);
 
   // // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
   // if (evt.type === EVENTS.TOUCH_PRESS) {

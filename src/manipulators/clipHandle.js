@@ -8,15 +8,18 @@ import { clipToBox, clip } from '../util/clip';
  * @function clipHandle
  * @memberof Manipulators
  *
+ * @param {Object} eventData - Data object associated with the event.
+ * @param {Object} handle - The handle to be clipped
  * @param {Object} options - An object containing the handles' moving options
+ * @returns {void}
  */
-export default function(handle, options = {}) {
+export default function(eventData, handle, options = {}) {
   if (options.preventHandleOutsideDisplayedArea) {
-    const { tlhc, brhc } = viewport.displayedArea;
+    const { tlhc, brhc } = eventData.viewport.displayedArea;
 
     handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
     handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
   } else if (options.preventHandleOutsideImage) {
-    clipToBox(handle, evt.detail.image);
+    clipToBox(handle, eventData.image);
   }
 }

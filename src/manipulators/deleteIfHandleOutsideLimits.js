@@ -12,19 +12,21 @@ import {
  * @function deleteIfHandleOutsideLimits
  * @memberof Manipulators
  *
+ * @param {Object} eventData - Data object associated with the event.
  * @param {string} toolName - The tool which the annotation belongs to
  * @param {Object} annotation - The annotation to have its handles verified
  * @param {Object} options - An object containing the handles' moving options
+ * @returns {void}
  */
-export default function(toolName, annotation, options = {}) {
+export default function(eventData, toolName, annotation, options = {}) {
   // If any handle is outside the image, delete the tool data
   if (
     (options.deleteIfHandleOutsideDisplayedArea &&
-      anyHandlesOutsideDisplayedArea(evt.detail, annotation.handles)) ||
+      anyHandlesOutsideDisplayedArea(eventData, annotation.handles)) ||
     (options.deleteIfHandleOutsideImage &&
-      anyHandlesOutsideImage(evt.detail, annotation.handles))
+      anyHandlesOutsideImage(eventData, annotation.handles))
   ) {
     annotation.cancelled = true;
-    removeToolState(element, toolName, annotation);
+    removeToolState(eventData.element, toolName, annotation);
   }
 }

@@ -161,7 +161,7 @@ function _moveHandler(
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
-  clipHandle(handle, options);
+  clipHandle(evt.detail, handle, options);
 
   external.cornerstone.updateImage(element);
 
@@ -272,8 +272,8 @@ function _moveEndHandler(
   //   return;
   // }
 
-  clipHandle(handle, options);
-  deleteIfHandleOutsideLimits(toolName, annotation, options);
+  clipHandle(eventData, handle, options);
+  deleteIfHandleOutsideLimits(eventData, toolName, annotation, options);
 
   _endHandler(
     interactionType,
