@@ -5,6 +5,7 @@ import BaseBrushTool from './tools/base/BaseBrushTool.js';
 import {
   anyHandlesOutsideImage,
   anyHandlesOutsideDisplayedArea,
+  clipHandle,
   getHandleMovingOptions,
   getHandleNearImagePoint,
   handleActivator,
@@ -102,6 +103,7 @@ export const lib = {
 
   'manipulators/anyHandlesOutsideDisplayedArea': anyHandlesOutsideDisplayedArea,
   'manipulators/anyHandlesOutsideImage': anyHandlesOutsideImage,
+  'manipulators/clipHandle': clipHandle,
   'manipulators/getHandleMovingOptions': getHandleMovingOptions,
   'manipulators/getHandleNearImagePoint': getHandleNearImagePoint,
   'manipulators/handleActivator': handleActivator,

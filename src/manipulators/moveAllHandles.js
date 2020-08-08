@@ -4,7 +4,7 @@ import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea.js'
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { clip, clipToBox } from '../util/clip.js';
+import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
@@ -43,7 +43,7 @@ const _upOrEndEvents = {
  * @param {String}   toolName
  * @param {*}        annotation
  * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
- * @param {Object}   [options={}]
+ * @param {Object}   [options]
  * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
  * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
@@ -114,14 +114,8 @@ export default function(
   });
 }
 
-function _dragHandler(
-  toolName,
-  annotation,
-  options = {},
-  interactionType,
-  evt
-) {
-  const { element, viewport, image, buttons } = evt.detail;
+function _dragHandler(toolName, annotation, options, interactionType, evt) {
+  const { element, image, buttons } = evt.detail;
   const { x, y } = evt.detail.deltaPoints.image;
 
   annotation.active = true;
@@ -146,14 +140,7 @@ function _dragHandler(
     handle.x += x;
     handle.y += y;
 
-    if (options.preventHandleOutsideDisplayedArea) {
-      const { tlhc, brhc } = viewport.displayedArea;
-
-      handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
-      handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
-    } else if (options.preventHandleOutsideImage) {
-      clipToBox(handle, image);
-    }
+    clipHandle(handle, options);
   }
 
   external.cornerstone.updateImage(element);
@@ -180,7 +167,7 @@ function _dragHandler(
 
 function _cancelEventHandler(
   annotation,
-  options = {},
+  options,
   interactionType,
   { dragHandler, upOrEndHandler },
   element,
@@ -203,7 +190,7 @@ function _cancelEventHandler(
 function _upOrEndHandler(
   toolName,
   annotation,
-  options = {},
+  options,
   interactionType,
   { dragHandler, upOrEndHandler },
   evt,
@@ -240,7 +227,7 @@ function _upOrEndHandler(
 
 function _endHandler(
   annotation,
-  options = {},
+  options,
   interactionType,
   { dragHandler, upOrEndHandler },
   element,

@@ -4,7 +4,7 @@ import anyHandlesOutsideDisplayedArea from './anyHandlesOutsideDisplayedArea';
 import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
 import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { clip, clipToBox } from '../util/clip.js';
+import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
@@ -37,7 +37,7 @@ const _moveEndEvents = {
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
- * @param {*} [options={}]
+ * @param {*} [options]
  * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
  * @param {Boolean}  [options.deleteIfHandleOutsideImage]
  * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
@@ -163,14 +163,7 @@ function _moveHandler(
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
-  if (options.preventHandleOutsideDisplayedArea) {
-    const { tlhc, brhc } = viewport.displayedArea;
-
-    handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
-    handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
-  } else if (options.preventHandleOutsideImage) {
-    clipToBox(handle, image);
-  }
+  clipHandle(handle, options);
 
   external.cornerstone.updateImage(element);
 
@@ -237,7 +230,7 @@ function _moveEndHandler(
   doneMovingCallback
 ) {
   const eventData = evt.detail;
-  const { element, viewport, currentPoints } = eventData;
+  const { element, currentPoints } = eventData;
 
   if (options.hasMoved === false) {
     return;
@@ -281,14 +274,7 @@ function _moveEndHandler(
   //   return;
   // }
 
-  if (options.preventHandleOutsideDisplayedArea) {
-    const { tlhc, brhc } = viewport.displayedArea;
-
-    handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
-    handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
-  } else if (options.preventHandleOutsideImage) {
-    clipToBox(handle, evt.detail.image);
-  }
+  clipHandle(handle, options);
 
   // If any handle is outside the image, delete the tool data
   if (
