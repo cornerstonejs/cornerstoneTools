@@ -1,3 +1,4 @@
+import external from '../externalModules.js';
 import { state } from './../store/index.js';
 
 /**
