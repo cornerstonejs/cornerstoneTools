@@ -85,11 +85,8 @@ export default function(
   path(context, options, context => {
     context.moveTo(corner1.x, corner1.y);
     context.lineTo(corner3.x, corner3.y);
-    context.moveTo(corner3.x, corner3.y);
     context.lineTo(corner2.x, corner2.y);
-    context.moveTo(corner2.x, corner2.y);
     context.lineTo(corner4.x, corner4.y);
-    context.moveTo(corner4.x, corner4.y);
     context.lineTo(corner1.x, corner1.y);
   });
 }
