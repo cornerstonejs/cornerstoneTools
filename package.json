@@ -1,20 +1,23 @@
 {
   "name": "cornerstone-tools",
-  "version": "4.8.2",
+  "version": "1.0.0",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
+  "publishConfig": {
+    "registry": "http://npm.altislabs.com:4873"
+  },
   "keywords": [
     "DICOM",
     "medical",
     "imaging",
     "cornerstone"
   ],
-  "author": "https://github.com/cornerstonejs/cornerstoneTools#contributors",
-  "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
+  "author": "Altis Labs",
+  "homepage": "https://github.com/altis-labs/cornerstoneTools",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
+    "url": "https://github.com/altis-labs/cornerstoneTools.git"
   },
   "engines": {
     "node": ">=8.16.0"
