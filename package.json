@@ -1,5 +1,5 @@
 {
-  "name": "cornerstone-tools",
+  "name": "@altis/cornerstone-tools",
   "version": "1.0.0",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
