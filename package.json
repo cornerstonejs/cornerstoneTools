@@ -4,7 +4,7 @@
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "publishConfig": {
-    "registry": "http://npm.altislabs.com:4873"
+    "registry": "https://npm.altislabs.com"
   },
   "keywords": [
     "DICOM",
