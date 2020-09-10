@@ -24,15 +24,19 @@ export function clip(val, low, high) {
  * @returns {void}
  */
 export function clipToBox(point, box) {
-  // Clip an {x, y} point to a box of size {width, height}
-  point.x = clip(point.x, box.left || 0, box.width);
-  point.y = clip(point.y, box.top || 0, box.height);
+  // Clip an {x, y} point to a box {top, left, width, height}
+  const left = box.left || 0;
+  const top = box.top || 0;
+
+  point.x = clip(point.x, left, left + box.width);
+  point.y = clip(point.y, top, top + box.height);
 }
 
 /**
  * Returns a new bounding box of rotated text box, relative to the pixel
  * coordinate system. It will get the coordinate of the 4 points of the rotated
- * text box and calculate the lower and upper boundaries for `x` and `y` axes.
+ * text box and calculate the AABB (axis-aligned bounding box - lower and upper
+ * boundaries for `x` and `y` axes).
  *
  * @param {HTMLElement} element The element to manipulate pixel positioning
  * @param {Object} box - `{ left, top, width, height }` in canvas coordinates
