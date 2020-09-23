@@ -56,27 +56,15 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
 
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
-    this.style = null;
-    this.visibleToolRoiIds = [];
-    this.toolRoiSavedStatuses = null;
+    this.drawSettings = {
+      color: 'rgb(255, 0, 0)',
+      lineWidth: 2,
+      drawHandles: true,
+    };
   }
 
-  setCurrentRoi(roi) {
-    this.roi = roi;
-  }
-
-  setStyle(style) {
-    this.style = style;
-  }
-
-  setToolRoiStates(roiStates) {
-    let { toolRoiSavedStatuses, visibleToolRoiIds } = roiStates;
-    this.toolRoiSavedStatuses = toolRoiSavedStatuses;
-    this.visibleToolRoiIds = visibleToolRoiIds;
-  }
-
-  setPassiveRoi(roi) {
-    this.passiveRoi = roi;
+  setDrawSettings(drawSettings) {
+    this.drawSettings = drawSettings;
   }
 
   setDataInvalidatedCallback(dataInvalidatedCallback) {
@@ -100,7 +88,6 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
       active: true,
       color: undefined,
       invalidated: true,
-      roi: this.roi,
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -223,35 +210,11 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
       for (let i = 0; i < toolData.data.length; i++) {
         const data = toolData.data[i];
 
-        let { roi } = data;
-
-        let isRoiVisible = this.isRoiVisible(roi);
-
-        if (!roi || !isRoiVisible || data.visible === false) {
+        if (data.visible === false) {
           continue;
         }
 
-        const isCurrentRoi = this.isOnCurrentRoi(roi);
-
-        const isRoiSaved = this.isRoiSaved(roi, this.toolRoiSavedStatuses);
-
-        const isRoiSelected = this.isRoiSelected(
-          roi,
-          this.toolRoiSavedStatuses
-        );
-
-        const style = isCurrentRoi
-          ? isRoiSaved
-            ? this.style.activeSaved
-            : this.style.activeUnsaved
-          : isRoiSaved
-          ? this.style.passiveSaved
-          : this.style.passiveUnsaved;
-
-        const color = style.color;
-        const lineWidth = isRoiSelected
-          ? this.style.selectedLineWidth
-          : style.lineWidth;
+        const { color, lineWidth, drawHandles } = this.drawSettings;
 
         // Configure
         const handleOptions = {
@@ -276,7 +239,7 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
 
-        if (isCurrentRoi) {
+        if (drawHandles) {
           drawHandles(context, eventData, data.handles, handleOptions);
         }
 
@@ -342,48 +305,12 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
     });
   }
 
-  isOnCurrentRoi(roi) {
-    return this.roi && this.roi.id === roi.id;
-  }
-
-  isRoiSaved(roi, toolRoiSavedStatuses) {
-    if (!toolRoiSavedStatuses) {
-      return true;
-    }
-
-    return toolRoiSavedStatuses.savedToolRoiIds.some(id => id === roi.id);
-  }
-
-  isRoiSelected(roi, toolRoiSavedStatuses) {
-    if (!toolRoiSavedStatuses) {
-      return false;
-    }
-
-    return toolRoiSavedStatuses.selectedToolRoiId === roi.id;
-  }
-
-  isOnPassiveRoi(roi) {
-    return this.passiveRoi && this.passiveRoi.id === roi.id;
-  }
-
-  isRoiVisible(roi) {
-    if (!roi) {
-      return false;
-    }
-
-    return this.visibleToolRoiIds.includes(roi.id);
-  }
-
   handleSelectedCallback(evt, toolData, handle, interactionType = 'mouse') {
-    if (this.isOnCurrentRoi(toolData.roi)) {
-      moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
-    }
+    moveHandleNearImagePoint(evt, this, toolData, handle, interactionType);
   }
 
   toolSelectedCallback(evt, annotation, interactionType = 'mouse') {
-    if (this.isOnCurrentRoi(annotation.roi)) {
-      moveAnnotation(evt, this, annotation, interactionType);
-    }
+    moveAnnotation(evt, this, annotation, interactionType);
   }
 }
 
