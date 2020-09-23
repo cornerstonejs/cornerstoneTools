@@ -56,15 +56,16 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
 
     this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
 
-    this.drawSettings = {
+    this.renderSettings = {
       color: 'rgb(255, 0, 0)',
       lineWidth: 2,
-      drawHandles: true,
+      renderHandles: true,
+      visible: true,
     };
   }
 
-  setDrawSettings(drawSettings) {
-    this.drawSettings = drawSettings;
+  setRenderSettings(renderSettings) {
+    this.renderSettings = renderSettings;
   }
 
   setDataInvalidatedCallback(dataInvalidatedCallback) {
@@ -88,6 +89,7 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
       active: true,
       color: undefined,
       invalidated: true,
+      roi: { id: this.name },
       handles: {
         start: {
           x: eventData.currentPoints.image.x,
@@ -214,7 +216,7 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
           continue;
         }
 
-        const { color, lineWidth, drawHandles } = this.drawSettings;
+        const { color, lineWidth, renderHandles } = this.renderSettings;
 
         // Configure
         const handleOptions = {
@@ -239,7 +241,7 @@ export default class EllipticalProbeTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
 
-        if (drawHandles) {
+        if (renderHandles) {
           drawHandles(context, eventData, data.handles, handleOptions);
         }
 
