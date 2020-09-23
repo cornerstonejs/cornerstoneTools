@@ -32,6 +32,10 @@
 - [Examples & Docs](#examples--docs)
 - [Contributing][contributing]
 
+## Altis Versioning
+
+This version of cornerstoneTools (v1.0.0) is based off of cornerstonejs v4.0.1
+
 ## The problem
 
 Building one or two tools on top of [Cornerstone.js](https://github.com/cornerstonejs/cornerstone/) is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:
