@@ -24,6 +24,8 @@ export default class RotateTool extends BaseTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         roundAngles: false,
+        flipHorizontal: false,
+        flipVertical: false,
       },
       svgCursor: rotateCursor,
     };
@@ -92,7 +94,7 @@ function defaultStrategy(evt) {
 }
 
 const horizontalStrategy = evt => {
-  const { roundAngles } = this.configuration;
+  const { roundAngles, flipHorizontal } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
@@ -101,12 +103,15 @@ const horizontalStrategy = evt => {
   if (roundAngles) {
     angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
   }
+  if (flipHorizontal) {
+    angle = -angle;
+  }
 
   viewport.rotation += angle;
 };
 
 const verticalStrategy = evt => {
-  const { roundAngles } = this.configuration;
+  const { roundAngles, flipVertical } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
@@ -114,6 +119,9 @@ const verticalStrategy = evt => {
 
   if (roundAngles) {
     angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
+  }
+  if (flipVertical) {
+    angle = -angle;
   }
 
   viewport.rotation += angle;
