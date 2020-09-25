@@ -82,7 +82,7 @@ function defaultStrategy(evt) {
   );
 
   if (roundAngles) {
-    angleInfo.angle = Math.round(angleInfo.angle);
+    angleInfo.angle = Math.ceil(angleInfo.angle);
   }
   if (angleInfo.direction < 0) {
     angleInfo.angle = -angleInfo.angle;
@@ -99,7 +99,7 @@ const horizontalStrategy = evt => {
   let angle = deltaPoints.page.x / viewport.scale;
 
   if (roundAngles) {
-    angle = Math.round(angle);
+    angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
   }
 
   viewport.rotation += angle;
@@ -113,7 +113,7 @@ const verticalStrategy = evt => {
   let angle = deltaPoints.page.y / viewport.scale;
 
   if (roundAngles) {
-    angle = Math.round(angle);
+    angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
   }
 
   viewport.rotation += angle;
