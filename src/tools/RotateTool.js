@@ -22,6 +22,9 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        roundAngles: false,
+      },
       svgCursor: rotateCursor,
     };
 
@@ -48,6 +51,7 @@ export default class RotateTool extends BaseTool {
 }
 
 function defaultStrategy(evt) {
+  const { roundAngles } = this.configuration;
   const eventData = evt.detail;
   const { element, viewport } = eventData;
   const initialRotation = viewport.initialRotation;
@@ -77,6 +81,9 @@ function defaultStrategy(evt) {
     currentPoints
   );
 
+  if (roundAngles) {
+    angleInfo.angle = Math.round(angleInfo.angle);
+  }
   if (angleInfo.direction < 0) {
     angleInfo.angle = -angleInfo.angle;
   }
@@ -85,15 +92,29 @@ function defaultStrategy(evt) {
 }
 
 const horizontalStrategy = evt => {
+  const { roundAngles } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += deltaPoints.page.x / viewport.scale;
+  let angle = deltaPoints.page.x / viewport.scale;
+
+  if (roundAngles) {
+    angle = Math.round(angle);
+  }
+
+  viewport.rotation += angle;
 };
 
 const verticalStrategy = evt => {
+  const { roundAngles } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += deltaPoints.page.y / viewport.scale;
+  let angle = deltaPoints.page.y / viewport.scale;
+
+  if (roundAngles) {
+    angle = Math.round(angle);
+  }
+
+  viewport.rotation += angle;
 };
