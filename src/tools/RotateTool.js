@@ -93,7 +93,7 @@ function defaultStrategy(evt) {
   viewport.rotation = initialRotation + angleInfo.angle;
 }
 
-const horizontalStrategy = evt => {
+function horizontalStrategy(evt) {
   const { roundAngles, flipHorizontal } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
@@ -108,9 +108,9 @@ const horizontalStrategy = evt => {
   }
 
   viewport.rotation += angle;
-};
+}
 
-const verticalStrategy = evt => {
+function verticalStrategy(evt) {
   const { roundAngles, flipVertical } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
@@ -125,4 +125,4 @@ const verticalStrategy = evt => {
   }
 
   viewport.rotation += angle;
-};
+}
