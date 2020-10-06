@@ -231,16 +231,16 @@ function prefetch(element) {
       imageIdsToPrefetch.push(imageId);
     }
   }
-  // Load images in reverse order, by adding them at the beginning of the pool.
-  for (const imageToLoad of imageIdsToPrefetch.reverse()) {
+
+  // Load images to request pool in priority order.
+  for (const imageToLoad of imageIdsToPrefetch) {
     requestPoolManager.addRequest(
       element,
       imageToLoad,
       requestType,
       preventCache,
       doneCallback,
-      failCallback,
-      true
+      failCallback
     );
   }
 
