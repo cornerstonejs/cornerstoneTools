@@ -22,6 +22,11 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        roundAngles: false,
+        flipHorizontal: false,
+        flipVertical: false,
+      },
       svgCursor: rotateCursor,
     };
 
@@ -48,6 +53,7 @@ export default class RotateTool extends BaseTool {
 }
 
 function defaultStrategy(evt) {
+  const { roundAngles } = this.configuration;
   const eventData = evt.detail;
   const { element, viewport } = eventData;
   const initialRotation = viewport.initialRotation;
@@ -77,6 +83,9 @@ function defaultStrategy(evt) {
     currentPoints
   );
 
+  if (roundAngles) {
+    angleInfo.angle = Math.ceil(angleInfo.angle);
+  }
   if (angleInfo.direction < 0) {
     angleInfo.angle = -angleInfo.angle;
   }
@@ -84,16 +93,36 @@ function defaultStrategy(evt) {
   viewport.rotation = initialRotation + angleInfo.angle;
 }
 
-const horizontalStrategy = evt => {
+function horizontalStrategy(evt) {
+  const { roundAngles, flipHorizontal } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += deltaPoints.page.x / viewport.scale;
-};
+  let angle = deltaPoints.page.x / viewport.scale;
 
-const verticalStrategy = evt => {
+  if (roundAngles) {
+    angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
+  }
+  if (flipHorizontal) {
+    angle = -angle;
+  }
+
+  viewport.rotation += angle;
+}
+
+function verticalStrategy(evt) {
+  const { roundAngles, flipVertical } = this.configuration;
   const eventData = evt.detail;
   const { viewport, deltaPoints } = eventData;
 
-  viewport.rotation += deltaPoints.page.y / viewport.scale;
-};
+  let angle = deltaPoints.page.y / viewport.scale;
+
+  if (roundAngles) {
+    angle = Math[angle > 0 ? 'ceil' : 'floor'](angle);
+  }
+  if (flipVertical) {
+    angle = -angle;
+  }
+
+  viewport.rotation += angle;
+}
