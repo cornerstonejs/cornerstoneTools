@@ -1,6 +1,6 @@
+import angleBetweenPoints from '../util/angleBetweenPoints.js';
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
-import angleBetweenPoints from '../util/angleBetweenPoints.js';
 import { rotateCursor } from './cursors/index.js';
 
 /**
@@ -33,6 +33,10 @@ export default class RotateTool extends BaseTool {
     super(props, defaultProps);
   }
 
+  postTouchStartCallback(evt) {
+    this.initialRotation = evt.detail.viewport.rotation;
+  }
+
   touchDragCallback(evt) {
     this.dragCallback(evt);
   }
@@ -56,12 +60,17 @@ function defaultStrategy(evt) {
   const { roundAngles } = this.configuration;
   const eventData = evt.detail;
   const { element, viewport } = eventData;
-  const initialRotation = viewport.initialRotation;
+  const initialRotation = viewport.initialRotation
+    ? viewport.initialRotation
+    : 0;
 
   // Calculate the center of the image
   const rect = element.getBoundingClientRect(element);
   const { clientWidth: width, clientHeight: height } = element;
 
+  if (!eventData.startPoints) {
+    eventData.startPoints = eventData.currentPoints;
+  }
   const initialPoints = {
     x: eventData.startPoints.client.x,
     y: eventData.startPoints.client.y,

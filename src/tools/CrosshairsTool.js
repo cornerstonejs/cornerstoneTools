@@ -1,15 +1,9 @@
-import BaseTool from './base/BaseTool.js';
-import external from './../externalModules.js';
-
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
-import {
-  addToolState,
-  getToolState,
-  clearToolState,
-} from '../stateManagement/toolState.js';
-import { imagePointToPatientPoint } from '../util/pointProjector.js';
+import { getToolState } from '../stateManagement/toolState.js';
 import convertToVector3 from '../util/convertToVector3.js';
-import { setToolOptions } from '../toolOptions.js';
+import { imagePointToPatientPoint } from '../util/pointProjector.js';
+import external from './../externalModules.js';
+import BaseTool from './base/BaseTool.js';
 import { crosshairsCursor } from './cursors/index.js';
 
 /**
@@ -21,6 +15,7 @@ import { crosshairsCursor } from './cursors/index.js';
  * image position in a synchronized image series.
  * @extends Tools.Base.BaseTool
  */
+
 export default class CrosshairsTool extends BaseTool {
   constructor(props = {}) {
     const defaultProps = {
@@ -31,9 +26,11 @@ export default class CrosshairsTool extends BaseTool {
 
     super(props, defaultProps);
 
-    this.mouseDownCallback = this._chooseLocation.bind(this);
-    this.mouseDragCallback = this._chooseLocation.bind(this);
-    this.touchDragCallback = this._chooseLocation.bind(this);
+    this.eventHandler = this._chooseLocation.bind(this);
+    this.mouseClickCallback = this.eventHandler;
+    this.mouseDragCallback = this.eventHandler;
+    this.touchDragCallback = this.eventHandler;
+    this.postTouchStartCallback = this.eventHandler;
   }
 
   _chooseLocation(evt) {
@@ -43,10 +40,10 @@ export default class CrosshairsTool extends BaseTool {
     // Prevent CornerstoneToolsTouchStartActive from killing any press events
     evt.stopImmediatePropagation();
 
-    // If we have no toolData for this element, return immediately as there is nothing to do
-    const toolData = getToolState(element, this.name);
+    // If we have no synchronizationContext for this element, return immediately as there is nothing to do
+    const { synchronizationContext } = this.options;
 
-    if (!toolData) {
+    if (!synchronizationContext) {
       return;
     }
 
@@ -75,8 +72,7 @@ export default class CrosshairsTool extends BaseTool {
     );
 
     // Get the enabled elements associated with this synchronization context
-    const syncContext = toolData.data[0].synchronizationContext;
-    const enabledElements = syncContext.getSourceElements();
+    const enabledElements = synchronizationContext.getSourceElements();
 
     // Iterate over each synchronized element
     enabledElements.forEach(function(targetElement) {
@@ -181,17 +177,6 @@ export default class CrosshairsTool extends BaseTool {
           }
         );
       }
-    });
-  }
-
-  activeCallback(element, { mouseButtonMask, synchronizationContext }) {
-    setToolOptions(this.name, element, { mouseButtonMask });
-
-    // Clear any currently existing toolData
-    clearToolState(element, this.name);
-
-    addToolState(element, this.name, {
-      synchronizationContext,
     });
   }
 }
