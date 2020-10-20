@@ -25,7 +25,7 @@ export default class FreehandScissorsTool extends BaseTool {
     const defaultProps = {
       name: 'FreehandScissors',
       strategies: {
-        FILL_INSIDE: fillInsideFreehand,
+        FILL_INSIDE: fillInsideFreehandScissors,
         FILL_OUTSIDE: fillOutsideFreehand,
         ERASE_OUTSIDE: eraseOutsideFreehand,
         ERASE_INSIDE: eraseInsideFreehand,
@@ -43,5 +43,17 @@ export default class FreehandScissorsTool extends BaseTool {
     };
 
     super(props, defaultProps);
+  }
+
+  setLabelmapChangeCallback(labelmapChangeCallback) {
+    this.labelmapChangeCallback = labelmapChangeCallback;
+  }
+}
+
+function fillInsideFreehandScissors(evt, operationData) {
+  fillInsideFreehand(evt, operationData);
+  const { element } = evt.detail;
+  if (this.labelmapChangeCallback) {
+    this.labelmapChangeCallback(element);
   }
 }
