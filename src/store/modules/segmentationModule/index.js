@@ -34,6 +34,7 @@ import setColorLUT, {
 import getBrushColor from './getBrushColor';
 import getSegmentsOnPixelData from './getSegmentsOnPixeldata';
 import deleteSegment from './deleteSegment';
+import deleteLabelmap3D from './deleteLabelmap3D';
 
 import state from './state';
 import configuration from './defaultConfiguration';
@@ -124,6 +125,7 @@ export default {
       );
     },
     deleteSegment,
+    deleteLabelmap3D,
     colorLUT: setColorLUT,
     colorLUTIndexForLabelmap3D: setColorLUTIndexForLabelmap3D,
     colorForSegmentIndexOfColorLUT: setColorForSegmentIndexOfColorLUT,
