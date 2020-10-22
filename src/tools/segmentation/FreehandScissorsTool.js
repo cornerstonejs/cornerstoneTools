@@ -26,32 +26,28 @@ export default class FreehandScissorsTool extends BaseTool {
       name: 'FreehandScissors',
       strategies: {
         FILL_INSIDE: (evt, operationData) =>
-          callStrategyWithLabelmapEvent(
+          this.callStrategyWithLabelmapEvent(
             evt,
             operationData,
-            fillInsideFreehand,
-            this.labelmapChangeCallback
+            fillInsideFreehand
           ),
         FILL_OUTSIDE: (evt, operationData) =>
-          callStrategyWithLabelmapEvent(
+          this.callStrategyWithLabelmapEvent(
             evt,
             operationData,
-            fillOutsideFreehand,
-            this.labelmapChangeCallback
+            fillOutsideFreehand
           ),
         ERASE_OUTSIDE: (evt, operationData) =>
-          callStrategyWithLabelmapEvent(
+          this.callStrategyWithLabelmapEvent(
             evt,
             operationData,
-            eraseOutsideFreehand,
-            this.labelmapChangeCallback
+            eraseOutsideFreehand
           ),
         ERASE_INSIDE: (evt, operationData) =>
-          callStrategyWithLabelmapEvent(
+          this.callStrategyWithLabelmapEvent(
             evt,
             operationData,
-            eraseInsideFreehand,
-            this.labelmapChangeCallback
+            eraseInsideFreehand
           ),
       },
       cursors: {
@@ -72,17 +68,12 @@ export default class FreehandScissorsTool extends BaseTool {
   setLabelmapChangeCallback(labelmapChangeCallback) {
     this.labelmapChangeCallback = labelmapChangeCallback;
   }
-}
 
-function callStrategyWithLabelmapEvent(
-  evt,
-  operationData,
-  freehandStrategyCallback,
-  labelmapChangeCallback
-) {
-  freehandStrategyCallback(evt, operationData);
-  const { element } = evt.detail;
-  if (labelmapChangeCallback) {
-    labelmapChangeCallback(element);
+  callStrategyWithLabelmapEvent(evt, operationData, freehandStrategyCallback) {
+    freehandStrategyCallback(evt, operationData);
+    const { element } = evt.detail;
+    if (this.labelmapChangeCallback) {
+      this.labelmapChangeCallback(element);
+    }
   }
 }
