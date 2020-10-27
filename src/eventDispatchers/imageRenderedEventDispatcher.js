@@ -31,9 +31,13 @@ const onImageRendered = function(evt) {
     onImageRenderedBrushEventHandler(evt);
   }
 
+  const context = eventData.canvasContext.canvas.getContext('2d');
+
   toolsToRender.forEach(tool => {
     if (tool.renderToolData) {
+      context.save();
       tool.renderToolData(evt);
+      context.restore();
     }
   });
 };

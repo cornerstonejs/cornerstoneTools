@@ -5,6 +5,7 @@ import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
 import toolColors from './../../stateManagement/toolColors.js';
+import getHandleNearImagePoint from '../../manipulators/getHandleNearImagePoint';
 
 // Drawing
 import {
@@ -48,6 +49,8 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
       configuration: {
         // showMinMax: false,
         // showHounsfieldUnits: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
       svgCursor: ellipticalRoiCursor,
@@ -104,6 +107,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
   pointNearTool(element, data, coords, interactionType) {
     const hasStartAndEndHandles =
       data && data.handles && data.handles.start && data.handles.end;
+
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
@@ -114,6 +118,17 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     if (!validParameters || data.visible === false) {
       return false;
+    }
+
+    const handleNearImagePoint = getHandleNearImagePoint(
+      element,
+      data.handles,
+      coords,
+      6
+    );
+
+    if (handleNearImagePoint) {
+      return true;
     }
 
     const distance = interactionType === 'mouse' ? 15 : 25;
@@ -183,6 +198,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
@@ -212,6 +228,7 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         setShadow(context, this.configuration);

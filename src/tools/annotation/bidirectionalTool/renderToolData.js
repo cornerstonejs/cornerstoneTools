@@ -18,7 +18,12 @@ import getPixelSpacing from '../../../util/getPixelSpacing';
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
-  const { handleRadius, drawHandlesOnHover, renderDashed } = this.configuration;
+  const {
+    handleRadius,
+    drawHandlesOnHover,
+    hideHandlesIfMoving,
+    renderDashed,
+  } = this.configuration;
 
   const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
@@ -102,6 +107,7 @@ export default function(evt) {
         color,
         handleRadius,
         drawHandlesIfActive: drawHandlesOnHover,
+        hideHandlesIfMoving,
       };
 
       // Draw the handles

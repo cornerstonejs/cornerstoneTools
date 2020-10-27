@@ -39,10 +39,12 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       configuration: {
         getTextCallback,
         changeTextCallback,
-        drawHandles: false,
-        drawHandlesOnHover: true,
+        drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         arrowFirst: true,
         renderDashed: false,
+        allowEmptyLabel: false,
       },
       svgCursor: arrowAnnotateCursor,
     };
@@ -102,6 +104,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
 
@@ -170,6 +173,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {
@@ -254,6 +258,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const element = evt.detail.element;
     const measurementData = this.createNewMeasurement(evt);
 
+    const { allowEmptyLabel } = this.configuration;
+
     // Associate this data with this imageId so we can render it and manipulate it
     addToolState(element, this.name, measurementData);
     external.cornerstone.updateImage(element);
@@ -269,21 +275,26 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         if (success) {
           if (measurementData.text === undefined) {
             this.configuration.getTextCallback(text => {
-              if (text) {
+              if (text || allowEmptyLabel) {
                 measurementData.text = text;
+                measurementData.active = false;
+
+                const modifiedEventData = {
+                  toolName: this.name,
+                  toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
+                  element,
+                  measurementData,
+                };
+
+                external.cornerstone.updateImage(element);
+                triggerEvent(
+                  element,
+                  EVENTS.MEASUREMENT_COMPLETED,
+                  modifiedEventData
+                );
               } else {
                 removeToolState(element, this.name, measurementData);
               }
-
-              measurementData.active = false;
-              external.cornerstone.updateImage(element);
-
-              triggerEvent(element, EVENTS.MEASUREMENT_MODIFIED, {
-                toolName: this.name,
-                toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
-                element,
-                measurementData,
-              });
             }, evt.detail);
           }
         } else {
@@ -291,15 +302,6 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         }
 
         external.cornerstone.updateImage(element);
-
-        const modifiedEventData = {
-          toolName: this.name,
-          toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
-          element,
-          measurementData,
-        };
-
-        triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
       }
     );
   }

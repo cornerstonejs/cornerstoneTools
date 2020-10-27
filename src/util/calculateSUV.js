@@ -67,7 +67,7 @@ export default function(image, storedPixelValue, skipRescale = false) {
     seriesAcquisitionTime.minutes * 60 +
     seriesAcquisitionTime.hours * 60 * 60;
   const injectionStartTimeInSeconds =
-    fracToDec(startTime.fractionalSeconds) +
+    fracToDec(startTime.fractionalSeconds || 0) +
     startTime.seconds +
     startTime.minutes * 60 +
     startTime.hours * 60 * 60;

@@ -12,6 +12,7 @@ import {
 import store, { getModule } from '../index.js';
 import { getLogger } from '../../util/logger.js';
 import loadHandlerManager from '../../stateManagement/loadHandlerManager.js';
+import { setToolDisabledForElement } from '../setToolMode';
 
 const logger = getLogger('internals:removeEnabledElement');
 
@@ -71,8 +72,11 @@ export default function(elementDisabledEvt) {
  * @returns  {void}
  */
 const _removeAllToolsForElement = function(enabledElement) {
-  // Note: We may want to `setToolDisabled` before removing from store
-  // Or take other action to remove any lingering eventListeners/state
+  store.state.tools.forEach(tool => {
+    if (tool.element === enabledElement) {
+      setToolDisabledForElement(tool.element, tool.name);
+    }
+  });
   store.state.tools = store.state.tools.filter(
     tool => tool.element !== enabledElement
   );

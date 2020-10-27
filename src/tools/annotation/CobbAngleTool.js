@@ -44,6 +44,8 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       svgCursor: cobbAngleCursor,
       configuration: {
         drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
         renderDashed: false,
       },
     };
@@ -164,6 +166,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const {
       handleRadius,
       drawHandlesOnHover,
+      hideHandlesIfMoving,
       renderDashed,
     } = this.configuration;
     // If we have no toolData for this element, return immediately as there is nothing to do
@@ -222,6 +225,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         if (this.configuration.drawHandles) {
