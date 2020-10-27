@@ -52,7 +52,7 @@ function fillShape(
           y,
         })
       ) {
-        pixelData[pixelIndex] = segmentIndex;
+        pixelData[pixelIndex] = pixelData[pixelIndex] | segmentIndex;
       }
     }
   }

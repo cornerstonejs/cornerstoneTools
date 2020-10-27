@@ -66,14 +66,16 @@ export default function deleteSegment(
         segmentIndex
       );
 
-      labelmap2D.segmentsOnLabelmap.splice(indexOfSegment, 1);
+      console.log(pixelData);
 
+      labelmap2D.segmentsOnLabelmap.splice(indexOfSegment, 1);
       // Delete the label for this segment.
       for (let p = 0; p < pixelData.length; p++) {
-        if (pixelData[p] === segmentIndex) {
-          pixelData[p] = 0;
-        }
+        //if (pixelData[p] === segmentIndex) {
+        pixelData[p] = pixelData[p] & ~segmentIndex;
+        //}
       }
+      console.log(pixelData);
     }
   }
 
