@@ -25,10 +25,30 @@ export default class FreehandScissorsTool extends BaseTool {
     const defaultProps = {
       name: 'FreehandScissors',
       strategies: {
-        FILL_INSIDE: fillInsideFreehand,
-        FILL_OUTSIDE: fillOutsideFreehand,
-        ERASE_OUTSIDE: eraseOutsideFreehand,
-        ERASE_INSIDE: eraseInsideFreehand,
+        FILL_INSIDE: (evt, operationData) =>
+          this.callStrategyWithLabelmapEvent(
+            evt,
+            operationData,
+            fillInsideFreehand
+          ),
+        FILL_OUTSIDE: (evt, operationData) =>
+          this.callStrategyWithLabelmapEvent(
+            evt,
+            operationData,
+            fillOutsideFreehand
+          ),
+        ERASE_OUTSIDE: (evt, operationData) =>
+          this.callStrategyWithLabelmapEvent(
+            evt,
+            operationData,
+            eraseOutsideFreehand
+          ),
+        ERASE_INSIDE: (evt, operationData) =>
+          this.callStrategyWithLabelmapEvent(
+            evt,
+            operationData,
+            eraseInsideFreehand
+          ),
       },
       cursors: {
         FILL_INSIDE: freehandFillInsideCursor,
@@ -43,5 +63,17 @@ export default class FreehandScissorsTool extends BaseTool {
     };
 
     super(props, defaultProps);
+  }
+
+  setLabelmapChangeCallback(labelmapChangeCallback) {
+    this.labelmapChangeCallback = labelmapChangeCallback;
+  }
+
+  callStrategyWithLabelmapEvent(evt, operationData, freehandStrategyCallback) {
+    freehandStrategyCallback(evt, operationData);
+    const { element } = evt.detail;
+    if (this.labelmapChangeCallback) {
+      this.labelmapChangeCallback(element);
+    }
   }
 }
