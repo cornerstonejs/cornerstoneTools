@@ -35,12 +35,5 @@ export default function deleteLabelmap3D(
     return;
   }
 
-  brushStackState.labelmaps3D[labelmapIndex] = undefined;
-
-  if (brushStackState.labelmaps3D.length) {
-    let firstLabelmapIndex = brushStackState.labelmaps3D.findIndex(
-      element => element !== undefined
-    );
-    brushStackState.activeLabelmapIndex = firstLabelmapIndex;
-  }
+  brushStackState.labelmaps3D.splice(labelmapIndex, 1);
 }
