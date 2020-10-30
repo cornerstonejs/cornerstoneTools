@@ -28,8 +28,6 @@ function drawBrushPixels(
       pixelData[spIndex] = pixelData[spIndex] | segmentIndex;
     }
   });
-
-  console.log(pixelData);
 }
 
 export { drawBrushPixels };
