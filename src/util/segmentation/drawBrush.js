@@ -25,7 +25,7 @@ function drawBrushPixels(
     if (shouldErase) {
       eraseIfSegmentIndex(spIndex, pixelData, segmentIndex);
     } else {
-      pixelData[spIndex] = segmentIndex;
+      pixelData[spIndex] = pixelData[spIndex] | segmentIndex;
     }
   });
 }
