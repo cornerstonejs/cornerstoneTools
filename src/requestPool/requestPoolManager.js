@@ -30,7 +30,7 @@ function addRequest(
   doneCallback,
   failCallback,
   addToBeginning,
-  options
+  options = {}
 ) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error(
