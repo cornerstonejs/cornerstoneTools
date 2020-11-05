@@ -152,14 +152,10 @@ function sendRequest(requestDetails) {
 
   const priority = requestTypeToLoadPriority(requestDetails);
 
-  const options = Object.assign(
-    {},
-    {
-      priority,
-      type: requestDetails.type,
-    },
-    requestDetails.options
-  );
+  const options = Object.assign({}, requestDetails.options, {
+    priority,
+    type: requestDetails.type,
+  });
 
   let loader;
 
