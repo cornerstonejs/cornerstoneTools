@@ -152,8 +152,6 @@ function sendRequest(requestDetails) {
 
   const priority = requestTypeToLoadPriority(requestDetails);
 
-  let loader;
-
   const options = Object.assign(
     {},
     {
@@ -162,6 +160,8 @@ function sendRequest(requestDetails) {
     },
     requestDetails.options
   );
+
+  let loader;
 
   if (requestDetails.preventCache === true) {
     loader = cornerstone.loadImage(imageId, options);
