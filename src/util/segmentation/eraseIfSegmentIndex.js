@@ -10,7 +10,5 @@ export default function eraseIfSegmentIndex(
   pixelData,
   segmentIndex
 ) {
-  if (pixelData[pixelIndex] === segmentIndex) {
-    pixelData[pixelIndex] = pixelData[pixelIndex] & ~segmentIndex;
-  }
+  pixelData[pixelIndex] = pixelData[pixelIndex] & ~segmentIndex;
 }
