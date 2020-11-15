@@ -63,6 +63,8 @@ function Synchronizer(event, handler) {
       return;
     }
 
+    const cornerstone = external.cornerstone;
+
     initialData.distances = {};
     initialData.imageIds = {
       sourceElements: [],
@@ -377,7 +379,7 @@ function Synchronizer(event, handler) {
    */
   this.displayImage = function(element, image, viewport) {
     ignoreFiredEvents = true;
-    cornerstone.displayImage(element, image, viewport);
+    external.cornerstone.displayImage(element, image, viewport);
     ignoreFiredEvents = false;
   };
 
@@ -390,7 +392,7 @@ function Synchronizer(event, handler) {
    */
   this.setViewport = function(element, viewport) {
     ignoreFiredEvents = true;
-    cornerstone.setViewport(element, viewport);
+    external.cornerstone.setViewport(element, viewport);
     ignoreFiredEvents = false;
   };
 
