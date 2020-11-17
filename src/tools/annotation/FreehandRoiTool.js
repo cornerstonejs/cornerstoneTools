@@ -265,6 +265,9 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     const modality = seriesModule ? seriesModule.modality : null;
 
     const points = data.handles.points;
+    if (!points) {
+      return;
+    }
     // If the data has been invalidated, and the tool is not currently active,
     // We need to calculate it again.
 
