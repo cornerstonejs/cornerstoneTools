@@ -1,5 +1,5 @@
 {
-  "name": "cornerstone-tools",
+  "name": "@DedalusDIIT/cornerstone-tools",
   "version": "4.0.1",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
@@ -10,11 +10,11 @@
     "cornerstone"
   ],
   "author": "https://github.com/cornerstonejs/cornerstoneTools#contributors",
-  "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
+  "homepage": "https://github.com/DedalusDIIT/cornerstoneTools",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
+    "url": "https://github.com/DedalusDIIT/cornerstoneTools.git"
   },
   "engines": {
     "node": ">=8.16.0"
