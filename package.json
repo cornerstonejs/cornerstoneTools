@@ -12,6 +12,9 @@
   "author": "https://github.com/cornerstonejs/cornerstoneTools#contributors",
   "homepage": "https://github.com/DedalusDIIT/cornerstoneTools",
   "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/DedalusDIIT/cornerstoneTools.git"
