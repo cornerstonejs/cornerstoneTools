@@ -69,10 +69,12 @@ export default class OverlayTool extends BaseTool {
     };
     const imageWidth =
       Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
-      viewportPixelSpacing.column;
+      viewportPixelSpacing.column *
+      viewport.scale;
     const imageHeight =
       Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) *
-      viewportPixelSpacing.row;
+      viewportPixelSpacing.row *
+      viewport.scale;
 
     overlayPlaneMetadata.overlays.forEach(overlay => {
       if (overlay.visible === false) {
@@ -81,11 +83,17 @@ export default class OverlayTool extends BaseTool {
 
       const layerCanvas = document.createElement('canvas');
 
-      layerCanvas.width = imageWidth;
-      layerCanvas.height = imageHeight;
+      layerCanvas.width = enabledElement.canvas.offsetWidth;
+      layerCanvas.height = enabledElement.canvas.offsetHeight;
 
       const layerContext = layerCanvas.getContext('2d');
+      // Mod by Triet
+      // Add current viewport transform to overlay canvas
+      const transform = external.cornerstone.internal.getTransform(
+        enabledElement
+      );
 
+      layerContext.setTransform(...transform.m);
       layerContext.fillStyle = overlay.fillStyle || 'white';
 
       if (overlay.type === 'R') {
