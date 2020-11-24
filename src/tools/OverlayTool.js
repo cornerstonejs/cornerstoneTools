@@ -1,4 +1,3 @@
-import { compact } from 'lodash';
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 
