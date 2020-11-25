@@ -2,12 +2,14 @@ import {
   mouseEventListeners,
   wheelEventListener,
   touchEventListeners,
+  keyboardEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher,
+  keyboardToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import store, { getModule } from '../index.js';
 import { getLogger } from '../../util/logger.js';
@@ -46,9 +48,11 @@ export default function(elementDisabledEvt) {
 
   // Mouse
   if (configuration.mouseEnabled) {
+    keyboardEventListeners.disable(enabledElement);
     mouseEventListeners.disable(enabledElement);
     wheelEventListener.disable(enabledElement);
     mouseToolEventDispatcher.disable(enabledElement);
+    keyboardToolEventDispatcher.disable(enabledElement);
   }
 
   // Touch

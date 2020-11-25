@@ -36,6 +36,10 @@ export const getters = {
     state.tools.filter(tool =>
       tool.supportedInteractionTypes.includes('Touch')
     ),
+  keyboardTools: () =>
+    state.tools.filter(tool =>
+      tool.supportedInteractionTypes.includes('Keyboard')
+    ),
   enabledElementByUID: enabledElementUID =>
     state.enabledElements.find(
       element =>

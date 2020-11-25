@@ -51,7 +51,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'FreehandRoi',
-      supportedInteractionTypes: ['Mouse', 'Touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'Keyboard'],
       configuration: defaultFreehandConfiguration(),
       svgCursor: freehandRoiCursor,
     };
@@ -143,6 +143,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
   setOnContourRightClicked(onContourRightClicked) {
     this.onContourRightClicked = onContourRightClicked;
+  }
+
+  setOnContourCopyHotKeyClicked(onContourCopyHotKeyClicked) {
+    this.onContourCopyHotKeyClicked = onContourCopyHotKeyClicked;
   }
 
   /**
@@ -688,6 +692,15 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this._activateModify(element);
 
     // Interupt eventDispatchers
+    preventPropagation(evt);
+  }
+
+  handleKeyboardCallback(evt) {
+    const { key, ctrlKey } = evt.detail;
+    if (key === 'c' && ctrlKey) {
+      this.onContourCopyHotKeyClicked();
+      return;
+    }
     preventPropagation(evt);
   }
 

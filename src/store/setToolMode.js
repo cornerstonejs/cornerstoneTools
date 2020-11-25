@@ -74,6 +74,8 @@ const setToolActiveForElement = function(
     }
   }
 
+  element.focus();
+
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
@@ -641,6 +643,7 @@ const _inputResolvers = {
   TouchRotate: _resolveGenericInputConflicts.bind(this, 'TouchRotate'),
   DoubleTap: _resolveGenericInputConflicts.bind(this, 'DoubleTap'),
   MultiTouch: _resolveMultiTouchInputConflicts,
+  Keyboard: _resolveGenericInputConflicts.bind(this, 'Keyboard'),
 };
 
 function _getNormalizedOptions(options) {
