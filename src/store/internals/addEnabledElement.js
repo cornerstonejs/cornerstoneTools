@@ -60,8 +60,6 @@ export default function(elementEnabledEvt) {
 
   const { configuration } = getModule('globalConfiguration');
 
-  console.log(configuration);
-
   // Mouse
   if (configuration.mouseEnabled) {
     mouseEventListeners.enable(enabledElement);

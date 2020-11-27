@@ -5,7 +5,6 @@ import triggerEvent from '../util/triggerEvent.js';
 import { getLogger } from '../util/logger.js';
 
 function keyDown(e) {
-  console.log(e);
   const element = e.target;
 
   const enabledElement = external.cornerstone.getEnabledElement(element);

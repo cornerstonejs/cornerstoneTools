@@ -27,8 +27,6 @@ export default function(evt) {
   const element = evt.detail.element;
   const coords = evt.detail.currentPoints.canvas;
 
-  console.log(evt);
-
   // High level filtering
   const activeAndPassiveTools = getInteractiveToolsForElement(
     element,

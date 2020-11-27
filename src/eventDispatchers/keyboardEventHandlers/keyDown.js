@@ -17,8 +17,6 @@ import filterToolsUseableWithMultiPartTools from './../../store/filterToolsUsabl
  * @returns {undefined}
  */
 export default function(evt) {
-  console.log(evt);
-
   if (state.isToolLocked) {
     return;
   }
@@ -34,13 +32,9 @@ export default function(evt) {
     tool => tool.mode === 'active'
   );
 
-  console.log(state.isMultiPartToolActive);
-
   if (state.isMultiPartToolActive) {
     activeTools = filterToolsUseableWithMultiPartTools(activeTools);
   }
-
-  console.log(activeTools);
 
   if (activeTools.length > 0) {
     const firstActiveTool = activeTools[0];
