@@ -85,7 +85,6 @@ function mouseDoubleClick(e) {
 
 function mouseDown(e) {
   const element = e.currentTarget;
-
   const enabledElement = external.cornerstone.getEnabledElement(element);
 
   if (!enabledElement.image) {
