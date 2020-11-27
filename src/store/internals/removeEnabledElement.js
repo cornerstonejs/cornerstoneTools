@@ -48,17 +48,21 @@ export default function(elementDisabledEvt) {
 
   // Mouse
   if (configuration.mouseEnabled) {
-    keyboardEventListeners.disable(enabledElement);
     mouseEventListeners.disable(enabledElement);
     wheelEventListener.disable(enabledElement);
     mouseToolEventDispatcher.disable(enabledElement);
-    keyboardToolEventDispatcher.disable(enabledElement);
   }
 
   // Touch
   if (configuration.touchEnabled) {
     touchEventListeners.disable(enabledElement);
     touchToolEventDispatcher.disable(enabledElement);
+  }
+
+  // Keyboard
+  if (configuration.keyboardEnabled) {
+    keyboardEventListeners.disable(enabledElement);
+    keyboardToolEventDispatcher.disable(enabledElement);
   }
 
   // State
