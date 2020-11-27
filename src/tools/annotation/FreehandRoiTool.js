@@ -90,6 +90,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.selectedToolRoiId = null;
     this.visibleToolRoiIds = [];
     this.onContourRightClicked = null;
+    this.onContourCopyHotKeyPressed = null;
+    this.onContourPasteHotKeyPressed = null;
   }
 
   createNewMeasurement(eventData) {
@@ -145,8 +147,12 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.onContourRightClicked = onContourRightClicked;
   }
 
-  setOnContourCopyHotKeyClicked(onContourCopyHotKeyClicked) {
-    this.onContourCopyHotKeyClicked = onContourCopyHotKeyClicked;
+  setOnContourCopyHotKeyPressed(onContourCopyHotKeyPressed) {
+    this.onContourCopyHotKeyPressed = onContourCopyHotKeyPressed;
+  }
+
+  setOnContourPasteHotKeyPressed(onContourPasteHotKeyPressed) {
+    this.onContourPasteHotKeyPressed = onContourPasteHotKeyPressed;
   }
 
   /**
@@ -698,7 +704,10 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   handleKeyboardCallback(evt) {
     const { key, ctrlKey } = evt.detail;
     if (key === 'c' && ctrlKey) {
-      this.onContourCopyHotKeyClicked();
+      this.onContourCopyHotKeyPressed();
+      return;
+    } else if (key === 'v' && ctrlKey) {
+      this.onContourPasteHotKeyPressed();
       return;
     }
     preventPropagation(evt);

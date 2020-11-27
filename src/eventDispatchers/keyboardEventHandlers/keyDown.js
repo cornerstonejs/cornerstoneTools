@@ -46,7 +46,6 @@ export default function(evt) {
     const firstActiveTool = activeTools[0];
 
     if (typeof firstActiveTool.handleKeyboardCallback === 'function') {
-      console.log('HHHHHH');
       firstActiveTool.handleKeyboardCallback(evt);
     }
   }

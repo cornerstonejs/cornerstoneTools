@@ -74,8 +74,6 @@ const setToolActiveForElement = function(
     }
   }
 
-  element.focus();
-
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
