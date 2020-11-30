@@ -90,8 +90,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.selectedToolRoiId = null;
     this.visibleToolRoiIds = [];
     this.onContourRightClicked = null;
-    this.onContourCopyHotKeyPressed = null;
-    this.onContourPasteHotKeyPressed = null;
+    this.ctrlCKeyPressed = null;
+    this.ctrlVKeyPressed = null;
   }
 
   createNewMeasurement(eventData) {
