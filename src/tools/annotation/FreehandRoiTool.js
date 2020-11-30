@@ -147,12 +147,12 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.onContourRightClicked = onContourRightClicked;
   }
 
-  setOnContourCopyHotKeyPressed(onContourCopyHotKeyPressed) {
-    this.onContourCopyHotKeyPressed = onContourCopyHotKeyPressed;
+  setCtrlCKeyPressed(ctrlCKeyPressed) {
+    this.ctrlCKeyPressed = ctrlCKeyPressed;
   }
 
-  setOnContourPasteHotKeyPressed(onContourPasteHotKeyPressed) {
-    this.onContourPasteHotKeyPressed = onContourPasteHotKeyPressed;
+  setCtrlVKeyPressed(ctrlVKeyPressed) {
+    this.ctrlVKeyPressed = ctrlVKeyPressed;
   }
 
   /**
@@ -703,11 +703,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
   handleKeyboardCallback(evt) {
     const { key, ctrlKey } = evt.detail;
-    if (key === 'c' && ctrlKey) {
-      this.onContourCopyHotKeyPressed();
+    if (key === 'c' && ctrlKey && this.ctrlCKeyPressed) {
+      this.ctrlCKeyPressed();
       return;
-    } else if (key === 'v' && ctrlKey) {
-      this.onContourPasteHotKeyPressed();
+    } else if (key === 'v' && ctrlKey && this.ctrlVKeyPressed) {
+      this.ctrlVKeyPressed();
       return;
     }
     preventPropagation(evt);
