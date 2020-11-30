@@ -19,7 +19,7 @@ export default class BrushTool extends BaseBrushTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'Brush',
-      supportedInteractionTypes: ['Mouse', 'Touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'Keyboard'],
       configuration: {},
       mixins: ['renderBrushMixin'],
     };

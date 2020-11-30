@@ -2,12 +2,14 @@ import {
   mouseEventListeners,
   wheelEventListener,
   touchEventListeners,
+  keyboardEventListeners,
 } from '../../eventListeners/index.js';
 import {
   imageRenderedEventDispatcher,
   mouseToolEventDispatcher,
   newImageEventDispatcher,
   touchToolEventDispatcher,
+  keyboardToolEventDispatcher,
 } from '../../eventDispatchers/index.js';
 import { addToolForElement } from './../addTool.js';
 import {
@@ -69,6 +71,12 @@ export default function(elementEnabledEvt) {
   if (configuration.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
+  }
+
+  // Keyboard
+  if (configuration.keyboardEnabled) {
+    keyboardEventListeners.enable(enabledElement);
+    keyboardToolEventDispatcher.enable(enabledElement);
   }
 
   // State

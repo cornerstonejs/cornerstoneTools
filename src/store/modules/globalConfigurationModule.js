@@ -4,6 +4,7 @@ const configuration = {
   globalToolSyncEnabled: false,
   showSVGCursors: false,
   autoResizeViewports: true,
+  keyboardEnabled: true,
 };
 
 export default {

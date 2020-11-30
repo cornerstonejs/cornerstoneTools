@@ -51,7 +51,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'FreehandRoi',
-      supportedInteractionTypes: ['Mouse', 'Touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'Keyboard'],
       configuration: defaultFreehandConfiguration(),
       svgCursor: freehandRoiCursor,
     };
@@ -90,6 +90,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this.selectedToolRoiId = null;
     this.visibleToolRoiIds = [];
     this.onContourRightClicked = null;
+    this.ctrlCKeyPressed = null;
+    this.ctrlVKeyPressed = null;
   }
 
   createNewMeasurement(eventData) {
@@ -143,6 +145,14 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
   setOnContourRightClicked(onContourRightClicked) {
     this.onContourRightClicked = onContourRightClicked;
+  }
+
+  setCtrlCKeyPressed(ctrlCKeyPressed) {
+    this.ctrlCKeyPressed = ctrlCKeyPressed;
+  }
+
+  setCtrlVKeyPressed(ctrlVKeyPressed) {
+    this.ctrlVKeyPressed = ctrlVKeyPressed;
   }
 
   /**
@@ -688,6 +698,18 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     this._activateModify(element);
 
     // Interupt eventDispatchers
+    preventPropagation(evt);
+  }
+
+  handleKeyboardCallback(evt) {
+    const { key, ctrlKey } = evt.detail;
+    if (key === 'c' && ctrlKey && this.ctrlCKeyPressed) {
+      this.ctrlCKeyPressed();
+      return;
+    } else if (key === 'v' && ctrlKey && this.ctrlVKeyPressed) {
+      this.ctrlVKeyPressed();
+      return;
+    }
     preventPropagation(evt);
   }
 
