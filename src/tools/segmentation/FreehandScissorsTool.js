@@ -57,12 +57,15 @@ export default class FreehandScissorsTool extends BaseTool {
         ERASE_INSIDE: freehandEraseInsideCursor,
       },
       defaultStrategy: 'FILL_INSIDE',
-      supportedInteractionTypes: ['Mouse', 'Touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'Keyboard'],
       svgCursor: freehandFillInsideCursor,
       mixins: ['freehandSegmentationMixin'],
     };
 
     super(props, defaultProps);
+
+    this.ctrlCKeyPressed = null;
+    this.ctrlVKeyPressed = null;
   }
 
   setLabelmapChangeCallback(labelmapChangeCallback) {
@@ -76,4 +79,30 @@ export default class FreehandScissorsTool extends BaseTool {
       this.labelmapChangeCallback(element);
     }
   }
+
+  setCtrlCKeyPressed(ctrlCKeyPressed) {
+    this.ctrlCKeyPressed = ctrlCKeyPressed;
+  }
+
+  setCtrlVKeyPressed(ctrlVKeyPressed) {
+    this.ctrlVKeyPressed = ctrlVKeyPressed;
+  }
+
+  handleKeyboardCallback(evt) {
+    const { key, ctrlKey } = evt.detail;
+    if (key === 'c' && ctrlKey && this.ctrlCKeyPressed) {
+      this.ctrlCKeyPressed();
+      return;
+    } else if (key === 'v' && ctrlKey && this.ctrlVKeyPressed) {
+      this.ctrlVKeyPressed();
+      return;
+    }
+    preventPropagation(evt);
+  }
+}
+
+function preventPropagation(evt) {
+  evt.stopImmediatePropagation();
+  evt.stopPropagation();
+  evt.preventDefault();
 }
