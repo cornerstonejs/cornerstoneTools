@@ -702,11 +702,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
   }
 
   handleKeyboardCallback(evt) {
-    const { key, ctrlKey } = evt.detail;
-    if (key === 'c' && ctrlKey && this.ctrlCKeyPressed) {
+    const { key, ctrlKey, metaKey } = evt.detail;
+    if (key === 'c' && (ctrlKey || metaKey) && this.ctrlCKeyPressed) {
       this.ctrlCKeyPressed();
       return;
-    } else if (key === 'v' && ctrlKey && this.ctrlVKeyPressed) {
+    } else if (key === 'v' && (ctrlKey || metaKey) && this.ctrlVKeyPressed) {
       this.ctrlVKeyPressed();
       return;
     }
