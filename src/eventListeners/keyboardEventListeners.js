@@ -19,6 +19,7 @@ function keyDown(e) {
     key: e.key,
     keyCode: e.code,
     ctrlKey: e.ctrlKey,
+    metaKey: e.metaKey,
     type: eventType,
   };
 
