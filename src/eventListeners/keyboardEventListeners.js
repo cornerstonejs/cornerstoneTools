@@ -1,8 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { getLogger } from '../util/logger.js';
 
 function keyDown(e) {
   const element = e.target;
@@ -20,6 +18,13 @@ function keyDown(e) {
     keyCode: e.code,
     ctrlKey: e.ctrlKey,
     metaKey: e.metaKey,
+    keys: {
+      letterKey: e.key,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey,
+      altKey: e.altKey,
+    },
     type: eventType,
   };
 

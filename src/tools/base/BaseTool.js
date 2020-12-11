@@ -77,6 +77,8 @@ class BaseTool {
     this.updateOnMouseMove = false;
     this.hideDefaultCursor = false;
 
+    this.keyBindings = null;
+
     // Apply mixins if mixinsArray is not empty.
     if (mixins && mixins.length) {
       this._applyMixins(mixins);
@@ -311,6 +313,24 @@ class BaseTool {
    *    return false;
    * }
    */
+  setKeyBindings(keyBindings) {
+    this.keyBindings = keyBindings;
+  }
+
+  handleKeyboardCallback(evt) {
+    if (!this.keyBindings) {
+      return;
+    }
+
+    const { keys } = evt.detail;
+
+    this.keyBindings.forEach(keyBinding => {
+      const { isKeyPressed, onKeyPressed } = keyBinding;
+      if (isKeyPressed(keys)) {
+        onKeyPressed();
+      }
+    });
+  }
 }
 
 export default BaseTool;

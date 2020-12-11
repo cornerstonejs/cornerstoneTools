@@ -27,16 +27,6 @@ export default class BrushTool extends BaseBrushTool {
     super(props, defaultProps);
 
     this.touchDragCallback = this._paint.bind(this);
-    this.ctrlCKeyPressed = null;
-    this.ctrlVKeyPressed = null;
-  }
-
-  setCtrlCKeyPressed(ctrlCKeyPressed) {
-    this.ctrlCKeyPressed = ctrlCKeyPressed;
-  }
-
-  setCtrlVKeyPressed(ctrlVKeyPressed) {
-    this.ctrlVKeyPressed = ctrlVKeyPressed;
   }
 
   /**
@@ -73,22 +63,4 @@ export default class BrushTool extends BaseBrushTool {
 
     external.cornerstone.updateImage(evt.detail.element);
   }
-
-  handleKeyboardCallback(evt) {
-    const { key, ctrlKey } = evt.detail;
-    if (key === 'c' && ctrlKey && this.ctrlCKeyPressed) {
-      this.ctrlCKeyPressed();
-      return;
-    } else if (key === 'v' && ctrlKey && this.ctrlVKeyPressed) {
-      this.ctrlVKeyPressed();
-      return;
-    }
-    preventPropagation(evt);
-  }
-}
-
-function preventPropagation(evt) {
-  evt.stopImmediatePropagation();
-  evt.stopPropagation();
-  evt.preventDefault();
 }
