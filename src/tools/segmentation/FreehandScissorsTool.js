@@ -57,7 +57,7 @@ export default class FreehandScissorsTool extends BaseTool {
         ERASE_INSIDE: freehandEraseInsideCursor,
       },
       defaultStrategy: 'FILL_INSIDE',
-      supportedInteractionTypes: ['Mouse', 'Touch'],
+      supportedInteractionTypes: ['Mouse', 'Touch', 'Keyboard'],
       svgCursor: freehandFillInsideCursor,
       mixins: ['freehandSegmentationMixin'],
     };
