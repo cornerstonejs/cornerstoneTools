@@ -41,6 +41,8 @@ import state from './state';
 import configuration from './defaultConfiguration';
 import { pushState, undo, redo } from './history';
 import setRadius from './setRadius';
+import setMinRadius from './setMinRadius';
+import setMaxRadius from './setMaxRadius';
 
 /**
  * A map of `firstImageId` to associated `BrushStackState`, where
@@ -136,5 +138,7 @@ export default {
     pushState,
     undo,
     redo,
+    minRadius: setMinRadius,
+    maxRadius: setMaxRadius,
   },
 };

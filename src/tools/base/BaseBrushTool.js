@@ -318,7 +318,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
-   * @returns {void}
+   * @returns {radius}
    */
   increaseBrushSize() {
     const { configuration, setters } = segmentationModule;
@@ -332,6 +332,7 @@ class BaseBrushTool extends BaseTool {
     }
 
     setters.radius(newRadius);
+    return configuration.radius;
   }
 
   /**
@@ -339,7 +340,7 @@ class BaseBrushTool extends BaseTool {
    *
    * @public
    * @api
-   * @returns {void}
+   * @returns {radius}
    */
   decreaseBrushSize() {
     const { configuration, setters } = segmentationModule;
@@ -347,6 +348,25 @@ class BaseBrushTool extends BaseTool {
     const newRadius = Math.floor(oldRadius * 0.8);
 
     setters.radius(newRadius);
+    return configuration.radius;
+  }
+
+  setBrushSize(newRadius) {
+    const { setters } = segmentationModule;
+
+    setters.radius(newRadius);
+  }
+
+  setBrushMinSize(newMinRadius) {
+    const { setters } = segmentationModule;
+
+    setters.minRadius(newMinRadius);
+  }
+
+  setBrushMaxSize(newMaxRadius) {
+    const { setters } = segmentationModule;
+
+    setters.maxRadius(newMaxRadius);
   }
 
   _isCtrlDown(eventData) {
