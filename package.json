@@ -1,10 +1,10 @@
 {
-  "name": "@altis/cornerstone-tools",
-  "version": "1.1.8",
+  "name": "@altis-labs/cornerstone-tools",
+  "version": "1.1.9",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "publishConfig": {
-    "registry": "https://npm.altislabs.com"
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "DICOM",
@@ -15,16 +15,13 @@
   "author": "Altis Labs",
   "homepage": "https://github.com/altis-labs/cornerstoneTools",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/altis-labs/cornerstoneTools.git"
-  },
+  "repository": "git://github.com/altis-labs/cornerstoneTools.git",
   "engines": {
     "node": ">=8.16.0"
   },
   "scripts": {
     "build:altis": "npm run prepublishOnly && npm run copynota",
-    "copynota": "cp -a \"./dist/.\" \"../altis-labs/nota/packages/nota/node_modules/@altis/cornerstone-tools/dist\"",
+    "copynota": "cp -a \"./dist/.\" \"../altis-labs/nota/packages/nota/node_modules/@altis-labs/cornerstone-tools/dist\"",
     "watch:altis": "nodemon",
     "build": "npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
