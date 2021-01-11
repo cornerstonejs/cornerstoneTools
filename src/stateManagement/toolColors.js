@@ -27,8 +27,8 @@ function getActiveColor() {
 }
 
 function getColorIfActive(data) {
-  if (data.color) {
-    return data.color;
+  if (data.roi.color) {
+    return data.roi.color;
   }
 
   return data.active ? activeColor : defaultColor;
