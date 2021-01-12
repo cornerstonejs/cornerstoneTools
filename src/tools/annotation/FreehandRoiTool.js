@@ -423,20 +423,11 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         const isActive = this.contourBelongsToCurrentRoi(roi);
         const isHighlighted = data.active;
         const isSelected = this.isRoiSelected(roi);
-
-        const colorStyle = this.style.color;
-        let color = isSelected
-          ? colorStyle.selected
-          : isActive
-          ? colorStyle.active
-          : colorStyle.passive;
+        let color = data.roi.color;
 
         if (data.handles.invalidHandlePlacement) {
           color = config.invalidColor;
         }
-
-        // Todo is this required?
-        const fillColor = color;
 
         const lineWidthStyle = this.style.lineWidth;
 
@@ -476,7 +467,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         const options = {
           color,
-          fill: fillColor,
+          fill: color,
         };
 
         if (
