@@ -29,6 +29,7 @@ import freehandUtils from '../../util/freehand/index.js';
 import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
+import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 
 const logger = getLogger('tools:annotation:FreehandRoiTool');
 
@@ -519,13 +520,14 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         data.unit = moSuffix;
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
-        let meanText = `Mean: ${numbersWithCommas(
-          meanStdDev.mean.toFixed(2)
-        )} ${moSuffix}`;
+
+        let meanText = `avg: ${toGermanNumberStringTemp(
+          meanStdDev.mean
+        )} ${moSuffix}`; //`Mean: ${numbersWithCommas(meanStdDev.mean.toFixed(2))} ${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `StdDev: ${numbersWithCommas(
-          meanStdDev.stdDev.toFixed(2)
-        )} ${moSuffix}`;
+        let stdDevText = `sd: ${toGermanNumberStringTemp(
+          meanStdDev.stdDev
+        )} ${moSuffix}`; //`StdDev: ${numbersWithCommas(meanStdDev.stdDev.toFixed(2))} ${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
@@ -554,7 +556,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+        const areaText = `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 
         // Add this text line to the array to be displayed in the textbox
         textLines.push(areaText);
