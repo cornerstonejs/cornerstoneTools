@@ -5,7 +5,7 @@ const requestPool = {
   interaction: [],
   thumbnail: [],
   prefetch: [],
-  custom:[]
+  custom: [],
 };
 
 const numRequests = {
@@ -22,11 +22,11 @@ let maxNumRequests = {
   custom: 5,
 };
 
-let requestTypesPriority = {
-  'prefetch': -5,
-  'interactive': 0,
-  'thumbnail': 5,
-}
+const requestTypesPriority = {
+  prefetch: -5,
+  interactive: 0,
+  thumbnail: 5,
+};
 
 const CUSTOM = 'custom';
 
@@ -42,7 +42,7 @@ function addRequest(
   failCallback,
   addToBeginning,
   options = {},
-  customPriority,
+  customPriority
 ) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error(
@@ -56,13 +56,13 @@ function addRequest(
 
   if (type === CUSTOM && !customPriority) {
     throw new Error(
-        'Request priority should be defined if using a custom type'
-      );
+      'Request priority should be defined if using a custom type'
+    );
   }
 
   // Using custom priority for prefetch, interaction, and thumbnail
-  if (customPriority){
-    requestTypesPriority[type] = customPriority
+  if (customPriority) {
+    requestTypesPriority[type] = customPriority;
   }
 
   // Describe the request
@@ -164,8 +164,9 @@ function sendRequest(requestDetails) {
   }
 
   function requestTypeToLoadPriority(requestDetails) {
-    const {type} = requestDetails
-    return requestTypesPriority[type]
+    const { type } = requestDetails;
+
+    return requestTypesPriority[type];
   }
 
   const priority = requestTypeToLoadPriority(requestDetails);
@@ -212,7 +213,11 @@ function startGrabbing() {
   };
 
   const currentRequests =
-    numRequests.interaction + numRequests.thumbnail + numRequests.prefetch + numRequests.custom;;
+    numRequests.interaction +
+    numRequests.thumbnail +
+    numRequests.prefetch +
+    numRequests.custom;
+
   const requestsToSend = maxSimultaneousRequests - currentRequests;
 
   for (let i = 0; i < requestsToSend; i++) {
@@ -246,10 +251,7 @@ function getNextRequest() {
     return requestPool.prefetch.shift();
   }
 
-  if (
-    requestPool.custom.length &&
-    numRequests.custom < maxNumRequests.custom
-  ) {
+  if (requestPool.custom.length && numRequests.custom < maxNumRequests.custom) {
     return requestPool.custom.shift();
   }
 
