@@ -13,9 +13,19 @@ jest.mock('./internals/renderSegmentation.js');
 jest.mock('../util/triggerEvent.js');
 jest.mock('../store/modules/segmentationModule/getLabelmaps3D.js');
 
+const width = 256;
+const imageId = 'image1';
 let evt;
 
-function createLabelMap(width, length, currentImageIdIndex) {
+function addMocks(testElement) {
+  externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
+    () => testElement
+  );
+  triggerEvent.mockImplementationOnce(() => true);
+  getLabelmaps3D.mockImplementationOnce(() => state.series[imageId]);
+}
+
+function createLabelMap(length, currentImageIdIndex) {
   let labelmap3D = {
     buffer: new ArrayBuffer(length * 2),
     labelmaps2D: [],
@@ -29,92 +39,69 @@ function createLabelMap(width, length, currentImageIdIndex) {
     segmentsOnLabelmap: [0, 1, 2],
   };
 
-  const pixelData = labelmap2D.pixelData;
-  const cols = width;
-
-  // Add segment 1 as an L shape, so should have 1 interior corner.
-  pixelData[64 * cols + 64] = 1;
-  pixelData[65 * cols + 64] = 1;
-  pixelData[65 * cols + 65] = 1;
-
-  // Add segment 2 as a rectangle.
-  for (let x = 201; x <= 210; x++) {
-    pixelData[200 * cols + x] = 2;
-    pixelData[201 * cols + x] = 2;
-  }
-
   labelmap3D.labelmaps2D[currentImageIdIndex] = labelmap2D;
 
   return labelmap3D;
 }
 
-function initalize() {
-  const width = 256;
-  const length = width * width;
-  const currentImageIdIndex = 0;
-  const labelmaps3D = [];
-  const canvasScale = 1.0;
-
-  let eventData = {
+function setEventDetail() {
+  let eventDetail = {
     element: null,
     image: {
-      width: 256,
-      height: 256,
+      width: width,
+      height: width,
     },
-    viewport: {
-      rotation: 0,
-      scale: canvasScale,
-      translation: { x: 0, y: 0 },
-      hflip: false,
-      vflip: false,
-      displayedArea: {
-        brhc: { x: 256, y: 256 },
-        tlhc: { x: 1, y: 1 },
-      },
-    },
+    viewport: {},
     canvasContext: {
       canvas: {
-        width: canvasScale * width,
-        height: canvasScale * width,
+        width: 1.0 * width,
+        height: 1.0 * width,
       },
     },
   };
 
   evt = {
-    detail: eventData,
+    detail: eventDetail,
   };
-  labelmaps3D.push(
-    createLabelMap(eventData.image.width, length, currentImageIdIndex)
-  );
-  labelmaps3D.push(
-    createLabelMap(eventData.image.width, length, currentImageIdIndex)
-  );
-  const imageIds = ['image1'];
-  const stack = {
-    currentImageIdIndex: 0,
-    imageIds: imageIds,
-  };
+}
 
-  const imageId = 'image1';
+function getLabelMapCollection(currentImageIdIndex) {
+  const labelmaps3D = [];
+  const eventData = evt.detail;
+  const length = width * width;
+  labelmaps3D.push(
+    createLabelMap(eventData.image.width, length, currentImageIdIndex)
+  );
+  labelmaps3D.push(
+    createLabelMap(eventData.image.width, length, currentImageIdIndex)
+  );
+  return labelmaps3D;
+}
+
+function initalize() {
+  const currentImageIdIndex = 0;
   const testElement = {
     image: {
       imageId,
     },
   };
 
-  state.series['image1'] = {
+  addMocks(testElement);
+  setEventDetail();
+
+  const imageIds = [imageId];
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
+  state.series[imageId] = {
     activeLabelmapIndex: 0,
-    labelmaps3D: labelmaps3D,
+    labelmaps3D: getLabelMapCollection(currentImageIdIndex),
     currentImageIdIndex: currentImageIdIndex,
   };
 
-  externalModules.cornerstone.getEnabledElement.mockImplementationOnce(
-    () => testElement
-  );
-  triggerEvent.mockImplementationOnce(() => true);
-  getLabelmaps3D.mockImplementationOnce(() => state.series['image1']);
-
-  const stackState = addToolState(testElement, 'stack', stack);
+  addToolState(testElement, 'stack', stack);
 }
 
 describe('onImageRenderedBrushEventHandler.js', () => {
