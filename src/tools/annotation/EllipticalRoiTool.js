@@ -397,7 +397,8 @@ function _createTextBoxContent(
       otherLines.push(`${meanString}${meanSuvString}`);
       otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
     } else {
-      otherLines.push(`${meanString}     ${stdDevString}`);
+      otherLines.push(`${meanString}`);
+      otherLines.push(`${stdDevString}`);
     }
 
     if (showMinMax) {
