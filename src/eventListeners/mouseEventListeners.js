@@ -362,7 +362,7 @@ function disable(element) {
   element.removeEventListener('mousedown', mouseDown);
   element.removeEventListener('mousemove', mouseMove);
   element.removeEventListener('dblclick', mouseDoubleClick);
-  // make sure we have removed any listeners that were added within the above listeners (#1337)
+  // Make sure we have removed any listeners that were added within the above listeners (#1337)
   addedListeners.forEach((listener, event) => {
     document.removeEventListener(event, listener);
   });
