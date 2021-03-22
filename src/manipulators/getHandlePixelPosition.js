@@ -13,11 +13,16 @@ import { state } from './../store/index.js';
  */
 export default function(eventData, interactionType) {
   const { currentPoints, element } = eventData;
-  const page = currentPoints.page;
-  const touchOffset = state.handleTouchOffset;
-  return external.cornerstone.pageToPixel(
-    element,
-    interactionType === 'touch' ? page.x + touchOffset.x : page.x,
-    interactionType === 'touch' ? page.y + touchOffset.y : page.y
-  );
+  const { page } = currentPoints;
+  const { handleTouchOffset } = state;
+
+  let offsetX = 0;
+  let offsetY = 0;
+
+  if(interactionType === 'touch') {
+    offsetX = handleTouchOffset.x;
+    offsetY = handleTouchOffset.y
+  }
+
+  return external.cornerstone.pageToPixel(element, page.x + offsetX, page.y + offsetY);
 }
