@@ -35,11 +35,11 @@ const _moveEndEvents = {
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
- * @param {*} [options]
- * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.preventHandleOutsideImage]
+ * @param {?Object} [options]
+ * @param {Boolean} [options.deleteIfHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.deleteIfHandleOutsideImage]
+ * @param {Boolean} [options.preventHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.preventHandleOutsideImage]
  * @param {string} [interactionType=mouse]
  * @param {function} [doneMovingCallback]
  * @returns {void}
@@ -53,9 +53,9 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  options = getHandleMovingOptions(options);
+  let internalOptions = getHandleMovingOptions(options);
 
-  options.hasMoved = false;
+  internalOptions.hasMoved = false;
 
   const { element } = eventData;
 
@@ -66,7 +66,7 @@ export default function(
   state.isToolLocked = true;
 
   function moveHandler(evt) {
-    _moveHandler(toolName, annotation, handle, options, interactionType, evt);
+    _moveHandler(toolName, annotation, handle, internalOptions, interactionType, evt);
   }
   // So we don't need to inline the entire `moveEndEventHandler` function
   function moveEndHandler(evt) {
@@ -74,7 +74,7 @@ export default function(
       toolName,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         moveHandler,
@@ -111,7 +111,7 @@ export default function(
       null,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         moveHandler,

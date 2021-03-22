@@ -9,8 +9,8 @@ import { clipToBox, clip } from '../util/clip';
  * @memberof Manipulators
  *
  * @param {Object} eventData - Data object associated with the event.
- * @param {Object} handle - The handle to be clipped
- * @param {Object} options - An object containing the handles' moving options
+ * @param {Object} handle - The handle to be clipped (arg will be mutated)
+ * @param {Object} [options={}] - An object containing the handles' moving options
  * @returns {void}
  */
 export default function(eventData, handle, options = {}) {

@@ -7,7 +7,7 @@ import { state } from './../store/index.js';
  * @function getHandleMovingOptions
  * @memberof Manipulators
  *
- * @param {Object} options - An object containing the handles' moving options
+ * @param {Object} [options={}] - An object containing the handles' moving options
  * @returns {Object} - The modified options object
  */
 export default function(options = {}) {
@@ -20,6 +20,7 @@ export default function(options = {}) {
 
   // Use global defaults, unless overidden by provided options
   return Object.assign(
+    {},
     {
       deleteIfHandleOutsideDisplayedArea,
       deleteIfHandleOutsideImage,

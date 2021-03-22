@@ -36,17 +36,17 @@ const _upOrEndEvents = {
  * @function moveAllHandles
  * @memberof Manipulators
  *
- * @param {*}        evtDetail
- * @param {*}        evtDetail.element
- * @param {String}   toolName
- * @param {*}        annotation
- * @param {*}        [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
- * @param {Object}   [options]
- * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.preventHandleOutsideImage]
- * @param {string}   [interactionType=mouse]
+ * @param {*} evtDetail
+ * @param {*} evtDetail.element
+ * @param {String} toolName
+ * @param {*} annotation
+ * @param {*} [handle=null] - not needed by moveAllHandles, but keeps call signature the same as `moveHandle`
+ * @param {?Object} [options]
+ * @param {Boolean} [options.deleteIfHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.deleteIfHandleOutsideImage]
+ * @param {Boolean} [options.preventHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.preventHandleOutsideImage]
+ * @param {string} [interactionType=mouse]
  * @param {function} [doneMovingCallback]
  * @returns {undefined}
  */
@@ -59,13 +59,13 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  options = getHandleMovingOptions(options);
+  let internalOptions = getHandleMovingOptions(options);
 
   const dragHandler = _dragHandler.bind(
     this,
     toolName,
     annotation,
-    options,
+    internalOptions,
     interactionType
   );
   // So we don't need to inline the entire `upOrEndHandler` function
@@ -73,7 +73,7 @@ export default function(
     _upOrEndHandler(
       toolName,
       annotation,
-      options,
+      internalOptions,
       interactionType,
       {
         dragHandler,
@@ -89,7 +89,7 @@ export default function(
     _cancelEventHandler.bind(
       null,
       annotation,
-      options,
+      internalOptions,
       interactionType,
       {
         dragHandler,

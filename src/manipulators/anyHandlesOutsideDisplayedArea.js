@@ -27,8 +27,8 @@ export default function(renderData, handles) {
     const handle = handles[name];
 
     if (
-      handle.allowedOutsideImage === true ||
-      handle.allowedOutsideDisplayedArea === true
+      !!handle.allowedOutsideImage ||
+      !!handle.allowedOutsideDisplayedArea
     ) {
       return;
     }

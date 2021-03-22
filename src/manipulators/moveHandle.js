@@ -45,11 +45,11 @@ const _upOrEndEvents = {
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
- * @param {*} [options]
- * @param {Boolean}  [options.deleteIfHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {Boolean}  [options.preventHandleOutsideDisplayedArea]
- * @param {Boolean}  [options.preventHandleOutsideImage]
+ * @param  {?Object} [options]
+ * @param {Boolean} [options.deleteIfHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.deleteIfHandleOutsideImage]
+ * @param {Boolean} [options.preventHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.preventHandleOutsideImage]
  * @param {*} [interactionType=mouse]
  * @param {function} doneMovingCallback
  * @returns {undefined}
@@ -63,7 +63,7 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  options = getHandleMovingOptions(options);
+  let internalOptions = getHandleMovingOptions(options);
 
   const element = evtDetail.element;
   const dragHandler = _dragHandler.bind(
@@ -71,7 +71,7 @@ export default function(
     toolName,
     annotation,
     handle,
-    options,
+    internalOptions,
     interactionType
   );
   // So we don't need to inline the entire `upOrEndHandler` function
@@ -81,7 +81,7 @@ export default function(
       evtDetail,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         dragHandler,
@@ -99,7 +99,7 @@ export default function(
       evtDetail,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         dragHandler,
