@@ -68,8 +68,8 @@ const getBoxPixelBoundaries = (element, box) => {
  * @param {string} axis The axis to be manipulated: `x` or `y`
  * @param {number} boxMin The box position's lower value on axis
  * @param {number} boxMax The box position's upper value on axis
- * @param {*} lowerLimit The lower limit of allowed box position on axis
- * @param {*} upperLimit The upper limit of allowed box position on axis
+ * @param {number} lowerLimit The lower limit of allowed box position on axis
+ * @param {number} upperLimit The upper limit of allowed box position on axis
  * @returns {void}
  */
 const clipBoxOnAxis = (point, axis, boxMin, boxMax, lowerLimit, upperLimit) => {

@@ -42,6 +42,8 @@ export function textBoxWidth(context, text, padding) {
  * @param  {number} y           The y position of the textBox.
  * @param  {string} color       The color of the textBox.
  * @param  {Object} options     Options for the textBox.
+ * @param  {boolean} options.centering Option to center the textbox.
+ * @param  {function} options.translator Translator function.
  * @returns {Object} {top, left, width, height} - Bounding box; can be used for pointNearTool
  */
 export default function(context, textLines, x, y, color, options = {}) {
