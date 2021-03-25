@@ -402,17 +402,33 @@ function _createTextBoxContent(
     }
 
     if (showMinMax) {
-      let minString = `Min: ${min} ${unit}`;
-      const maxString = `Max: ${max} ${unit}`;
+      let minString = `Min: ${min.toFixed(4)} ${unit}`;
+      let maxString = `Max: ${max.toFixed(4)} ${unit}`;
+
       const targetStringLength = hasStandardUptakeValues
         ? Math.floor(context.measureText(`${stdDevString}     `).width)
         : Math.floor(context.measureText(`${meanString}     `).width);
 
-      while (context.measureText(minString).width < targetStringLength) {
-        minString += ' ';
-      }
+      if (hasStandardUptakeValues) {
+        const minSUVString = `Min SUV: ${meanStdDevSUV.min.toFixed(4)}`;
+        const maxSUVString = `Max SUV: ${meanStdDevSUV.max.toFixed(4)}`;
 
-      otherLines.push(`${minString}${maxString}`);
+        while (context.measureText(minString).width < targetStringLength) {
+          minString += ' ';
+        }
+
+        while (context.measureText(maxString).width < targetStringLength) {
+          maxString += ' ';
+        }
+
+        otherLines.push(`${minString}${minSUVString}`);
+        otherLines.push(`${maxString}${maxSUVString}`);
+      } else {
+        while (context.measureText(minString).width < targetStringLength) {
+          minString += ' ';
+        }
+        otherLines.push(`${minString}${maxString}`);
+      }
     }
   }
 
@@ -476,6 +492,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     meanStdDevSUV = {
       mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
       stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
+      max: calculateSUV(image, ellipseMeanStdDev.max, true) || 0,
+      min: calculateSUV(image, ellipseMeanStdDev.min, true) || 0,
     };
   }
 
