@@ -16,3 +16,4 @@ dist/
 junit.xml
 .DS_Store
 
+~/.npm
