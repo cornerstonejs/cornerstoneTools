@@ -5,11 +5,10 @@
 
 [**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-<h2 />
 <h2> Videa-Specific Customizations and Notes</h2>
-Per VideaHealth specifications, a few changes are made to support: 
+Per VideaHealth specifications, a few changes are made to support:
 
-1. Hiding metrics as annotations are drawn, and 
+1. Adding a configuration setting for hiding metrics as freehand and rectangular annotations are drawn,
 2. Disabling the mobile drawing offset.
 3. Coming soon: Decreasing the radius around boxes that is treated as editing a particular box. This is to allow for annotating boxes more closely together.
 
