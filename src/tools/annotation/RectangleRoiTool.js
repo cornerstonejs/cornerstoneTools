@@ -226,7 +226,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           data.handles.initialRotation
         );
 
-        if (this.configuration.drawHandles) {
+        if (this.configuration.drawHandles && data.source !== 'AI') {
           drawHandles(context, eventData, data.handles, handleOptions);
         }
 
