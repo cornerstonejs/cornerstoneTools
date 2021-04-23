@@ -5,11 +5,24 @@
 
 [**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-<p>Per VideaHealth specifications, a few changes are made to support: 1. Hiding metrics as annotations are drawn, and 2. Disabling the mobile drawing offset.</p>
+<h2 />
+<h2> Videa-Specific Customizations and Notes</h2>
+Per VideaHealth specifications, a few changes are made to support: 
 
-</div>
+1. Hiding metrics as annotations are drawn, and 
+2. Disabling the mobile drawing offset.
+3. Coming soon: Decreasing the radius around boxes that is treated as editing a particular box. This is to allow for annotating boxes more closely together.
 
+<h3>Videa Deployment Steps</h3>
+1. Run the build and update package.json to reflect the new version
+2. Commit the changes
+3. Create a release tag on Github with the version you would like. For example, 4.12.2-b. The base `x.y.z-l` follows CornerstoneTools' semantic versioning for `x.y.z`, with `l` representing the corresponding letter for how many changes have been made since the `x.y.z` release.
+</p>
+
+This concludes the Videa-specific notes.
 <hr />
+
+<h2>Cornerstone Community Documentation</h2>
 
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
@@ -198,12 +211,5 @@ For questions related to using the library, please visit our support community,
 or file an issue on GitHub.
 
 - [Google Group][google-group]
-
-<p>Changes have been made to support: 1. Hiding metrics as annotations are drawn, disabling the mobile drawing offset, and hiding the handles (changing the default configuration value).</p>
-
-<h3>Deployment Steps</h3>
-<p>
-  Run the build, commit the changes (update package.json to reflect the new version), and then create a release tag on Github with the version you would like. For example, 4.12.2-b. The base `x.y.z-l` follows CornerstoneTools' semantic versioning for `x.y.z`, with `l` representing the corresponding letter for how many changes have been made since the `x.y.z` release.
-</p>
 
 </div>
