@@ -136,7 +136,7 @@ export default function(
 
     // Average pixel width of index finger is 45-57 pixels
     // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-    const fingerDistance = -57;
+    const fingerDistance = 0;
 
     const aboveFinger = {
       x: evtDetail.currentPoints.page.x,
@@ -163,7 +163,7 @@ function _dragHandler(
 ) {
   const { image, currentPoints, element, buttons } = evt.detail;
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const fingerOffset = 0;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
     page.x,

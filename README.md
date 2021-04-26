@@ -1,13 +1,27 @@
 <div align="center">
-<h1>cornerstone-tools</h1>
+<h1>videahealth/cornerstone-tools</h1>
 
 <p>Provides a simple, extensible framework for creating tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a>. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.</p>
 
 [**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 
-</div>
+<h2> Videa-Specific Customizations and Notes</h2>
+Per VideaHealth specifications, a few changes are made to support:
 
+1. Adding a configuration setting for hiding metrics as freehand and rectangular annotations are drawn,
+2. Disabling the mobile drawing offset.
+3. Coming soon: Decreasing the radius around boxes that is treated as editing a particular box. This is to allow for annotating boxes more closely together.
+
+<h3>Videa Deployment Steps</h3>
+1. Run the build and update package.json to reflect the new version
+2. Commit the changes
+3. Create a release tag on Github with the version you would like. For example, 4.12.2-b. The base `x.y.z-l` follows CornerstoneTools' semantic versioning for `x.y.z`, with `l` representing the corresponding letter for how many changes have been made since the `x.y.z` release.
+</p>
+
+This concludes the Videa-specific notes.
 <hr />
+
+<h2>Cornerstone Community Documentation</h2>
 
 <!-- prettier-ignore-start -->
 [![Build Status][build-badge]][build]
@@ -111,6 +125,7 @@ This library has `peerDependencies` listings for:
 
 If you need to support the `IE11` Browser, you will need to provide polyfills as needed. Our BrowserList target:
 
+[**Read The Docs**](https://tools.cornerstonejs.org/) | [Edit the docs](https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/)
 ```json
   "browserslist": [
     "> 1%",
@@ -196,34 +211,4 @@ or file an issue on GitHub.
 
 - [Google Group][google-group]
 
-## LICENSE
-
-MIT
-
-<!--
-Links:
--->
-
-<!-- prettier-ignore-start -->
-[build-badge]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg
-[build]: https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master
-[contributing]: https://github.com/cornerstonejs/cornerstoneTools/blob/master/CONTRIBUTING.md
-[coverage-badge]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master/graphs/badge.svg
-[coverage]: https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master
-[npm-url]: https://npmjs.org/package/cornerstone-tools
-[npm-downloads-image]: http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat
-[npm-version-image]: http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat
-[license-image]: http://img.shields.io/badge/license-MIT-blue.svg?style=flat
-[license-url]: LICENSE
-[version-2]: https://github.com/cornerstonejs/cornerstoneTools/tree/v2.4.x
-[node]: https://nodejs.org
-[ohif-demo]: https://viewer.ohif.org/demo-signin
-[ohif-source]: https://github.com/OHIF/Viewers
-[emojis]: https://github.com/kentcdodds/all-contributors#emoji-key
-[all-contributors]: https://github.com/kentcdodds/all-contributors
-[bugs]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A"🐛+Bug%3A+Verified"+sort%3Acreated-desc
-[requests-feature]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A"💻+Change%3A+Feature"+is%3Aopen
-[requests-implementation]: https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A"💻+Change%3A+Implementation"+is%3Aopen
-[good-first-issue]: https://github.com/cornerstonejs/cornerstoneTools/issues?utf8=✓&q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A"🥇+Good+First+Issue"
-[google-group]: https://groups.google.com/forum/#!forum/cornerstone-platform
-<!-- prettier-ignore-end -->
+</div>

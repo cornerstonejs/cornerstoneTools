@@ -154,7 +154,7 @@ function _moveHandler(
   options.hasMoved = true;
 
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const fingerOffset = 0;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
     interactionType === 'touch' ? page.x + fingerOffset : page.x,
@@ -243,7 +243,7 @@ function _moveEndHandler(
   }
 
   const page = currentPoints.page;
-  const fingerOffset = -57;
+  const fingerOffset = 0;
   const targetLocation = external.cornerstone.pageToPixel(
     element,
     interactionType === 'touch' ? page.x + fingerOffset : page.x,
