@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 5.1.4-a - 2021-04-23 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 5.1.4-b - 2021-04-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "539ccc9db62c945d62ef";
+/******/ 	var hotCurrentHash = "f74e8565c2f716b05a1b";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -24674,18 +24674,11 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
               data.handles.textBox.y = data.polyBoundingBox.top + data.polyBoundingBox.height / 2;
             }
 
-            var text = textBoxText.call(_this2, data); // drawLinkedTextBox(
-            //   context,
-            //   element,
-            //   data.handles.textBox,
-            //   text,
-            //   data.handles.points,
-            //   textBoxAnchorPoints,
-            //   color,
-            //   lineWidth,
-            //   0,
-            //   true
-            // );
+            var text = textBoxText.call(_this2, data);
+
+            if (_this2.configuration.drawStatistics) {
+              Object(_drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_19__["default"])(context, element, data.handles.textBox, text, data.handles.points, textBoxAnchorPoints, color, lineWidth, 0, true);
+            }
           }
         });
       };
@@ -25976,6 +25969,7 @@ function defaultFreehandConfiguration() {
     currentHandle: 0,
     currentTool: -1,
     drawHandles: true,
+    drawStatistics: false,
     renderDashed: false
   };
 }
@@ -26696,8 +26690,11 @@ var RectangleRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       configuration: {
         drawHandles: true,
         drawHandlesOnHover: false,
+        drawStatistics: false,
         hideHandlesIfMoving: false,
-        renderDashed: false // showMinMax: false,
+        renderDashed: false,
+        mouseEditingRadius: 15,
+        touchEditingRadius: 25 // showMinMax: false,
         // showHounsfieldUnits: true
 
       },
@@ -26762,7 +26759,10 @@ var RectangleRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
         return false;
       }
 
-      var distance = interactionType === 'mouse' ? 15 : 25;
+      var _this$configuration = this.configuration,
+          touchEditingRadius = _this$configuration.touchEditingRadius,
+          mouseEditingRadius = _this$configuration.mouseEditingRadius;
+      var distance = interactionType === 'mouse' ? mouseEditingRadius : touchEditingRadius;
       var startCanvas = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.pixelToCanvas(element, data.handles.start);
       var endCanvas = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.pixelToCanvas(element, data.handles.end);
       var rect = {
@@ -26802,11 +26802,11 @@ var RectangleRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           element = eventData.element;
       var lineWidth = _stateManagement_toolStyle_js__WEBPACK_IMPORTED_MODULE_8__["default"].getToolWidth();
       var lineDash = Object(_store_index__WEBPACK_IMPORTED_MODULE_18__["getModule"])('globalConfiguration').configuration.lineDash;
-      var _this$configuration = this.configuration,
-          handleRadius = _this$configuration.handleRadius,
-          drawHandlesOnHover = _this$configuration.drawHandlesOnHover,
-          hideHandlesIfMoving = _this$configuration.hideHandlesIfMoving,
-          renderDashed = _this$configuration.renderDashed;
+      var _this$configuration2 = this.configuration,
+          handleRadius = _this$configuration2.handleRadius,
+          drawHandlesOnHover = _this$configuration2.drawHandlesOnHover,
+          hideHandlesIfMoving = _this$configuration2.hideHandlesIfMoving,
+          renderDashed = _this$configuration2.renderDashed;
       var context = Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["getNewContext"])(eventData.canvasContext.canvas);
 
       var _getPixelSpacing = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_17__["default"])(image),
@@ -26847,7 +26847,7 @@ var RectangleRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
 
           Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawRect"])(context, element, data.handles.start, data.handles.end, rectOptions, 'pixel', data.handles.initialRotation);
 
-          if (_this2.configuration.drawHandles) {
+          if (_this2.configuration.drawHandles && data.source !== 'AI') {
             Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawHandles"])(context, eventData, data.handles, handleOptions);
           } // Update textbox stats
 
@@ -26864,30 +26864,19 @@ var RectangleRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           if (!data.handles.textBox.hasMoved) {
             var defaultCoords = Object(_util_getROITextBoxCoords_js__WEBPACK_IMPORTED_MODULE_12__["default"])(eventData.viewport, data.handles);
             Object.assign(data.handles.textBox, defaultCoords);
-          } // const textBoxAnchorPoints = handles =>
-          //   _findTextBoxAnchorPoints(handles.start, handles.end);
-          // const textBoxContent = _createTextBoxContent(
-          //   context,
-          //   image.color,
-          //   data.cachedStats,
-          //   modality,
-          //   hasPixelSpacing,
-          //   this.configuration
-          // );
+          }
 
+          var textBoxAnchorPoints = function textBoxAnchorPoints(handles) {
+            return _findTextBoxAnchorPoints(handles.start, handles.end);
+          };
 
-          data.unit = _getUnit(modality, _this2.configuration.showHounsfieldUnits); // drawLinkedTextBox(
-          //   context,
-          //   element,
-          //   data.handles.textBox,
-          //   textBoxContent,
-          //   data.handles,
-          //   textBoxAnchorPoints,
-          //   color,
-          //   lineWidth,
-          //   10,
-          //   true
-          // );
+          var textBoxContent = _createTextBoxContent(context, image.color, data.cachedStats, modality, hasPixelSpacing, _this2.configuration);
+
+          data.unit = _getUnit(modality, _this2.configuration.showHounsfieldUnits);
+
+          if (_this2.configuration.drawStatistics) {
+            Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_10__["drawLinkedTextBox"])(context, element, data.handles.textBox, textBoxContent, data.handles, textBoxAnchorPoints, color, lineWidth, 10, true);
+          }
         }
       });
     }
@@ -38420,7 +38409,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('5.1.4-a');
+/* harmony default export */ __webpack_exports__["default"] = ('5.1.4-b');
 
 /***/ })
 
