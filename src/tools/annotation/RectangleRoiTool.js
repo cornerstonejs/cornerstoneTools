@@ -47,6 +47,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         drawStatistics: false,
         hideHandlesIfMoving: false,
         renderDashed: false,
+        mouseEditingRadius: 15,
+        touchEditingRadius: 25,
         // showMinMax: false,
         // showHounsfieldUnits: true
       },
@@ -116,7 +118,9 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       return false;
     }
 
-    const distance = interactionType === 'mouse' ? 15 : 25;
+    const { touchEditingRadius, mouseEditingRadius } = this.configuration;
+    const distance =
+      interactionType === 'mouse' ? mouseEditingRadius : touchEditingRadius;
     const startCanvas = external.cornerstone.pixelToCanvas(
       element,
       data.handles.start
