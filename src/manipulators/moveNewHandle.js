@@ -66,6 +66,7 @@ export default function(
 
   annotation.active = true;
 
+  handle.moving = true;
   handle.active = true;
   state.isToolLocked = true;
 
@@ -235,6 +236,7 @@ function _moveEndHandler(
 ) {
   const eventData = evt.detail;
   const { element, currentPoints } = eventData;
+  let moveNewHandleSuccessful = true;
 
   if (options.hasMoved === false) {
     return;
@@ -252,6 +254,7 @@ function _moveEndHandler(
   annotation.active = false;
   annotation.invalidated = true;
   handle.active = false;
+  handle.moving = false;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
@@ -286,6 +289,8 @@ function _moveEndHandler(
     options.deleteIfHandleOutsideImage &&
     anyHandlesOutsideImage(evt.detail, annotation.handles)
   ) {
+    annotation.cancelled = true;
+    moveNewHandleSuccessful = false;
     removeToolState(element, toolName, annotation);
   }
 
@@ -298,7 +303,7 @@ function _moveEndHandler(
       moveEndHandler,
     },
     doneMovingCallback,
-    true
+    moveNewHandleSuccessful
   );
 }
 

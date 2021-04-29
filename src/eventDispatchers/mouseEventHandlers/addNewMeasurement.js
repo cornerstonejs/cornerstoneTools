@@ -1,6 +1,9 @@
 import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
-import { addToolState } from '../../stateManagement/toolState.js';
+import {
+  addToolState,
+  removeToolState,
+} from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
 import { getLogger } from '../../util/logger.js';
 import triggerEvent from '../../util/triggerEvent.js';
@@ -36,16 +39,24 @@ export default function(evt, tool) {
     measurementData.handles.end,
     tool.options,
     'mouse',
-    () => {
-      const eventType = EVENTS.MEASUREMENT_COMPLETED;
-      const eventData = {
-        toolName: tool.name,
-        toolType: tool.name, // Deprecation notice: toolType will be replaced by toolName
-        element,
-        measurementData,
-      };
+    success => {
+      if (measurementData.cancelled) {
+        return;
+      }
 
-      triggerEvent(element, eventType, eventData);
+      if (success) {
+        const eventType = EVENTS.MEASUREMENT_COMPLETED;
+        const eventData = {
+          toolName: tool.name,
+          toolType: tool.name, // Deprecation notice: toolType will be replaced by toolName
+          element,
+          measurementData,
+        };
+
+        triggerEvent(element, eventType, eventData);
+      } else {
+        removeToolState(element, tool.name, measurementData);
+      }
     }
   );
 }
