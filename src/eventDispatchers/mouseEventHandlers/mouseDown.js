@@ -88,7 +88,22 @@ export default function(evt) {
 
   if (annotationToolsWithMoveableHandles.length > 0) {
     const firstToolWithMoveableHandles = annotationToolsWithMoveableHandles[0];
-    const toolState = getToolState(element, firstToolWithMoveableHandles.name);
+    let toolState = getToolState(element, firstToolWithMoveableHandles.name);
+
+    // create a deep copy of toolState to avoid bad renders of contours after right clicks
+    toolState = JSON.parse(JSON.stringify(toolState));
+
+    const activeRoiId = firstToolWithMoveableHandles.roi.id;
+    let temporaryValue;
+
+    // Moves the elements with a roi id equal to the activeRoiId to the beginning of the toolState array
+    for (let i = 0; i < toolState.data.length; i++) {
+      if (toolState.data[i].roi.id === activeRoiId) {
+        temporaryValue = toolState.data[i];
+        toolState.data.splice(i, 1);
+        toolState.data.unshift(temporaryValue);
+      }
+    }
 
     const { handle, data } = findHandleDataNearImagePoint(
       element,
