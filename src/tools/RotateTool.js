@@ -56,7 +56,15 @@ export default class RotateTool extends BaseTool {
 function defaultStrategy(evt) {
   const { roundAngles, rotateScale } = this.configuration;
   const { element, viewport, startPoints, currentPoints } = evt.detail;
-  const initialRotation = viewport.initialRotation;
+
+  let prevInitialRotation;
+
+  if (viewport.initialRotation) {
+    prevInitialRotation = viewport.initialRotation;
+  } else {
+    prevInitialRotation = viewport.rotation;
+  }
+  const initialRotation = prevInitialRotation;
 
   // Calculate the center of the image
   const rect = element.getBoundingClientRect(element);
