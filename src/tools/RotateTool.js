@@ -57,14 +57,9 @@ function defaultStrategy(evt) {
   const { roundAngles, rotateScale } = this.configuration;
   const { element, viewport, startPoints, currentPoints } = evt.detail;
 
-  let prevInitialRotation;
-
-  if (viewport.initialRotation) {
-    prevInitialRotation = viewport.initialRotation;
-  } else {
-    prevInitialRotation = viewport.rotation;
-  }
-  const initialRotation = prevInitialRotation;
+  const initialRotation = viewport.initialRotation
+    ? viewport.initialRotation
+    : viewport.rotation;
 
   // Calculate the center of the image
   const rect = element.getBoundingClientRect(element);
