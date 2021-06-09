@@ -29,7 +29,8 @@ function addRequest(
   preventCache,
   doneCallback,
   failCallback,
-  addToBeginning
+  addToBeginning,
+  options = {}
 ) {
   if (!requestPool.hasOwnProperty(type)) {
     throw new Error(
@@ -48,6 +49,7 @@ function addRequest(
     preventCache,
     doneCallback,
     failCallback,
+    options,
   };
 
   // If this imageId is in the cache, resolve it immediately
@@ -150,18 +152,17 @@ function sendRequest(requestDetails) {
 
   const priority = requestTypeToLoadPriority(requestDetails);
 
+  const options = Object.assign({}, requestDetails.options, {
+    priority,
+    type: requestDetails.type,
+  });
+
   let loader;
 
   if (requestDetails.preventCache === true) {
-    loader = cornerstone.loadImage(imageId, {
-      priority,
-      type: requestDetails.type,
-    });
+    loader = cornerstone.loadImage(imageId, options);
   } else {
-    loader = cornerstone.loadAndCacheImage(imageId, {
-      priority,
-      type: requestDetails.type,
-    });
+    loader = cornerstone.loadAndCacheImage(imageId, options);
   }
 
   // Load and cache the image

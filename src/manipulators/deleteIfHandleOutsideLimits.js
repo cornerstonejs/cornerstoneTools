@@ -16,9 +16,20 @@ import {
  * @param {string} toolName - The tool which the annotation belongs to
  * @param {Object} annotation - The annotation to have its handles verified
  * @param {Object} [options={}] - An object containing the handles' moving options
- * @returns {void}
+ * @returns {boolean} if handle outside limits
  */
 export default function(eventData, toolName, annotation, options = {}) {
+
+    // // If any handle is outside the image, delete the tool data
+  // if (
+  //   options.deleteIfHandleOutsideImage &&
+  //   anyHandlesOutsideImage(evt.detail, annotation.handles)
+  // ) {
+  //   annotation.cancelled = true;
+  //   moveNewHandleSuccessful = false;
+  //   removeToolState(element, toolName, annotation);
+  // }
+
   // If any handle is outside the image, delete the tool data
   if (
     (options.deleteIfHandleOutsideDisplayedArea &&
@@ -28,5 +39,7 @@ export default function(eventData, toolName, annotation, options = {}) {
   ) {
     annotation.cancelled = true;
     removeToolState(eventData.element, toolName, annotation);
+    return true;
   }
+  return false;
 }
