@@ -19,10 +19,14 @@ export default function(eventData, interactionType) {
   let offsetX = 0;
   let offsetY = 0;
 
-  if(interactionType === 'touch') {
+  if (interactionType === 'touch') {
     offsetX = handleTouchOffset.x;
-    offsetY = handleTouchOffset.y
+    offsetY = handleTouchOffset.y;
   }
 
-  return external.cornerstone.pageToPixel(element, page.x + offsetX, page.y + offsetY);
+  return external.cornerstone.pageToPixel(
+    element,
+    page.x + offsetX,
+    page.y + offsetY
+  );
 }
