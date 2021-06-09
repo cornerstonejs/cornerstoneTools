@@ -63,6 +63,8 @@ function Synchronizer(event, handler) {
       return;
     }
 
+    const cornerstone = external.cornerstone;
+
     initialData.distances = {};
     initialData.imageIds = {
       sourceElements: [],
@@ -156,7 +158,7 @@ function Synchronizer(event, handler) {
    * @param {Object} eventData - The data object for the source event
    * @returns {void}
    */
-  function fireEvent(sourceElement, eventData) {
+  this.fireEvent = function(sourceElement, eventData) {
     const isDisabled = !that.enabled;
     const noElements = !sourceElements.length || !targetElements.length;
 
@@ -199,7 +201,7 @@ function Synchronizer(event, handler) {
       );
     });
     ignoreFiredEvents = false;
-  }
+  };
 
   /**
    * Call fireEvent if not ignoring events, and pass along event data
@@ -208,15 +210,15 @@ function Synchronizer(event, handler) {
    * @param {Event} e - The source event object
    * @returns {void}
    */
-  function onEvent(e) {
+  this.onEvent = function(e) {
     const eventData = e.detail;
 
     if (ignoreFiredEvents === true) {
       return;
     }
 
-    fireEvent(e.currentTarget, eventData);
-  }
+    that.fireEvent(e.currentTarget, eventData);
+  };
 
   /**
    * Add a source element to this synchronizer
@@ -237,7 +239,7 @@ function Synchronizer(event, handler) {
 
     // Subscribe to the event
     event.split(' ').forEach(oneEvent => {
-      element.addEventListener(oneEvent, onEvent);
+      element.addEventListener(oneEvent, that.onEvent);
     });
 
     // Update the initial distances between elements
@@ -302,14 +304,14 @@ function Synchronizer(event, handler) {
 
     // Stop listening for the event
     event.split(' ').forEach(oneEvent => {
-      element.removeEventListener(oneEvent, onEvent);
+      element.removeEventListener(oneEvent, that.onEvent);
     });
 
     // Update the initial distances between elements
     that.getDistances();
 
     // Update everyone listening for events
-    fireEvent(element);
+    that.fireEvent(element);
     that.updateDisableHandlers();
   };
 
@@ -377,7 +379,7 @@ function Synchronizer(event, handler) {
    */
   this.displayImage = function(element, image, viewport) {
     ignoreFiredEvents = true;
-    cornerstone.displayImage(element, image, viewport);
+    external.cornerstone.displayImage(element, image, viewport);
     ignoreFiredEvents = false;
   };
 
@@ -390,7 +392,7 @@ function Synchronizer(event, handler) {
    */
   this.setViewport = function(element, viewport) {
     ignoreFiredEvents = true;
-    cornerstone.setViewport(element, viewport);
+    external.cornerstone.setViewport(element, viewport);
     ignoreFiredEvents = false;
   };
 
