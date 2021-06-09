@@ -230,6 +230,7 @@ function _moveEndHandler(
 ) {
   const eventData = evt.detail;
   const { element } = eventData;
+  let moveNewHandleSuccessful = true;
 
   if (options.hasMoved === false) {
     return;
@@ -277,6 +278,7 @@ function _moveEndHandler(
     anyHandlesOutsideImage(evt.detail, annotation.handles)
   ) {
     annotation.cancelled = true;
+    moveNewHandleSuccessful = false;
     removeToolState(element, toolName, annotation);
   }
 
@@ -289,7 +291,7 @@ function _moveEndHandler(
       moveEndHandler,
     },
     doneMovingCallback,
-    true
+    moveNewHandleSuccessful
   );
 }
 
