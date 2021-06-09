@@ -19,8 +19,7 @@ import {
  * @returns {boolean} if handle outside limits
  */
 export default function(eventData, toolName, annotation, options = {}) {
-
-    // // If any handle is outside the image, delete the tool data
+  // // If any handle is outside the image, delete the tool data
   // if (
   //   options.deleteIfHandleOutsideImage &&
   //   anyHandlesOutsideImage(evt.detail, annotation.handles)

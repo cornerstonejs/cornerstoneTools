@@ -53,7 +53,7 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  let internalOptions = getHandleMovingOptions(options);
+  const internalOptions = getHandleMovingOptions(options);
 
   internalOptions.hasMoved = false;
 
@@ -66,7 +66,14 @@ export default function(
   state.isToolLocked = true;
 
   function moveHandler(evt) {
-    _moveHandler(toolName, annotation, handle, internalOptions, interactionType, evt);
+    _moveHandler(
+      toolName,
+      annotation,
+      handle,
+      internalOptions,
+      interactionType,
+      evt
+    );
   }
   // So we don't need to inline the entire `moveEndEventHandler` function
   function moveEndHandler(evt) {
@@ -274,7 +281,12 @@ function _moveEndHandler(
   // }
 
   clipHandle(eventData, handle, options);
-  moveNewHandleSuccessful = !deleteIfHandleOutsideLimits(eventData, toolName, annotation, options);
+  moveNewHandleSuccessful = !deleteIfHandleOutsideLimits(
+    eventData,
+    toolName,
+    annotation,
+    options
+  );
 
   _endHandler(
     interactionType,

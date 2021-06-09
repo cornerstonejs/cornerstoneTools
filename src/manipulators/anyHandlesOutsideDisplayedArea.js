@@ -26,10 +26,7 @@ export default function(renderData, handles) {
   Object.keys(handles).forEach(function(name) {
     const handle = handles[name];
 
-    if (
-      !!handle.allowedOutsideImage ||
-      !!handle.allowedOutsideDisplayedArea
-    ) {
+    if (!!handle.allowedOutsideImage || !!handle.allowedOutsideDisplayedArea) {
       return;
     }
 
