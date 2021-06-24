@@ -10,6 +10,8 @@ let isClickEvent = true;
 let preventClickTimeout;
 const clickDelay = 200;
 
+const addedListeners = new Map();
+
 function getEventButtons(event) {
   if (typeof event.buttons === 'number') {
     return event.buttons;
@@ -264,6 +266,8 @@ function mouseDown(e) {
 
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
+    addedListeners.delete(onMouseMove);
+    addedListeners.delete(onMouseUp);
 
     element.addEventListener('mousemove', mouseMove);
 
@@ -272,6 +276,8 @@ function mouseDown(e) {
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
+  addedListeners.set(onMouseMove, 'mousemove');
+  addedListeners.set(onMouseUp, 'mouseup');
 }
 
 function mouseMove(e) {
@@ -356,6 +362,11 @@ function disable(element) {
   element.removeEventListener('mousedown', mouseDown);
   element.removeEventListener('mousemove', mouseMove);
   element.removeEventListener('dblclick', mouseDoubleClick);
+  // Make sure we have removed any listeners that were added within the above listeners (#1337)
+  addedListeners.forEach((event, listener) => {
+    document.removeEventListener(event, listener);
+  });
+  addedListeners.clear();
 }
 
 function enable(element) {
