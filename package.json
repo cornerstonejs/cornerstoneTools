@@ -1,6 +1,6 @@
 {
-  "name": "@DedalusDIIT/cornerstone-tools",
-  "version": "4.0.1",
+  "name": "@dedalusdiit/cornerstone-tools",
+  "version": "4.0.3",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
@@ -13,6 +13,7 @@
   "homepage": "https://github.com/DedalusDIIT/cornerstoneTools",
   "license": "MIT",
   "publishConfig": {
+    "cache": "~/.npm",
     "registry": "https://npm.pkg.github.com/"
   },
   "repository": {
