@@ -1229,9 +1229,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     }
 
     // Reset the current handle
-    config.currentHandle = 0;
-    config.currentTool = -1;
-    data.canComplete = false;
+    this._resetCurrentHandle(data);
 
     if (this._drawing) {
       this._deactivateDraw(element);
@@ -1822,20 +1820,23 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
     if (!this._drawing) {
       return;
     }
+
     const toolState = getToolState(element, this.name);
-
     const config = this.configuration;
-
     const data = toolState.data[config.currentTool];
+
+    if (!data) {
+      this._deactivateDraw(element);
+      this._resetConfiguration();
+
+      return;
+    }
 
     data.active = false;
     data.highlight = false;
     data.handles.invalidHandlePlacement = false;
 
-    // Reset the current handle
-    config.currentHandle = 0;
-    config.currentTool = -1;
-    data.canComplete = false;
+    this._resetCurrentHandle(data);
 
     removeToolState(element, this.name, data);
 
@@ -1872,14 +1873,32 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     points[config.currentHandle - 1].lines.push(points[0]);
 
-    // Reset the current handle
-    config.currentHandle = 0;
-    config.currentTool = -1;
-    data.canComplete = false;
+    this._resetCurrentHandle();
 
     this._deactivateDraw(element);
 
     external.cornerstone.updateImage(element);
+  }
+
+  /**
+   * Resets the configuration
+   * @private
+   * @returns {undefined}
+   */
+  _resetConfiguration() {
+    this.configuration.currentHandle = 0;
+    this.configuration.currentTool = -1;
+  }
+
+  /**
+   * Resets the current handle
+   * @private
+   * @param {Object} data - toolState data of the current tool
+   * @returns {undefined}
+   */
+  _resetCurrentHandle(data) {
+    this._resetConfiguration();
+    data.canComplete = false;
   }
 }
 
