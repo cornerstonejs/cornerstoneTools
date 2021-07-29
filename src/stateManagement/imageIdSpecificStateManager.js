@@ -94,19 +94,21 @@ function newImageIdSpecificToolStateManager() {
     return imageIdToolState[toolName];
   }
 
-  function replaceElementToolState(element, toolName, data) {
+  // Replaces the given tool's state using the provided element's imageId
+  function setElementToolState(element, toolName, data) {
     const enabledElement = external.cornerstone.getEnabledElement(element);
 
     if (!enabledElement.image) {
       return;
     }
-    replaceImageIdToolState(enabledElement.image.imageId, toolName, data);
+    setImageIdToolState(enabledElement.image.imageId, toolName, data);
   }
 
-  function replaceImageIdToolState(imageId, toolName, data) {
+  // Replaces the imageId's tool state for a given tool
+  function setImageIdToolState(imageId, toolName, data) {
     const imageIdToolState = toolState[imageId];
 
-    // Replace the toolState
+    // set the toolState
     imageIdToolState[toolName] = data;
   }
 
@@ -131,11 +133,11 @@ function newImageIdSpecificToolStateManager() {
   return {
     get: getElementToolState,
     add: addElementToolState,
-    replace: replaceElementToolState,
+    set: setElementToolState,
     clear: clearElementToolState,
     getImageIdToolState,
     addImageIdToolState,
-    replaceImageIdToolState,
+    setImageIdToolState,
     clearImageIdToolState,
     saveImageIdToolState,
     restoreImageIdToolState,

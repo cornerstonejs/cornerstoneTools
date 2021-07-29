@@ -77,8 +77,8 @@ describe('imageIdSpecificStateManager.add', () => {
   });
 });
 
-describe('imageIdSpecificStateManager.replace', () => {
-  it('replaces data in the existing toolState', () => {
+describe('imageIdSpecificStateManager.set', () => {
+  it('replaces data in the existing toolState using set', () => {
     const stateManager = newImageIdSpecificToolStateManager();
     const toolName = 'TestTool';
     const imageId = 'abc123';
@@ -97,7 +97,7 @@ describe('imageIdSpecificStateManager.replace', () => {
       [toolName]: { data: ['initialData'] },
     });
     // Add more data
-    stateManager.replace(testElement, toolName, {
+    stateManager.set(testElement, toolName, {
       data: ['replacedData1', 'replacedData2'],
     });
 
