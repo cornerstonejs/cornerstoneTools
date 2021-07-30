@@ -1,9 +1,6 @@
 // SUT
 import wheelEventListener from './wheelEventListener.js';
 
-// Setup
-import external from './../externalModules.js';
-
 jest.mock('./../externalModules.js');
 
 describe('eventListeners/wheelEventListener.js', () => {
@@ -41,7 +38,7 @@ describe('eventListeners/wheelEventListener.js', () => {
     const localElement = document.createElement('div');
 
     // Assert
-    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+    localElement.addEventListener('cornerstonetoolsmousewheel', () => {
       expect(true).toBe(true);
       done();
     });
@@ -56,7 +53,7 @@ describe('eventListeners/wheelEventListener.js', () => {
     const localElement = document.createElement('div');
     const scrollHandler = jest.fn();
 
-    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+    localElement.addEventListener('cornerstonetoolsmousewheel', () => {
       scrollHandler();
     });
     wheelEventListener.enable(localElement);
@@ -105,5 +102,25 @@ describe('eventListeners/wheelEventListener.js', () => {
 
     // Fire Away!
     localElement.dispatchEvent(new Event('wheel'));
+  });
+
+  it('does not emit an `cornerstonetoolsmousewheel` event when scrolling less than one pixel', () => {
+    // Setup
+    const localElement = document.createElement('div');
+    const scrollCloseToZeroPixel = 0.00001;
+    const middleMouseButtonClickedEvent = new WheelEvent('wheel', {
+      deltaY: scrollCloseToZeroPixel,
+    });
+
+    // Assert
+    localElement.addEventListener('cornerstonetoolsmousewheel', evt => {
+      expect(false).toBe(true, `Unwanted event fired for ${evt}`);
+    });
+
+    // SUT
+    wheelEventListener.enable(localElement);
+
+    // Fire Away!
+    localElement.dispatchEvent(middleMouseButtonClickedEvent);
   });
 });

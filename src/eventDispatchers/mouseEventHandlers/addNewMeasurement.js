@@ -1,9 +1,18 @@
+import EVENTS from '../../events.js';
 import external from '../../externalModules.js';
-import { addToolState } from '../../stateManagement/toolState.js';
+import {
+  addToolState,
+  removeToolState,
+} from '../../stateManagement/toolState.js';
 import { moveHandle, moveNewHandle } from '../../manipulators/index.js';
+import { getLogger } from '../../util/logger.js';
+import triggerEvent from '../../util/triggerEvent.js';
+
+const logger = getLogger('eventDispatchers:mouseEventHandlers');
 
 export default function(evt, tool) {
-  //
+  logger.log('addNewMeasurement');
+
   evt.preventDefault();
   evt.stopPropagation();
   const eventData = evt.detail;
@@ -14,7 +23,6 @@ export default function(evt, tool) {
     return;
   }
 
-  // Associate this data with this imageId so we can render it and manipulate it
   addToolState(element, tool.name, measurementData);
 
   external.cornerstone.updateImage(element);
@@ -30,6 +38,25 @@ export default function(evt, tool) {
     measurementData,
     measurementData.handles.end,
     tool.options,
-    'mouse'
+    'mouse',
+    success => {
+      if (measurementData.cancelled) {
+        return;
+      }
+
+      if (success) {
+        const eventType = EVENTS.MEASUREMENT_COMPLETED;
+        const eventData = {
+          toolName: tool.name,
+          toolType: tool.name, // Deprecation notice: toolType will be replaced by toolName
+          element,
+          measurementData,
+        };
+
+        triggerEvent(element, eventType, eventData);
+      } else {
+        removeToolState(element, tool.name, measurementData);
+      }
+    }
   );
 }

@@ -1,53 +1,70 @@
 {
   "name": "cornerstone-tools",
-  "version": "3.0.1",
+  "version": "4.0.1",
   "description": "Medical imaging tools for the Cornerstone library",
-  "main": "./dist/cornerstoneTools.min.js",
+  "main": "./dist/cornerstoneTools.js",
   "keywords": [
     "DICOM",
     "medical",
     "imaging",
     "cornerstone"
   ],
-  "author": "Chris Hafey, Prasath",
+  "author": "https://github.com/cornerstonejs/cornerstoneTools#contributors",
   "homepage": "https://github.com/cornerstonejs/cornerstoneTools",
   "license": "MIT",
-  "module": "./dist/cornerstoneTools.min.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/cornerstonejs/cornerstoneTools.git"
   },
+  "engines": {
+    "node": ">=8.16.0"
+  },
   "scripts": {
     "build": "npm run test && npm run clean:dist && npm run version && npm run build:prod && npm run build:dev",
     "build:dev": "webpack --progress --config ./config/webpack/webpack-dev",
-    "build:prod": "webpack --progress --config ./config/webpack/webpack-prod",
+    "build:prod": "webpack --config ./config/webpack/webpack-prod",
+    "commit": "git-cz",
     "contributors:add": "all-contributors add",
     "contributors:generate": "all-contributors generate",
     "clean:dist": "shx rm -rf ./dist",
     "clean:coverage": "shx rm -rf ./coverage",
     "dev": "npm run build:dev -- --watch --debug",
-    "docs:api": "docma --config ./docma.json && docma serve ./docs/latest/api",
-    "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api\"",
+    "docs:api": "docma --config ./docma.json",
+    "docs:api:dev": "docma --config ./docma-dev.json && docma serve ./docs/latest/api",
+    "docs:api:watch": "nodemon --watch src/**/* -x \"npm run docs:api:dev\"",
     "docs:book": "npm run docs:api && cd ./docs/latest && gitbook install && gitbook serve",
-    "docs:deploy": "bash ./build/update-docs.sh",
-    "lint": "eslint -c .eslintrc.js --fix src",
+    "docs:deploy": "bash ./.circleci/update-docs.sh",
+    "lint": "eslint -c .eslintrc.js --fix src && prettier --single-quote --write src/**/*.{js,json,css}",
     "prepublishOnly": "npm run build",
     "start": "npm run build:prod && npm run build:dev",
-    "test:unit": "jest --clearCache && jest \\.test\\.js$",
+    "test": "npm run test:unit",
+    "test:unit": "jest --clearCache && jest --runInBand \\.test\\.js$",
     "test:ci": "npm run test:unit && codecov",
     "version": "node -p -e \"'export default \\'' + require('./package.json').version + '\\';'\" > src/version.js"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "src/**/*.{js,json,css}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
   "devDependencies": {
-    "@babel/core": "7.1.2",
-    "@babel/plugin-transform-runtime": "7.1.0",
-    "@babel/preset-env": "7.1.0",
+    "@babel/core": "^7.5.0",
+    "@babel/plugin-transform-runtime": "^7.5.0",
+    "@babel/preset-env": "^7.5.0",
     "all-contributors-cli": "5.11.0",
-    "babel-core": "7.0.0-bridge.0",
-    "babel-jest": "23.6.0",
-    "babel-loader": "8.0.4",
-    "canvas": "2.1.0",
+    "babel-jest": "^25.1.0",
+    "babel-loader": "^8.0.4",
+    "canvas": "2.6.1",
+    "commitizen": "^4.0.3",
     "coveralls": "3.0.2",
-    "docma": "3.0.0",
+    "cz-conventional-changelog": "2.1.0",
+    "docma": "3.2.2",
     "eslint": "4.19.1",
     "eslint-config-prettier": "3.3.0",
     "eslint-loader": "2.0.0",
@@ -57,20 +74,23 @@
     "gitbook-plugin-ga": "2.0.0",
     "gitbook-plugin-github": "3.0.0",
     "gitbook-plugin-sitemap": "1.2.0",
-    "jest": "23.4.0",
+    "husky": "3.0.x",
+    "jest": "^25.1.0",
     "jest-junit": "5.1.0",
-    "lodash": "4.17.10",
-    "nodemon": "1.18.6",
-    "semantic-release": "^15.13.3",
+    "lint-staged": "^9.2.5",
+    "lodash": "^4.17.15",
+    "nodemon": "^2.0.2",
+    "prettier": "1.18.x",
+    "semantic-release": "^15.13.24",
     "shx": "^0.3.2",
-    "uglifyjs-webpack-plugin": "1.2.5",
-    "webpack": "4.9.1",
-    "webpack-cli": "2.1.4",
-    "webpack-dev-server": "3.1.10"
+    "terser-webpack-plugin": "^1.4.1",
+    "webpack": "^4.35.2",
+    "webpack-cli": "^3.3.5",
+    "webpack-dev-server": "^3.7.2"
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "^0.1.7"
+    "cornerstone-math": "0.1.7"
   },
   "files": [
     "dist/cornerstoneTools.js",
@@ -98,5 +118,17 @@
       "!src/index.js"
     ],
     "testEnvironment": "jsdom"
-  }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "browserslist": [
+    "> 1%",
+    "IE 11",
+    "not dead",
+    "not IE < 11",
+    "not op_mini all"
+  ]
 }

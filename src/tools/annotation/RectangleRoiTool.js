@@ -18,8 +18,15 @@ import {
 
 // Util
 import calculateSUV from './../../util/calculateSUV.js';
+import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
+import { rectangleRoiCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+import getPixelSpacing from '../../util/getPixelSpacing';
+import { getModule } from '../../store/index';
+
+const logger = getLogger('tools:annotation:RectangleRoiTool');
 
 /**
  * @public
@@ -30,19 +37,24 @@ import throttle from './../../util/throttle.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class RectangleRoiTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'RectangleRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
+        drawHandles: true,
+        drawHandlesOnHover: false,
+        hideHandlesIfMoving: false,
+        renderDashed: false,
         // showMinMax: false,
         // showHounsfieldUnits: true
       },
+      svgCursor: rectangleRoiCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
+
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -50,10 +62,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
-        `required eventData not supplied to tool ${
-          this.name
-        }'s createNewMeasurement`
+      logger.error(
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
       );
 
       return;
@@ -77,6 +87,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           highlight: true,
           active: true,
         },
+        initialRotation: eventData.viewport.rotation,
         textBox: {
           active: false,
           hasMoved: false,
@@ -95,8 +106,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const validParameters = hasStartAndEndHandles;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
     }
 
@@ -129,6 +140,25 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     return distanceToPoint < distance;
   }
 
+  updateCachedStats(image, element, data) {
+    const seriesModule =
+      external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
+      {};
+    const modality = seriesModule.modality;
+    const pixelSpacing = getPixelSpacing(image);
+
+    const stats = _calculateStats(
+      image,
+      element,
+      data.handles,
+      modality,
+      pixelSpacing
+    );
+
+    data.cachedStats = stats;
+    data.invalidated = false;
+  }
+
   renderToolData(evt) {
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -139,28 +169,24 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
     const eventData = evt.detail;
     const { image, element } = eventData;
     const lineWidth = toolStyle.getToolWidth();
-    const { handleRadius, drawHandlesOnHover } = this.configuration;
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
+    const {
+      handleRadius,
+      drawHandlesOnHover,
+      hideHandlesIfMoving,
+      renderDashed,
+    } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     // Meta
     const seriesModule =
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
-    let imagePlane = external.cornerstone.metaData.get(
-      'imagePlaneModule',
-      image.imageId
-    );
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing =
-      imagePlane && imagePlane.rowPixelSpacing && imagePlane.columnPixelSpacing;
-
-    imagePlane = imagePlane || {};
-    const pixelSpacing = {
-      rowPixelSpacing: imagePlane.rowPixelSpacing || 1,
-      columnPixelSpacing: imagePlane.columnPixelSpacing || 1,
-    };
+    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
 
     draw(context, context => {
       // If we have tool data for this element - iterate over each set and draw it
@@ -177,39 +203,49 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
+          hideHandlesIfMoving,
         };
 
         setShadow(context, this.configuration);
 
+        const rectOptions = { color };
+
+        if (renderDashed) {
+          rectOptions.lineDash = lineDash;
+        }
+
         // Draw
-        drawRect(context, element, data.handles.start, data.handles.end, {
-          color,
-        });
-        drawHandles(context, eventData, data.handles, handleOptions);
+        drawRect(
+          context,
+          element,
+          data.handles.start,
+          data.handles.end,
+          rectOptions,
+          'pixel',
+          data.handles.initialRotation
+        );
+
+        if (this.configuration.drawHandles) {
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
 
         // Update textbox stats
         if (data.invalidated === true) {
           if (data.cachedStats) {
-            _throttledUpdateCachedStats(
-              image,
-              element,
-              data,
-              modality,
-              pixelSpacing
-            );
+            this.throttledUpdateCachedStats(image, element, data);
           } else {
-            _updateCachedStats(image, element, data, modality, pixelSpacing);
+            this.updateCachedStats(image, element, data);
           }
         }
 
         // Default to textbox on right side of ROI
         if (!data.handles.textBox.hasMoved) {
-          data.handles.textBox.x = Math.max(
-            data.handles.start.x,
-            data.handles.end.x
+          const defaultCoords = getROITextBoxCoords(
+            eventData.viewport,
+            data.handles
           );
-          data.handles.textBox.y =
-            (data.handles.start.y + data.handles.end.y) / 2;
+
+          Object.assign(data.handles.textBox, defaultCoords);
         }
 
         const textBoxAnchorPoints = handles =>
@@ -223,6 +259,8 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           this.configuration
         );
 
+        data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
+
         drawLinkedTextBox(
           context,
           element,
@@ -232,7 +270,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           textBoxAnchorPoints,
           color,
           lineWidth,
-          0,
+          10,
           true
         );
       }
@@ -241,39 +279,12 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 }
 
 /**
- *
- */
-const _throttledUpdateCachedStats = throttle(_updateCachedStats, 110);
-
-/**
- *
- *
- * @param {*} image
- * @param {*} element
- * @param {*} data
- * @param {string} modality
- * @param {*} pixelSpacing
- */
-function _updateCachedStats(image, element, data, modality, pixelSpacing) {
-  const stats = _calculateStats(
-    image,
-    element,
-    data.handles,
-    modality,
-    pixelSpacing
-  );
-
-  data.cachedStats = stats;
-  data.invalidated = false;
-}
-
-/**
  * TODO: This is the same method (+ GetPixels) for the other ROIs
  * TODO: The pixel filtering is the unique bit
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {{ left: number, top: number, width: number, height: number}}
  */
 function _getRectangleImageCoordinates(startHandle, endHandle) {
   return {
@@ -292,7 +303,7 @@ function _getRectangleImageCoordinates(startHandle, endHandle) {
  * @param {*} handles
  * @param {*} modality
  * @param {*} pixelSpacing
- * @returns
+ * @returns {Object} The Stats object
  */
 function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Retrieve the bounds of the rectangle in image coordinates
@@ -325,7 +336,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   // Calculate the image area from the rectangle dimensions and pixel spacing
   const area =
     roiCoordinates.width *
-    (pixelSpacing.columnPixelSpacing || 1) *
+    (pixelSpacing.colPixelSpacing || 1) *
     (roiCoordinates.height * (pixelSpacing.rowPixelSpacing || 1));
 
   return {
@@ -345,7 +356,7 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
  *
  * @param {*} sp
  * @param {*} rectangle
- * @returns
+ * @returns {{ count, number, mean: number,  variance: number,  stdDev: number,  min: number,  max: number }}
  */
 function _calculateRectangleStats(sp, rectangle) {
   let sum = 0;
@@ -395,7 +406,7 @@ function _calculateRectangleStats(sp, rectangle) {
  *
  * @param {*} startHandle
  * @param {*} endHandle
- * @returns
+ * @returns {Array.<{x: number, y: number}>}
  */
 function _findTextBoxAnchorPoints(startHandle, endHandle) {
   const { left, top, width, height } = _getRectangleImageCoordinates(
@@ -432,7 +443,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
  *
  * @param {*} area
  * @param {*} hasPixelSpacing
- * @returns
+ * @returns {string} The formatted label for showing area
  */
 function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
@@ -441,6 +452,10 @@ function _formatArea(area, hasPixelSpacing) {
     : ` px${String.fromCharCode(178)}`;
 
   return `Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+}
+
+function _getUnit(modality, showHounsfieldUnits) {
+  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
 }
 
 /**
@@ -453,7 +468,7 @@ function _formatArea(area, hasPixelSpacing) {
  * @param {*} modality
  * @param {*} hasPixelSpacing
  * @param {*} [options={}]
- * @returns
+ * @returns {string[]}
  */
 function _createTextBoxContent(
   context,
@@ -464,19 +479,18 @@ function _createTextBoxContent(
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
-  const showHounsfieldUnits = options.showHounsfieldUnits !== false;
   const textLines = [];
 
   const otherLines = [];
 
   if (!isColorImage) {
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
-    const suffix = modality === 'CT' && showHounsfieldUnits ? ' HU' : '';
+    const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))}${suffix}`;
+    let meanString = `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
     const stdDevString = `Std Dev: ${numbersWithCommas(
       stdDev.toFixed(2)
-    )}${suffix}`;
+    )} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -500,12 +514,13 @@ function _createTextBoxContent(
       otherLines.push(`${meanString}${meanSuvString}`);
       otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
     } else {
-      otherLines.push(`${meanString}     ${stdDevString}`);
+      otherLines.push(`${meanString}`);
+      otherLines.push(`${stdDevString}`);
     }
 
     if (showMinMax) {
-      let minString = `Min: ${min}${suffix}`;
-      const maxString = `Max: ${max}${suffix}`;
+      let minString = `Min: ${min} ${unit}`;
+      const maxString = `Max: ${max} ${unit}`;
       const targetStringLength = hasStandardUptakeValues
         ? Math.floor(context.measureText(`${stdDevString}     `).width)
         : Math.floor(context.measureText(`${meanString}     `).width);

@@ -9,10 +9,10 @@
  * @param {CanvasRenderingContext2D} context - Context you wish to transform.
  * @param {HTMLCanvasElement} canvas - Canvas the context relates to.
  * @param {*} viewport - The viewport you wish to map on to.
- * @returns null
+ * @returns {void}
  */
 export default function(context, canvas, viewport) {
-  if (!(viewport.vflip || viewport.vflip || viewport.rotation)) {
+  if (!(viewport.hflip || viewport.vflip || viewport.rotation)) {
     return;
   }
 

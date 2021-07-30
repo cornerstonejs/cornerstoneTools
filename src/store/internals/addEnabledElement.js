@@ -16,7 +16,10 @@ import {
   setToolEnabledForElement,
   setToolDisabledForElement,
 } from './../setToolMode.js';
-import store from '../index.js';
+import store, { getModule } from '../index.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('internals:addEnabledElement');
 
 /**
  * Element Enabled event.
@@ -43,30 +46,33 @@ import store from '../index.js';
  * @name addEnabledElement
  * @param {Cornerstone#ElementEnabled} elementEnabledEvt
  * @listens Cornerstone#ElementEnabled
+ * @returns {void}
  */
 export default function(elementEnabledEvt) {
-  console.log('EVENT:ELEMENT_ENABLED');
+  logger.log('EVENT:ELEMENT_ENABLED');
   const enabledElement = elementEnabledEvt.detail.element;
 
   // Dispatchers
   imageRenderedEventDispatcher.enable(enabledElement);
   newImageEventDispatcher.enable(enabledElement);
 
+  const { configuration } = getModule('globalConfiguration');
+
   // Mouse
-  if (store.modules.globalConfiguration.state.mouseEnabled) {
+  if (configuration.mouseEnabled) {
     mouseEventListeners.enable(enabledElement);
     wheelEventListener.enable(enabledElement);
     mouseToolEventDispatcher.enable(enabledElement);
   }
 
   // Touch
-  if (store.modules.globalConfiguration.state.touchEnabled) {
+  if (configuration.touchEnabled) {
     touchEventListeners.enable(enabledElement);
     touchToolEventDispatcher.enable(enabledElement);
   }
 
   // State
-  _addEnabledElmenet(enabledElement);
+  _addEnabledElement(enabledElement);
 }
 
 /**
@@ -74,8 +80,9 @@ export default function(elementEnabledEvt) {
  * @private
  * @method
  * @param {HTMLElement} enabledElement
+ * @returns {void}
  */
-const _addEnabledElmenet = function(enabledElement) {
+const _addEnabledElement = function(enabledElement) {
   store.state.enabledElements.push(enabledElement);
   if (store.modules) {
     _initModulesOnElement(enabledElement);
@@ -90,6 +97,7 @@ const _addEnabledElmenet = function(enabledElement) {
  * @private
  * @method
  * @param  {Object} enabledElement
+ * @returns {void}
  */
 function _initModulesOnElement(enabledElement) {
   const modules = store.modules;
@@ -101,20 +109,39 @@ function _initModulesOnElement(enabledElement) {
   });
 }
 
+/**
+ * Iterate over our stores globalTools adding each one to `enabledElement`
+ * @private
+ * @method
+ * @param {HTMLElement} enabledElement
+ * @returns {void}
+ */
 function _addGlobalToolsToElement(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 
   Object.keys(store.state.globalTools).forEach(function(key) {
-    const { tool, configuration } = store.state.globalTools[key];
+    const { tool, props } = store.state.globalTools[key];
 
-    addToolForElement(enabledElement, tool, configuration);
+    addToolForElement(enabledElement, tool, props);
   });
 }
 
+/**
+ * Iterate over the globalToolChangeHistory and apply each `historyEvent`
+ * to the supplied `enabledElement`.
+ * @private
+ * @method
+ * @param {HTMLElement} enabledElement
+ * @returns {void}
+ */
 function _repeatGlobalToolHistory(enabledElement) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  const { configuration } = getModule('globalConfiguration');
+
+  if (!configuration.globalToolSyncEnabled) {
     return;
   }
 

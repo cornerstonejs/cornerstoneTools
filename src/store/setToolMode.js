@@ -1,7 +1,16 @@
 import EVENTS from './../events.js';
 import triggerEvent from './../util/triggerEvent.js';
 import getToolForElement from './getToolForElement.js';
-import store from './../store/index.js';
+import {
+  setToolCursor,
+  resetToolCursor,
+  hideToolCursor,
+} from './setToolCursor.js';
+import { getLogger } from '../util/logger.js';
+import store, { getModule } from './index.js';
+
+const globalConfiguration = getModule('globalConfiguration');
+const logger = getLogger('store:setToolMode');
 
 /**
  * Sets a tool's state, with the provided toolName and element, to 'active'. Active tools are rendered,
@@ -56,11 +65,38 @@ const setToolActiveForElement = function(
         options[`is${interactionType}Active`] = false;
       }
     });
+
+    if (
+      globalConfiguration.configuration.showSVGCursors &&
+      tool.supportedInteractionTypes.includes('Mouse')
+    ) {
+      _setToolCursorIfPrimary(element, options, tool);
+    }
   }
 
   // Resume normal behavior
   setToolModeForElement('active', null, element, toolName, options);
 };
+
+function _setToolCursorIfPrimary(element, options, tool) {
+  let mouseButtonMask;
+
+  if (typeof options === 'number') {
+    mouseButtonMask = [options];
+  } else {
+    mouseButtonMask = options.mouseButtonMask;
+  }
+
+  if (mouseButtonMask.includes(1)) {
+    if (tool.svgCursor) {
+      setToolCursor(tool.element, tool.svgCursor);
+    } else if (tool.hideDefaultCursor) {
+      hideToolCursor(element);
+    } else {
+      resetToolCursor(element);
+    }
+  }
+}
 
 /**
  * Sets all tool's state, with the provided toolName, to 'active'. Active tools are rendered,
@@ -195,7 +231,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
   const tool = getToolForElement(element, toolName);
 
   if (!tool) {
-    console.warn(`Unable to find tool '${toolName}' for enabledElement`);
+    logger.warn('Unable to find tool "%s" for enabledElement', toolName);
 
     return;
   }
@@ -210,7 +246,8 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
     options.mouseButtonMask.length !== 0 &&
     Array.isArray(tool.options.mouseButtonMask)
   ) {
-    options.mouseButtonMask = options.mouseButtonMask.concat(
+    options.mouseButtonMask = _mergeMouseButtonMask(
+      options.mouseButtonMask,
       tool.options.mouseButtonMask
     );
   }
@@ -229,6 +266,7 @@ function setToolModeForElement(mode, changeEvent, element, toolName, options) {
     const statusChangeEventData = {
       options,
       toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
       type: changeEvent,
     };
 
@@ -286,8 +324,9 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
       if (inputResolver) {
         inputResolver(tool, element, options);
       } else {
-        console.warn(
-          `Unable to resolve input conflicts for type ${interactionType}`
+        logger.warn(
+          'Unable to resolve input conflicts for type %s',
+          interactionType
         );
       }
     }
@@ -310,7 +349,7 @@ function _resolveInputConflicts(element, tool, options, interactionTypes) {
     });
 
     if (!toolHasAnyActiveInteractionType) {
-      console.info(`Setting tool ${t.name}'s to PASSIVE`);
+      logger.log("Setting tool %s's to PASSIVE", t.name);
       setToolPassiveForElement(element, t.name);
     }
   });
@@ -366,10 +405,9 @@ function _resolveMouseInputConflicts(tool, element, options) {
  *
  * @param {Object} tool
  * @param {HTMLElement} element
- * @param {Object} options
  * @returns {undefined}
  */
-function _resolveTouchInputConflicts(tool, element, options) {
+function _resolveTouchInputConflicts(tool, element) {
   const activeTouchTool = store.state.tools.find(
     t =>
       t.element === element &&
@@ -386,16 +424,16 @@ function _resolveTouchInputConflicts(tool, element, options) {
   );
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
   if (activeMultiTouchToolWithOneTouchPointer) {
-    console.info(
-      `Setting tool ${
-        activeMultiTouchToolWithOneTouchPointer.name
-      }'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeMultiTouchToolWithOneTouchPointer.name
     );
     activeMultiTouchToolWithOneTouchPointer.options.isMultiTouchActive = false;
   }
@@ -408,10 +446,9 @@ function _resolveTouchInputConflicts(tool, element, options) {
  *
  * @param {Object} tool
  * @param {HTMLElement} element
- * @param {Object} options
  * @returns {undefined}
  */
-function _resolveMultiTouchInputConflicts(tool, element, options) {
+function _resolveMultiTouchInputConflicts(tool, element) {
   const activeMultiTouchTool = store.state.tools.find(
     t =>
       t.element === element &&
@@ -432,15 +469,17 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
   }
 
   if (activeMultiTouchTool) {
-    console.info(
-      `Setting tool ${activeMultiTouchTool.name}'s isMultiTouchActive to false`
+    logger.log(
+      "Setting tool %s's isMultiTouchActive to false",
+      activeMultiTouchTool.name
     );
     activeMultiTouchTool.options.isMultiTouchActive = false;
   }
 
   if (activeTouchTool) {
-    console.info(
-      `Setting tool ${activeTouchTool.name}'s isTouchActive to false`
+    logger.log(
+      "Setting tool %s's isTouchActive to false",
+      activeTouchTool.name
     );
     activeTouchTool.options.isTouchActive = false;
   }
@@ -459,33 +498,27 @@ function _resolveMultiTouchInputConflicts(tool, element, options) {
  * @param {(Object|number)} options
  * @returns {undefined}
  */
-function _resolveGenericInputConflicts(
-  interactionType,
-  tool,
-  element,
-  options
-) {
+function _resolveGenericInputConflicts(interactionType, tool, element) {
+  const interactionTypeFlag = `is${interactionType}Active`;
   const activeToolWithActiveInteractionType = store.state.tools.find(
     t =>
       t.element === element &&
       t.mode === 'active' &&
-      t.options[`is${interactionType}Active`] === true
+      t.options[interactionTypeFlag] === true
   );
 
   if (activeToolWithActiveInteractionType) {
-    console.info(
-      `Setting tool ${
-        activeToolWithActiveInteractionType.name
-      }'s is${interactionType}Active to false`
+    logger.log(
+      "Setting tool %s's %s to false",
+      activeToolWithActiveInteractionType.name,
+      interactionTypeFlag
     );
-    activeToolWithActiveInteractionType.options[
-      `is${interactionType}Active`
-    ] = false;
+    activeToolWithActiveInteractionType.options[interactionTypeFlag] = false;
   }
 }
 
 function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
-  if (!store.modules.globalConfiguration.state.globalToolSyncEnabled) {
+  if (!globalConfiguration.configuration.globalToolSyncEnabled) {
     return;
   }
 
@@ -511,6 +544,14 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
 
   // Update ActiveBindings Array
   const globalTool = store.state.globalTools[toolName];
+
+  if (!globalTool) {
+    logger.warn(
+      `setToolMode call for tool not available globally: ${toolName}`
+    );
+
+    return;
+  }
 
   if (mode === 'active') {
     let stringBindings = _determineStringBindings(
@@ -556,7 +597,8 @@ function _determineStringBindings(toolName, options, interactionTypes) {
   const globalTool = store.state.globalTools[toolName];
 
   if (globalTool) {
-    const tool = new globalTool.tool(globalTool.configuration);
+    // eslint-disable-next-line new-cap
+    const tool = new globalTool.tool(globalTool.props);
 
     tool.supportedInteractionTypes.forEach(interactionType => {
       if (
@@ -602,6 +644,44 @@ const _inputResolvers = {
   MultiTouch: _resolveMultiTouchInputConflicts,
 };
 
+function _getNormalizedOptions(options) {
+  if (Array.isArray(options)) {
+    // If options is an array assume the array is the mouseButtonMask array
+    options = { mouseButtonMask: options };
+  } else if (options !== Object(options)) {
+    // And if it's something other than an object, assume options is
+    // a single mouseButtonMask
+    options = { mouseButtonMask: [options] };
+  }
+
+  // If there is still no 'mouseButtonMask' default it to an empty array
+  if (!options.hasOwnProperty('mouseButtonMask')) {
+    options.mouseButtonMask = [];
+  }
+
+  if (!Array.isArray(options.mouseButtonMask)) {
+    options.mouseButtonMask = [options.mouseButtonMask];
+  }
+
+  // Now filter out anything that is not an number or is the number 0
+  options.mouseButtonMask = options.mouseButtonMask.filter(
+    o => typeof o === 'number' && o !== 0
+  );
+
+  return options;
+}
+
+function _mergeMouseButtonMask(newMask, oldMask) {
+  // Merges and removes duplicates
+  return newMask.concat(oldMask).reduce((acc, m) => {
+    if (acc.indexOf(m) === -1) {
+      acc.push(m);
+    }
+
+    return acc;
+  }, []);
+}
+
 export {
   setToolActive,
   setToolActiveForElement,
@@ -611,34 +691,9 @@ export {
   setToolEnabledForElement,
   setToolPassive,
   setToolPassiveForElement,
+  // Exported for testing
+  setToolMode,
+  setToolModeForElement,
+  _getNormalizedOptions,
+  _mergeMouseButtonMask,
 };
-
-function _getNormalizedOptions(options) {
-  // Is an object, but not an Array
-  if (options === Object(options) && !Array.isArray(options)) {
-    if (options.mouseButtonMask === 0 || options.mouseButtonMask === null) {
-      options.mouseButtonMask = [];
-    } else if (typeof options.mouseButtonMask === 'number') {
-      const tempArray = [];
-
-      tempArray.push(options.mouseButtonMask);
-      options.mouseButtonMask = tempArray;
-    }
-  } else if (typeof options === 'number') {
-    const tempArray = [];
-
-    tempArray.push(options);
-    options = {
-      mouseButtonMask: options === 0 ? [] : tempArray,
-    };
-  } else if (options === null) {
-    options = {
-      mouseButtonMask: [],
-    };
-  } else {
-    console.info(`No options provided when changing tool mode`);
-    options = {};
-  }
-
-  return options;
-}

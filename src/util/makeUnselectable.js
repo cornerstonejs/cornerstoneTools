@@ -6,6 +6,7 @@
  * @param {HTMLElement} element The element to make unselectable
  * @param {Boolean} ignorePointerEvents  true to make this element also
  * ignore events (e.g. mouse click), false otherwise.
+ * @returns {void}
  */
 export default function(element, ignorePointerEvents) {
   element.style.webkitUserSelect = 'none';

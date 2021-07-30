@@ -1,12 +1,22 @@
 import LengthTool from './LengthTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
+jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
+jest.mock('./../../importInternal.js', () => ({
   default: jest.fn(),
+}));
+
+jest.mock('./../../externalModules.js', () => ({
+  cornerstone: {
+    metaData: {
+      get: jest.fn(),
+    },
+  },
 }));
 
 const badMouseEventData = 'hello world';
@@ -19,14 +29,12 @@ const goodMouseEventData = {
   },
 };
 
-describe('LengthTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
+const image = {
+  rowPixelSpacing: 0.8984375,
+  columnPixelSpacing: 0.8984375,
+};
 
+describe('LengthTool.js', () => {
   describe('default values', () => {
     it('has a default name of "Length"', () => {
       const defaultName = 'Length';
@@ -46,11 +54,12 @@ describe('LengthTool.js', () => {
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
       const instantiatedTool = new LengthTool('toolName');
+      const logger = getLogger();
 
       instantiatedTool.createNewMeasurement(badMouseEventData);
 
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.mock.calls[0][0]).toContain(
+      expect(logger.error).toHaveBeenCalled();
+      expect(logger.error.mock.calls[0][0]).toContain(
         'required eventData not supplied to tool'
       );
     });
@@ -112,11 +121,12 @@ describe('LengthTool.js', () => {
       const noHandlesMeasurementData = {
         handles: {},
       };
+      const logger = getLogger();
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
     it('returns false when measurement data is null or undefined', () => {
@@ -145,6 +155,42 @@ describe('LengthTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(false);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    it('should calculate and update annotation value', () => {
+      const instantiatedTool = new LengthTool('toolName');
+
+      const data = {
+        handles: {
+          start: {
+            x: 166.10687022900754,
+            y: 90.8702290076336,
+          },
+          end: {
+            x: 145.58778625954199,
+            y: 143.63358778625957,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.length.toFixed(2)).toEqual('50.86');
+
+      data.handles.start.x = 138.74809160305347;
+      data.handles.start.y = 71.32824427480917;
+      data.handles.end.x = 79.14503816793899;
+      data.handles.end.y = 121.16030534351145;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.length.toFixed(2)).toEqual('69.80');
     });
   });
 

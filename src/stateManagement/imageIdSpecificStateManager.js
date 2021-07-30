@@ -34,75 +34,111 @@ function newImageIdSpecificToolStateManager() {
 
   // Here we add tool state, this is done by tools as well
   // As modules that restore saved state
-  function addImageIdSpecificToolState(element, toolType, data) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
-    // If we don't have any tool state for this imageId, add an empty object
+  function addElementToolState(element, toolName, data) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
-      toolState[enabledImage.image.imageId] = {};
+    // If we don't have an image for this element exit early
+    if (!enabledElement.image) {
+      return;
+    }
+    addImageIdToolState(enabledElement.image.imageId, toolName, data);
+  }
+
+  function addImageIdToolState(imageId, toolName, data) {
+    // If we don't have any tool state for this imageId, add an empty object
+    if (toolState.hasOwnProperty(imageId) === false) {
+      toolState[imageId] = {};
     }
 
-    const imageIdToolState = toolState[enabledImage.image.imageId];
+    const imageIdToolState = toolState[imageId];
 
-    // If we don't have tool state for this type of tool, add an empty object
-    if (imageIdToolState.hasOwnProperty(toolType) === false) {
-      imageIdToolState[toolType] = {
+    // If we don't have tool state for this tool name, add an empty object
+    if (imageIdToolState.hasOwnProperty(toolName) === false) {
+      imageIdToolState[toolName] = {
         data: [],
       };
     }
 
-    const toolData = imageIdToolState[toolType];
+    const toolData = imageIdToolState[toolName];
 
     // Finally, add this new tool to the state
     toolData.data.push(data);
   }
 
+  function getElementToolState(element, toolName) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    // If the element does not have an image return undefined.
+    if (!enabledElement.image) {
+      return;
+    }
+
+    return getImageIdToolState(enabledElement.image.imageId, toolName);
+  }
+
   // Here you can get state - used by tools as well as modules
   // That save state persistently
-  function getImageIdSpecificToolState(element, toolType) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
+  function getImageIdToolState(imageId, toolName) {
     // If we don't have any tool state for this imageId, return undefined
-
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
+    if (toolState.hasOwnProperty(imageId) === false) {
       return;
     }
 
-    const imageIdToolState = toolState[enabledImage.image.imageId];
+    const imageIdToolState = toolState[imageId];
 
-    // If we don't have tool state for this type of tool, return undefined
-    if (imageIdToolState.hasOwnProperty(toolType) === false) {
+    // If we don't have tool state for this tool name, return undefined
+    if (imageIdToolState.hasOwnProperty(toolName) === false) {
       return;
     }
 
-    const toolData = imageIdToolState[toolType];
+    return imageIdToolState[toolName];
+  }
 
-    return toolData;
+  // Replaces the given tool's state using the provided element's imageId
+  function setElementToolState(element, toolName, data) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+
+    if (!enabledElement.image) {
+      return;
+    }
+    setImageIdToolState(enabledElement.image.imageId, toolName, data);
+  }
+
+  // Replaces the imageId's tool state for a given tool
+  function setImageIdToolState(imageId, toolName, data) {
+    const imageIdToolState = toolState[imageId];
+
+    // set the toolState
+    imageIdToolState[toolName] = data;
   }
 
   // Clears all tool data from this toolStateManager.
-  function clearImageIdSpecificToolStateManager(element) {
-    const enabledImage = external.cornerstone.getEnabledElement(element);
+  function clearElementToolState(element) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
 
-    if (
-      !enabledImage.image ||
-      toolState.hasOwnProperty(enabledImage.image.imageId) === false
-    ) {
+    if (!enabledElement.image) {
+      return;
+    }
+    clearImageIdToolState(enabledElement.image.imageId);
+  }
+
+  function clearImageIdToolState(imageId) {
+    if (toolState.hasOwnProperty(imageId) === false) {
       return;
     }
 
-    delete toolState[enabledImage.image.imageId];
+    delete toolState[imageId];
   }
 
   return {
-    get: getImageIdSpecificToolState,
-    add: addImageIdSpecificToolState,
-    clear: clearImageIdSpecificToolStateManager,
+    get: getElementToolState,
+    add: addElementToolState,
+    set: setElementToolState,
+    clear: clearElementToolState,
+    getImageIdToolState,
+    addImageIdToolState,
+    setImageIdToolState,
+    clearImageIdToolState,
     saveImageIdToolState,
     restoreImageIdToolState,
     saveToolState,

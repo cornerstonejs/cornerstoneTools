@@ -5,6 +5,7 @@ import getActiveToolsForElement from './../../store/getActiveToolsForElement.js'
 jest.mock('./../../store/index.js', () => ({
   state: {
     isToolLocked: false,
+    isMultiPartToolActive: false,
     tools: [
       {
         aDifferentCustomFunctionName: jest.fn(),
@@ -27,6 +28,9 @@ jest.mock('./../../store/index.js', () => ({
 }));
 
 jest.mock('./../../store/getActiveToolsForElement.js', () => jest.fn());
+jest.mock('./../../store/filterToolsUsableWithMultiPartTools.js', () =>
+  jest.fn()
+);
 
 describe('eventDispatchers/customCallbackHandler.js', () => {
   const firstToolWithCustomFunction = state.tools[1];
@@ -39,6 +43,7 @@ describe('eventDispatchers/customCallbackHandler.js', () => {
 
   beforeEach(() => {
     state.isToolLocked = false;
+    state.isMultiPartToolActive = false;
 
     jest.resetAllMocks();
     jest.clearAllMocks();

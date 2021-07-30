@@ -3,12 +3,9 @@ version: 2
 defaults: &defaults
   working_directory: ~/repo
   docker:
-    - image: circleci/node:latest
+    - image: circleci/node:10.15.1
 
 jobs:
-  ##################
-  #
-  ##################
   checkout_code:
     <<: *defaults
     steps:
@@ -28,15 +25,13 @@ jobs:
           root: ~/repo
           paths: .
 
-  ##################
-  #
-  ##################
   test_and_report:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
       - run: npm install
+      - run: npm rebuild
       - run:
           name: Install codecov
           command: npm install --save-dev codecov
@@ -52,15 +47,13 @@ jobs:
       - store_test_results:
           path: ./coverage/
 
-  ##################
-  #
-  ##################
   build:
     <<: *defaults
     steps:
       - attach_workspace:
           at: ~/repo
       - run: npm install
+      - run: npm rebuild
       - run:
           name: Build our app
           command: npm run build
@@ -68,9 +61,6 @@ jobs:
           root: ~/repo
           paths: .
 
-  ##################
-  #
-  ##################
   publish_npm:
     <<: *defaults
     steps:
@@ -78,12 +68,33 @@ jobs:
           at: ~/repo
       - run: npm install
       - run:
+          name: Avoid hosts unknown for github
+          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+      - run:
           name: Publish using Semantic Release
-          command: npx semantic-release --dry-run
+          command: npx semantic-release
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
 
-  ##################
-  #
-  ##################
+  publish_docs:
+    working_directory: ~/repo
+    docker:
+      - image: circleci/ruby:2.6.0-node
+    environment:
+      BUNDLE_PATH: ~/repo/vendor/bundle
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Avoid hosts unknown for github
+          command: mkdir ~/.ssh/ && echo -e "Host github.com\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+      - run: npm install
+      - run: sudo npm install gitbook-cli -g
+      - run:
+          name: Do Magic
+          command: sh ~/repo/.circleci/update-docs.sh
+
   deployment:
     <<: *defaults
     steps:
@@ -111,7 +122,10 @@ workflows:
       - checkout_code:
           filters:
             branches:
-              ignore: vNext
+              ignore:
+                - master
+                - feature/*
+                - hotfix/*
       - test_and_report:
           requires:
             - checkout_code
@@ -139,6 +153,12 @@ workflows:
             - checkout_code
             - test_and_report
             - build
+      #   - build_examples:
+      #       requires:
+      #         - publish_npm
+      - publish_docs:
+          requires:
+            - publish_npm
   ###
   # MERGE: VNEXT
   ###

@@ -1,16 +1,22 @@
-import external from './../../externalModules.js';
+import external from '../../externalModules.js';
 import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
 // State
-import { getToolState } from './../../stateManagement/toolState.js';
-import textStyle from './../../stateManagement/textStyle.js';
-import toolColors from './../../stateManagement/toolColors.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import textStyle from '../../stateManagement/textStyle.js';
+import toolColors from '../../stateManagement/toolColors.js';
 // Drawing
-import { getNewContext, draw } from './../../drawing/index.js';
-import drawTextBox from './../../drawing/drawTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
+import { getNewContext, draw } from '../../drawing/index.js';
+import drawTextBox from '../../drawing/drawTextBox.js';
+import drawHandles from '../../drawing/drawHandles.js';
 // Utilities
-import getRGBPixels from './../../util/getRGBPixels.js';
-import calculateSUV from './../../util/calculateSUV.js';
+import getRGBPixels from '../../util/getRGBPixels.js';
+import calculateSUV from '../../util/calculateSUV.js';
+import { probeCursor } from '../cursors/index.js';
+import { getLogger } from '../../util/logger.js';
+import throttle from '../../util/throttle';
+import { getModule } from '../../store/index';
+
+const logger = getLogger('tools:annotation:ProbeTool');
 
 /**
  * @public
@@ -21,16 +27,20 @@ import calculateSUV from './../../util/calculateSUV.js';
  * @extends Tools.Base.BaseAnnotationTool
  */
 export default class ProbeTool extends BaseAnnotationTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Probe',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      svgCursor: probeCursor,
+      configuration: {
+        drawHandles: true,
+        renderDashed: false,
+      },
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
+    super(props, defaultProps);
 
-    this.initialConfiguration = initialConfiguration;
+    this.throttledUpdateCachedStats = throttle(this.updateCachedStats, 110);
   }
 
   createNewMeasurement(eventData) {
@@ -38,10 +48,8 @@ export default class ProbeTool extends BaseAnnotationTool {
       eventData && eventData.currentPoints && eventData.currentPoints.image;
 
     if (!goodEventData) {
-      console.error(
-        `required eventData not supplieed to tool ${
-          this.name
-        }'s createNewMeasurement`
+      logger.error(
+        `required eventData not supplied to tool ${this.name}'s createNewMeasurement`
       );
 
       return;
@@ -51,6 +59,7 @@ export default class ProbeTool extends BaseAnnotationTool {
       visible: true,
       active: true,
       color: undefined,
+      invalidated: true,
       handles: {
         end: {
           x: eventData.currentPoints.image.x,
@@ -75,8 +84,8 @@ export default class ProbeTool extends BaseAnnotationTool {
     const validParameters = hasEndHandle;
 
     if (!validParameters) {
-      console.warn(
-        `invalid parameters supplieed to tool ${this.name}'s pointNearTool`
+      logger.warn(
+        `invalid parameters supplied to tool ${this.name}'s pointNearTool`
       );
     }
 
@@ -92,9 +101,39 @@ export default class ProbeTool extends BaseAnnotationTool {
     return external.cornerstoneMath.point.distance(probeCoords, coords) < 5;
   }
 
+  updateCachedStats(image, element, data) {
+    const x = Math.round(data.handles.end.x);
+    const y = Math.round(data.handles.end.y);
+
+    const stats = {};
+
+    if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
+      stats.x = x;
+      stats.y = y;
+
+      if (image.color) {
+        stats.storedPixels = getRGBPixels(element, x, y, 1, 1);
+      } else {
+        stats.storedPixels = external.cornerstone.getStoredPixels(
+          element,
+          x,
+          y,
+          1,
+          1
+        );
+        stats.sp = stats.storedPixels[0];
+        stats.mo = stats.sp * image.slope + image.intercept;
+        stats.suv = calculateSUV(image, stats.sp);
+      }
+    }
+
+    data.cachedStats = stats;
+    data.invalidated = false;
+  }
+
   renderToolData(evt) {
     const eventData = evt.detail;
-    const { handleRadius } = this.configuration;
+    const { handleRadius, renderDashed } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
     if (!toolData) {
@@ -103,8 +142,9 @@ export default class ProbeTool extends BaseAnnotationTool {
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
-    const { image } = eventData;
+    const { image, element } = eventData;
     const fontHeight = textStyle.getFontSize();
+    const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
@@ -116,38 +156,38 @@ export default class ProbeTool extends BaseAnnotationTool {
       draw(context, context => {
         const color = toolColors.getColorIfActive(data);
 
-        // Draw the handles
-        drawHandles(context, eventData, data.handles, {
-          handleRadius,
-          color,
-        });
+        if (this.configuration.drawHandles) {
+          // Draw the handles
+          let handleOptions = { handleRadius, color };
 
-        const x = Math.round(data.handles.end.x);
-        const y = Math.round(data.handles.end.y);
-        let storedPixels;
+          if (renderDashed) {
+            handleOptions.lineDash = lineDash;
+          }
+
+          drawHandles(context, eventData, data.handles, handleOptions);
+        }
+
+        // Update textbox stats
+        if (data.invalidated === true) {
+          if (data.cachedStats) {
+            this.throttledUpdateCachedStats(image, element, data);
+          } else {
+            this.updateCachedStats(image, element, data);
+          }
+        }
 
         let text, str;
+
+        const { x, y, storedPixels, sp, mo, suv } = data.cachedStats;
 
         if (x >= 0 && y >= 0 && x < image.columns && y < image.rows) {
           text = `${x}, ${y}`;
 
           if (image.color) {
-            storedPixels = getRGBPixels(eventData.element, x, y, 1, 1);
             str = `R: ${storedPixels[0]} G: ${storedPixels[1]} B: ${
               storedPixels[2]
             }`;
           } else {
-            storedPixels = external.cornerstone.getStoredPixels(
-              eventData.element,
-              x,
-              y,
-              1,
-              1
-            );
-            const sp = storedPixels[0];
-            const mo = sp * image.slope + image.intercept;
-            const suv = calculateSUV(image, sp);
-
             // Draw text
             str = `SP: ${sp} MO: ${parseFloat(mo.toFixed(3))}`;
             if (suv) {

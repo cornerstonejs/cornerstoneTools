@@ -1,7 +1,7 @@
 /* eslint no-loop-func: 0 */ // --> OFF
-import external from './../../../externalModules.js';
 import drawHandles from './../../../drawing/drawHandles.js';
 import updatePerpendicularLineHandles from './utils/updatePerpendicularLineHandles.js';
+import { getModule } from '../../../store/index';
 
 import toolStyle from './../../../stateManagement/toolStyle.js';
 import toolColors from './../../../stateManagement/toolColors.js';
@@ -13,11 +13,19 @@ import {
   drawLine,
 } from './../../../drawing/index.js';
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
+import getPixelSpacing from '../../../util/getPixelSpacing';
 
 export default function(evt) {
   const eventData = evt.detail;
   const { element, canvasContext, image } = eventData;
-  const { handleRadius, drawHandlesOnHover } = this.configuration;
+  const {
+    handleRadius,
+    drawHandlesOnHover,
+    hideHandlesIfMoving,
+    renderDashed,
+  } = this.configuration;
+
+  const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
   // If we have no toolData for this element, return immediately as there is nothing to do
   const toolData = getToolState(element, this.name);
@@ -26,20 +34,7 @@ export default function(evt) {
     return;
   }
 
-  const imagePlane = external.cornerstone.metaData.get(
-    'imagePlaneModule',
-    image.imageId
-  );
-
-  let rowPixelSpacing = image.rowPixelSpacing;
-  let colPixelSpacing = image.columnPixelSpacing;
-
-  if (imagePlane) {
-    rowPixelSpacing =
-      imagePlane.rowPixelSpacing || imagePlane.rowImagePixelSpacing;
-    colPixelSpacing =
-      imagePlane.columnPixelSpacing || imagePlane.colImagePixelSpacing;
-  }
+  const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
   // LT-29 Disable Target Measurements when pixel spacing is not available
   if (!rowPixelSpacing || !colPixelSpacing) {
@@ -63,7 +58,13 @@ export default function(evt) {
     color = data.active ? activeColor : toolColors.getToolColor();
 
     // Calculate the data measurements
-    getMeasurementData(data, rowPixelSpacing, colPixelSpacing);
+    if (data.invalidated === true) {
+      if (data.longestDiameter && data.shortestDiameter) {
+        this.throttledUpdateCachedStats(image, element, data);
+      } else {
+        this.updateCachedStats(image, element, data);
+      }
+    }
 
     draw(context, context => {
       // Configurable shadow
@@ -77,27 +78,42 @@ export default function(evt) {
         textBox,
       } = data.handles;
 
+      const lineOptions = { color };
+      const perpendicularLineOptions = { color, strokeWidth };
+
+      if (renderDashed) {
+        lineOptions.lineDash = lineDash;
+        perpendicularLineOptions.lineDash = lineDash;
+      }
+
       // Draw the measurement line
-      drawLine(context, element, start, end, { color });
+      drawLine(context, element, start, end, lineOptions);
 
       // Draw perpendicular line
       const strokeWidth = lineWidth;
 
       updatePerpendicularLineHandles(eventData, data);
-      drawLine(context, element, perpendicularStart, perpendicularEnd, {
-        color,
-        strokeWidth,
-      });
+
+      drawLine(
+        context,
+        element,
+        perpendicularStart,
+        perpendicularEnd,
+        perpendicularLineOptions
+      );
 
       // Draw the handles
       const handleOptions = {
         color,
         handleRadius,
         drawHandlesIfActive: drawHandlesOnHover,
+        hideHandlesIfMoving,
       };
 
       // Draw the handles
-      drawHandles(context, eventData, data.handles, handleOptions);
+      if (this.configuration.drawHandles) {
+        drawHandles(context, eventData, data.handles, handleOptions);
+      }
 
       // Draw the textbox
       // Move the textbox slightly to the right and upwards
@@ -109,11 +125,7 @@ export default function(evt) {
         handles.perpendicularStart,
         handles.perpendicularEnd,
       ];
-      let textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
-
-      if (data.additionalData && Array.isArray(data.additionalData)) {
-        textLines = data.additionalData.concat(textLines);
-      }
+      const textLines = getTextBoxText(data, rowPixelSpacing, colPixelSpacing);
 
       drawLinkedTextBox(
         context,
@@ -131,38 +143,6 @@ export default function(evt) {
   }
 }
 
-const getMeasurementData = (data, rowPixelSpacing, colPixelSpacing) => {
-  const { start, end, perpendicularStart, perpendicularEnd } = data.handles;
-  // Calculate the long axis length
-  const dx = (start.x - end.x) * (colPixelSpacing || 1);
-  const dy = (start.y - end.y) * (rowPixelSpacing || 1);
-  let length = Math.sqrt(dx * dx + dy * dy);
-
-  // Calculate the short axis length
-  const wx =
-    (perpendicularStart.x - perpendicularEnd.x) * (colPixelSpacing || 1);
-  const wy =
-    (perpendicularStart.y - perpendicularEnd.y) * (rowPixelSpacing || 1);
-  let width = Math.sqrt(wx * wx + wy * wy);
-
-  if (!width) {
-    width = 0;
-  }
-
-  // Length is always longer than width
-  if (width > length) {
-    const tempW = width;
-    const tempL = length;
-
-    length = tempW;
-    width = tempL;
-  }
-
-  // Set measurement values to be use externaly
-  data.longestDiameter = length.toFixed(1);
-  data.shortestDiameter = width.toFixed(1);
-};
-
 const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
   let suffix = ' mm';
 
@@ -172,6 +152,12 @@ const getTextBoxText = (data, rowPixelSpacing, colPixelSpacing) => {
 
   const lengthText = ` L ${data.longestDiameter}${suffix}`;
   const widthText = ` W ${data.shortestDiameter}${suffix}`;
+
+  const { labels } = data;
+
+  if (labels && Array.isArray(labels)) {
+    return [...labels, lengthText, widthText];
+  }
 
   return [lengthText, widthText];
 };

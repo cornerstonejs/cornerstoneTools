@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<!-- support for mobile touch devices -->
+	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+	<link rel="stylesheet" href="../reset.css">
+	<link rel="stylesheet" href="../app.css">
+	<link rel="stylesheet" href="../icon-classes.css">
+	<link rel="stylesheet" href="../tool-help.css">
+</head>
+
+<body>
+	<div id="app">
+		<div class="wrapper">
+			<!-- Select Tool Category -->
+			<ul class="tool-category-list">
+				<li><a class="tools" data-category="tools" href="#">Freehand</a></li>
+				<li><a data-category="mousewheel" href="#">MouseWheel</a></li>
+			</ul>
+
+			<!-- Select Active Tool -->
+			<ul class="tool-category active" data-tool-category="tools">
+				<li><a href="#" data-tool="FreehandRoi">FreehandRoi</a></li>
+				<li><a href="#" data-tool="FreehandRoiSculptor">FreehandRoiSculptor</a></li>
+				<li><a href="#" id="saveToolState">Save Freehand</a></li>
+				<li><a href="#" id="clearToolState">Clear Freehand</a></li>
+				<li><a href="#" id="loadToolState">Load Freehand State</a></li>
+			</ul>
+			<ul class="tool-category" data-tool-category="mousewheel">
+				<li><a href="#" data-tool="StackScrollMouseWheel" data-tool-interaction="wheel">StackScrollMouseWheel</a></li>
+				<li><a href="#" data-tool="ZoomMouseWheel" data-tool-interaction="wheel">ZoomMouseWheel</a></li>
+			</ul>
+
+			<!-- Our beautiful element targets -->
+			<div class="cornerstone-element-wrapper-help">
+				<div class="cornerstone-element-help" data-index="0" oncontextmenu="return false"></div>
+				<div class="tool-help">
+					<h1>FreehandRoi Tool</h1>
+					<table>
+						<tr>
+							<th>Mouse Input</th>
+						</tr>
+						<tr>
+							<th>Polygon Mode</th>
+							<td>
+								<table>
+									<tr>
+										<td>Click on the canvas sequentially to drop handles and construct lines.</td>
+									</tr>
+									<tr>
+										<td>Click on the origin node to complete the region.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<th>Pencil Mode</th>
+							<td>
+								<table>
+									<tr>
+										<td>Shift + Click on the canvas to start drawing.</td>
+									</tr>
+									<tr>
+										<td>Move the mouse around to draw free-form.</td>
+									</tr>
+									<tr>
+										<td>Click on the origin node to complete the region.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+					</table>
+					<h1>FreehandRoi Tool API</h1>
+					<table>
+						<tr>
+							<th>
+								<button type="button" api-call="always-show-handles">
+									Toggle Always Show Handles
+								</button>
+							</th>
+							<td>
+								Toggles whether the user can always see the handles.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="set-invalid-color">
+									Change Invalid Handle Color
+								</button>
+							</th>
+							<td>
+								Switches the invalid handle color to 'darkred'.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="spacing" min="3" max="10">
+							</td>
+							<td>
+								spacing - The distance between handles in pencil mode.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="activeHandleRadius" min="2" max="4">
+							</td>
+							<td>
+								activeHandleRadius - The radius of the active handle when drawing.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="completeHandleRadius" min="5" max="8">
+							</td>
+							<td>
+								completeHandleRadius - The radius of the active handle when region can be completed.
+							</td>
+						</tr>
+					</table>
+
+					<h1>FreehandRoiSculptor Tool</h1>
+					<table>
+						<tr>
+							<th>Mouse Input</th>
+							<td>
+								<table>
+									<tr>
+										<td>Ctrl-click near a region of interest to select it for editing.</td>
+									</tr>
+									<tr>
+										<td>Hold down click near the selected tool to begin editing.</td>
+									</tr>
+									<tr>
+										<td>
+											With the mouse held down, drag the tool to push the region.
+											This can be done from the inside or outside.
+										</td>
+									</tr>
+									<tr>
+										<td>Release the mouse to complete the edit.</td>
+									</tr>
+									<tr>
+										<td>The closer to the contour the mouse is, the smaller the tool will be.</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+
+					</table>
+					<h1>FreehandRoiSculptor Tool API</h1>
+					<table>
+						<tr>
+							<th>
+								<button type="button" api-call="show-cursor-on-hover">
+									Show Cursor On Hover
+								</button>
+							</th>
+							<td>
+								Toggles whether the freehand roi sculptor cursor can be seen whilst hovering near the selected region.
+							</td>
+						</tr>
+						<tr>
+							<th>
+								<button type="button" api-call="limit-radius-outside-region">
+									Limit Radius Outside Region
+								</button>
+							</th>
+							<td>
+								Toggles whether the freehand roi sculptor should have a maximum size when far from the selected region.
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="minSpacing" min="4" max="10">
+							</td>
+							<td>minSpacing - The minimum spacing allowed between region handles.</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="maxSpacing" min="15" max="25">
+							</td>
+							<td>maxSpacing - The maximum spacing allowed between region handles.</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="hoverCursorFadeAlpha" min="0" max="255">
+							</td>
+							<td>hoverCursorFadeAlpha - The alpha of the cursor when distant from the region, if showCursorOnHover and
+								limitRadiusOutsideRegion are enabled.</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="range" id="hoverCursorFadeDistance" min="100" max="200">
+							</td>
+							<td>hoverCursorFadeDistance - The distance in tool radii with which to fade the cursor.</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.6/dist/cornerstone.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.js"></script>
+<script src="../../dist/cornerstoneTools.js"></script>
+<script>window.cornerstoneTools || document.write('<script src="https://unpkg.com/cornerstone-tools">\x3C/script>')</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../imageLoader.js"></script>
+
+<script>
+	cornerstoneTools.init();
+	const imageIds = [
+		'example://1',
+		'example://2',
+		'example://3'
+	];
+	const stack = {
+		currentImageIdIndex: 0,
+		imageIds: imageIds
+	};
+
+	// Enable & Setup all of our elements
+	const element = document.querySelector('.cornerstone-element-help');
+
+	cornerstone.enable(element);
+
+	element.tabIndex = 0;
+	element.focus();
+
+	cornerstone.loadImage(imageIds[0]).then(function (image) {
+		cornerstone.displayImage(element, image);
+
+		cornerstoneTools.addStackStateManager(element, ['stack']);
+		cornerstoneTools.addToolState(element, 'stack', stack);
+	});
+
+	function setAllToolsPassive() {
+		cornerstoneTools.store.state.tools.forEach((tool) => {
+			cornerstoneTools.setToolPassive(tool.name);
+		});
+	}
+
+	// Iterate over all tool-category links
+	const toolCategoryLinks = document.querySelectorAll('ul.tool-category-list a');
+	const toolCategorySections = document.querySelectorAll('ul.tool-category');
+	Array.from(toolCategoryLinks).forEach(link => {
+		//
+		const categoryName = link.getAttribute('data-category');
+		const categoryElement = document.querySelector(`section[data-tool-category="${categoryName}"]`)
+
+		// Setup listener
+		link.addEventListener('click', (evt) => {
+			evt.preventDefault();
+			setToolCategoryActive(categoryName);
+		});
+	})
+
+	// API calls
+	const apiButtons = document.querySelectorAll('button[api-call]');
+	Array.from(apiButtons).forEach(apiBtn => {
+		const apiCall = apiBtn.getAttribute('api-call');
+
+		apiBtn.addEventListener('mousedown', (evt) => {
+			freehandApiCall(apiCall);
+		});
+	});
+
+	// Iterate over all tool buttons
+	const toolButtons = document.querySelectorAll('a[data-tool]');
+	Array.from(toolButtons).forEach(toolBtn => {
+		// Add the tool
+		const toolName = toolBtn.getAttribute('data-tool');
+		const apiTool = cornerstoneTools[`${toolName}Tool`];
+
+		if (apiTool) {
+			cornerstoneTools.addTool(apiTool);
+		} else {
+			console.warn(`unable to add tool with name ${toolName}Tool`);
+			console.log(cornerstoneTools)
+		}
+
+		// Setup button listener
+		// Prevent right click context menu for our menu buttons
+		toolBtn.addEventListener('contextmenu', event => event.preventDefault(), true);
+		// Prevent middle click opening a new tab on Chrome & FF
+		toolBtn.addEventListener('auxclick', event => {
+			if (event.button && event.button === 1) {
+				event.preventDefault();
+			}
+		}, false);
+		toolBtn.addEventListener('mousedown', (evt) => {
+			const mouseButtonMask = evt.buttons
+				? evt.buttons
+				: convertMouseEventWhichToButtons(evt.which)
+			const toolInteraction = evt.target.getAttribute('data-tool-interaction')
+			setButtonActive(toolName, mouseButtonMask, toolInteraction);
+			cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
+
+			evt.preventDefault();
+			evt.stopPropagation();
+			evt.stopImmediatePropagation();
+			return false;
+		});
+	});
+
+	// Activate first tool
+	cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, { mouseButtonMask: 1 });
+
+	const setToolCategoryActive = (categoryName) => {
+		Array.from(toolCategoryLinks).forEach(toolLink => {
+			if (categoryName === toolLink.getAttribute('data-category')) {
+				toolLink.classList.remove('active');
+				toolLink.classList.add('active');
+			} else {
+				toolLink.classList.remove('active');
+			}
+		});
+
+		Array.from(toolCategorySections).forEach(toolCategorySection => {
+			if (categoryName === toolCategorySection.getAttribute('data-tool-category')) {
+				toolCategorySection.classList.remove('active');
+				toolCategorySection.classList.add('active');
+			} else {
+				toolCategorySection.classList.remove('active');
+			}
+		});
+	}
+
+	const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
+		Array.from(toolButtons).forEach(toolBtn => {
+			// Classes we need to set & remove
+			let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
+			let touchIcon = `touch-1`
+
+			// Update classes depending on the toolInteraction we clicked
+			if (toolInteraction === 'none') {
+				return;
+			} else if (toolInteraction === 'multitouch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-2';
+			} else if (toolInteraction === 'pinch') {
+				mouseButtonIcon = null;
+				touchIcon = 'touch-pinch';
+			} else if (toolInteraction === 'wheel') {
+				mouseButtonIcon = 'mousebutton-wheel';
+				touchIcon = null;
+			}
+
+			// Update our target button
+			if (toolName === toolBtn.getAttribute('data-tool')) {
+				toolBtn.className = "";
+				toolBtn.classList.add('active');
+				if (mouseButtonIcon) {
+					toolBtn.classList.add(mouseButtonIcon)
+				}
+				if (touchIcon) {
+					toolBtn.classList.add(touchIcon)
+				}
+				// Remove relevant classes from other buttons
+			} else {
+				if (mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
+					toolBtn.classList.remove(mouseButtonIcon);
+				}
+				if (touchIcon && toolBtn.classList.contains(touchIcon)) {
+					toolBtn.classList.remove(touchIcon);
+				}
+				if (toolBtn.classList.length === 1 && toolBtn.classList[0] === 'active') {
+					toolBtn.classList.remove('active');
+				}
+			}
+		});
+	}
+
+	const convertMouseEventWhichToButtons = (which) => {
+		switch (which) {
+			// no button
+			case 0:
+				return 0;
+			// left
+			case 1:
+				return 1;
+			// middle
+			case 2:
+				return 4;
+			// right
+			case 3:
+				return 2;
+		}
+		return 0;
+	}
+
+	// FREEHAND API //
+
+	const freehandRoiTool = cornerstoneTools.getToolForElement(element, 'FreehandRoi');
+	const freehandRoiSculpterTool = cornerstoneTools.getToolForElement(element, 'FreehandRoiSculptor');
+
+	function freehandApiCall(opperation) {
+		switch (opperation) {
+			case 'always-show-handles':
+				const alwaysShowHandles = freehandRoiTool.alwaysShowHandles;
+				freehandRoiTool.alwaysShowHandles = !alwaysShowHandles;
+				break;
+			case 'set-invalid-color':
+				freehandRoiTool.invalidColor = 'darkred';
+				break;
+			case 'show-cursor-on-hover':
+				const showCursorOnHover = freehandRoiSculptorTool.showCursorOnHover;
+				freehandRoiSculptorTool.showCursorOnHover = !showCursorOnHover;
+				break;
+			case 'limit-radius-outside-region':
+				const limitRadiusOutsideRegion = freehandRoiSculptorTool.limitRadiusOutsideRegion;
+				freehandRoiSculptorTool.limitRadiusOutsideRegion = !limitRadiusOutsideRegion;
+				break;
+			default:
+				return;
+		}
+	}
+
+	// API Sliders
+
+	const spacingSlider = document.getElementById("spacing");
+	const activeHandleRadiusSlider = document.getElementById("activeHandleRadius");
+	const completeHandleRadiusSlider = document.getElementById("completeHandleRadius");
+
+	const minSpacingSlider = document.getElementById("minSpacing");
+	const maxSpacingSlider = document.getElementById("maxSpacing");
+	const hoverCursorFadeAlphaSlider = document.getElementById("hoverCursorFadeAlpha");
+	const hoverCursorFadeDistanceSlider = document.getElementById("hoverCursorFadeDistance");
+
+
+	spacingSlider.defaultValue = 5;
+	activeHandleRadiusSlider.defaultValue = 3;
+	completeHandleRadiusSlider.defaultValue = 6;
+
+	minSpacingSlider.defaultValue = 5;
+	maxSpacingSlider.defaultValue = 20;
+	hoverCursorFadeAlphaSlider.defaultValue = 122;
+	hoverCursorFadeDistanceSlider.defaultValue = 120;
+
+	spacingSlider.addEventListener('input', event => {
+		freehandRoiTool.spacing = Number(event.target.value);
+	});
+
+	activeHandleRadiusSlider.addEventListener('input', event => {
+		freehandRoiTool.activeHandleRadius = Number(event.target.value);
+	});
+
+	completeHandleRadiusSlider.addEventListener('input', event => {
+		freehandRoiTool.completeHandleRadius = Number(event.target.value);
+	});
+
+	minSpacingSlider.addEventListener('input', event => {
+		freehandRoiSculptorTool.minSpacing = Number(event.target.value);
+	});
+
+	maxSpacingSlider.addEventListener('input', event => {
+		freehandRoiSculptorTool.maxSpacing = Number(event.target.value);
+	});
+
+	hoverCursorFadeAlphaSlider.addEventListener('input', event => {
+		const normalisedAlpha = Number(event.target.value) / 255.0;
+
+		freehandRoiSculptorTool.hoverCursorFadeAlpha = normalisedAlpha;
+	});
+
+	hoverCursorFadeDistanceSlider.addEventListener('input', event => {
+		// Slider transformed from (100 <-> 200) to (1.0 <-> 2.0).
+		const realValue = Math.floor(Number(event.target.value) / 100.0);
+
+		freehandRoiSculptorTool.hoverCursorFadeDistance = realValue;
+	});
+
+	const saveToolStateButton = document.getElementById('saveToolState');
+	const clearToolStateButton = document.getElementById('clearToolState');
+	const loadToolStateButton = document.getElementById('loadToolState');
+	let toolState = null;
+
+	saveToolStateButton.addEventListener('click', event => {
+		const toolStateString = JSON.stringify(cornerstoneTools.getToolState(element, freehandRoiTool.name));
+
+		if (toolStateString) {
+			toolState = JSON.parse(toolStateString);
+			alert("saved");
+		} else {
+			alert("nothing to save!");
+		}
+	});
+
+	clearToolStateButton.addEventListener('click', event => {
+		cornerstoneTools.clearToolState(element, freehandRoiTool.name);
+
+		cornerstone.updateImage(element);
+	});
+
+	loadToolStateButton.addEventListener('click', event => {
+		if (toolState) {
+			cornerstoneTools.clearToolState(element, freehandRoiTool.name);
+
+			toolState.data.forEach((data) => {
+				cornerstoneTools.addToolState(element, freehandRoiTool.name, data);
+			})
+
+			cornerstone.updateImage(element);
+			alert('loaded');
+		} else {
+			alert('Nothing has been saved!');
+		}
+	});
+
+	element.addEventListener('keydown', event => {
+		if (event.keyCode === 27) {
+			freehandRoiTool.cancelDrawing(element);
+		}
+		if (event.keyCode === 13) {
+			freehandRoiTool.completeDrawing(element)
+		}
+	});
+
+</script>
+
+</html>

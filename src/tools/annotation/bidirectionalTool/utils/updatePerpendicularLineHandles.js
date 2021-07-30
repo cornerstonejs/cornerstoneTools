@@ -1,12 +1,27 @@
-// Update the  perpendicular line handles
-export default function(eventData, data) {
-  if (!data.handles.perpendicularStart.locked) {
-    return;
+import getLineVector from './getLineVector';
+
+/**
+ * Update the perpendicular line handles when the measurement is being created.
+ * This method will make the perpendicular line intersect in the middle of the
+ * long line and assume half the size of the long line.
+ *
+ * @param {*} eventData Data object associated with the event
+ * @param {*} measurementData Data from current bidirectional tool measurement
+ *
+ * @returns {boolean} False in case the handle is not locked or true when moved
+ */
+export default function updatePerpendicularLineHandles(
+  eventData,
+  measurementData
+) {
+  if (!measurementData.handles.perpendicularStart.locked) {
+    return false;
   }
 
   let startX, startY, endX, endY;
 
-  const { start, end } = data.handles;
+  const { start, end } = measurementData.handles;
+  const { columnPixelSpacing = 1, rowPixelSpacing = 1 } = eventData.image;
 
   if (start.x === end.x && start.y === end.y) {
     startX = start.x;
@@ -20,24 +35,28 @@ export default function(eventData, data) {
       y: (start.y + end.y) / 2,
     };
 
-    // Length of long-axis
-    const dx = (start.x - end.x) * (eventData.image.columnPixelSpacing || 1);
-    const dy = (start.y - end.y) * (eventData.image.rowPixelSpacing || 1);
-    const length = Math.sqrt(dx * dx + dy * dy);
+    // Inclination of the perpendicular line
+    const vector = getLineVector(
+      columnPixelSpacing,
+      rowPixelSpacing,
+      start,
+      end
+    );
 
-    const vectorX = (start.x - end.x) / length;
-    const vectorY = (start.y - end.y) / length;
+    const perpendicularLineLength = vector.length / 2;
+    const rowMultiplier = perpendicularLineLength / (2 * rowPixelSpacing);
+    const columnMultiplier = perpendicularLineLength / (2 * columnPixelSpacing);
 
-    const perpendicularLineLength = length / 2;
-
-    startX = mid.x + (perpendicularLineLength / 2) * vectorY;
-    startY = mid.y - (perpendicularLineLength / 2) * vectorX;
-    endX = mid.x - (perpendicularLineLength / 2) * vectorY;
-    endY = mid.y + (perpendicularLineLength / 2) * vectorX;
+    startX = mid.x + columnMultiplier * vector.y;
+    startY = mid.y - rowMultiplier * vector.x;
+    endX = mid.x - columnMultiplier * vector.y;
+    endY = mid.y + rowMultiplier * vector.x;
   }
 
-  data.handles.perpendicularStart.x = startX;
-  data.handles.perpendicularStart.y = startY;
-  data.handles.perpendicularEnd.x = endX;
-  data.handles.perpendicularEnd.y = endY;
+  measurementData.handles.perpendicularStart.x = startX;
+  measurementData.handles.perpendicularStart.y = startY;
+  measurementData.handles.perpendicularEnd.x = endX;
+  measurementData.handles.perpendicularEnd.y = endY;
+
+  return true;
 }

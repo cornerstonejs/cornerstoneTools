@@ -1,5 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+import { wwwcCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -10,20 +11,18 @@ import BaseTool from './base/BaseTool.js';
  * @extends Tools.Base.BaseTool
  */
 export default class WwwcTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Wwwc',
       strategies: { basicLevelingStrategy },
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: {
         orientation: 0,
       },
+      svgCursor: wwwcCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   mouseDragCallback(evt) {
@@ -45,9 +44,12 @@ export default class WwwcTool extends BaseTool {
  * provide consistency for the ww/wc tool regardless of the dynamic range (e.g. an 8 bit
  * image will feel the same as a 16 bit image would)
  *
- * @param eventData
+ * @param {Object} evt
+ * @param {Object} { orienttion }
+ * @returns {void}
  */
-function basicLevelingStrategy(evt, { orientation }) {
+function basicLevelingStrategy(evt) {
+  const { orientation } = this.configuration;
   const eventData = evt.detail;
 
   const maxVOI =
@@ -69,4 +71,7 @@ function basicLevelingStrategy(evt, { orientation }) {
     eventData.viewport.voi.windowWidth += deltaY;
     eventData.viewport.voi.windowCenter += deltaX;
   }
+
+  // Unset any existing VOI LUT
+  eventData.viewport.voiLUT = undefined;
 }

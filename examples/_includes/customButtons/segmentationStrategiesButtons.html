@@ -1,0 +1,62 @@
+<div class="buttons operations-buttons">
+  <div class="row-label">
+    Strategies
+  </div>
+  <button class="button set-tool-mode is-primary" data-action="FILL_INSIDE">
+    <span>Fill Inside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="ERASE_INSIDE">
+    <span>Erase Inside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="FILL_OUTSIDE">
+    <span>Fill outside</span>
+  </button>
+  <button class="button set-tool-mode" data-action="ERASE_OUTSIDE">
+    <span>Erase Outside</span>
+  </button>
+</div>
+
+<script>
+  function segmentationStrategiesButtons() {
+    function bindEvents(buttons, handleClick) {
+      buttons.forEach(btn => {
+        btn.addEventListener('contextmenu', handleClick);
+        btn.addEventListener('auxclick', handleClick);
+        btn.addEventListener('click', handleClick);
+      });
+    }
+
+    function cleanAllButtons(evt, buttons) {
+      // Remove active style from all buttons
+      buttons.forEach(btn => {
+        btn.classList.remove('is-primary');
+      });
+    }
+
+    function deactivateLinkBehaviour(evt) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      evt.stopImmediatePropagation();
+    }
+
+    (function DealWithOperations() {
+      const nameSpace = `.operations-buttons`;
+      const buttons = document.querySelectorAll(`${nameSpace} .set-tool-mode`);
+
+      const handleClick = function(evt) {
+        const action = this.dataset.action;
+        const ActiveScissorTool = cornerstoneTools.getToolForElement(
+          element,
+          '{{page.toolName}}'
+        );
+        ActiveScissorTool.changeStrategy(action);
+        cleanAllButtons(evt, buttons);
+        this.classList.add('is-primary');
+        deactivateLinkBehaviour(evt);
+        return false;
+      };
+
+      bindEvents(buttons, handleClick);
+    })();
+  }
+</script>

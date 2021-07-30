@@ -1,6 +1,7 @@
 import external from './../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 import angleBetweenPoints from '../util/angleBetweenPoints.js';
+import { rotateCursor } from './cursors/index.js';
 
 /**
  * @public
@@ -11,8 +12,8 @@ import angleBetweenPoints from '../util/angleBetweenPoints.js';
  * @extends Tools.Base.BaseTool
  */
 export default class RotateTool extends BaseTool {
-  constructor(configuration = {}) {
-    const defaultConfig = {
+  constructor(props = {}) {
+    const defaultProps = {
       name: 'Rotate',
       strategies: {
         default: defaultStrategy,
@@ -21,12 +22,16 @@ export default class RotateTool extends BaseTool {
       },
       defaultStrategy: 'default',
       supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        roundAngles: false,
+        flipHorizontal: false,
+        flipVertical: false,
+        rotateScale: 1,
+      },
+      svgCursor: rotateCursor,
     };
-    const initialConfiguration = Object.assign(defaultConfig, configuration);
 
-    super(initialConfiguration);
-
-    this.initialConfiguration = initialConfiguration;
+    super(props, defaultProps);
   }
 
   touchDragCallback(evt) {
@@ -43,58 +48,78 @@ export default class RotateTool extends BaseTool {
 
   dragCallback(evt) {
     evt.detail.viewport.initialRotation = this.initialRotation;
-    this.applyActiveStrategy(evt, this.configuration);
+    this.applyActiveStrategy(evt);
     external.cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
   }
 }
 
-const defaultStrategy = evt => {
-  const eventData = evt.detail;
-  const { element, viewport } = eventData;
+function defaultStrategy(evt) {
+  const { roundAngles, rotateScale } = this.configuration;
+  const { element, viewport, startPoints, currentPoints } = evt.detail;
   const initialRotation = viewport.initialRotation;
 
   // Calculate the center of the image
   const rect = element.getBoundingClientRect(element);
   const { clientWidth: width, clientHeight: height } = element;
 
-  const initialPoints = {
-    x: eventData.startPoints.client.x,
-    y: eventData.startPoints.client.y,
-  };
   const { scale, translation } = viewport;
   const centerPoints = {
     x: rect.left + width / 2 + translation.x * scale,
     y: rect.top + height / 2 + translation.y * scale,
   };
 
-  const currentPoints = {
-    x: eventData.currentPoints.client.x,
-    y: eventData.currentPoints.client.y,
-  };
-
   const angleInfo = angleBetweenPoints(
     centerPoints,
-    initialPoints,
-    currentPoints
+    startPoints.client,
+    currentPoints.client
   );
 
+  angleInfo.angle *= rotateScale;
+
+  if (roundAngles) {
+    angleInfo.angle = Math.ceil(angleInfo.angle);
+  }
   if (angleInfo.direction < 0) {
     angleInfo.angle = -angleInfo.angle;
   }
 
   viewport.rotation = initialRotation + angleInfo.angle;
-};
+}
 
-const horizontalStrategy = evt => {
-  const eventData = evt.detail;
-  const { viewport, deltaPoints } = eventData;
+function horizontalStrategy(evt) {
+  const { roundAngles, flipHorizontal, rotateScale } = this.configuration;
+  const { viewport, startPoints, currentPoints } = evt.detail;
+  const initialRotation = viewport.initialRotation;
+  const initialPointX = startPoints.client.x;
+  const currentPointX = currentPoints.client.x;
 
-  viewport.rotation += deltaPoints.page.x / viewport.scale;
-};
+  let angle = (currentPointX - initialPointX) * rotateScale;
 
-const verticalStrategy = evt => {
-  const eventData = evt.detail;
-  const { viewport, deltaPoints } = eventData;
+  if (roundAngles) {
+    angle = Math.round(Math.abs(angle)) * (angle > 0 ? 1 : -1);
+  }
+  if (flipHorizontal) {
+    angle = -angle;
+  }
 
-  viewport.rotation += deltaPoints.page.y / viewport.scale;
-};
+  viewport.rotation = initialRotation + angle;
+}
+
+function verticalStrategy(evt) {
+  const { roundAngles, flipVertical, rotateScale } = this.configuration;
+  const { viewport, startPoints, currentPoints } = evt.detail;
+  const initialRotation = viewport.initialRotation;
+  const initialPointY = startPoints.client.y;
+  const currentPointY = currentPoints.client.y;
+
+  let angle = (currentPointY - initialPointY) * rotateScale;
+
+  if (roundAngles) {
+    angle = Math.round(Math.abs(angle)) * (angle > 0 ? 1 : -1);
+  }
+  if (flipVertical) {
+    angle = -angle;
+  }
+
+  viewport.rotation = initialRotation + angle;
+}

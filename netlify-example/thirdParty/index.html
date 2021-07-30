@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <!-- support for mobile touch devices -->
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1" />
+  <link rel="stylesheet" href="../reset.css" />
+  <link rel="stylesheet" href="../app.css" />
+  <link rel="stylesheet" href="../icon-classes.css" />
+  <link rel="stylesheet" href="../tool-help.css" />
+</head>
+
+<body>
+  <div id="app">
+    <div class="wrapper">
+      <!-- Select Tool Category -->
+      <ul class="tool-category-list">
+        <li><a class="tools" data-category="tools" href="#">Tools</a></li>
+      </ul>
+
+      <!-- Select Active Tool -->
+      <ul class="tool-category active" data-tool-category="tools">
+        <li><a href="#" data-tool="HelloWorldMouse">HelloWorldMouse</a></li>
+      </ul>
+
+      <!-- Our beautiful element targets -->
+      <div class="cornerstone-element-wrapper-help">
+        <div class="cornerstone-element-help" data-index="0" oncontextmenu="return false"></div>
+        <div class="tool-help"></div>
+      </div>
+    </div>
+  </div>
+</body>
+
+<!-- include the hammer.js library for touch gestures-->
+<script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+
+<!-- include the cornerstone library -->
+<script src="https://unpkg.com/cornerstone-core@2.2.6/dist/cornerstone.js"></script>
+<script src="https://unpkg.com/cornerstone-math@0.1.6/dist/cornerstoneMath.js"></script>
+<script src="../../dist/cornerstoneTools.js"></script>
+<script>
+  window.cornerstoneTools ||
+    document.write(
+      '<script src="https://unpkg.com/cornerstone-tools">\x3C/script>'
+    );
+</script>
+
+<!-- include special code for these examples which provides images -->
+<script src="../imageLoader.js"></script>
+
+<script>
+  //====== Define some thirdParty functionality: ======//
+  // 1) A module
+  const state = {
+    isPolite: true,
+    responses: {
+      polite: 'Hello World!',
+      rude: 'Go away, World.',
+    },
+  };
+
+  const myModule = {
+    state,
+    getters: {
+      response: () => {
+        if (state.isPolite) {
+          return state.responses.polite;
+        } else {
+          return state.responses.rude;
+        }
+      },
+    },
+    setters: {
+      politeResponse: response => {
+        state.responses.polite = response;
+      },
+      rudeResponse: response => {
+        state.responses.rude = response;
+      },
+      moodSwitch: () => {
+        state.isPolite = !state.isPolite;
+      },
+    },
+    onRegisterCallback: () => {
+      console.log('Hello onRegisterCallback.');
+    },
+    enabledElementCallback: enabledElement => {
+      console.log(
+        `module: enabledElementCallback: Hello element ${
+        enabledElement.uuid
+        }.`
+      );
+    },
+  };
+  // 2) A mixin
+  const myMixin = {
+    evenMoreHelloWorldMixin: () => {
+      // Note this would need to be called from somewhere
+      // Within the tool's implementation.
+      console.log('Hello World from the even more hello world mixin!');
+    },
+  };
+
+  // 3) A Tool
+  const BaseTool = cornerstoneTools.importInternal('base/BaseTool');
+
+  class HelloWorldMouseTool extends BaseTool {
+    constructor(name = 'HelloWorldMouse') {
+      super({
+        name,
+        supportedInteractionTypes: ['mouse'],
+        mixins: [
+          'activeOrDisabledBinaryTool', // Mixin from cornerstoneTools source.
+          'evenMoreHelloWorld', // Mixin from the plugin.
+        ],
+      });
+
+      this._helloWorldModule = cornerstoneTools.getModule('helloWorld');
+    }
+
+    preMouseDownCallback(evt) {
+      // Say response
+      console.log(this._helloWorldModule.getters.response());
+
+      // Mood switch
+      this._helloWorldModule.setters.moodSwitch();
+
+      // Call mixin function
+      this.evenMoreHelloWorldMixin();
+    }
+
+    activeCallback(element) {
+      const enabledElement = cornerstone.getEnabledElement(element);
+
+      console.log(`Hello element ${enabledElement.uuid}!`);
+    }
+
+    disabledCallback(element) {
+      const enabledElement = cornerstone.getEnabledElement(element);
+
+      console.log(`Goodbye element ${enabledElement.uuid}!`);
+    }
+  }
+
+  // Register the thirdParty functionality
+  cornerstoneTools.register('module', 'helloWorld', myModule);
+  cornerstoneTools.register('mixin', 'evenMoreHelloWorld', myMixin);
+
+  // Initialise the extended cornerstoneTools library.
+  cornerstoneTools.init();
+
+  const imageIds = ['example://1', 'example://2', 'example://3'];
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
+  // Enable & Setup all of our elements
+  const element = document.querySelector('.cornerstone-element-help');
+
+  cornerstone.enable(element);
+
+  element.tabIndex = 0;
+  element.focus();
+
+  cornerstone.loadImage(imageIds[0]).then(function (image) {
+    cornerstone.displayImage(element, image);
+
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
+  });
+
+  function setAllToolsPassive() {
+    cornerstoneTools.store.state.tools.forEach(tool => {
+      cornerstoneTools.setToolPassive(tool.name);
+    });
+  }
+
+  // Iterate over all tool-category links
+  const toolCategoryLinks = document.querySelectorAll(
+    'ul.tool-category-list a'
+  );
+  const toolCategorySections = document.querySelectorAll('ul.tool-category');
+  Array.from(toolCategoryLinks).forEach(link => {
+    //
+    const categoryName = link.getAttribute('data-category');
+    const categoryElement = document.querySelector(
+      `section[data-tool-category="${categoryName}"]`
+    );
+
+    // Setup listener
+    link.addEventListener('click', evt => {
+      evt.preventDefault();
+      setToolCategoryActive(categoryName);
+    });
+  });
+
+  // Iterate over all tool buttons
+  const toolButtons = document.querySelectorAll('a[data-tool]');
+  const toolBtn = document.querySelector('a[data-tool]');
+  const toolName = toolBtn.getAttribute('data-tool');
+  // Add the 3rd party tool (may be locally defined, or from an npm library)
+
+  cornerstoneTools.addTool(HelloWorldMouseTool);
+
+  // Setup button listener
+  // Prevent right click context menu for our menu buttons
+  toolBtn.addEventListener(
+    'contextmenu',
+    event => event.preventDefault(),
+    true
+  );
+  // Prevent middle click opening a new tab on Chrome & FF
+  toolBtn.addEventListener(
+    'auxclick',
+    event => {
+      if (event.button && event.button === 1) {
+        event.preventDefault();
+      }
+    },
+    false
+  );
+  toolBtn.addEventListener('mousedown', evt => {
+    const mouseButtonMask = evt.buttons
+      ? evt.buttons
+      : convertMouseEventWhichToButtons(evt.which);
+    // TODO: Let's make this happen automagically for mask/touch conflicts?
+    setAllToolsPassive();
+    const toolInteraction = evt.target.getAttribute('data-tool-interaction');
+    setButtonActive(toolName, mouseButtonMask, toolInteraction);
+    cornerstoneTools.setToolActive(toolName, { mouseButtonMask });
+
+    evt.preventDefault();
+    evt.stopPropagation();
+    evt.stopImmediatePropagation();
+    return false;
+  });
+
+  // Activate first tool
+  cornerstoneTools.setToolActive(cornerstoneTools.store.state.tools[0].name, {
+    mouseButtonMask: 1,
+  });
+
+  const setToolCategoryActive = categoryName => {
+    Array.from(toolCategoryLinks).forEach(toolLink => {
+      if (categoryName === toolLink.getAttribute('data-category')) {
+        toolLink.classList.remove('active');
+        toolLink.classList.add('active');
+      } else {
+        toolLink.classList.remove('active');
+      }
+    });
+
+    Array.from(toolCategorySections).forEach(toolCategorySection => {
+      if (
+        categoryName ===
+        toolCategorySection.getAttribute('data-tool-category')
+      ) {
+        toolCategorySection.classList.remove('active');
+        toolCategorySection.classList.add('active');
+      } else {
+        toolCategorySection.classList.remove('active');
+      }
+    });
+  };
+
+  const setButtonActive = (toolName, mouseButtonMask, toolInteraction) => {
+    Array.from(toolButtons).forEach(toolBtn => {
+      // Classes we need to set & remove
+      let mouseButtonIcon = `mousebutton-${mouseButtonMask}`;
+      let touchIcon = `touch-1`;
+
+      // Update classes depending on the toolInteraction we clicked
+      if (toolInteraction === 'none') {
+        return;
+      } else if (toolInteraction === 'multitouch') {
+        mouseButtonIcon = null;
+        touchIcon = 'touch-2';
+      } else if (toolInteraction === 'pinch') {
+        mouseButtonIcon = null;
+        touchIcon = 'touch-pinch';
+      } else if (toolInteraction === 'wheel') {
+        mouseButtonIcon = 'mousebutton-wheel';
+        touchIcon = null;
+      }
+
+      // Update our target button
+      if (toolName === toolBtn.getAttribute('data-tool')) {
+        toolBtn.className = '';
+        toolBtn.classList.add('active');
+        if (mouseButtonIcon) {
+          toolBtn.classList.add(mouseButtonIcon);
+        }
+        if (touchIcon) {
+          toolBtn.classList.add(touchIcon);
+        }
+        // Remove relevant classes from other buttons
+      } else {
+        if (mouseButtonIcon && toolBtn.classList.contains(mouseButtonIcon)) {
+          toolBtn.classList.remove(mouseButtonIcon);
+        }
+        if (touchIcon && toolBtn.classList.contains(touchIcon)) {
+          toolBtn.classList.remove(touchIcon);
+        }
+        if (
+          toolBtn.classList.length === 1 &&
+          toolBtn.classList[0] === 'active'
+        ) {
+          toolBtn.classList.remove('active');
+        }
+      }
+    });
+  };
+
+  const convertMouseEventWhichToButtons = which => {
+    switch (which) {
+      // no button
+      case 0:
+        return 0;
+      // left
+      case 1:
+        return 1;
+      // middle
+      case 2:
+        return 4;
+      // right
+      case 3:
+        return 2;
+    }
+    return 0;
+  };
+</script>
+
+</html>

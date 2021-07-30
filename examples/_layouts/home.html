@@ -1,0 +1,156 @@
+---
+layout: default
+---
+
+<section class="section">
+  <div class="container">
+    <div class="home">
+      <h1 class="title is-1">Examples</h1>
+
+      <p class="content">
+        This page serves as an index for quick examples and guides that
+        demonstrate how to use cornerstone tools. Please feel free to add your
+        own examples, or improve upon existing ones.
+      </p>
+
+      <h2 class="title is-2">Tools</h2>
+
+      <div class="columns">
+        <!-- -->
+        <div class="column">
+          <h4 class="title is-4">General</h4>
+          <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'general' %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
+          </ul>
+        </div>
+
+        <!-- ANNOTATION TOOLS-->
+        <div class="column">
+          <h4 class="title is-4">Annotation</h4>
+          <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'annotation' %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
+          </ul>
+        </div>
+
+        <!-- STACK TOOLS -->
+        <div class="column">
+          <h4 class="title is-4">Stack / Series</h4>
+          <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'stack' %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
+          </ul>
+        </div>
+
+        <!-- SEGMENTATION TOOLS -->
+        <div class="column">
+          <h4 class="title is-4">Segmentation</h4>
+          <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'segmentation'
+            %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="title is-2">Synchronization</h2>
+
+      <div class="columns">
+        <!-- STATE MANAGERS -->
+        <div class="column">
+          <h4 class="title is-4">Misc.</h4>
+          <ul class="tool-list content">
+            {% for page in site.pages %} {% if page.toolType == 'sync-tool' %}
+            <li>
+              <a class="tool-link" href="{{ page.url | relative_url }}">
+                {{ page.title | escape }}
+              </a>
+            </li>
+            {% endif %} {% endfor %}
+            <li>Stack Image Id Synchronization</li>
+            <li>Stack Image Position Synchronization</li>
+            <li>Pan/Zoom Synchronization</li>
+            <li>Update Image Synchronization</li>
+            <li>WWWC Synchronization</li>
+            <li>Linking/Unlinking Elements</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="title is-2">State Management</h2>
+
+      <div class="columns">
+        <!-- STATE MANAGERS -->
+        <div class="column">
+          <h4 class="title is-4">State Managers</h4>
+          <ul class="tool-list content">
+            <li>Image Id State Manager</li>
+            <li>Frame of Reference State Manager</li>
+            <li>Stack State Manager</li>
+          </ul>
+        </div>
+
+        <!-- TOOL STYLE -->
+        <div class="column">
+          <h4 class="title is-4">Tool Style</h4>
+          <ul class="tool-list content">
+            <li>Text Style</li>
+            <li>Tool Colors</li>
+            <li>Tool Coordinates</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="title is-2">Guides</h2>
+      <div class="columns">
+        <!-- EXAMPLES -->
+        <div class="column">
+          <h4 class="title is-4">Misc.</h4>
+          <ul class="tool-list content">
+            <li>Keyboard Actions</li>
+          </ul>
+        </div>
+      </div>
+
+      <h2 class="title is-2">Advanced: Custom Tools & Plugins</h2>
+      <div class="columns">
+        <!-- EXAMPLES -->
+        <div class="column">
+          <h4 class="title is-4">Misc. Examples</h4>
+          <ul class="tool-list content">
+            <li>Orientation Markers</li>
+            <li>Hello World</li>
+            <li>Seed Points</li>
+            <li>Save As...</li>
+            <li>
+              <a href="concepts/cursors">
+                Enable Cursors
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

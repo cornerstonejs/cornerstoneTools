@@ -1,12 +1,25 @@
 import ProbeTool from './ProbeTool.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import { getToolState } from '../../stateManagement/toolState.js';
+import { getLogger } from '../../util/logger.js';
 
-jest.mock('./../../stateManagement/toolState.js', () => ({
+jest.mock('../../util/logger.js');
+jest.mock('../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../import.js', () => ({
-  default: jest.fn(),
+jest.mock('./../../externalModules.js', () => ({
+  cornerstone: {
+    metaData: {
+      get: jest.fn(),
+    },
+    getStoredPixels: (element, x, y) => {
+      /* eslint-disable prettier/prettier */
+      const storedPixels = [10, 20, 30, 40, 50, 60, 70, 80, 90];
+      /* eslint-enable prettier/prettier */
+
+      return [storedPixels[x * 2 + y]];
+    },
+  },
 }));
 
 const badMouseEventData = 'hello world';
@@ -19,14 +32,15 @@ const goodMouseEventData = {
   },
 };
 
-describe('ProbeTool.js', () => {
-  beforeEach(() => {
-    console.error = jest.fn();
-    console.error.mockClear();
-    console.warn = jest.fn();
-    console.warn.mockClear();
-  });
+const image = {
+  rows: 3,
+  columns: 3,
+  slope: 1,
+  intercept: 1,
+  color: false,
+};
 
+describe('ProbeTool.js', () => {
   describe('default values', () => {
     it('has a default name of "Probe"', () => {
       const defaultName = 'Probe';
@@ -45,13 +59,15 @@ describe('ProbeTool.js', () => {
 
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
+      const logger = getLogger();
       const instantiatedTool = new ProbeTool();
 
-      instantiatedTool.createNewMeasurement(badMouseEventData);
+      const d = instantiatedTool.createNewMeasurement(badMouseEventData);
 
-      expect(console.error).toHaveBeenCalled();
-      expect(console.error.mock.calls[0][0]).toContain(
-        'required eventData not supplieed to tool'
+      expect(d).toBeUndefined();
+      expect(logger.error).toHaveBeenCalled();
+      expect(logger.error.mock.calls[0][0]).toContain(
+        'required eventData not supplied to tool'
       );
     });
 
@@ -93,6 +109,8 @@ describe('ProbeTool.js', () => {
 
     // Todo: Not sure we want all of our methods to check for valid params.
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
+      const logger = getLogger();
+
       const instantiatedTool = new ProbeTool();
       const noHandlesMeasurementData = {
         handles: {},
@@ -100,8 +118,8 @@ describe('ProbeTool.js', () => {
 
       instantiatedTool.pointNearTool(element, noHandlesMeasurementData, coords);
 
-      expect(console.warn).toHaveBeenCalled();
-      expect(console.warn.mock.calls[0][0]).toContain('invalid parameters');
+      expect(logger.warn).toHaveBeenCalled();
+      expect(logger.warn.mock.calls[0][0]).toContain('invalid parameters');
     });
 
     it('returns false when measurement data is null or undefined', () => {
@@ -130,6 +148,42 @@ describe('ProbeTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(false);
+    });
+  });
+
+  describe('updateCachedStats', () => {
+    let element;
+
+    beforeEach(() => {
+      element = jest.fn();
+    });
+
+    it('should calculate and update annotation values', () => {
+      const instantiatedTool = new ProbeTool();
+
+      const data = {
+        handles: {
+          end: {
+            x: 0,
+            y: 0,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.x).toEqual(0);
+      expect(data.cachedStats.y).toEqual(0);
+      expect(data.cachedStats.mo).toEqual(11);
+      expect(data.cachedStats.sp).toEqual(10);
+
+      data.handles.end.x = 2;
+      data.handles.end.y = 2;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.x).toEqual(2);
+      expect(data.cachedStats.y).toEqual(2);
+      expect(data.cachedStats.mo).toEqual(71);
+      expect(data.cachedStats.sp).toEqual(70);
     });
   });
 

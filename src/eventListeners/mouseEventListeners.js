@@ -2,10 +2,15 @@ import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import copyPoints from '../util/copyPoints.js';
 import triggerEvent from '../util/triggerEvent.js';
+import { getLogger } from '../util/logger.js';
+
+const logger = getLogger('eventListeners:mouseEventListeners');
 
 let isClickEvent = true;
 let preventClickTimeout;
 const clickDelay = 200;
+
+const addedListeners = new Map();
 
 function getEventButtons(event) {
   if (typeof event.buttons === 'number') {
@@ -60,7 +65,7 @@ function mouseDoubleClick(e) {
 
   const lastPoints = copyPoints(startPoints);
 
-  console.log(`double-click: ${getEventButtons(e)}`);
+  logger.log('double-click: %o', getEventButtons(e));
   const eventData = {
     event: e,
     buttons: getEventButtons(e),
@@ -174,7 +179,7 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mousemove ${getEventButtons(e)}`);
+    logger.log('mousemove: %o', getEventButtons(e));
     const eventData = {
       buttons: getEventButtons(e),
       viewport: external.cornerstone.getViewport(element),
@@ -243,7 +248,7 @@ function mouseDown(e) {
       ),
     };
 
-    console.log(`mouseup: ${getEventButtons(e)}`);
+    logger.log('mouseup: %o', getEventButtons(e));
     const eventData = {
       event: e,
       buttons: getEventButtons(e),
@@ -261,6 +266,8 @@ function mouseDown(e) {
 
     document.removeEventListener('mousemove', onMouseMove);
     document.removeEventListener('mouseup', onMouseUp);
+    addedListeners.delete(onMouseMove);
+    addedListeners.delete(onMouseUp);
 
     element.addEventListener('mousemove', mouseMove);
 
@@ -269,6 +276,8 @@ function mouseDown(e) {
 
   document.addEventListener('mousemove', onMouseMove);
   document.addEventListener('mouseup', onMouseUp);
+  addedListeners.set(onMouseMove, 'mousemove');
+  addedListeners.set(onMouseUp, 'mouseup');
 }
 
 function mouseMove(e) {
@@ -353,6 +362,11 @@ function disable(element) {
   element.removeEventListener('mousedown', mouseDown);
   element.removeEventListener('mousemove', mouseMove);
   element.removeEventListener('dblclick', mouseDoubleClick);
+  // Make sure we have removed any listeners that were added within the above listeners (#1337)
+  addedListeners.forEach((event, listener) => {
+    document.removeEventListener(event, listener);
+  });
+  addedListeners.clear();
 }
 
 function enable(element) {

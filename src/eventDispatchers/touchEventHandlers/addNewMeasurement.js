@@ -7,13 +7,17 @@ import {
   addToolState,
   removeToolState,
 } from '../../stateManagement/toolState.js';
+import triggerEvent from '../../util/triggerEvent.js';
+import { getLogger } from '../../util/logger.js';
+
+const logger = getLogger('eventDispatchers:touchEventHandlers');
 
 export default function(evt, tool) {
-  console.log('touch: addNewMeasurement');
-  //
+  logger.log('addNewMeasurement');
+
   evt.preventDefault();
   evt.stopPropagation();
-  //
+
   const touchEventData = evt.detail;
   const element = touchEventData.element;
   const measurementData = tool.createNewMeasurement(touchEventData);
@@ -60,6 +64,17 @@ export default function(evt, tool) {
     measurementData,
     measurementData.handles.end,
     tool.options,
-    'touch'
+    'touch',
+    () => {
+      const eventType = EVENTS.MEASUREMENT_COMPLETED;
+      const eventData = {
+        toolName: tool.name,
+        toolType: tool.name, // Deprecation notice: toolType will be replaced by toolName
+        element,
+        measurementData,
+      };
+
+      triggerEvent(element, eventType, eventData);
+    }
   );
 }
