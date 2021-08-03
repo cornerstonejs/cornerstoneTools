@@ -12,7 +12,7 @@ import drawJoinedLines from './drawJoinedLines.js';
  * @param  {Object} end       The end position.
  * @param  {string} color     The color of the arrow.
  * @param  {number} lineWidth The width of the arrow line.
- * @param  {number[]|| undefined} [lineDash] The optional lineDash style.
+ * @param  {number[] | undefined} [lineDash] The optional lineDash style.
  * @returns {undefined}
  */
 export default function(context, start, end, color, lineWidth, lineDash) {
