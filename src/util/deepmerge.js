@@ -38,8 +38,19 @@ const defaultArrayMerge = (target, source, optionsArgument) => {
   return destination;
 };
 
+const createDestination = (target, source) => {
+  let prototype = Object.prototype;
+  if (target.constructor !== Object) {
+    prototype = target.constructor.prototype;
+  }
+  if (source.constructor !== Object) {
+    prototype = source.constructor.prototype;
+  }
+  return Object.create(prototype);
+};
+
 const mergeObject = (target, source, optionsArgument) => {
-  const destination = {};
+  const destination = createDestination(target, source);
 
   if (isMergeableObject(target)) {
     Object.keys(target).forEach(function(key) {
