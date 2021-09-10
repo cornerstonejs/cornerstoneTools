@@ -75,8 +75,6 @@ import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
 import makeUnselectable from './util/makeUnselectable.js';
 import getRGBPixels from './util/getRGBPixels.js';
 import {
-  getDefaultSimultaneousRequests,
-  getMaxSimultaneousRequests,
   getBrowserInfo,
   isMobileDevice,
 } from './util/getMaxSimultaneousRequests.js';
@@ -147,8 +145,6 @@ export const lib = {
   'util/pointInsideBoundingBox': pointInsideBoundingBox,
   'util/makeUnselectable': makeUnselectable,
   'util/getRGBPixels': getRGBPixels,
-  'util/getDefaultSimultaneousRequests': getDefaultSimultaneousRequests,
-  'util/getMaxSimultaneousRequests': getMaxSimultaneousRequests,
   'util/getBrowserInfo': getBrowserInfo,
   'util/isMobileDevice': isMobileDevice,
   'util/angleBetweenPoints': angleBetweenPoints,
