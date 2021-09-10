@@ -1,8 +1,6 @@
 import external from './../externalModules.js';
-import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
-import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 import { getLogger } from '../util/logger.js';
 import triggerEvent from '../util/triggerEvent';
 import EVENTS from '../events.js';
@@ -140,7 +138,7 @@ function prefetch(element) {
 
   // Clear the requestPool of prefetch requests, if needed.
   if (!configuration.preserveExistingPool) {
-    requestPoolManager.clearRequestStack(requestType);
+    external.cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   }
 
   // Identify the nearest imageIdIndex to the currentImageIdIndex
@@ -233,20 +231,16 @@ function prefetch(element) {
   }
   // Load images in reverse order, by adding them at the beginning of the pool.
   for (const imageToLoad of imageIdsToPrefetch.reverse()) {
-    requestPoolManager.addRequest(
-      element,
-      imageToLoad,
-      requestType,
-      preventCache,
-      doneCallback,
-      failCallback,
-      true
-    );
+    if (preventCache) {
+      external.cornerstone
+        .loadImage(imageToLoad, { priority: 0, requestType })
+        .then(doneCallback, failCallback);
+    } else {
+      external.cornerstone
+        .loadAndCacheImage(imageToLoad, { priority: 0, requestType })
+        .then(doneCallback, failCallback);
+    }
   }
-
-  // Try to start the requestPool's grabbing procedure
-  // In case it isn't already running
-  requestPoolManager.startGrabbing();
 }
 
 function getPromiseRemovedHandler(element) {
@@ -393,7 +387,7 @@ function disable(element) {
     stackPrefetchData.data[0].enabled = false;
 
     // Clear current prefetch requests from the requestPool
-    requestPoolManager.clearRequestStack(requestType);
+    external.cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   }
 }
 
@@ -403,10 +397,6 @@ function getConfiguration() {
 
 function setConfiguration(config) {
   configuration = config;
-
-  if (config.maxSimultaneousRequests) {
-    setMaxSimultaneousRequests(config.maxSimultaneousRequests);
-  }
 }
 
 // Module/private exports
