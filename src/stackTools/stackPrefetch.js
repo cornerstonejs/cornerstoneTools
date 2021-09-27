@@ -9,6 +9,7 @@ const logger = getLogger('stackTools:stackPrefetch');
 
 const toolName = 'stackPrefetch';
 const requestType = 'prefetch';
+const priority = 0;
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
@@ -229,17 +230,28 @@ function prefetch(element) {
       imageIdsToPrefetch.push(imageId);
     }
   }
+
+  let sendRequest;
+  if (preventCache) {
+    sendRequest = imageId =>
+      external.cornerstone
+        .loadImage(imageId, { priority, requestType })
+        .then(doneCallback, failCallback);
+  } else {
+    sendRequest = imageId =>
+      external.cornerstone
+        .loadAndCacheImage(imageId, { priority, requestType })
+        .then(doneCallback, failCallback);
+  }
+
   // Load images in reverse order, by adding them at the beginning of the pool.
   for (const imageToLoad of imageIdsToPrefetch.reverse()) {
-    if (preventCache) {
-      external.cornerstone
-        .loadImage(imageToLoad, { priority: 0, requestType })
-        .then(doneCallback, failCallback);
-    } else {
-      external.cornerstone
-        .loadAndCacheImage(imageToLoad, { priority: 0, requestType })
-        .then(doneCallback, failCallback);
-    }
+    external.cornerstone.imageLoadPoolManager.addRequest(
+      sendRequest.bind(imageToLoad),
+      requestType,
+      { imageId: imageToLoad },
+      priority
+    );
   }
 }
 
