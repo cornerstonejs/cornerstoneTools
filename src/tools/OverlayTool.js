@@ -1,6 +1,33 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 
+/** From cornerstone-core, but the original isn't accessible */
+function getDisplayedArea(image, viewport = null) {
+  if (viewport && viewport.displayedArea) {
+    return viewport.displayedArea;
+  }
+
+  if (image === undefined) {
+    throw new Error('getDisplayedArea: parameter image must not be undefined');
+  }
+
+  return {
+    tlhc: {
+      x: 1,
+      y: 1,
+    },
+    brhc: {
+      x: image.columns,
+      y: image.rows,
+    },
+    rowPixelSpacing:
+      image.rowPixelSpacing === undefined ? 1 : image.rowPixelSpacing,
+    columnPixelSpacing:
+      image.columnPixelSpacing === undefined ? 1 : image.columnPixelSpacing,
+    presentationSizeMode: 'NONE',
+  };
+}
+
 /**
  *
  * http://dicom.nema.org/dicom/2013/output/chtml/part03/sect_C.9.html
@@ -63,15 +90,21 @@ export default class OverlayTool extends BaseTool {
       return;
     }
 
+    if (viewport.overlay === undefined) {
+      viewport.overlay = true;
+    }
+    if (!viewport.overlay) return;
+
+    const displayedArea = getDisplayedArea(image, viewport);
     const viewportPixelSpacing = {
-      column: viewport.displayedArea.columnPixelSpacing || 1,
-      row: viewport.displayedArea.rowPixelSpacing || 1,
+      column: displayedArea.columnPixelSpacing || 1,
+      row: displayedArea.rowPixelSpacing || 1,
     };
     const imageWidth =
-      Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
+      Math.abs(displayedArea.brhc.x - displayedArea.tlhc.x) *
       viewportPixelSpacing.column;
     const imageHeight =
-      Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) *
+      Math.abs(displayedArea.brhc.y - displayedArea.tlhc.y) *
       viewportPixelSpacing.row;
 
     overlayPlaneMetadata.overlays.forEach(overlay => {
