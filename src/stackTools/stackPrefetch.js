@@ -9,6 +9,8 @@ const logger = getLogger('stackTools:stackPrefetch');
 
 const toolName = 'stackPrefetch';
 const requestType = 'prefetch';
+const priority = 0;
+const addToBeginning = true;
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
@@ -229,18 +231,32 @@ function prefetch(element) {
       imageIdsToPrefetch.push(imageId);
     }
   }
-  // Load images in reverse order, by adding them at the beginning of the pool.
-  for (const imageToLoad of imageIdsToPrefetch.reverse()) {
-    if (preventCache) {
-      external.cornerstone
-        .loadImage(imageToLoad, { priority: 0, requestType })
-        .then(doneCallback, failCallback);
-    } else {
-      external.cornerstone
-        .loadAndCacheImage(imageToLoad, { priority: 0, requestType })
-        .then(doneCallback, failCallback);
-    }
+
+  let requestFn;
+  const options = {
+    addToBeginning,
+    priority,
+    requestType,
+  };
+
+  if (preventCache) {
+    requestFn = id => external.cornerstone.loadImage(id, options);
+  } else {
+    requestFn = id => external.cornerstone.loadAndCacheImage(id, options);
   }
+
+  imageIdsToPrefetch.forEach(imageId => {
+    external.cornerstone.imageLoadPoolManager.addRequest(
+      requestFn.bind(null, imageId),
+      requestType,
+      // Additional details
+      {
+        imageId,
+      },
+      priority,
+      addToBeginning
+    );
+  });
 }
 
 function getPromiseRemovedHandler(element) {
