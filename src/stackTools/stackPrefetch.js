@@ -245,7 +245,7 @@ function prefetch(element) {
     requestFn = id => external.cornerstone.loadAndCacheImage(id, options);
   }
 
-  imageIdsToPrefetch.forEach(imageId => {
+  imageIdsToPrefetch.reverse().forEach(imageId => {
     external.cornerstone.imageLoadPoolManager.addRequest(
       requestFn.bind(null, imageId),
       requestType,
