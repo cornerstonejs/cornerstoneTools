@@ -1,33 +1,6 @@
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
 
-/** From cornerstone-core, but the original isn't accessible */
-function getDisplayedArea(image, viewport = null) {
-  if (viewport && viewport.displayedArea) {
-    return viewport.displayedArea;
-  }
-
-  if (image === undefined) {
-    throw new Error('getDisplayedArea: parameter image must not be undefined');
-  }
-
-  return {
-    tlhc: {
-      x: 1,
-      y: 1,
-    },
-    brhc: {
-      x: image.columns,
-      y: image.rows,
-    },
-    rowPixelSpacing:
-      image.rowPixelSpacing === undefined ? 1 : image.rowPixelSpacing,
-    columnPixelSpacing:
-      image.columnPixelSpacing === undefined ? 1 : image.columnPixelSpacing,
-    presentationSizeMode: 'NONE',
-  };
-}
-
 /**
  *
  * http://dicom.nema.org/dicom/2013/output/chtml/part03/sect_C.9.html
@@ -95,17 +68,8 @@ export default class OverlayTool extends BaseTool {
     }
     if (!viewport.overlay) return;
 
-    const displayedArea = getDisplayedArea(image, viewport);
-    const viewportPixelSpacing = {
-      column: displayedArea.columnPixelSpacing || 1,
-      row: displayedArea.rowPixelSpacing || 1,
-    };
-    const imageWidth =
-      Math.abs(displayedArea.brhc.x - displayedArea.tlhc.x) *
-      viewportPixelSpacing.column;
-    const imageHeight =
-      Math.abs(displayedArea.brhc.y - displayedArea.tlhc.y) *
-      viewportPixelSpacing.row;
+    const imageWidth = image.columns;
+    const imageHeight = image.rows;
 
     overlayPlaneMetadata.overlays.forEach(overlay => {
       if (overlay.visible === false) {
