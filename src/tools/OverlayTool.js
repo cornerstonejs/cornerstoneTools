@@ -83,7 +83,7 @@ export default class OverlayTool extends BaseTool {
 
       const layerContext = layerCanvas.getContext('2d');
 
-      layerContext.fillStyle = overlay.fillStyle || 'white';
+      layerContext.fillStyle = overlay.fillStyle || '#b026ff';
 
       if (overlay.type === 'R') {
         layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
