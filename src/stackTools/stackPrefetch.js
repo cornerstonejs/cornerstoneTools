@@ -40,32 +40,20 @@ function range(lowEnd, highEnd) {
   return arr;
 }
 
-const max = function(arr) {
-  return Math.max.apply(null, arr);
-};
-
-const min = function(arr) {
-  return Math.min.apply(null, arr);
-};
-
 function nearestIndex(arr, x) {
   // Return index of nearest values in array
   // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
-  const l = [];
-  const h = [];
-
-  arr.forEach(function(v) {
+  let low = 0;
+  let high = arr.length - 1;
+  arr.forEach((v, idx) => {
     if (v < x) {
-      l.push(v);
+      low = Math.max(idx, low);
     } else if (v > x) {
-      h.push(v);
+      high = Math.min(idx, high);
     }
   });
 
-  return {
-    low: arr.indexOf(max(l)),
-    high: arr.indexOf(min(h)),
-  };
+  return { low, high };
 }
 
 function prefetch(element) {
