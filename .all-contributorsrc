@@ -343,6 +343,16 @@
       "contributions": [
         "bug"
       ]
+    },
+    {
+      "login": "wayfarer3130",
+      "name": "Bill Wallace",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27778909?v=4",
+      "profile": "https://github.com/wayfarer3130",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7
