@@ -7,7 +7,6 @@
     "-fontsettings",
     "github",
     "ga",
-    "sitemap",
     "versions"
   ],
   "pluginsConfig": {
@@ -26,8 +25,7 @@
     },
     "versions": {
       "gitbookConfigURL": "https://raw.githubusercontent.com/cornerstonejs/cornerstoneTools/master/docs/book.json",
-      "options": [
-        {
+      "options": [{
           "value": "https://tools.cornerstonejs.org/history/v2/",
           "text": "Version 2.x"
         },
