@@ -1,5 +1,8 @@
+import { modules } from '../store/index';
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+
+const globalConfiguration = modules.globalConfiguration;
 
 /**
  *
@@ -9,7 +12,7 @@ import BaseTool from './base/BaseTool.js';
  * @class Overlay
  * @memberof Tools
  *
- * @classdesc Tool for displaying a scale overlay on the image.
+ * @classdesc Tool for displaying a scale overlay on the image.  Uses viewport.overlayColor to set the default colour.
  * @extends Tools.Base.BaseTool
  */
 export default class OverlayTool extends BaseTool {
@@ -63,10 +66,12 @@ export default class OverlayTool extends BaseTool {
       return;
     }
 
-    if (viewport.overlay === undefined) {
-      viewport.overlay = true;
+    if (viewport.overlayColor === undefined) {
+      viewport.overlayColor =
+        globalConfiguration.configuration.overlayColor || 'white';
     }
-    if (!viewport.overlay) return;
+    // Allow turning off overlays by setting overlayColor to false
+    if (viewport.overlayColor === false) return;
 
     const imageWidth = image.columns;
     const imageHeight = image.rows;
@@ -83,7 +88,7 @@ export default class OverlayTool extends BaseTool {
 
       const layerContext = layerCanvas.getContext('2d');
 
-      layerContext.fillStyle = overlay.fillStyle || '#b026ff';
+      layerContext.fillStyle = overlay.fillStyle || viewport.overlayColor;
 
       if (overlay.type === 'R') {
         layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
