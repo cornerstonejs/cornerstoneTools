@@ -353,6 +353,24 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "brunoalvesdefaria",
+      "name": "Bruno Alves de Faria",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3341923?v=4",
+      "profile": "http://radicalimaging.com/",
+      "contributions": [
+        "bug",
+        "code",
+        "content",
+        "design",
+        "doc",
+        "plugin",
+        "review",
+        "test",
+        "tool",
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7
