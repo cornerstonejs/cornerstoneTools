@@ -4,6 +4,7 @@ import clipHandle from './clipHandle.js';
 import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
 import getHandleMovingOptions from './getHandleMovingOptions.js';
 import getHandleNearImagePoint from './getHandleNearImagePoint.js';
+import getHandlePixelPosition from './getHandlePixelPosition.js';
 import handleActivator from './handleActivator.js';
 import moveAllHandles from './moveAllHandles.js';
 import moveHandle from './moveHandle.js';
@@ -16,6 +17,7 @@ export {
   deleteIfHandleOutsideLimits,
   getHandleMovingOptions,
   getHandleNearImagePoint,
+  getHandlePixelPosition,
   handleActivator,
   moveAllHandles,
   moveHandle,

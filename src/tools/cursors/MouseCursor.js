@@ -69,7 +69,7 @@ export default class MouseCursor {
   }
 
   /**
-   * Returns the mousePoint as a space seperated string.
+   * Returns the mousePoint as a space separated string.
    *
    * @returns {string} The mousePoint.
    */

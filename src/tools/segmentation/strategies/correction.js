@@ -18,7 +18,7 @@ const logger = getLogger('util:segmentation:operations:correction');
  * - Stroke in-out-in: Section is added.
  *
  * @param  {Object} evt The cornerstone event.
- * @param  {} operationData An object containing the `pixelData` to
+ * @param  {Object} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  *
  * @returns {null}
@@ -462,13 +462,26 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
 }
 
 /**
- * Splits the path of nodes into seperate add/remove operations.
+ * @typedef {Object} Node
+ * @property {number} x - the X position
+ * @property {number} y - the Y position
+ * @property {number} segment - The segment index
+ */
+
+/**
+ * @typedef {Object} SegmentationOperations
+ * @property {boolean} additive - Whether the operation is additive or not
+ * @property {Node[]} nodes - The array of nodes
+ */
+
+/**
+ * Splits the path of nodes into separate add/remove operations.
  *
  * @param  {Object[]} nodes The array of nodes.
  * @param  {number} segmentIndex The label value to replace.
- * @returns {{additive: boolean, nodes: []}[]} An array of operations to perform,
- *                                             whether they are `additive` and the
- *                                             corresponding `nodes` of the operation.
+ * @returns {SegmentationOperations[]} An array of operations to perform,
+ *                       whether they are `additive` and the
+ *                       corresponding `nodes` of the operation.
  */
 function splitLineIntoSeperateOperations(nodes, segmentIndex) {
   // Check whether the first node is inside a segment of the appropriate label or not.

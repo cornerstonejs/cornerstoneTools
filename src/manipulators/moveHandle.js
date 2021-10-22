@@ -1,6 +1,7 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
+import getHandlePixelPosition from './getHandlePixelPosition.js';
 import triggerEvent from '../util/triggerEvent.js';
 import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
@@ -63,7 +64,7 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  let internalOptions = getHandleMovingOptions(options);
+  const internalOptions = getHandleMovingOptions(options);
 
   const element = evtDetail.element;
   const dragHandler = _dragHandler.bind(
@@ -128,21 +129,7 @@ export default function(
   if (interactionType === 'touch') {
     runAnimation.value = true;
     const enabledElement = external.cornerstone.getEnabledElement(element);
-
-    // Average pixel width of index finger is 45-57 pixels
-    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-    const fingerDistance = -57;
-
-    const aboveFinger = {
-      x: evtDetail.currentPoints.page.x,
-      y: evtDetail.currentPoints.page.y + fingerDistance,
-    };
-
-    const targetLocation = external.cornerstone.pageToPixel(
-      element,
-      aboveFinger.x,
-      aboveFinger.y
-    );
+    const targetLocation = getHandlePixelPosition(evtDetail, interactionType);
 
     _animate(handle, runAnimation, enabledElement, targetLocation);
   }
@@ -156,14 +143,8 @@ function _dragHandler(
   interactionType,
   evt
 ) {
-  const { image, currentPoints, element, buttons } = evt.detail;
-  const page = currentPoints.page;
-  const fingerOffset = -57;
-  const targetLocation = external.cornerstone.pageToPixel(
-    element,
-    page.x,
-    interactionType === 'touch' ? page.y + fingerOffset : page.y
-  );
+  const { image, element, buttons } = evt.detail;
+  const targetLocation = getHandlePixelPosition(evt.detail, interactionType);
 
   runAnimation.value = false;
   handle.active = true;
