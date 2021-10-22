@@ -45,14 +45,8 @@ export default class OverlayTool extends BaseTool {
     }
   }
 
-  renderToolData(evt) {
-    const eventData = evt.detail;
-    const { enabledElement, image, viewport, canvasContext } = eventData;
-
-    if (!eventData || !enabledElement || !image) {
-      return;
-    }
-
+  setupRender(image) {
+    if (!image) return;
     const overlayPlaneMetadata = external.cornerstone.metaData.get(
       'overlayPlaneModule',
       image.imageId
@@ -66,12 +60,28 @@ export default class OverlayTool extends BaseTool {
       return;
     }
 
+    return overlayPlaneMetadata;
+  }
+
+  setupViewport(viewport) {
     if (viewport.overlayColor === undefined) {
       viewport.overlayColor =
         globalConfiguration.configuration.overlayColor || 'white';
     }
     // Allow turning off overlays by setting overlayColor to false
     if (viewport.overlayColor === false) return;
+    return true;
+  }
+
+  renderToolData(evt) {
+    const eventData = evt.detail;
+    const { enabledElement, image, viewport, canvasContext } = eventData;
+    const overlayPlaneMetadata = this.setupRender(image);
+
+    if (!eventData || !enabledElement || !overlayPlaneMetadata) {
+      return;
+    }
+    if (!this.setupViewport(viewport)) return;
 
     const imageWidth = image.columns;
     const imageHeight = image.rows;
