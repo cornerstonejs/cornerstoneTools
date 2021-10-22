@@ -55,6 +55,7 @@ import drawLink from './drawing/drawLink.js';
 import drawLinkedTextBox from './drawing/drawLinkedTextBox.js';
 import drawHandles from './drawing/drawHandles.js';
 
+import getActiveTool from './util/getActiveTool';
 import getLuminance from './util/getLuminance.js';
 import getROITextBoxCoords from './util/getROITextBoxCoords';
 import copyPoints from './util/copyPoints.js';
@@ -75,8 +76,6 @@ import pointInsideBoundingBox from './util/pointInsideBoundingBox.js';
 import makeUnselectable from './util/makeUnselectable.js';
 import getRGBPixels from './util/getRGBPixels.js';
 import {
-  getDefaultSimultaneousRequests,
-  getMaxSimultaneousRequests,
   getBrowserInfo,
   isMobileDevice,
 } from './util/getMaxSimultaneousRequests.js';
@@ -133,6 +132,7 @@ export const lib = {
   'drawing/drawHandles': drawHandles,
   'drawing/textBoxWidth': textBoxWidth,
 
+  'util/getActiveTool': getActiveTool,
   'util/getLuminance': getLuminance,
   'util/getROITextBoxCoords': getROITextBoxCoords,
   'util/copyPoints': copyPoints,
@@ -147,8 +147,6 @@ export const lib = {
   'util/pointInsideBoundingBox': pointInsideBoundingBox,
   'util/makeUnselectable': makeUnselectable,
   'util/getRGBPixels': getRGBPixels,
-  'util/getDefaultSimultaneousRequests': getDefaultSimultaneousRequests,
-  'util/getMaxSimultaneousRequests': getMaxSimultaneousRequests,
   'util/getBrowserInfo': getBrowserInfo,
   'util/isMobileDevice': isMobileDevice,
   'util/angleBetweenPoints': angleBetweenPoints,
