@@ -1,6 +1,8 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import { moveHandle, moveAllHandles } from './../manipulators/index.js';
+import EVENTS from '../events';
+import triggerEvent from './triggerEvent';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 
@@ -26,6 +28,18 @@ const moveHandleNearImagePoint = function(
 ) {
   toolData.active = true;
   state.isToolLocked = true;
+  const doneHandler = success => {
+    const { element } = evt.detail;
+    const toolName = toolData.toolType || toolData.toolName;
+    const modifiedEventData = {
+      toolName,
+      toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
+      element,
+      measurementData: { ...toolData, active: false },
+    };
+
+    triggerEvent(element, EVENTS.MEASUREMENT_COMPLETED, modifiedEventData);
+  };
 
   moveHandle(
     evt.detail,
@@ -33,7 +47,8 @@ const moveHandleNearImagePoint = function(
     toolData,
     handle,
     tool.options,
-    interactionType
+    interactionType,
+    doneHandler
   );
 
   evt.stopImmediatePropagation();
