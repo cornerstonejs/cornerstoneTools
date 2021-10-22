@@ -52,7 +52,7 @@ export default function(
 
   // Clip the bounding box to the displayed area of the image
   if (state.preventTextBoxOutsideDisplayedArea) {
-    options.translator = box => clipBoxToDisplayedArea(element, box);
+    options.displacer = box => clipBoxToDisplayedArea(element, box);
   }
 
   // Draw the text box

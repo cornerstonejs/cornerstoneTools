@@ -43,7 +43,7 @@ export function textBoxWidth(context, text, padding) {
  * @param  {string} color       The color of the textBox.
  * @param  {Object} options     Options for the textBox.
  * @param  {boolean} options.centering Option to center the textbox.
- * @param  {function} options.translator Translator function.
+ * @param  {function} options.displacer displacer function.
  * @returns {Object} {top, left, width, height} - Bounding box; can be used for pointNearTool
  */
 export default function(context, textLines, x, y, color, options = {}) {
@@ -89,9 +89,9 @@ export default function(context, textLines, x, y, color, options = {}) {
     boundingBox.left = x;
     boundingBox.top = y;
 
-    // Check if a translator function was provided
-    if (typeof options.translator === 'function') {
-      options.translator(boundingBox);
+    // Check if a displacer function was provided
+    if (typeof options.displacer === 'function') {
+      options.displacer(boundingBox);
     }
 
     fillBox(context, boundingBox, backgroundColor);
