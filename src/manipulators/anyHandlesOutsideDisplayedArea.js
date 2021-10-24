@@ -11,7 +11,9 @@ import external from '../externalModules.js';
  * @returns {Boolean} - True if the handle was placed outside the displayed area
  */
 export default function(renderData, handles) {
-  const { tlhc, brhc } = renderData.viewport.displayedArea;
+  const { getDisplayedArea } = external.cornerstone;
+  const { image, viewport } = renderData;
+  const { tlhc, brhc } = getDisplayedArea(image, viewport);
   const left = tlhc.x - 1;
   const top = tlhc.y - 1;
   const imageRect = {

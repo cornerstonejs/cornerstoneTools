@@ -1,4 +1,5 @@
 import { clipToBox, clip } from '../util/clip';
+import external from '../externalModules.js';
 
 /**
  * Clip the handle inside the image or displayed area's boundaries depending on
@@ -15,11 +16,13 @@ import { clipToBox, clip } from '../util/clip';
  */
 export default function(eventData, handle, options = {}) {
   if (options.preventHandleOutsideDisplayedArea) {
-    const { tlhc, brhc } = eventData.viewport.displayedArea;
+    const { getDisplayedArea } = external.cornerstone;
+    const { image, viewport } = eventData;
+    const { tlhc, brhc } = getDisplayedArea(image, viewport);
 
     handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
     handle.y = clip(handle.y, tlhc.y - 1, brhc.y);
   } else if (options.preventHandleOutsideImage) {
-    clipToBox(handle, eventData.image);
+    clipToBox(handle, image);
   }
 }
