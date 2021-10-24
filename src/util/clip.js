@@ -1,5 +1,4 @@
 import external from '../externalModules.js';
-import getDisplayedArea from './getDisplayedArea';
 
 /**
  * Clips a value to an upper and lower bound.
@@ -103,6 +102,7 @@ export function clipBoxToDisplayedArea(element, box) {
     canvasToPixel,
     getViewport,
     getEnabledElement,
+    getDisplayedArea,
   } = external.cornerstone;
 
   // Transform the position of given box from canvas to pixel coordinates
