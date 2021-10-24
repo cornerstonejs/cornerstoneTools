@@ -1,6 +1,7 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import { moveHandle, moveAllHandles } from './../manipulators/index.js';
+import getDistanceThreshold from './getDistanceThreshold.js';
 
 // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
 
@@ -70,7 +71,7 @@ const findHandleDataNearImagePoint = function(
       element,
       data.handles,
       coords,
-      interactionType === 'mouse' ? state.clickProximity : state.touchProximity
+      getDistanceThreshold(interactionType, toolName)
     );
 
     if (handle) {

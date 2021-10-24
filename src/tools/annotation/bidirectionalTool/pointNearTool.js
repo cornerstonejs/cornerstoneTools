@@ -1,4 +1,5 @@
 import { state } from '../../../store/index.js';
+import getDistanceThreshold from '../../../util/getDistanceThreshold.js';
 import external from './../../../externalModules.js';
 import pointInsideBoundingBox from './../../../util/pointInsideBoundingBox.js';
 
@@ -41,8 +42,10 @@ export default function(element, data, coords, interactionType = 'mouse') {
     return true;
   }
 
-  const distanceThreshold =
-    interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
+  const distanceThreshold = getDistanceThreshold(
+    interactionType,
+    'Bidirectional'
+  );
 
   if (pointNearPerpendicular(element, handles, coords, distanceThreshold)) {
     return true;

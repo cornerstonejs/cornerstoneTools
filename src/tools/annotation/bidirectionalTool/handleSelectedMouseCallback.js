@@ -12,6 +12,7 @@ import { moveAllHandles } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
 import { setToolCursor, hideToolCursor } from '../../../store/setToolCursor.js';
+import getDistanceThreshold from '../../../util/getDistanceThreshold.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -19,7 +20,7 @@ export default function(evt) {
   const { element } = eventData;
   let data;
 
-  const distanceThreshold = state.clickProximity;
+  const distanceThreshold = getDistanceThreshold('mouse', this.name);
 
   const handleDoneMove = handle => {
     data.invalidated = true;
