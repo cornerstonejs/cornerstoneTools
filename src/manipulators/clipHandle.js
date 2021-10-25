@@ -15,9 +15,9 @@ import external from '../externalModules.js';
  * @returns {void}
  */
 export default function(eventData, handle, options = {}) {
+  const { image, viewport } = eventData;
   if (options.preventHandleOutsideDisplayedArea) {
     const { getDisplayedArea } = external.cornerstone;
-    const { image, viewport } = eventData;
     const { tlhc, brhc } = getDisplayedArea(image, viewport);
 
     handle.x = clip(handle.x, tlhc.x - 1, brhc.x);
