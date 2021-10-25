@@ -201,6 +201,7 @@ describe('RectangleRoiTool.js', () => {
 
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
+      expect(data.cachedStats.perimeter.toFixed(2)).toEqual('10.78');
       expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
       expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
 
