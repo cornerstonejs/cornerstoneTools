@@ -5,17 +5,8 @@ jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
-jest.mock('./../../importInternal.js', () => ({
-  default: jest.fn(),
-}));
-
-jest.mock('./../../externalModules.js', () => ({
-  cornerstone: {
-    metaData: {
-      get: jest.fn(),
-    },
-  },
-}));
+jest.mock('./../../externalModules.js');
+import external from '../../externalModules.js';
 
 const goodMouseEventData = {
   currentPoints: {
@@ -32,6 +23,10 @@ const image = {
 };
 
 describe('CobbAngleTool.js', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   describe('default values', () => {
     it('has a default name of "CobbAngle"', () => {
       const defaultName = 'CobbAngle';
@@ -124,6 +119,65 @@ describe('CobbAngleTool.js', () => {
       );
 
       expect(isPointNearTool).toBe(false);
+    });
+
+    it('returns false when measurement data is incomplete', () => {
+      const instantiatedTool = new Tool('AngleTool');
+      instantiatedTool.hasIncomplete = true;
+      const measurementData = {
+        visible: true,
+        handles: {
+          start: { x: 10, y: 10 },
+          end: { x: 20, y: 10 },
+        },
+      };
+      const isPointNearTool = instantiatedTool.pointNearTool(
+        element,
+        measurementData,
+        measurementData.handles.start
+      );
+
+      expect(isPointNearTool).toBe(false);
+    });
+
+    it('returns true when measurement data is near the end points', () => {
+      const instantiatedTool = new Tool('AngleTool');
+      const measurementData = {
+        visible: true,
+        handles: {
+          start: { x: 10, y: 10 },
+          end: { x: 20, y: 10 },
+          start2: { x: 40, y: 10 },
+          end2: { x: 40, y: 40 },
+        },
+      };
+
+      external.cornerstone.pixelToCanvas.mockImplementation((el, pt) => {
+        return pt;
+      });
+
+      expect(
+        instantiatedTool.pointNearTool(element, measurementData, {
+          x: 70,
+          y: 10,
+        })
+      ).toBe(false);
+
+      expect(
+        instantiatedTool.pointNearTool(
+          element,
+          measurementData,
+          measurementData.handles.start
+        )
+      ).toBe(true);
+
+      expect(
+        instantiatedTool.pointNearTool(
+          element,
+          measurementData,
+          measurementData.handles.end2
+        )
+      ).toBe(true);
     });
   });
 
