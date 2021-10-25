@@ -16,7 +16,7 @@ function setFont(font) {
   const split = font.split('px ');
 
   if (split.length === 2) {
-    setFontSize(split[0]);
+    setFontSize(parseFloat(split[0]));
     setFontFamily(split[1]);
   }
 }
@@ -40,6 +40,10 @@ function getFont() {
  * @returns {void}
  */
 function setFontFamily(fontFamily) {
+  if (typeof fontFamily !== 'string') {
+    throw new Error('Font family must be a valid string');
+  }
+
   textStyle.fontFamily = fontFamily;
 }
 
