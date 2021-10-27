@@ -1,3 +1,5 @@
+import cornerstoneMath from 'cornerstone-math';
+
 export default {
   cornerstone: {
     getEnabledElement: jest.fn().mockImplementation(() => ({
@@ -19,6 +21,7 @@ export default {
     updateImage: jest.fn(),
   },
   cornerstoneMath: {
+    ...cornerstoneMath,
     point: {
       distance: jest.fn(),
     },

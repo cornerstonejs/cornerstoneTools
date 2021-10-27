@@ -124,12 +124,14 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       return false;
     }
 
-    return (
+    const seg1Near =
       lineSegDistance(element, data.handles.start, data.handles.end, coords) <
-        25 ||
+      25;
+    const seg2Near =
       lineSegDistance(element, data.handles.start2, data.handles.end2, coords) <
-        25
-    );
+      25;
+
+    return seg1Near || seg2Near;
   }
 
   updateCachedStats(image, element, data) {
@@ -182,12 +184,19 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const font = textStyle.getFont();
+    const { element } = evt.detail;
+    const image = external.cornerstone.getEnabledElement(element).image;
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
 
       if (data.visible === false) {
         continue;
+      }
+
+      if (!data.value) {
+        data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
       }
 
       draw(context, context => {
@@ -291,6 +300,15 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
         return;
       }
+      const eventType = EVENTS.MEASUREMENT_COMPLETED;
+      const eventData = {
+        toolName: this.name,
+        toolType: this.name, // Deprecation notice: toolType will be replaced by toolName
+        element,
+        measurementData,
+      };
+
+      triggerEvent(element, eventType, eventData);
     };
 
     // Search for incomplete measurements
@@ -373,22 +391,20 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       }
     }
 
-    const { rAngle } = data;
+    data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
+  }
 
-    data.value = '';
-
-    if (!Number.isNaN(rAngle)) {
-      data.value = textBoxText(rAngle, rowPixelSpacing, colPixelSpacing);
+  textBoxText({ rAngle }, rowPixelSpacing, colPixelSpacing) {
+    if (rAngle === undefined) {
+      return '';
+    }
+    if (Number.isNaN(rAngle)) {
+      return '';
     }
 
-    function textBoxText(rAngle, rowPixelSpacing, colPixelSpacing) {
-      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
-      const str = '00B0'; // Degrees symbol
+    const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
 
-      return (
-        rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
-      );
-    }
+    return `${rAngle}\u00B0${suffix}`;
   }
 
   activeCallback(element) {
