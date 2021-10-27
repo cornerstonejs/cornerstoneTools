@@ -5,13 +5,13 @@ import { state } from '../store';
  * at the tool configuration and then at global configuration.
  *
  * @public
- * @function getDistanceThreshold
+ * @function getProximityThreshold
  *
  * @param {string} interactionType The interaction type (mouse or touch)
  * @param {string} toolName The name of the tool
  * @returns {Number} The distance threshold based on the tool
  */
-export default function getDistanceThreshold(interactionType, toolName) {
+export default function getProximityThreshold(interactionType, toolName) {
   let { clickProximity, touchProximity } = state;
   const tool = state.tools.find(({ name }) => name === toolName);
 

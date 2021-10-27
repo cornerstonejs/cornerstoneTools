@@ -1,6 +1,5 @@
 /* jshint -W083 */
 import external from './../../../externalModules.js';
-import { state } from '../../../store/index.js';
 import EVENTS from './../../../events.js';
 import {
   removeToolState,
@@ -12,7 +11,7 @@ import { moveAllHandles } from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
 import { setToolCursor, hideToolCursor } from '../../../store/setToolCursor.js';
-import getDistanceThreshold from '../../../util/getDistanceThreshold.js';
+import getProximityThreshold from '../../../util/getProximityThreshold.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -20,7 +19,7 @@ export default function(evt) {
   const { element } = eventData;
   let data;
 
-  const distanceThreshold = getDistanceThreshold('mouse', this.name);
+  const distanceThreshold = getProximityThreshold('mouse', this.name);
 
   const handleDoneMove = handle => {
     data.invalidated = true;
