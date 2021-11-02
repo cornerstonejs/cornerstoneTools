@@ -1,6 +1,5 @@
 /* jshint -W083 */
 import external from './../../../externalModules.js';
-import { state } from '../../../store/index.js';
 import EVENTS from './../../../events.js';
 import { getToolState } from './../../../stateManagement/toolState.js';
 import {
@@ -12,6 +11,7 @@ import {
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
 import { setToolCursor, hideToolCursor } from '../../../store/setToolCursor.js';
+import getProximityThreshold from '../../../util/getProximityThreshold.js';
 
 export default function(evt) {
   const eventData = evt.detail;
@@ -19,7 +19,7 @@ export default function(evt) {
   const { element } = eventData;
   let data;
 
-  const distanceThreshold = state.clickProximity;
+  const distanceThreshold = getProximityThreshold('mouse', this.name);
 
   const handleDoneMove = handle => {
     const options = getHandleMovingOptions(this.options);
