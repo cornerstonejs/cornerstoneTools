@@ -1,6 +1,7 @@
 import { state } from '../store/index.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
 import { moveHandle, moveAllHandles } from './../manipulators/index.js';
+import getProximityThreshold from './getProximityThreshold.js';
 import EVENTS from '../events';
 import triggerEvent from './triggerEvent';
 
@@ -85,7 +86,7 @@ const findHandleDataNearImagePoint = function(
       element,
       data.handles,
       coords,
-      interactionType === 'mouse' ? state.clickProximity : state.touchProximity
+      getProximityThreshold(interactionType, toolName)
     );
 
     if (handle) {

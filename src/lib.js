@@ -48,7 +48,7 @@ import isPointInPolygon from './util/isPointInPolygon';
 import throttle from './util/throttle';
 import { wait, waitForEnabledElementImageToLoad } from './util/wait';
 import getKeyPressData from './util/getKeyPressData';
-
+import getProximityThreshold from './util/getProximityThreshold.js';
 import drawTextBox, { textBoxWidth } from './drawing/drawTextBox.js';
 import drawArrow from './drawing/drawArrow.js';
 import drawLink from './drawing/drawLink.js';
@@ -160,6 +160,7 @@ export const lib = {
   'util/debounce': debounce,
   'util/deepmerge': deepmerge,
   'util/getDefault': getDefault,
+  'util/getProximityThreshold': getProximityThreshold,
   'util/getPixelSpacing': getPixelSpacing,
   'util/isEmptyObject': isEmptyObject,
   'util/isObject': isObject,

@@ -97,7 +97,13 @@ const clipBoxOnAxis = (point, axis, boxMin, boxMax, lowerLimit, upperLimit) => {
  * @returns {void}
  */
 export function clipBoxToDisplayedArea(element, box) {
-  const { pixelToCanvas, canvasToPixel, getViewport } = external.cornerstone;
+  const {
+    pixelToCanvas,
+    canvasToPixel,
+    getViewport,
+    getEnabledElement,
+    getDisplayedArea,
+  } = external.cornerstone;
 
   // Transform the position of given box from canvas to pixel coordinates
   const pixelPosition = canvasToPixel(element, {
@@ -109,7 +115,13 @@ export function clipBoxToDisplayedArea(element, box) {
   const { minX, minY, maxX, maxY } = getBoxPixelBoundaries(element, box);
 
   // Get the displayed area's top, left, bottom and right boundaries
-  const { tlhc, brhc } = getViewport(element).displayedArea;
+  const viewport = getViewport(element);
+  const enabledElement = getEnabledElement(element);
+  const defaultDisplayedArea = getDisplayedArea(enabledElement.image, viewport);
+
+  const { tlhc, brhc } = viewport.displayedArea
+    ? viewport.displayedArea
+    : defaultDisplayedArea;
   const top = tlhc.y - 1;
   const left = tlhc.x - 1;
   const bottom = brhc.y;
