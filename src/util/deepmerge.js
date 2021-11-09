@@ -68,7 +68,13 @@ const deepmerge = (target = {}, source = {}, optionsArgument) => {
       : cloneIfNecessary(source, optionsArgument);
   }
 
-  return mergeObject(target, source, optionsArgument);
+  const mergedObject = mergeObject(target, source, optionsArgument);
+
+  if (Object.getPrototypeOf(target) !== Object.prototype) {
+    Object.setPrototypeOf(mergedObject, Object.getPrototypeOf(target));
+  }
+
+  return mergedObject;
 };
 
 export default deepmerge;
