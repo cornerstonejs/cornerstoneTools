@@ -325,6 +325,64 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kivikakk",
+      "name": "Asherah Connor",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1915?v=4",
+      "profile": "https://kivikakk.ee",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "eltociear",
+      "name": "Ikko Ashimine",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22633385?v=4",
+      "profile": "https://bandism.net/",
+      "contributions": [
+        "bug"
+      ]
+    },
+    {
+      "login": "wayfarer3130",
+      "name": "Bill Wallace",
+      "avatar_url": "https://avatars.githubusercontent.com/u/27778909?v=4",
+      "profile": "https://github.com/wayfarer3130",
+      "contributions": [
+        "code",
+        "doc"
+      ]
+    },
+    {
+      "login": "brunoalvesdefaria",
+      "name": "Bruno Alves de Faria",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3341923?v=4",
+      "profile": "http://radicalimaging.com/",
+      "contributions": [
+        "bug",
+        "code",
+        "content",
+        "doc",
+        "plugin",
+        "review",
+        "test",
+        "tool",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "igoroctaviano",
+      "name": "Igor Octaviano",
+      "avatar_url": "https://avatars.githubusercontent.com/u/13886933?v=4",
+      "profile": "http://igoroctaviano.com",
+      "contributions": [
+        "code",
+        "doc",
+        "maintenance",
+        "review",
+        "userTesting"
+      ]
     }
   ],
   "contributorsPerLine": 7

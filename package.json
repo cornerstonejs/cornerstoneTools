@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "4.0.1",
+  "version": "0.0.0-semantically-released",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
@@ -52,6 +52,9 @@
       "prettier --write",
       "git add"
     ]
+  },
+  "peerDependencies": {
+    "cornerstone-core": "^2.6.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.0",

@@ -1,8 +1,6 @@
 import external from './../externalModules.js';
-import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import { addToolState, getToolState } from '../stateManagement/toolState.js';
-import { setMaxSimultaneousRequests } from '../util/getMaxSimultaneousRequests.js';
 import { getLogger } from '../util/logger.js';
 import triggerEvent from '../util/triggerEvent';
 import EVENTS from '../events.js';
@@ -11,6 +9,8 @@ const logger = getLogger('stackTools:stackPrefetch');
 
 const toolName = 'stackPrefetch';
 const requestType = 'prefetch';
+const priority = 0;
+const addToBeginning = true;
 
 let configuration = {
   maxImagesToPrefetch: Infinity,
@@ -40,32 +40,20 @@ function range(lowEnd, highEnd) {
   return arr;
 }
 
-const max = function(arr) {
-  return Math.max.apply(null, arr);
-};
-
-const min = function(arr) {
-  return Math.min.apply(null, arr);
-};
-
 function nearestIndex(arr, x) {
   // Return index of nearest values in array
   // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
-  const l = [];
-  const h = [];
-
-  arr.forEach(function(v) {
+  let low = 0;
+  let high = arr.length - 1;
+  arr.forEach((v, idx) => {
     if (v < x) {
-      l.push(v);
+      low = Math.max(idx, low);
     } else if (v > x) {
-      h.push(v);
+      high = Math.min(idx, high);
     }
   });
 
-  return {
-    low: arr.indexOf(max(l)),
-    high: arr.indexOf(min(h)),
-  };
+  return { low, high };
 }
 
 function prefetch(element) {
@@ -140,7 +128,7 @@ function prefetch(element) {
 
   // Clear the requestPool of prefetch requests, if needed.
   if (!configuration.preserveExistingPool) {
-    requestPoolManager.clearRequestStack(requestType);
+    external.cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   }
 
   // Identify the nearest imageIdIndex to the currentImageIdIndex
@@ -231,22 +219,32 @@ function prefetch(element) {
       imageIdsToPrefetch.push(imageId);
     }
   }
-  // Load images in reverse order, by adding them at the beginning of the pool.
-  for (const imageToLoad of imageIdsToPrefetch.reverse()) {
-    requestPoolManager.addRequest(
-      element,
-      imageToLoad,
-      requestType,
-      preventCache,
-      doneCallback,
-      failCallback,
-      true
-    );
+
+  let requestFn;
+  const options = {
+    addToBeginning,
+    priority,
+    requestType,
+  };
+
+  if (preventCache) {
+    requestFn = id => external.cornerstone.loadImage(id, options);
+  } else {
+    requestFn = id => external.cornerstone.loadAndCacheImage(id, options);
   }
 
-  // Try to start the requestPool's grabbing procedure
-  // In case it isn't already running
-  requestPoolManager.startGrabbing();
+  imageIdsToPrefetch.reverse().forEach(imageId => {
+    external.cornerstone.imageLoadPoolManager.addRequest(
+      requestFn.bind(null, imageId),
+      requestType,
+      // Additional details
+      {
+        imageId,
+      },
+      priority,
+      addToBeginning
+    );
+  });
 }
 
 function getPromiseRemovedHandler(element) {
@@ -393,7 +391,7 @@ function disable(element) {
     stackPrefetchData.data[0].enabled = false;
 
     // Clear current prefetch requests from the requestPool
-    requestPoolManager.clearRequestStack(requestType);
+    external.cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   }
 }
 
@@ -403,10 +401,6 @@ function getConfiguration() {
 
 function setConfiguration(config) {
   configuration = config;
-
-  if (config.maxSimultaneousRequests) {
-    setMaxSimultaneousRequests(config.maxSimultaneousRequests);
-  }
 }
 
 // Module/private exports

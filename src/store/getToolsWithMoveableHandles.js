@@ -1,6 +1,6 @@
-import { state } from './index.js';
 import { getToolState } from '../stateManagement/toolState.js';
 import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js';
+import getProximityThreshold from '../util/getProximityThreshold.js';
 
 /**
  * Filters an array of tools, returning only tools with moveable handles at the
@@ -16,10 +16,8 @@ import getHandleNearImagePoint from '../manipulators/getHandleNearImagePoint.js'
  * @returns {Object[]}            The filtered array.
  */
 export default function(element, tools, coords, interactionType = 'mouse') {
-  const proximity =
-    interactionType === 'mouse' ? state.clickProximity : state.touchProximity;
-
   return tools.filter(tool => {
+    const distanceThreshold = getProximityThreshold(interactionType, tool.name);
     const toolState = getToolState(element, tool.name);
 
     for (let i = 0; i < toolState.data.length; i++) {
@@ -28,7 +26,7 @@ export default function(element, tools, coords, interactionType = 'mouse') {
           element,
           toolState.data[i].handles,
           coords,
-          proximity
+          distanceThreshold
         ) !== undefined
       ) {
         return true;
