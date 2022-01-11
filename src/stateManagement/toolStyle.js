@@ -5,8 +5,10 @@ function setToolWidth(width) {
   defaultWidth = width;
 }
 
-function getToolWidth() {
-  return defaultWidth;
+function getToolWidth(data) {
+  if (data && data.lineWidth) {
+    return data.lineWidth;
+  }
 }
 
 function setActiveWidth(width) {

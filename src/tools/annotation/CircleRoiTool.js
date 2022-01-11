@@ -168,7 +168,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
     const getDistance = external.cornerstoneMath.point.distance;
     const eventData = evt.detail;
     const { image, element, canvasContext } = eventData;
-    const lineWidth = toolStyle.getToolWidth();
     const {
       handleRadius,
       drawHandlesOnHover,
@@ -198,12 +197,14 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
+        const lineWidth = toolStyle.getToolWidth(data);
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         setShadow(context, this.configuration);
@@ -221,7 +222,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         // Calculating the radius where startCanvas is the center of the circle to be drawn
         const radius = getDistance(startCanvas, endCanvas);
 
-        const circleOptions = { color };
+        const circleOptions = { color, lineWidth };
 
         if (renderDashed) {
           circleOptions.lineDash = lineDash;

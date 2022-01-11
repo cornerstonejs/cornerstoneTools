@@ -18,6 +18,7 @@ import { state } from './../store/index.js';
  * @param {Boolean} [options.drawHandlesIfActive=false] - Whether the handles should only be drawn if Active (hovered/selected)
  * @param {string} [options.fill]
  * @param {Number} [options.handleRadius=6]
+ * @param {Number} [options.lineWidth]
  * @returns {undefined}
  */
 export default function(context, evtDetail, handles, options = {}) {
@@ -43,9 +44,7 @@ export default function(context, evtDetail, handles, options = {}) {
       continue;
     }
 
-    const lineWidth = handle.active
-      ? toolStyle.getActiveWidth()
-      : toolStyle.getToolWidth();
+    const lineWidth = getLineWidth(handle, options);
     const fillStyle = options.fill;
 
     const pathOptions = { lineWidth, fillStyle };
@@ -73,4 +72,11 @@ export default function(context, evtDetail, handles, options = {}) {
       );
     });
   }
+}
+function getLineWidth(handle, options) {
+  if (handle.active) {
+    return toolStyle.getActiveWidth();
+  }
+
+  return options.lineWidth ? options.lineWidth : toolStyle.getToolWidth();
 }

@@ -119,9 +119,8 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const canvas = evt.detail.canvasContext.canvas;
     const context = getNewContext(canvas);
 
-    const lineWidth = toolStyle.getToolWidth();
-
     let lineDash;
+
     if (renderDashed) {
       lineDash = getModule('globalConfiguration').configuration.lineDash;
     }
@@ -136,6 +135,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
       draw(context, context => {
         setShadow(context, this.configuration);
 
+        const lineWidth = toolStyle.getToolWidth(data);
         const color = toolColors.getColorIfActive(data);
 
         // Draw the arrow
@@ -174,6 +174,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         if (this.configuration.drawHandles) {

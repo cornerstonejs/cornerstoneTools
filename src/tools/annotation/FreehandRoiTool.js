@@ -360,7 +360,6 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
-    const lineWidth = toolStyle.getToolWidth();
     const { renderDashed } = config;
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
@@ -375,6 +374,8 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         let color = toolColors.getColorIfActive(data);
         let fillColor;
 
+        const lineWidth = toolStyle.getToolWidth(data);
+
         if (data.active) {
           if (data.handles.invalidHandlePlacement) {
             color = config.invalidColor;
@@ -387,7 +388,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
           fillColor = toolColors.getToolColor();
         }
 
-        let options = { color };
+        let options = { color, lineWidth };
 
         if (renderDashed) {
           options.lineDash = lineDash;
@@ -422,6 +423,7 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         options = {
           color,
           fill: fillColor,
+          lineWidth,
         };
 
         if (config.alwaysShowHandles || (data.active && data.polyBoundingBox)) {

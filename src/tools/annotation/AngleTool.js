@@ -160,8 +160,6 @@ export default class AngleTool extends BaseAnnotationTool {
     const { image, element } = eventData;
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
-    const lineWidth = toolStyle.getToolWidth();
-
     for (let i = 0; i < toolData.data.length; i++) {
       const data = toolData.data[i];
 
@@ -172,6 +170,7 @@ export default class AngleTool extends BaseAnnotationTool {
       draw(context, context => {
         setShadow(context, this.configuration);
 
+        const lineWidth = toolStyle.getToolWidth(data);
         // Differentiate the color of activation tool
         const color = toolColors.getColorIfActive(data);
 
@@ -184,7 +183,7 @@ export default class AngleTool extends BaseAnnotationTool {
           data.handles.middle
         );
 
-        const lineOptions = { color };
+        const lineOptions = { color, lineWidth };
 
         if (renderDashed) {
           lineOptions.lineDash = lineDash;
@@ -204,6 +203,7 @@ export default class AngleTool extends BaseAnnotationTool {
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         if (this.configuration.drawHandles) {

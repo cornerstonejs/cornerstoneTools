@@ -168,7 +168,6 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
     const eventData = evt.detail;
     const { image, element } = eventData;
-    const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const {
       handleRadius,
@@ -198,17 +197,19 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
+        const lineWidth = toolStyle.getToolWidth(data);
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         setShadow(context, this.configuration);
 
-        const rectOptions = { color };
+        const rectOptions = { color, lineWidth };
 
         if (renderDashed) {
           rectOptions.lineDash = lineDash;

@@ -193,7 +193,6 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
 
     const eventData = evt.detail;
     const { image, element } = eventData;
-    const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
     const {
       handleRadius,
@@ -223,17 +222,19 @@ export default class EllipticalRoiTool extends BaseAnnotationTool {
         }
 
         // Configure
+        const lineWidth = toolStyle.getToolWidth(data);
         const color = toolColors.getColorIfActive(data);
         const handleOptions = {
           color,
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         setShadow(context, this.configuration);
 
-        const ellipseOptions = { color };
+        const ellipseOptions = { color, lineWidth };
 
         if (renderDashed) {
           ellipseOptions.lineDash = lineDash;

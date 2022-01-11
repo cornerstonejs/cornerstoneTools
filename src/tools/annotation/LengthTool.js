@@ -160,7 +160,6 @@ export default class LengthTool extends BaseAnnotationTool {
     const { image, element } = eventData;
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
-    const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     for (let i = 0; i < toolData.data.length; i++) {
@@ -174,9 +173,10 @@ export default class LengthTool extends BaseAnnotationTool {
         // Configurable shadow
         setShadow(context, this.configuration);
 
+        const lineWidth = toolStyle.getToolWidth(data);
         const color = toolColors.getColorIfActive(data);
 
-        const lineOptions = { color };
+        const lineOptions = { color, lineWidth };
 
         if (renderDashed) {
           lineOptions.lineDash = lineDash;
@@ -197,6 +197,7 @@ export default class LengthTool extends BaseAnnotationTool {
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          lineWidth,
         };
 
         if (this.configuration.drawHandles) {
