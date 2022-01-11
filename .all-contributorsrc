@@ -383,6 +383,15 @@
         "review",
         "userTesting"
       ]
+    },
+    {
+      "login": "sasyor",
+      "name": "sasyor",
+      "avatar_url": "https://avatars.githubusercontent.com/u/66509092?v=4",
+      "profile": "https://github.com/sasyor",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
