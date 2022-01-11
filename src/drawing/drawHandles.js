@@ -44,7 +44,9 @@ export default function(context, evtDetail, handles, options = {}) {
       continue;
     }
 
-    const lineWidth = getLineWidth(handle, options);
+    const lineWidth = handle.active
+      ? toolStyle.getActiveWidth()
+      : toolStyle.getToolWidth(options);
     const fillStyle = options.fill;
 
     const pathOptions = { lineWidth, fillStyle };
@@ -72,11 +74,4 @@ export default function(context, evtDetail, handles, options = {}) {
       );
     });
   }
-}
-function getLineWidth(handle, options) {
-  if (handle.active) {
-    return toolStyle.getActiveWidth();
-  }
-
-  return options.lineWidth ? options.lineWidth : toolStyle.getToolWidth();
 }

@@ -9,6 +9,8 @@ function getToolWidth(data) {
   if (data && data.lineWidth) {
     return data.lineWidth;
   }
+
+  return defaultWidth;
 }
 
 function setActiveWidth(width) {
