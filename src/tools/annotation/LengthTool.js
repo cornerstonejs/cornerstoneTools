@@ -40,6 +40,7 @@ export default class LengthTool extends BaseAnnotationTool {
         drawHandlesOnHover: false,
         hideHandlesIfMoving: false,
         renderDashed: false,
+        digits: 2,
       },
     };
 
@@ -147,6 +148,7 @@ export default class LengthTool extends BaseAnnotationTool {
       drawHandlesOnHover,
       hideHandlesIfMoving,
       renderDashed,
+      digits,
     } = this.configuration;
     const toolData = getToolState(evt.currentTarget, this.name);
 
@@ -253,7 +255,7 @@ export default class LengthTool extends BaseAnnotationTool {
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
-      // measured value is not defined, return empty string
+      // Measured value is not defined, return empty string
       if (!measuredValue) {
         return '';
       }

@@ -7,12 +7,27 @@ cd "$(dirname "$0")"
 ## Generate DOCMA API Docs
 cd ..
 npm run docs:api
-cd ./.circleci/
+
+# Try to patch Gitbook's broken deep dependency on graceful-fs
+npm install --save gitbook-cli
+cd node_modules/gitbook-cli/node_modules/npm
+npm install graceful-fs@4.2.0 --save
+cd ../../
+./bin/gitbook.js fetch
+cd ../../
+
+# Generate latest output
+# Clear previous output, generate new
+cd ./docs/latest
+rm -rf _book
+../../node_modules/gitbook-cli/bin/gitbook.js install
+../../node_modules/gitbook-cli/bin/gitbook.js build
+cd ../../
 
 
 # Generate all version's GitBook output
 # For each directory in /docs ...
-cd ./../docs/
+cd ./docs/previous
 for D in *; do
   if [ -d "${D}" ]; then
 
@@ -21,12 +36,13 @@ for D in *; do
 
 		# Clear previous output, generate new
 		rm -rf _book
-		gitbook install
-		gitbook build
+		../../../node_modules/gitbook-cli/bin/gitbook.js install
+		../../../node_modules/gitbook-cli/bin/gitbook.js build
 
 		cd ..
   fi
 done
+cd ..
 
 # Move CNAME File into `latest`
 cp CNAME ./latest/CNAME
@@ -35,16 +51,18 @@ cp CNAME ./latest/CNAME
 mkdir ./latest/_book/history
 
 # Move each version's files to latest's history folder
+cd previous
 for D in *; do
   if [ -d "${D}" ]; then
 
 		echo "Moving ${D} to the latest version's history folder"
 
-		mkdir "./latest/_book/history/${D}"
-		cp -v -r "./${D}/_book"/* "./latest/_book/history/${D}"
+		mkdir "../latest/_book/history/${D}"
+		cp -v -r "./${D}/_book"/* "../latest/_book/history/${D}"
 
 	fi
 done
+cd ..
 
 # Generate Examples
 cd ./../examples/
