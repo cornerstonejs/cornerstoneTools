@@ -158,7 +158,7 @@ export default class ProbeTool extends BaseAnnotationTool {
 
         if (this.configuration.drawHandles) {
           // Draw the handles
-          let handleOptions = { handleRadius, color };
+          const handleOptions = { handleRadius, color };
 
           if (renderDashed) {
             handleOptions.lineDash = lineDash;

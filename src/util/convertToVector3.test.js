@@ -3,6 +3,7 @@ import external from '../externalModules.js';
 
 jest.mock('../externalModules.js', () => {
   const cornerstoneMath = require('cornerstone-math');
+
   return {
     cornerstoneMath: {
       Vector3: cornerstoneMath.Vector3,
