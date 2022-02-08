@@ -405,12 +405,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
 
-      return (
-        toGermanNumberStringTemp(rAngle) /*rAngle.toString()*/ +
-        String.fromCharCode(parseInt(str, 16)) +
-        suffix
-      );
-    }
+    return `${toGermanNumberStringTemp(rAngle)}\u00B0${suffix}`;
   }
 
   activeCallback(element) {
