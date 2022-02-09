@@ -18,6 +18,7 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
+import { getUltrasoundRegions } from '../../store/modules/ultrasound/region.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -124,7 +125,10 @@ export default class LengthTool extends BaseAnnotationTool {
   }
 
   updateCachedStats(image, element, data) {
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+    const { rowPixelSpacing, colPixelSpacing, suffix } = getMeasurementMetrics(
+      image,
+      [data.handles.start, data.handles.end]
+    );
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
@@ -137,6 +141,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
     // Store the length inside the tool for outside access
     data.length = length;
+    data.unit = suffix;
     data.invalidated = false;
   }
 
@@ -158,8 +163,6 @@ export default class LengthTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
-
     const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
@@ -169,6 +172,12 @@ export default class LengthTool extends BaseAnnotationTool {
       if (data.visible === false) {
         continue;
       }
+
+      const {
+        rowPixelSpacing,
+        colPixelSpacing,
+        suffix,
+      } = getMeasurementMetrics(image, [data.handles.start, data.handles.end]);
 
       draw(context, context => {
         // Configurable shadow
@@ -233,7 +242,12 @@ export default class LengthTool extends BaseAnnotationTool {
           }
         }
 
-        const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+        const text = textBoxText(
+          data,
+          rowPixelSpacing,
+          colPixelSpacing,
+          suffix
+        );
 
         drawLinkedTextBox(
           context,
@@ -251,19 +265,12 @@ export default class LengthTool extends BaseAnnotationTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing, suffix) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
       // Measured value is not defined, return empty string
       if (!measuredValue) {
         return '';
-      }
-
-      // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = 'mm';
-
-      if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
       }
 
       annotation.unit = suffix;
@@ -294,4 +301,79 @@ function _sanitizeMeasuredValue(value) {
   const isNumber = !isNaN(parsedValue);
 
   return isNumber ? parsedValue : undefined;
+}
+
+/**
+ * Check if the points lie in one or more defined regions and return the applicable
+ * pixel spacing and measurement suffix
+ *
+ * @param {*} image - image
+ * @param [] points - array of measurement points, assumed to be of length 2
+ * @returns a number or undefined
+ */
+function getMeasurementMetrics(image, points) {
+  const sequenceOfUltrasoundRegions = getUltrasoundRegions(image);
+
+  // This is based on the DICOM standard for the specification of the sequence of ultrasund regions
+  // http://dicom.nema.org/medical/dicom/current/output/chtml/part03/sect_C.8.5.5.html#table_C.8-17
+  if (
+    sequenceOfUltrasoundRegions &&
+    sequenceOfUltrasoundRegions.length > 0 &&
+    points.length === 2
+  ) {
+    // Find all regions that contain both points and then sort by total area
+    const contained = sequenceOfUltrasoundRegions
+      .filter(
+        region => region.contains(points[0]) && region.contains(points[1])
+      )
+      .sort((a, b) => a.area() - b.area());
+
+    // If no region contains both of the points, find all regions that contain either the start point or contain the end point
+    // and where both regions have the same scaling
+    if (contained.length === 0) {
+      const containsStart = sequenceOfUltrasoundRegions
+        .filter(region => region.contains(points[0]))
+        .sort((a, b) => a.area() - b.area());
+      const containsEnd = sequenceOfUltrasoundRegions
+        .filter(region => region.contains(points[1]))
+        .sort((a, b) => a.area() - b.area());
+
+      containsStart.forEach(r1 => {
+        if (contained.length > 0) {
+          return;
+        }
+
+        const match = containsEnd.find(r2 => r2.units() === r1.units());
+
+        if (match) {
+          contained.push(match);
+        }
+      });
+    }
+
+    // Assume the first discovered region is the most acceptable
+    // We do not fall back to regular pixel spacing tags as we assume that if
+    // the regions were specified, then points that exist outside of the regions
+    // have an unknown physical spacing
+    const physicalDeltaX =
+      contained.length > 0 ? contained[0].physicalDeltaX : 1;
+    const physicalDeltaY =
+      contained.length > 0 ? contained[0].physicalDeltaY : 1;
+
+    return {
+      rowPixelSpacing: physicalDeltaY,
+      colPixelSpacing: physicalDeltaY,
+      suffix: contained.length > 0 ? contained[0].units() : 'pixels',
+    };
+  }
+
+  const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+  // Set the length text suffix depending on whether or not pixelSpacing is available
+  let suffix = 'mm';
+
+  if (!rowPixelSpacing || !colPixelSpacing) {
+    suffix = 'pixels';
+  }
+
+  return { rowPixelSpacing, colPixelSpacing, suffix };
 }
