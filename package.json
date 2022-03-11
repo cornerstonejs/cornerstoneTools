@@ -1,6 +1,6 @@
 {
   "name": "cornerstone-tools",
-  "version": "5.1.4-b",
+  "version": "6.0.6-a",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
@@ -54,6 +54,9 @@
       "git add"
     ]
   },
+  "peerDependencies": {
+    "cornerstone-core": "^2.6.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.5.0",
     "@babel/plugin-transform-runtime": "^7.5.0",
@@ -91,7 +94,7 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "0.1.7"
+    "cornerstone-math": "0.1.9"
   },
   "files": [
     "dist/cornerstoneTools.js",

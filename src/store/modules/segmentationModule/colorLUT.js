@@ -53,7 +53,7 @@ export function getColorForSegmentIndexColorLUT(
  *
  * @param {Object|number} labelmap3DOrColorLUTIndex Either a `Labelmap3D` object (who's referenced colorLUT will be changed), or a colorLUTIndex.
  * @param {number} segmentIndex The segmentIndex color to change.
- * @param {[number,number,number,number]} colorArray The color values in RGBA array format.
+ * @param {number[]} colorArray The color values in RGBA array format (required length 4).
  */
 export function setColorForSegmentIndexOfColorLUT(
   labelmap3DOrColorLUTIndex,

@@ -1,5 +1,8 @@
+import { modules } from '../store/index';
 import external from '../externalModules.js';
 import BaseTool from './base/BaseTool.js';
+
+const globalConfiguration = modules.globalConfiguration;
 
 /**
  *
@@ -9,7 +12,7 @@ import BaseTool from './base/BaseTool.js';
  * @class Overlay
  * @memberof Tools
  *
- * @classdesc Tool for displaying a scale overlay on the image.
+ * @classdesc Tool for displaying a scale overlay on the image.  Uses viewport.overlayColor to set the default colour.
  * @extends Tools.Base.BaseTool
  */
 export default class OverlayTool extends BaseTool {
@@ -42,14 +45,8 @@ export default class OverlayTool extends BaseTool {
     }
   }
 
-  renderToolData(evt) {
-    const eventData = evt.detail;
-    const { enabledElement, image, viewport, canvasContext } = eventData;
-
-    if (!eventData || !enabledElement || !image) {
-      return;
-    }
-
+  setupRender(image) {
+    if (!image) return;
     const overlayPlaneMetadata = external.cornerstone.metaData.get(
       'overlayPlaneModule',
       image.imageId
@@ -63,16 +60,31 @@ export default class OverlayTool extends BaseTool {
       return;
     }
 
-    const viewportPixelSpacing = {
-      column: viewport.displayedArea.columnPixelSpacing || 1,
-      row: viewport.displayedArea.rowPixelSpacing || 1,
-    };
-    const imageWidth =
-      Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) *
-      viewportPixelSpacing.column;
-    const imageHeight =
-      Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) *
-      viewportPixelSpacing.row;
+    return overlayPlaneMetadata;
+  }
+
+  setupViewport(viewport) {
+    if (viewport.overlayColor === undefined) {
+      viewport.overlayColor =
+        globalConfiguration.configuration.overlayColor || 'white';
+    }
+    // Allow turning off overlays by setting overlayColor to false
+    if (viewport.overlayColor === false) return;
+    return true;
+  }
+
+  renderToolData(evt) {
+    const eventData = evt.detail;
+    const { enabledElement, image, viewport, canvasContext } = eventData;
+    const overlayPlaneMetadata = this.setupRender(image);
+
+    if (!eventData || !enabledElement || !overlayPlaneMetadata) {
+      return;
+    }
+    if (!this.setupViewport(viewport)) return;
+
+    const imageWidth = image.columns;
+    const imageHeight = image.rows;
 
     overlayPlaneMetadata.overlays.forEach(overlay => {
       if (overlay.visible === false) {
@@ -86,7 +98,7 @@ export default class OverlayTool extends BaseTool {
 
       const layerContext = layerCanvas.getContext('2d');
 
-      layerContext.fillStyle = overlay.fillStyle || 'white';
+      layerContext.fillStyle = overlay.fillStyle || viewport.overlayColor;
 
       if (overlay.type === 'R') {
         layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);

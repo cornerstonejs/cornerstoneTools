@@ -1,7 +1,6 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
 import { getToolState } from '../stateManagement/toolState.js';
-import requestPoolManager from '../requestPool/requestPoolManager.js';
 import loadHandlerManager from '../stateManagement/loadHandlerManager.js';
 import triggerEvent from '../util/triggerEvent.js';
 
@@ -126,8 +125,6 @@ export default function(element, newImageIdIndex) {
   }
 
   imagePromise.then(doneCallback, failCallback);
-  // Make sure we kick off any changed download request pools
-  requestPoolManager.startGrabbing();
 
   triggerEvent(element, EVENTS.STACK_SCROLL, eventData);
 }
