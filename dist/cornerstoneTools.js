@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 5.1.4-b - 2021-04-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 6.0.6-a - 2022-03-11 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "f74e8565c2f716b05a1b";
+/******/ 	var hotCurrentHash = "11f9482065101fc601a9";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2485,7 +2485,7 @@ __webpack_require__.r(__webpack_exports__);
  * @param  {Object} end       The end position.
  * @param  {string} color     The color of the arrow.
  * @param  {number} lineWidth The width of the arrow line.
- * @param  {number[]|| undefined} [lineDash] The optional lineDash style.
+ * @param  {number[] | undefined} [lineDash] The optional lineDash style.
  * @returns {undefined}
  */
 
@@ -2954,6 +2954,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
 /* harmony import */ var _drawTextBox_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./drawTextBox.js */ "./drawing/drawTextBox.js");
 /* harmony import */ var _drawLink_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./drawLink.js */ "./drawing/drawLink.js");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
+/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
+
+
 
 
 
@@ -2977,9 +2981,9 @@ __webpack_require__.r(__webpack_exports__);
  */
 
 /* harmony default export */ __webpack_exports__["default"] = (function (context, element, textBox, text, handles, textBoxAnchorPoints, color, lineWidth, xOffset, yCenter) {
-  var cornerstone = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone; // Convert the textbox Image coordinates into Canvas coordinates
+  var pixelToCanvas = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.pixelToCanvas; // Convert the textbox Image coordinates into Canvas coordinates
 
-  var textCoords = cornerstone.pixelToCanvas(element, textBox);
+  var textCoords = pixelToCanvas(element, textBox);
 
   if (xOffset) {
     textCoords.x += xOffset;
@@ -2990,14 +2994,21 @@ __webpack_require__.r(__webpack_exports__);
       x: false,
       y: yCenter
     }
-  }; // Draw the text box
+  }; // Clip the bounding box to the displayed area of the image
+
+  if (_store_index_js__WEBPACK_IMPORTED_MODULE_3__["state"].preventTextBoxOutsideDisplayedArea) {
+    options.displacer = function (box) {
+      return Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_4__["clipBoxToDisplayedArea"])(element, box);
+    };
+  } // Draw the text box
+
 
   textBox.boundingBox = Object(_drawTextBox_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, text, textCoords.x, textCoords.y, color, options);
 
   if (textBox.hasMoved) {
     // Identify the possible anchor points for the tool -> text line
     var linkAnchorPoints = textBoxAnchorPoints(handles).map(function (h) {
-      return cornerstone.pixelToCanvas(element, h);
+      return pixelToCanvas(element, h);
     }); // Draw dashed link line between tool and text
 
     Object(_drawLink_js__WEBPACK_IMPORTED_MODULE_2__["default"])(linkAnchorPoints, textCoords, textBox.boundingBox, context, color, lineWidth);
@@ -3161,10 +3172,14 @@ function textBoxWidth(context, text, padding) {
  * @param  {number} y           The y position of the textBox.
  * @param  {string} color       The color of the textBox.
  * @param  {Object} options     Options for the textBox.
+ * @param  {boolean} options.centering Option to center the textbox.
+ * @param  {function} options.displacer displacer function.
  * @returns {Object} {top, left, width, height} - Bounding box; can be used for pointNearTool
  */
 
-/* harmony default export */ __webpack_exports__["default"] = (function (context, textLines, x, y, color, options) {
+/* harmony default export */ __webpack_exports__["default"] = (function (context, textLines, x, y, color) {
+  var options = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : {};
+
   if (Object.prototype.toString.call(textLines) !== '[object Array]') {
     textLines = [textLines];
   }
@@ -3188,18 +3203,24 @@ function textBoxWidth(context, text, padding) {
   Object(_draw_js__WEBPACK_IMPORTED_MODULE_1__["default"])(context, function (context) {
     context.strokeStyle = color; // Draw the background box with padding
 
-    if (options && options.centering && options.centering.x === true) {
-      x -= boundingBox.width / 2;
-    }
+    if (options.centering) {
+      if (options.centering.x === true) {
+        x -= boundingBox.width / 2;
+      }
 
-    if (options && options.centering && options.centering.y === true) {
-      y -= boundingBox.height / 2;
+      if (options.centering.y === true) {
+        y -= boundingBox.height / 2;
+      }
     }
 
     boundingBox.left = x;
-    boundingBox.top = y;
-    var fillStyle = options && options.debug === true ? '#FF0000' : backgroundColor;
-    Object(_fillBox_js__WEBPACK_IMPORTED_MODULE_3__["default"])(context, boundingBox, fillStyle); // Draw each of the text lines on top of the background box
+    boundingBox.top = y; // Check if a displacer function was provided
+
+    if (typeof options.displacer === 'function') {
+      options.displacer(boundingBox);
+    }
+
+    Object(_fillBox_js__WEBPACK_IMPORTED_MODULE_3__["default"])(context, boundingBox, backgroundColor); // Draw each of the text lines on top of the background box
 
     Object(_fillTextLines_js__WEBPACK_IMPORTED_MODULE_2__["default"])(context, boundingBox, textLines, color, padding);
   }); // Return the bounding box so it can be used for pointNearHandle
@@ -6624,7 +6645,11 @@ function disable(element) {
 
   if (mc) {
     mc.off('tap doubletap panstart panmove panend pinchstart pinchmove rotatemove', onTouch);
+    mc.input.destroy();
   }
+
+  options.hammer = null;
+  Object(_toolOptions_js__WEBPACK_IMPORTED_MODULE_5__["clearToolOptions"])(inputName, element);
 } // Module exports
 
 
@@ -7090,7 +7115,7 @@ __webpack_require__.r(__webpack_exports__);
 /*!******************!*\
   !*** ./index.js ***!
   \******************/
-/*! exports provided: AngleTool, ArrowAnnotateTool, BidirectionalTool, CircleRoiTool, CobbAngleTool, EllipticalRoiTool, FreehandRoiTool, LengthTool, ProbeTool, RectangleRoiTool, TextMarkerTool, BrushTool, SphericalBrushTool, RectangleScissorsTool, FreehandScissorsTool, CircleScissorsTool, CorrectionScissorsTool, CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OverlayTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, init, stackPrefetch, stackRenderers, playClip, stopClip, store, getModule, getToolForElement, addTool, addToolForElement, removeTool, removeToolForElement, setToolOptions, setToolOptionsForElement, isToolActiveForElement, setToolActive, setToolActiveForElement, setToolEnabled, setToolEnabledForElement, setToolDisabled, setToolDisabledForElement, setToolPassive, setToolPassiveForElement, addToolState, getToolState, removeToolState, clearToolState, setElementToolStateManager, getElementToolStateManager, textStyle, toolStyle, toolColors, toolCoordinates, stackSpecificStateManager, newStackSpecificToolStateManager, addStackStateManager, loadHandlerManager, newImageIdSpecificToolStateManager, globalImageIdSpecificToolStateManager, newFrameOfReferenceSpecificToolStateManager, globalFrameOfReferenceSpecificToolStateManager, forceEnabledElementResize, orientation, SaveAs, enableLogger, disableLogger, register, registerSome, wwwcSynchronizer, updateImageSynchronizer, Synchronizer, stackScrollSynchronizer, stackImagePositionSynchronizer, stackImagePositionOffsetSynchronizer, stackImageIndexSynchronizer, panZoomSynchronizer, requestPoolManager, importInternal, external, EVENTS, version, import, default */
+/*! exports provided: AngleTool, ArrowAnnotateTool, BidirectionalTool, CircleRoiTool, CobbAngleTool, EllipticalRoiTool, FreehandRoiTool, LengthTool, ProbeTool, RectangleRoiTool, TextMarkerTool, BrushTool, SphericalBrushTool, RectangleScissorsTool, FreehandScissorsTool, CircleScissorsTool, CorrectionScissorsTool, CrosshairsTool, DoubleTapFitToWindowTool, DragProbeTool, EraserTool, FreehandRoiSculptorTool, MagnifyTool, OverlayTool, OrientationMarkersTool, PanMultiTouchTool, PanTool, ReferenceLinesTool, RotateTool, RotateTouchTool, ScaleOverlayTool, StackScrollMouseWheelTool, StackScrollMultiTouchTool, StackScrollTool, WwwcRegionTool, WwwcTool, ZoomMouseWheelTool, ZoomTool, ZoomTouchPinchTool, init, stackPrefetch, stackRenderers, playClip, stopClip, store, getModule, getToolForElement, addTool, addToolForElement, removeTool, removeToolForElement, setToolOptions, setToolOptionsForElement, isToolActiveForElement, setToolActive, setToolActiveForElement, setToolEnabled, setToolEnabledForElement, setToolDisabled, setToolDisabledForElement, setToolPassive, setToolPassiveForElement, addToolState, getToolState, removeToolState, clearToolState, setElementToolStateManager, getElementToolStateManager, textStyle, toolStyle, toolColors, toolCoordinates, stackSpecificStateManager, newStackSpecificToolStateManager, addStackStateManager, loadHandlerManager, newImageIdSpecificToolStateManager, globalImageIdSpecificToolStateManager, newFrameOfReferenceSpecificToolStateManager, globalFrameOfReferenceSpecificToolStateManager, forceEnabledElementResize, orientation, SaveAs, enableLogger, disableLogger, register, registerSome, wwwcSynchronizer, updateImageSynchronizer, Synchronizer, stackScrollSynchronizer, stackImagePositionSynchronizer, stackImagePositionOffsetSynchronizer, stackImageIndexSynchronizer, panZoomSynchronizer, importInternal, external, EVENTS, version, import, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7322,22 +7347,19 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _synchronization_panZoomSynchronizer_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./synchronization/panZoomSynchronizer.js */ "./synchronization/panZoomSynchronizer.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "panZoomSynchronizer", function() { return _synchronization_panZoomSynchronizer_js__WEBPACK_IMPORTED_MODULE_36__["default"]; });
 
-/* harmony import */ var _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./requestPool/requestPoolManager.js */ "./requestPool/requestPoolManager.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "requestPoolManager", function() { return _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_37__["default"]; });
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./externalModules.js */ "./externalModules.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "external", function() { return _externalModules_js__WEBPACK_IMPORTED_MODULE_37__["default"]; });
 
-/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./externalModules.js */ "./externalModules.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "external", function() { return _externalModules_js__WEBPACK_IMPORTED_MODULE_38__["default"]; });
+/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./events.js */ "./events.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EVENTS", function() { return _events_js__WEBPACK_IMPORTED_MODULE_38__["default"]; });
 
-/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./events.js */ "./events.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EVENTS", function() { return _events_js__WEBPACK_IMPORTED_MODULE_39__["default"]; });
+/* harmony import */ var _version_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./version.js */ "./version.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "version", function() { return _version_js__WEBPACK_IMPORTED_MODULE_39__["default"]; });
 
-/* harmony import */ var _version_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./version.js */ "./version.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "version", function() { return _version_js__WEBPACK_IMPORTED_MODULE_40__["default"]; });
+/* harmony import */ var _importInternal_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./importInternal.js */ "./importInternal.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "importInternal", function() { return _importInternal_js__WEBPACK_IMPORTED_MODULE_40__["default"]; });
 
-/* harmony import */ var _importInternal_js__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./importInternal.js */ "./importInternal.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "importInternal", function() { return _importInternal_js__WEBPACK_IMPORTED_MODULE_41__["default"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "import", function() { return _importInternal_js__WEBPACK_IMPORTED_MODULE_41__["default"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "import", function() { return _importInternal_js__WEBPACK_IMPORTED_MODULE_40__["default"]; });
 
 /**
  * Root
@@ -7464,7 +7486,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
 var cornerstoneTools = {
   // ~~~ TOOLS
   // ~ Annotation Tools
@@ -7555,8 +7576,8 @@ var cornerstoneTools = {
   SaveAs: _util_SaveAs_js__WEBPACK_IMPORTED_MODULE_25__["default"],
   enableLogger: _util_logger_js__WEBPACK_IMPORTED_MODULE_26__["enable"],
   disableLogger: _util_logger_js__WEBPACK_IMPORTED_MODULE_26__["disable"],
-  importInternal: _importInternal_js__WEBPACK_IMPORTED_MODULE_41__["default"],
-  import: _importInternal_js__WEBPACK_IMPORTED_MODULE_41__["default"],
+  importInternal: _importInternal_js__WEBPACK_IMPORTED_MODULE_40__["default"],
+  import: _importInternal_js__WEBPACK_IMPORTED_MODULE_40__["default"],
   register: _thirdParty_register_js__WEBPACK_IMPORTED_MODULE_27__["default"],
   registerSome: _thirdParty_registerSome_js__WEBPACK_IMPORTED_MODULE_28__["default"],
   wwwcSynchronizer: _synchronization_wwwcSynchronizer_js__WEBPACK_IMPORTED_MODULE_29__["default"],
@@ -7567,10 +7588,9 @@ var cornerstoneTools = {
   stackImagePositionOffsetSynchronizer: _synchronization_stackImagePositionOffsetSynchronizer_js__WEBPACK_IMPORTED_MODULE_34__["default"],
   stackImageIndexSynchronizer: _synchronization_stackImageIndexSynchronizer_js__WEBPACK_IMPORTED_MODULE_35__["default"],
   panZoomSynchronizer: _synchronization_panZoomSynchronizer_js__WEBPACK_IMPORTED_MODULE_36__["default"],
-  requestPoolManager: _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_37__["default"],
-  external: _externalModules_js__WEBPACK_IMPORTED_MODULE_38__["default"],
-  EVENTS: _events_js__WEBPACK_IMPORTED_MODULE_39__["default"],
-  version: _version_js__WEBPACK_IMPORTED_MODULE_40__["default"]
+  external: _externalModules_js__WEBPACK_IMPORTED_MODULE_37__["default"],
+  EVENTS: _events_js__WEBPACK_IMPORTED_MODULE_38__["default"],
+  version: _version_js__WEBPACK_IMPORTED_MODULE_39__["default"]
 }; // Named Exports
 
 
@@ -7731,35 +7751,39 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_throttle__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./util/throttle */ "./util/throttle.js");
 /* harmony import */ var _util_wait__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./util/wait */ "./util/wait.js");
 /* harmony import */ var _util_getKeyPressData__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./util/getKeyPressData */ "./util/getKeyPressData.js");
-/* harmony import */ var _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./drawing/drawTextBox.js */ "./drawing/drawTextBox.js");
-/* harmony import */ var _drawing_drawArrow_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./drawing/drawArrow.js */ "./drawing/drawArrow.js");
-/* harmony import */ var _drawing_drawLink_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./drawing/drawLink.js */ "./drawing/drawLink.js");
-/* harmony import */ var _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./drawing/drawLinkedTextBox.js */ "./drawing/drawLinkedTextBox.js");
-/* harmony import */ var _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./drawing/drawHandles.js */ "./drawing/drawHandles.js");
-/* harmony import */ var _util_getLuminance_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./util/getLuminance.js */ "./util/getLuminance.js");
-/* harmony import */ var _util_getROITextBoxCoords__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./util/getROITextBoxCoords */ "./util/getROITextBoxCoords.js");
-/* harmony import */ var _util_copyPoints_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./util/copyPoints.js */ "./util/copyPoints.js");
-/* harmony import */ var _util_calculateSUV_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./util/calculateSUV.js */ "./util/calculateSUV.js");
-/* harmony import */ var _util_setContextToDisplayFontSize_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./util/setContextToDisplayFontSize.js */ "./util/setContextToDisplayFontSize.js");
-/* harmony import */ var _util_scrollToIndex_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./util/scrollToIndex.js */ "./util/scrollToIndex.js");
-/* harmony import */ var _util_scroll_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./util/scroll.js */ "./util/scroll.js");
-/* harmony import */ var _util_roundToDecimal_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./util/roundToDecimal.js */ "./util/roundToDecimal.js");
-/* harmony import */ var _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./util/pointProjector.js */ "./util/pointProjector.js");
-/* harmony import */ var _util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./util/lineSegDistance.js */ "./util/lineSegDistance.js");
-/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./util/logger */ "./util/logger.js");
-/* harmony import */ var _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./util/pointInsideBoundingBox.js */ "./util/pointInsideBoundingBox.js");
-/* harmony import */ var _util_makeUnselectable_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./util/makeUnselectable.js */ "./util/makeUnselectable.js");
-/* harmony import */ var _util_getRGBPixels_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./util/getRGBPixels.js */ "./util/getRGBPixels.js");
-/* harmony import */ var _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./util/getMaxSimultaneousRequests.js */ "./util/getMaxSimultaneousRequests.js");
-/* harmony import */ var _util_angleBetweenPoints_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./util/angleBetweenPoints.js */ "./util/angleBetweenPoints.js");
-/* harmony import */ var _util_numbersWithCommas_js__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./util/numbersWithCommas.js */ "./util/numbersWithCommas.js");
-/* harmony import */ var _tools_cursors_MouseCursor_js__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./tools/cursors/MouseCursor.js */ "./tools/cursors/MouseCursor.js");
-/* harmony import */ var _util_ellipse_index_js__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./util/ellipse/index.js */ "./util/ellipse/index.js");
-/* harmony import */ var _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./util/freehand/index.js */ "./util/freehand/index.js");
-/* harmony import */ var _util_segmentation__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./util/segmentation */ "./util/segmentation/index.js");
-/* harmony import */ var _util_zoom_index_js__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./util/zoom/index.js */ "./util/zoom/index.js");
-/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./util/triggerEvent.js */ "./util/triggerEvent.js");
-/* harmony import */ var _util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./util/convertToVector3.js */ "./util/convertToVector3.js");
+/* harmony import */ var _util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./util/getProximityThreshold.js */ "./util/getProximityThreshold.js");
+/* harmony import */ var _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./drawing/drawTextBox.js */ "./drawing/drawTextBox.js");
+/* harmony import */ var _drawing_drawArrow_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./drawing/drawArrow.js */ "./drawing/drawArrow.js");
+/* harmony import */ var _drawing_drawLink_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./drawing/drawLink.js */ "./drawing/drawLink.js");
+/* harmony import */ var _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./drawing/drawLinkedTextBox.js */ "./drawing/drawLinkedTextBox.js");
+/* harmony import */ var _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./drawing/drawHandles.js */ "./drawing/drawHandles.js");
+/* harmony import */ var _util_getActiveTool__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./util/getActiveTool */ "./util/getActiveTool.js");
+/* harmony import */ var _util_getLuminance_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./util/getLuminance.js */ "./util/getLuminance.js");
+/* harmony import */ var _util_getROITextBoxCoords__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./util/getROITextBoxCoords */ "./util/getROITextBoxCoords.js");
+/* harmony import */ var _util_copyPoints_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./util/copyPoints.js */ "./util/copyPoints.js");
+/* harmony import */ var _util_calculateSUV_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./util/calculateSUV.js */ "./util/calculateSUV.js");
+/* harmony import */ var _util_setContextToDisplayFontSize_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./util/setContextToDisplayFontSize.js */ "./util/setContextToDisplayFontSize.js");
+/* harmony import */ var _util_scrollToIndex_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./util/scrollToIndex.js */ "./util/scrollToIndex.js");
+/* harmony import */ var _util_scroll_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./util/scroll.js */ "./util/scroll.js");
+/* harmony import */ var _util_roundToDecimal_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./util/roundToDecimal.js */ "./util/roundToDecimal.js");
+/* harmony import */ var _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./util/pointProjector.js */ "./util/pointProjector.js");
+/* harmony import */ var _util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./util/lineSegDistance.js */ "./util/lineSegDistance.js");
+/* harmony import */ var _util_logger__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./util/logger */ "./util/logger.js");
+/* harmony import */ var _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./util/pointInsideBoundingBox.js */ "./util/pointInsideBoundingBox.js");
+/* harmony import */ var _util_makeUnselectable_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./util/makeUnselectable.js */ "./util/makeUnselectable.js");
+/* harmony import */ var _util_getRGBPixels_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./util/getRGBPixels.js */ "./util/getRGBPixels.js");
+/* harmony import */ var _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./util/getMaxSimultaneousRequests.js */ "./util/getMaxSimultaneousRequests.js");
+/* harmony import */ var _util_angleBetweenPoints_js__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./util/angleBetweenPoints.js */ "./util/angleBetweenPoints.js");
+/* harmony import */ var _util_numbersWithCommas_js__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./util/numbersWithCommas.js */ "./util/numbersWithCommas.js");
+/* harmony import */ var _tools_cursors_MouseCursor_js__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./tools/cursors/MouseCursor.js */ "./tools/cursors/MouseCursor.js");
+/* harmony import */ var _util_ellipse_index_js__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./util/ellipse/index.js */ "./util/ellipse/index.js");
+/* harmony import */ var _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./util/freehand/index.js */ "./util/freehand/index.js");
+/* harmony import */ var _util_segmentation__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./util/segmentation */ "./util/segmentation/index.js");
+/* harmony import */ var _util_zoom_index_js__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./util/zoom/index.js */ "./util/zoom/index.js");
+/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./util/triggerEvent.js */ "./util/triggerEvent.js");
+/* harmony import */ var _util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./util/convertToVector3.js */ "./util/convertToVector3.js");
+
+
 
 
 
@@ -7813,10 +7837,11 @@ var lib = {
   'base/BaseTool': _tools_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_0__["default"],
   'base/BaseAnnotationTool': _tools_base_BaseAnnotationTool_js__WEBPACK_IMPORTED_MODULE_1__["default"],
   'base/BaseBrushTool': _tools_base_BaseBrushTool_js__WEBPACK_IMPORTED_MODULE_2__["default"],
-  'tools/cursors/MouseCursor': _tools_cursors_MouseCursor_js__WEBPACK_IMPORTED_MODULE_42__["default"],
+  'tools/cursors/MouseCursor': _tools_cursors_MouseCursor_js__WEBPACK_IMPORTED_MODULE_44__["default"],
   'tools/cursors': _tools_cursors_index_js__WEBPACK_IMPORTED_MODULE_6__,
   'manipulators/anyHandlesOutsideImage': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["anyHandlesOutsideImage"],
   'manipulators/getHandleNearImagePoint': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["getHandleNearImagePoint"],
+  'manipulators/getHandlePixelPosition': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["getHandlePixelPosition"],
   'manipulators/handleActivator': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["handleActivator"],
   'manipulators/moveAllHandles': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["moveAllHandles"],
   'manipulators/moveHandle': _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["moveHandle"],
@@ -7837,57 +7862,58 @@ var lib = {
   'drawing/drawEllipse': _drawing_index_js__WEBPACK_IMPORTED_MODULE_7__["drawEllipse"],
   'drawing/drawRect': _drawing_index_js__WEBPACK_IMPORTED_MODULE_7__["drawRect"],
   'drawing/fillOutsideRect': _drawing_index_js__WEBPACK_IMPORTED_MODULE_7__["fillOutsideRect"],
-  'drawing/drawTextBox': _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_20__["default"],
-  'drawing/drawArrow': _drawing_drawArrow_js__WEBPACK_IMPORTED_MODULE_21__["default"],
+  'drawing/drawTextBox': _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_21__["default"],
+  'drawing/drawArrow': _drawing_drawArrow_js__WEBPACK_IMPORTED_MODULE_22__["default"],
   'drawing/fillBox': _drawing_index_js__WEBPACK_IMPORTED_MODULE_7__["fillBox"],
   'drawing/fillTextLines': _drawing_index_js__WEBPACK_IMPORTED_MODULE_7__["fillTextLines"],
-  'drawing/drawLink': _drawing_drawLink_js__WEBPACK_IMPORTED_MODULE_22__["default"],
-  'drawing/drawLinkedTextBox': _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_23__["default"],
-  'drawing/drawHandles': _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_24__["default"],
-  'drawing/textBoxWidth': _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_20__["textBoxWidth"],
-  'util/getLuminance': _util_getLuminance_js__WEBPACK_IMPORTED_MODULE_25__["default"],
-  'util/getROITextBoxCoords': _util_getROITextBoxCoords__WEBPACK_IMPORTED_MODULE_26__["default"],
-  'util/copyPoints': _util_copyPoints_js__WEBPACK_IMPORTED_MODULE_27__["default"],
-  'util/calculateSUV': _util_calculateSUV_js__WEBPACK_IMPORTED_MODULE_28__["default"],
-  'util/setContextToDisplayFontSize': _util_setContextToDisplayFontSize_js__WEBPACK_IMPORTED_MODULE_29__["default"],
-  'util/scrollToIndex': _util_scrollToIndex_js__WEBPACK_IMPORTED_MODULE_30__["default"],
-  'util/scroll': _util_scroll_js__WEBPACK_IMPORTED_MODULE_31__["default"],
-  'util/roundToDecimal': _util_roundToDecimal_js__WEBPACK_IMPORTED_MODULE_32__["default"],
-  'util/projectPatientPointToImagePlane': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_33__["projectPatientPointToImagePlane"],
-  'util/imagePointToPatientPoint': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_33__["imagePointToPatientPoint"],
-  'util/planePlaneIntersection': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_33__["planePlaneIntersection"],
-  'util/pointInsideBoundingBox': _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_36__["default"],
-  'util/makeUnselectable': _util_makeUnselectable_js__WEBPACK_IMPORTED_MODULE_37__["default"],
-  'util/getRGBPixels': _util_getRGBPixels_js__WEBPACK_IMPORTED_MODULE_38__["default"],
-  'util/getDefaultSimultaneousRequests': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_39__["getDefaultSimultaneousRequests"],
-  'util/getMaxSimultaneousRequests': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_39__["getMaxSimultaneousRequests"],
-  'util/getBrowserInfo': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_39__["getBrowserInfo"],
-  'util/isMobileDevice': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_39__["isMobileDevice"],
-  'util/angleBetweenPoints': _util_angleBetweenPoints_js__WEBPACK_IMPORTED_MODULE_40__["default"],
-  'util/numbersWithCommas': _util_numbersWithCommas_js__WEBPACK_IMPORTED_MODULE_41__["default"],
-  'util/lineSegDistance': _util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_34__["default"],
-  'util/triggerEvent': _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_47__["default"],
-  'util/convertToVector3': _util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_48__["default"],
+  'drawing/drawLink': _drawing_drawLink_js__WEBPACK_IMPORTED_MODULE_23__["default"],
+  'drawing/drawLinkedTextBox': _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_24__["default"],
+  'drawing/drawHandles': _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_25__["default"],
+  'drawing/textBoxWidth': _drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_21__["textBoxWidth"],
+  'util/getActiveTool': _util_getActiveTool__WEBPACK_IMPORTED_MODULE_26__["default"],
+  'util/getLuminance': _util_getLuminance_js__WEBPACK_IMPORTED_MODULE_27__["default"],
+  'util/getROITextBoxCoords': _util_getROITextBoxCoords__WEBPACK_IMPORTED_MODULE_28__["default"],
+  'util/copyPoints': _util_copyPoints_js__WEBPACK_IMPORTED_MODULE_29__["default"],
+  'util/calculateSUV': _util_calculateSUV_js__WEBPACK_IMPORTED_MODULE_30__["default"],
+  'util/setContextToDisplayFontSize': _util_setContextToDisplayFontSize_js__WEBPACK_IMPORTED_MODULE_31__["default"],
+  'util/scrollToIndex': _util_scrollToIndex_js__WEBPACK_IMPORTED_MODULE_32__["default"],
+  'util/scroll': _util_scroll_js__WEBPACK_IMPORTED_MODULE_33__["default"],
+  'util/roundToDecimal': _util_roundToDecimal_js__WEBPACK_IMPORTED_MODULE_34__["default"],
+  'util/projectPatientPointToImagePlane': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_35__["projectPatientPointToImagePlane"],
+  'util/imagePointToPatientPoint': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_35__["imagePointToPatientPoint"],
+  'util/planePlaneIntersection': _util_pointProjector_js__WEBPACK_IMPORTED_MODULE_35__["planePlaneIntersection"],
+  'util/pointInsideBoundingBox': _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_38__["default"],
+  'util/makeUnselectable': _util_makeUnselectable_js__WEBPACK_IMPORTED_MODULE_39__["default"],
+  'util/getRGBPixels': _util_getRGBPixels_js__WEBPACK_IMPORTED_MODULE_40__["default"],
+  'util/getBrowserInfo': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_41__["getBrowserInfo"],
+  'util/isMobileDevice': _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_41__["isMobileDevice"],
+  'util/angleBetweenPoints': _util_angleBetweenPoints_js__WEBPACK_IMPORTED_MODULE_42__["default"],
+  'util/numbersWithCommas': _util_numbersWithCommas_js__WEBPACK_IMPORTED_MODULE_43__["default"],
+  'util/lineSegDistance': _util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_36__["default"],
+  'util/triggerEvent': _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_49__["default"],
+  'util/convertToVector3': _util_convertToVector3_js__WEBPACK_IMPORTED_MODULE_50__["default"],
   'util/clip': _util_clip_js__WEBPACK_IMPORTED_MODULE_8__["clip"],
   'util/clipToBox': _util_clip_js__WEBPACK_IMPORTED_MODULE_8__["clipToBox"],
+  'util/clipBoxToDisplayedArea': _util_clip_js__WEBPACK_IMPORTED_MODULE_8__["clipBoxToDisplayedArea"],
   'util/debounce': _util_debounce__WEBPACK_IMPORTED_MODULE_9__["default"],
   'util/deepmerge': _util_deepmerge__WEBPACK_IMPORTED_MODULE_10__["default"],
   'util/getDefault': _util_getDefault__WEBPACK_IMPORTED_MODULE_11__["default"],
+  'util/getProximityThreshold': _util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_20__["default"],
   'util/getPixelSpacing': _util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_12__["default"],
   'util/isEmptyObject': _util_isEmptyObject__WEBPACK_IMPORTED_MODULE_13__["default"],
   'util/isObject': _util_isObject__WEBPACK_IMPORTED_MODULE_14__["default"],
   'util/isPointInImage': _util_isPointInImage__WEBPACK_IMPORTED_MODULE_15__["default"],
   'util/isPointInPolygon': _util_isPointInPolygon__WEBPACK_IMPORTED_MODULE_16__["default"],
-  'util/getLogger': _util_logger__WEBPACK_IMPORTED_MODULE_35__["getLogger"],
+  'util/getLogger': _util_logger__WEBPACK_IMPORTED_MODULE_37__["getLogger"],
   'util/throttle': _util_throttle__WEBPACK_IMPORTED_MODULE_17__["default"],
   'util/wait': _util_wait__WEBPACK_IMPORTED_MODULE_18__["wait"],
   'util/waitForEnabledElementImageToLoad': _util_wait__WEBPACK_IMPORTED_MODULE_18__["waitForEnabledElementImageToLoad"],
   'util/getKeyPressData': _util_getKeyPressData__WEBPACK_IMPORTED_MODULE_19__["default"],
   // Whole tool specific util packages
-  'util/ellipseUtils': _util_ellipse_index_js__WEBPACK_IMPORTED_MODULE_43__["default"],
-  'util/freehandUtils': _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_44__["default"],
-  'util/segmentationUtils': _util_segmentation__WEBPACK_IMPORTED_MODULE_45__,
-  'util/zoomUtils': _util_zoom_index_js__WEBPACK_IMPORTED_MODULE_46__["default"]
+  'util/ellipseUtils': _util_ellipse_index_js__WEBPACK_IMPORTED_MODULE_45__["default"],
+  'util/freehandUtils': _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_46__["default"],
+  'util/segmentationUtils': _util_segmentation__WEBPACK_IMPORTED_MODULE_47__,
+  'util/zoomUtils': _util_zoom_index_js__WEBPACK_IMPORTED_MODULE_48__["default"]
 };
 
 /***/ }),
@@ -8057,6 +8083,48 @@ var _isHandleNearImagePoint = function _isHandleNearImagePoint(handle, element, 
 
 /***/ }),
 
+/***/ "./manipulators/getHandlePixelPosition.js":
+/*!************************************************!*\
+  !*** ./manipulators/getHandlePixelPosition.js ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
+
+
+/**
+ * Return the handle position considering offset for touch interaction.
+ * @public
+ * @function getHandlePixelPosition
+ * @memberof Manipulators
+ *
+ * @param {Object} eventData - Data object associated with the event
+ * @param {string} interactionType - Type of user's input
+ * @returns {Object} - The translated point object
+ */
+
+/* harmony default export */ __webpack_exports__["default"] = (function (eventData, interactionType) {
+  var currentPoints = eventData.currentPoints,
+      element = eventData.element;
+  var page = currentPoints.page;
+  var handleTouchOffset = _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].handleTouchOffset;
+  var offsetX = 0;
+  var offsetY = 0;
+
+  if (interactionType === 'touch') {
+    offsetX = handleTouchOffset.x;
+    offsetY = handleTouchOffset.y;
+  }
+
+  return _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.pageToPixel(element, page.x + offsetX, page.y + offsetY);
+});
+
+/***/ }),
+
 /***/ "./manipulators/handleActivator.js":
 /*!*****************************************!*\
   !*** ./manipulators/handleActivator.js ***!
@@ -8131,7 +8199,7 @@ function _getActiveHandle(handles) {
 /*!*******************************!*\
   !*** ./manipulators/index.js ***!
   \*******************************/
-/*! exports provided: anyHandlesOutsideImage, getHandleNearImagePoint, handleActivator, moveAllHandles, moveHandle, moveNewHandle */
+/*! exports provided: anyHandlesOutsideImage, getHandleNearImagePoint, getHandlePixelPosition, handleActivator, moveAllHandles, moveHandle, moveNewHandle */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8142,17 +8210,21 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getHandleNearImagePoint", function() { return _getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__["default"]; });
 
-/* harmony import */ var _handleActivator_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./handleActivator.js */ "./manipulators/handleActivator.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "handleActivator", function() { return _handleActivator_js__WEBPACK_IMPORTED_MODULE_2__["default"]; });
+/* harmony import */ var _getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./getHandlePixelPosition.js */ "./manipulators/getHandlePixelPosition.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "getHandlePixelPosition", function() { return _getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_2__["default"]; });
 
-/* harmony import */ var _moveAllHandles_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./moveAllHandles.js */ "./manipulators/moveAllHandles.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveAllHandles", function() { return _moveAllHandles_js__WEBPACK_IMPORTED_MODULE_3__["default"]; });
+/* harmony import */ var _handleActivator_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./handleActivator.js */ "./manipulators/handleActivator.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "handleActivator", function() { return _handleActivator_js__WEBPACK_IMPORTED_MODULE_3__["default"]; });
 
-/* harmony import */ var _moveHandle_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./moveHandle.js */ "./manipulators/moveHandle.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveHandle", function() { return _moveHandle_js__WEBPACK_IMPORTED_MODULE_4__["default"]; });
+/* harmony import */ var _moveAllHandles_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./moveAllHandles.js */ "./manipulators/moveAllHandles.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveAllHandles", function() { return _moveAllHandles_js__WEBPACK_IMPORTED_MODULE_4__["default"]; });
 
-/* harmony import */ var _moveNewHandle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./moveNewHandle.js */ "./manipulators/moveNewHandle.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveNewHandle", function() { return _moveNewHandle_js__WEBPACK_IMPORTED_MODULE_5__["default"]; });
+/* harmony import */ var _moveHandle_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./moveHandle.js */ "./manipulators/moveHandle.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveHandle", function() { return _moveHandle_js__WEBPACK_IMPORTED_MODULE_5__["default"]; });
+
+/* harmony import */ var _moveNewHandle_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./moveNewHandle.js */ "./manipulators/moveNewHandle.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "moveNewHandle", function() { return _moveNewHandle_js__WEBPACK_IMPORTED_MODULE_6__["default"]; });
+
 
 
 
@@ -8403,13 +8475,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../events.js */ "./events.js");
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
 /* harmony import */ var _anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./anyHandlesOutsideImage.js */ "./manipulators/anyHandlesOutsideImage.js");
-/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
-/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
-/* harmony import */ var _util_getActiveTool__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../util/getActiveTool */ "./util/getActiveTool.js");
-/* harmony import */ var _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../tools/base/BaseAnnotationTool */ "./tools/base/BaseAnnotationTool.js");
-/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
+/* harmony import */ var _getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getHandlePixelPosition.js */ "./manipulators/getHandlePixelPosition.js");
+/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
+/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
+/* harmony import */ var _util_getActiveTool__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../util/getActiveTool */ "./util/getActiveTool.js");
+/* harmony import */ var _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../tools/base/BaseAnnotationTool */ "./tools/base/BaseAnnotationTool.js");
+/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
 
 
 
@@ -8421,8 +8494,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_9__["getLogger"])('manipulators:moveHandle');
-var manipulatorStateModule = Object(_store_index_js__WEBPACK_IMPORTED_MODULE_6__["getModule"])('manipulatorState');
+
+var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_10__["getLogger"])('manipulators:moveHandle');
+var manipulatorStateModule = Object(_store_index_js__WEBPACK_IMPORTED_MODULE_7__["getModule"])('manipulatorState');
 var runAnimation = {
   value: false
 };
@@ -8459,8 +8533,8 @@ var _upOrEndEvents = {
   var doneMovingCallback = arguments.length > 6 ? arguments[6] : undefined;
   // Use global defaults, unless overidden by provided options
   options = Object.assign({
-    deleteIfHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].deleteIfHandleOutsideImage,
-    preventHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].preventHandleOutsideImage
+    deleteIfHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].deleteIfHandleOutsideImage,
+    preventHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].preventHandleOutsideImage
   }, options);
   var element = evtDetail.element;
 
@@ -8481,7 +8555,7 @@ var _upOrEndEvents = {
   handle.active = true;
   handle.moving = true;
   annotation.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].isToolLocked = true; // Add Event Listeners
+  _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].isToolLocked = true; // Add Event Listeners
 
   _dragEvents[interactionType].forEach(function (eventType) {
     element.addEventListener(eventType, dragHandler);
@@ -8496,15 +8570,8 @@ var _upOrEndEvents = {
 
   if (interactionType === 'touch') {
     runAnimation.value = true;
-    var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.getEnabledElement(element); // Average pixel width of index finger is 45-57 pixels
-    // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
-
-    var fingerDistance = 0;
-    var aboveFinger = {
-      x: evtDetail.currentPoints.page.x,
-      y: evtDetail.currentPoints.page.y + fingerDistance
-    };
-    var targetLocation = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.pageToPixel(element, aboveFinger.x, aboveFinger.y);
+    var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.getEnabledElement(element);
+    var targetLocation = Object(_getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__["default"])(evtDetail, interactionType);
 
     _animate(handle, runAnimation, enabledElement, targetLocation);
   }
@@ -8513,12 +8580,9 @@ var _upOrEndEvents = {
 function _dragHandler(toolName, annotation, handle, options, interactionType, evt) {
   var _evt$detail = evt.detail,
       image = _evt$detail.image,
-      currentPoints = _evt$detail.currentPoints,
       element = _evt$detail.element,
       buttons = _evt$detail.buttons;
-  var page = currentPoints.page;
-  var fingerOffset = 0;
-  var targetLocation = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.pageToPixel(element, page.x, interactionType === 'touch' ? page.y + fingerOffset : page.y);
+  var targetLocation = Object(_getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__["default"])(evt.detail, interactionType);
   runAnimation.value = false;
   handle.active = true;
   handle.hasMoved = true;
@@ -8528,13 +8592,13 @@ function _dragHandler(toolName, annotation, handle, options, interactionType, ev
   annotation.invalidated = true;
 
   if (options.preventHandleOutsideImage) {
-    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_5__["clipToBox"])(handle, image);
+    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_6__["clipToBox"])(handle, image);
   }
 
   _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.updateImage(element);
-  var activeTool = Object(_util_getActiveTool__WEBPACK_IMPORTED_MODULE_7__["default"])(element, buttons, interactionType);
+  var activeTool = Object(_util_getActiveTool__WEBPACK_IMPORTED_MODULE_8__["default"])(element, buttons, interactionType);
 
-  if (activeTool instanceof _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_8__["default"]) {
+  if (activeTool instanceof _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_9__["default"]) {
     activeTool.updateCachedStats(image, element, annotation);
   }
 
@@ -8546,7 +8610,7 @@ function _dragHandler(toolName, annotation, handle, options, interactionType, ev
     element: element,
     measurementData: annotation
   };
-  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__["default"])(element, eventType, modifiedEventData);
+  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__["default"])(element, eventType, modifiedEventData);
 }
 
 function _cancelEventHandler(toolName, evtDetail, annotation, handle) {
@@ -8599,7 +8663,7 @@ function _endHandler(toolName, evtDetail, annotation, handle) {
   annotation.active = false;
   annotation.invalidated = true;
   runAnimation.value = false;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].isToolLocked = false; // Remove Event Listeners
+  _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].isToolLocked = false; // Remove Event Listeners
 
   _dragEvents[interactionType].forEach(function (eventType) {
     element.removeEventListener(eventType, dragHandler);
@@ -8611,7 +8675,7 @@ function _endHandler(toolName, evtDetail, annotation, handle) {
 
 
   if (options.deleteIfHandleOutsideImage && Object(_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_2__["default"])(evtDetail, annotation.handles)) {
-    Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["removeToolState"])(element, toolName, annotation);
+    Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__["removeToolState"])(element, toolName, annotation);
   } // // TODO: What dark magic makes us want to handle TOUCH_PRESS differently?
   // if (evt.type === EVENTS.TOUCH_PRESS) {
   //   evt.detail.handlePressed = annotation;
@@ -8687,13 +8751,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../events.js */ "./events.js");
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
 /* harmony import */ var _anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./anyHandlesOutsideImage.js */ "./manipulators/anyHandlesOutsideImage.js");
-/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
-/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
-/* harmony import */ var _util_getActiveTool__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../util/getActiveTool */ "./util/getActiveTool.js");
-/* harmony import */ var _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../tools/base/BaseAnnotationTool */ "./tools/base/BaseAnnotationTool.js");
-/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
+/* harmony import */ var _getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./getHandlePixelPosition.js */ "./manipulators/getHandlePixelPosition.js");
+/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
+/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../util/clip.js */ "./util/clip.js");
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./../store/index.js */ "./store/index.js");
+/* harmony import */ var _util_getActiveTool__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../util/getActiveTool */ "./util/getActiveTool.js");
+/* harmony import */ var _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../tools/base/BaseAnnotationTool */ "./tools/base/BaseAnnotationTool.js");
+/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
 
 
 
@@ -8705,8 +8770,9 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_9__["getLogger"])('manipulators:moveNewHandle');
-var manipulatorStateModule = Object(_store_index_js__WEBPACK_IMPORTED_MODULE_6__["getModule"])('manipulatorState');
+
+var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_10__["getLogger"])('manipulators:moveNewHandle');
+var manipulatorStateModule = Object(_store_index_js__WEBPACK_IMPORTED_MODULE_7__["getModule"])('manipulatorState');
 var _moveEvents = {
   mouse: [_events_js__WEBPACK_IMPORTED_MODULE_0__["default"].MOUSE_MOVE, _events_js__WEBPACK_IMPORTED_MODULE_0__["default"].MOUSE_DRAG],
   touch: [_events_js__WEBPACK_IMPORTED_MODULE_0__["default"].TOUCH_DRAG]
@@ -8739,15 +8805,15 @@ var _moveEndEvents = {
   var doneMovingCallback = arguments.length > 6 ? arguments[6] : undefined;
   // Use global defaults, unless overidden by provided options
   options = Object.assign({
-    deleteIfHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].deleteIfHandleOutsideImage,
-    preventHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].preventHandleOutsideImage
+    deleteIfHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].deleteIfHandleOutsideImage,
+    preventHandleOutsideImage: _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].preventHandleOutsideImage
   }, options);
   options.hasMoved = false;
   var element = eventData.element;
   annotation.active = true;
   handle.moving = true;
   handle.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].isToolLocked = true;
+  _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].isToolLocked = true;
 
   function moveHandler(evt) {
     _moveHandler(toolName, annotation, handle, options, interactionType, evt);
@@ -8802,27 +8868,24 @@ var _moveEndEvents = {
 
 function _moveHandler(toolName, annotation, handle, options, interactionType, evt) {
   var _evt$detail = evt.detail,
-      currentPoints = _evt$detail.currentPoints,
       image = _evt$detail.image,
       element = _evt$detail.element,
       buttons = _evt$detail.buttons;
+  var targetLocation = Object(_getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__["default"])(evt.detail, interactionType);
   options.hasMoved = true;
-  var page = currentPoints.page;
-  var fingerOffset = 0;
-  var targetLocation = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.pageToPixel(element, interactionType === 'touch' ? page.x + fingerOffset : page.x, interactionType === 'touch' ? page.y + fingerOffset : page.y);
   annotation.invalidated = true;
   handle.active = true;
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
   if (options && options.preventHandleOutsideImage) {
-    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_5__["clipToBox"])(handle, image);
+    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_6__["clipToBox"])(handle, image);
   }
 
   _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.updateImage(element);
-  var activeTool = Object(_util_getActiveTool__WEBPACK_IMPORTED_MODULE_7__["default"])(element, buttons, interactionType);
+  var activeTool = Object(_util_getActiveTool__WEBPACK_IMPORTED_MODULE_8__["default"])(element, buttons, interactionType);
 
-  if (activeTool instanceof _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_8__["default"]) {
+  if (activeTool instanceof _tools_base_BaseAnnotationTool__WEBPACK_IMPORTED_MODULE_9__["default"]) {
     activeTool.updateCachedStats(image, element, annotation);
   }
 
@@ -8834,7 +8897,7 @@ function _moveHandler(toolName, annotation, handle, options, interactionType, ev
     element: element,
     measurementData: annotation
   };
-  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__["default"])(element, eventType, modifiedEventData);
+  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__["default"])(element, eventType, modifiedEventData);
 }
 
 function _endHandler(interactionType, options, element, _ref, doneMovingCallback) {
@@ -8852,7 +8915,7 @@ function _endHandler(interactionType, options, element, _ref, doneMovingCallback
   });
 
   element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_0__["default"].TOUCH_START, _stopImmediatePropagation);
-  _store_index_js__WEBPACK_IMPORTED_MODULE_6__["state"].isToolLocked = false;
+  _store_index_js__WEBPACK_IMPORTED_MODULE_7__["state"].isToolLocked = false;
 
   if (typeof doneMovingCallback === 'function') {
     doneMovingCallback(success);
@@ -8871,17 +8934,14 @@ function _moveEndHandler(toolName, annotation, handle, options, interactionType,
   var moveHandler = _ref2.moveHandler,
       moveEndHandler = _ref2.moveEndHandler;
   var eventData = evt.detail;
-  var element = eventData.element,
-      currentPoints = eventData.currentPoints;
+  var element = eventData.element;
   var moveNewHandleSuccessful = true;
 
   if (options.hasMoved === false) {
     return;
   }
 
-  var page = currentPoints.page;
-  var fingerOffset = 0;
-  var targetLocation = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.pageToPixel(element, interactionType === 'touch' ? page.x + fingerOffset : page.x, interactionType === 'touch' ? page.y + fingerOffset : page.y); // "Release" the handle
+  var targetLocation = Object(_getHandlePixelPosition_js__WEBPACK_IMPORTED_MODULE_3__["default"])(eventData, interactionType); // "Release" the handle
 
   annotation.active = false;
   annotation.invalidated = true;
@@ -8907,14 +8967,14 @@ function _moveEndHandler(toolName, annotation, handle, options, interactionType,
   // }
 
   if (options.preventHandleOutsideImage) {
-    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_5__["clipToBox"])(handle, evt.detail.image);
+    Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_6__["clipToBox"])(handle, evt.detail.image);
   } // If any handle is outside the image, delete the tool data
 
 
   if (options.deleteIfHandleOutsideImage && Object(_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_2__["default"])(evt.detail, annotation.handles)) {
     annotation.cancelled = true;
     moveNewHandleSuccessful = false;
-    Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["removeToolState"])(element, toolName, annotation);
+    Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__["removeToolState"])(element, toolName, annotation);
   }
 
   _endHandler(interactionType, options, element, {
@@ -9914,219 +9974,6 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./requestPool/requestPoolManager.js":
-/*!*******************************************!*\
-  !*** ./requestPool/requestPoolManager.js ***!
-  \*******************************************/
-/*! exports provided: default */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
-/* harmony import */ var _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../util/getMaxSimultaneousRequests.js */ "./util/getMaxSimultaneousRequests.js");
-
-
-var requestPool = {
-  interaction: [],
-  thumbnail: [],
-  prefetch: []
-};
-var numRequests = {
-  interaction: 0,
-  thumbnail: 0,
-  prefetch: 0
-};
-var maxNumRequests = {
-  interaction: 6,
-  thumbnail: 6,
-  prefetch: 5
-};
-var awake = false;
-var grabDelay = 20;
-
-function addRequest(element, imageId, type, preventCache, doneCallback, failCallback, addToBeginning) {
-  var options = arguments.length > 7 && arguments[7] !== undefined ? arguments[7] : {};
-
-  if (!requestPool.hasOwnProperty(type)) {
-    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
-  }
-
-  if (!element || !imageId) {
-    return;
-  } // Describe the request
-
-
-  var requestDetails = {
-    type: type,
-    imageId: imageId,
-    preventCache: preventCache,
-    doneCallback: doneCallback,
-    failCallback: failCallback,
-    options: options
-  }; // If this imageId is in the cache, resolve it immediately
-
-  var imageLoadObject = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.imageCache.getImageLoadObject(imageId);
-
-  if (imageLoadObject) {
-    imageLoadObject.promise.then(function (image) {
-      doneCallback(image);
-    }, function (error) {
-      failCallback(error);
-    });
-    return;
-  }
-
-  if (addToBeginning) {
-    // Add it to the beginning of the stack
-    requestPool[type].unshift(requestDetails);
-  } else {
-    // Add it to the end of the stack
-    requestPool[type].push(requestDetails);
-  } // Wake up
-
-
-  awake = true;
-}
-
-function clearRequestStack(type) {
-  // Console.log('clearRequestStack');
-  if (!requestPool.hasOwnProperty(type)) {
-    throw new Error('Request type must be one of interaction, thumbnail, or prefetch');
-  }
-
-  requestPool[type] = [];
-}
-
-function startAgain() {
-  if (!awake) {
-    return;
-  }
-
-  setTimeout(function () {
-    startGrabbing();
-  }, grabDelay);
-}
-
-function sendRequest(requestDetails) {
-  var cornerstone = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone; // Increment the number of current requests of this type
-
-  var type = requestDetails.type;
-  numRequests[type]++;
-  awake = true;
-  var imageId = requestDetails.imageId;
-  var doneCallback = requestDetails.doneCallback;
-  var failCallback = requestDetails.failCallback; // Check if we already have this image promise in the cache
-
-  var imageLoadObject = cornerstone.imageCache.getImageLoadObject(imageId);
-
-  if (imageLoadObject) {
-    // If we do, remove from list (when resolved, as we could have
-    // Pending prefetch requests) and stop processing this iteration
-    imageLoadObject.promise.then(function (image) {
-      numRequests[type]--; // Console.log(numRequests);
-
-      doneCallback(image);
-      startAgain();
-    }, function (error) {
-      numRequests[type]--; // Console.log(numRequests);
-
-      failCallback(error);
-      startAgain();
-    });
-    return;
-  }
-
-  function requestTypeToLoadPriority(requestDetails) {
-    if (requestDetails.type === 'prefetch') {
-      return -5;
-    } else if (requestDetails.type === 'interactive') {
-      return 0;
-    } else if (requestDetails.type === 'thumbnail') {
-      return 5;
-    }
-  }
-
-  var priority = requestTypeToLoadPriority(requestDetails);
-  var options = Object.assign({}, requestDetails.options, {
-    priority: priority,
-    type: requestDetails.type
-  });
-  var loader;
-
-  if (requestDetails.preventCache === true) {
-    loader = cornerstone.loadImage(imageId, options);
-  } else {
-    loader = cornerstone.loadAndCacheImage(imageId, options);
-  } // Load and cache the image
-
-
-  loader.then(function (image) {
-    numRequests[type]--; // Console.log(numRequests);
-
-    doneCallback(image);
-    startAgain();
-  }, function (error) {
-    numRequests[type]--; // Console.log(numRequests);
-
-    failCallback(error);
-    startAgain();
-  });
-}
-
-function startGrabbing() {
-  // Begin by grabbing X images
-  var maxSimultaneousRequests = Object(_util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_1__["getMaxSimultaneousRequests"])();
-  maxNumRequests = {
-    interaction: Math.max(maxSimultaneousRequests, 1),
-    thumbnail: Math.max(maxSimultaneousRequests - 2, 1),
-    prefetch: Math.max(maxSimultaneousRequests - 1, 1)
-  };
-  var currentRequests = numRequests.interaction + numRequests.thumbnail + numRequests.prefetch;
-  var requestsToSend = maxSimultaneousRequests - currentRequests;
-
-  for (var i = 0; i < requestsToSend; i++) {
-    var requestDetails = getNextRequest();
-
-    if (requestDetails) {
-      sendRequest(requestDetails);
-    }
-  }
-}
-
-function getNextRequest() {
-  if (requestPool.interaction.length && numRequests.interaction < maxNumRequests.interaction) {
-    return requestPool.interaction.shift();
-  }
-
-  if (requestPool.thumbnail.length && numRequests.thumbnail < maxNumRequests.thumbnail) {
-    return requestPool.thumbnail.shift();
-  }
-
-  if (requestPool.prefetch.length && numRequests.prefetch < maxNumRequests.prefetch) {
-    return requestPool.prefetch.shift();
-  }
-
-  if (!requestPool.interaction.length && !requestPool.thumbnail.length && !requestPool.prefetch.length) {
-    awake = false;
-  }
-
-  return false;
-}
-
-function getRequestPool() {
-  return requestPool;
-}
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  addRequest: addRequest,
-  clearRequestStack: clearRequestStack,
-  startGrabbing: startGrabbing,
-  getRequestPool: getRequestPool
-});
-
-/***/ }),
-
 /***/ "./stackTools/fusionRenderer.js":
 /*!**************************************!*\
   !*** ./stackTools/fusionRenderer.js ***!
@@ -10536,30 +10383,22 @@ function stopClip(element) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./../externalModules.js */ "./externalModules.js");
-/* harmony import */ var _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../requestPool/requestPoolManager.js */ "./requestPool/requestPoolManager.js");
-/* harmony import */ var _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stateManagement/loadHandlerManager.js */ "./stateManagement/loadHandlerManager.js");
-/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/getMaxSimultaneousRequests.js */ "./util/getMaxSimultaneousRequests.js");
-/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
-/* harmony import */ var _util_triggerEvent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../util/triggerEvent */ "./util/triggerEvent.js");
-/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../events.js */ "./events.js");
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+/* harmony import */ var _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../stateManagement/loadHandlerManager.js */ "./stateManagement/loadHandlerManager.js");
+/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../util/logger.js */ "./util/logger.js");
+/* harmony import */ var _util_triggerEvent__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/triggerEvent */ "./util/triggerEvent.js");
+/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../events.js */ "./events.js");
 
 
 
 
 
 
-
-
-
-var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_5__["getLogger"])('stackTools:stackPrefetch');
+var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_3__["getLogger"])('stackTools:stackPrefetch');
 var toolName = 'stackPrefetch';
 var requestType = 'prefetch';
+var priority = 0;
+var addToBeginning = true;
 var configuration = {
   maxImagesToPrefetch: Infinity,
   preserveExistingPool: false
@@ -10586,35 +10425,27 @@ function range(lowEnd, highEnd) {
   return arr;
 }
 
-var max = function max(arr) {
-  return Math.max.apply(null, arr);
-};
-
-var min = function min(arr) {
-  return Math.min.apply(null, arr);
-};
-
 function nearestIndex(arr, x) {
   // Return index of nearest values in array
   // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
-  var l = [];
-  var h = [];
-  arr.forEach(function (v) {
+  var low = 0;
+  var high = arr.length - 1;
+  arr.forEach(function (v, idx) {
     if (v < x) {
-      l.push(v);
+      low = Math.max(idx, low);
     } else if (v > x) {
-      h.push(v);
+      high = Math.min(idx, high);
     }
   });
   return {
-    low: arr.indexOf(max(l)),
-    high: arr.indexOf(min(h))
+    low: low,
+    high: high
   };
 }
 
 function prefetch(element) {
   // Check to make sure stack data exists
-  var stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, 'stack');
+  var stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, 'stack');
 
   if (!stackData || !stackData.data || !stackData.data.length) {
     return;
@@ -10622,7 +10453,7 @@ function prefetch(element) {
 
   var stack = stackData.data[0]; // Get the stackPrefetch tool data
 
-  var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, toolName);
+  var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, toolName);
 
   if (!stackPrefetchData) {
     return;
@@ -10677,7 +10508,7 @@ function prefetch(element) {
 
 
   if (!configuration.preserveExistingPool) {
-    _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_1__["default"].clearRequestStack(requestType);
+    _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   } // Identify the nearest imageIdIndex to the currentImageIdIndex
 
 
@@ -10690,7 +10521,7 @@ function prefetch(element) {
     logger.log('prefetch done: %s', image.imageId);
     var imageIdIndex = stack.imageIds.indexOf(image.imageId);
     removeFromList(imageIdIndex);
-    Object(_util_triggerEvent__WEBPACK_IMPORTED_MODULE_6__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].STACK_PREFETCH_IMAGE_LOADED, {
+    Object(_util_triggerEvent__WEBPACK_IMPORTED_MODULE_4__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_5__["default"].STACK_PREFETCH_IMAGE_LOADED, {
       element: element,
       imageId: image.imageId,
       imageIndex: imageIdIndex,
@@ -10699,7 +10530,7 @@ function prefetch(element) {
     }); // If there are no more images to fetch
 
     if (!(stackPrefetch.indicesToRequest && stackPrefetch.indicesToRequest.length > 0)) {
-      Object(_util_triggerEvent__WEBPACK_IMPORTED_MODULE_6__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_7__["default"].STACK_PREFETCH_DONE, {
+      Object(_util_triggerEvent__WEBPACK_IMPORTED_MODULE_4__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_5__["default"].STACK_PREFETCH_DONE, {
         element: element,
         stackPrefetch: stackPrefetch,
         stack: stack
@@ -10708,7 +10539,7 @@ function prefetch(element) {
   } // Retrieve the errorLoadingHandler if one exists
 
 
-  var errorLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_2__["default"].getErrorLoadingHandler(element);
+  var errorLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_1__["default"].getErrorLoadingHandler(element);
 
   function failCallback(error) {
     logger.log('prefetch errored: %o', error);
@@ -10745,26 +10576,31 @@ function prefetch(element) {
       imageId = stack.imageIds[nextImageIdIndex];
       imageIdsToPrefetch.push(imageId);
     }
-  } // Load images in reverse order, by adding them at the beginning of the pool.
-
-
-  var _iterator = _createForOfIteratorHelper(imageIdsToPrefetch.reverse()),
-      _step;
-
-  try {
-    for (_iterator.s(); !(_step = _iterator.n()).done;) {
-      var imageToLoad = _step.value;
-      _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_1__["default"].addRequest(element, imageToLoad, requestType, preventCache, doneCallback, failCallback, true);
-    } // Try to start the requestPool's grabbing procedure
-    // In case it isn't already running
-
-  } catch (err) {
-    _iterator.e(err);
-  } finally {
-    _iterator.f();
   }
 
-  _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_1__["default"].startGrabbing();
+  var requestFn;
+  var options = {
+    addToBeginning: addToBeginning,
+    priority: priority,
+    requestType: requestType
+  };
+
+  if (preventCache) {
+    requestFn = function requestFn(id) {
+      return _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.loadImage(id, options);
+    };
+  } else {
+    requestFn = function requestFn(id) {
+      return _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.loadAndCacheImage(id, options);
+    };
+  }
+
+  imageIdsToPrefetch.reverse().forEach(function (imageId) {
+    _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.imageLoadPoolManager.addRequest(requestFn.bind(null, imageId), requestType, // Additional details
+    {
+      imageId: imageId
+    }, priority, addToBeginning);
+  });
 }
 
 function getPromiseRemovedHandler(element) {
@@ -10777,7 +10613,7 @@ function getPromiseRemovedHandler(element) {
 
     try {
       // It will throw an exception in some cases (eg: thumbnails)
-      stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, 'stack');
+      stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, 'stack');
     } catch (error) {
       return;
     }
@@ -10794,7 +10630,7 @@ function getPromiseRemovedHandler(element) {
       return;
     }
 
-    var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, toolName);
+    var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, toolName);
 
     if (!stackPrefetchData || !stackPrefetchData.data || !stackPrefetchData.data.length) {
       return;
@@ -10822,10 +10658,10 @@ function onImageUpdated(e) {
 
 function enable(element) {
   // Clear old prefetch data. Skipping this can cause problems when changing the series inside an element
-  var stackPrefetchDataArray = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, toolName);
+  var stackPrefetchDataArray = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, toolName);
   stackPrefetchDataArray.data = []; // First check that there is stack data available
 
-  var stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, 'stack');
+  var stackData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, 'stack');
 
   if (!stackData || !stackData.data || !stackData.data.length) {
     return;
@@ -10847,7 +10683,7 @@ function enable(element) {
 
   var indexOfCurrentImage = stackPrefetchData.indicesToRequest.indexOf(stack.currentImageIdIndex);
   stackPrefetchData.indicesToRequest.splice(indexOfCurrentImage, 1);
-  Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["addToolState"])(element, toolName, stackPrefetchData);
+  Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["addToolState"])(element, toolName, stackPrefetchData);
   prefetch(element);
   element.removeEventListener(_externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
   element.addEventListener(_externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
@@ -10861,12 +10697,12 @@ function disable(element) {
   element.removeEventListener(_externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.EVENTS.NEW_IMAGE, onImageUpdated);
   var promiseRemovedHandler = getPromiseRemovedHandler(element);
   _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.events.removeEventListener(_externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.EVENTS.IMAGE_CACHE_PROMISE_REMOVED, promiseRemovedHandler);
-  var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(element, toolName); // If there is actually something to disable, disable it
+  var stackPrefetchData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__["getToolState"])(element, toolName); // If there is actually something to disable, disable it
 
   if (stackPrefetchData && stackPrefetchData.data.length) {
     stackPrefetchData.data[0].enabled = false; // Clear current prefetch requests from the requestPool
 
-    _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_1__["default"].clearRequestStack(requestType);
+    _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.imageLoadPoolManager.clearRequestStack(requestType);
   }
 }
 
@@ -10876,10 +10712,6 @@ function getConfiguration() {
 
 function setConfiguration(config) {
   configuration = config;
-
-  if (config.maxSimultaneousRequests) {
-    Object(_util_getMaxSimultaneousRequests_js__WEBPACK_IMPORTED_MODULE_4__["setMaxSimultaneousRequests"])(config.maxSimultaneousRequests);
-  }
 } // Module/private exports
 
 
@@ -11113,6 +10945,24 @@ function newImageIdSpecificToolStateManager() {
     }
 
     return imageIdToolState[toolName];
+  } // Replaces the given tool's state using the provided element's imageId
+
+
+  function setElementToolState(element, toolName, data) {
+    var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.getEnabledElement(element);
+
+    if (!enabledElement.image) {
+      return;
+    }
+
+    setImageIdToolState(enabledElement.image.imageId, toolName, data);
+  } // Replaces the imageId's tool state for a given tool
+
+
+  function setImageIdToolState(imageId, toolName, data) {
+    var imageIdToolState = toolState[imageId]; // set the toolState
+
+    imageIdToolState[toolName] = data;
   } // Clears all tool data from this toolStateManager.
 
 
@@ -11137,9 +10987,11 @@ function newImageIdSpecificToolStateManager() {
   return {
     get: getElementToolState,
     add: addElementToolState,
+    set: setElementToolState,
     clear: clearElementToolState,
     getImageIdToolState: getImageIdToolState,
     addImageIdToolState: addImageIdToolState,
+    setImageIdToolState: setImageIdToolState,
     clearImageIdToolState: clearImageIdToolState,
     saveImageIdToolState: saveImageIdToolState,
     restoreImageIdToolState: restoreImageIdToolState,
@@ -11387,43 +11239,126 @@ var stackSpecificStateManager = {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-var defaultFontSize = 15,
-    defaultFont = "".concat(defaultFontSize, "px Arial"),
-    defaultBackgroundColor = 'transparent';
+var textStyle = {
+  fontSize: 15,
+  fontFamily: 'Arial',
+  backgroundColor: 'transparent'
+};
+/**
+ * @deprecated
+ * This function will be deprecated and users must use `setFontSize` and
+ * `setFontFamily` to set the font configuration independently.
+ *
+ * @param {string} font Font string with font size and font family
+ * @returns {void}
+ */
 
 function setFont(font) {
-  defaultFont = font;
+  var split = font.split('px ');
+
+  if (split.length === 2) {
+    setFontSize(parseFloat(split[0]));
+    setFontFamily(split[1]);
+  }
 }
+/**
+ * Returns all the font styling properties combined into a single string
+ * following the CSS font property pattern.
+ * @see {@link https://www.w3.org/TR/css-fonts-3/#font-prop|3.7. Shorthand font property: the font property}
+ *
+ * @returns {string} CSS font property
+ */
+
 
 function getFont() {
-  return defaultFont;
+  return "".concat(textStyle.fontSize, "px ").concat(textStyle.fontFamily);
 }
+/**
+ * Sets the font family that will be used for general font rendering.
+ * @see {@link https://www.w3.org/TR/css-fonts-3/#font-family-prop|3.1. Font family: the font-family property}
+ *
+ * @param {string} fontFamily Name of the font to be used
+ * @returns {void}
+ */
+
+
+function setFontFamily(fontFamily) {
+  if (typeof fontFamily !== 'string') {
+    throw new Error('Font family must be a valid string');
+  }
+
+  textStyle.fontFamily = fontFamily;
+}
+/**
+ * Returns the defined font family for rendering text boxes.
+ *
+ * @returns {string} The font family used for rendering text boxes
+ */
+
+
+function getFontFamily() {
+  return textStyle.fontFamily;
+}
+/**
+ * Sets the font size in pixels that will be used for general font rendering.
+ *
+ * @param {number} fontSize Font size in pixels
+ * @returns {void}
+ */
+
 
 function setFontSize(fontSize) {
-  defaultFontSize = fontSize;
+  if (typeof fontSize !== 'number' || isNaN(fontSize) || !isFinite(fontSize)) {
+    throw new Error('Font size must be a valid number');
+  }
+
+  textStyle.fontSize = parseFloat(fontSize);
 }
+/**
+ * Returns the font size in pixels that will be used for general font rendering.
+ *
+ * @returns {number} Font size in pixels
+ */
+
 
 function getFontSize() {
-  return defaultFontSize;
+  return textStyle.fontSize;
 }
+/**
+ * Changes the background color of the text's bounding box.
+ * The default background color is transparent, that's why it doesn't display
+ * any background for the text box.
+ *
+ * @param {string} backgroundColor Background color for the text
+ * @returns {void}
+ */
+
 
 function setBackgroundColor(backgroundColor) {
-  defaultBackgroundColor = backgroundColor;
+  textStyle.backgroundColor = backgroundColor;
 }
+/**
+ * Returns the background color that is being used for rendering text boxes.
+ *
+ * @returns {string} The background color for the text's bounding box
+ */
+
 
 function getBackgroundColor() {
-  return defaultBackgroundColor;
+  return textStyle.backgroundColor;
 }
 
-var textStyle = {
+var textStyleApi = {
   setFont: setFont,
   getFont: getFont,
   setFontSize: setFontSize,
   getFontSize: getFontSize,
+  setFontFamily: setFontFamily,
+  getFontFamily: getFontFamily,
   setBackgroundColor: setBackgroundColor,
   getBackgroundColor: getBackgroundColor
 };
-/* harmony default export */ __webpack_exports__["default"] = (textStyle);
+/* harmony default export */ __webpack_exports__["default"] = (textStyleApi);
 
 /***/ }),
 
@@ -11988,9 +11923,9 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.js */ "./store/index.js");
-/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
+/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
+/* harmony import */ var _util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../util/getProximityThreshold.js */ "./util/getProximityThreshold.js");
 
 
 
@@ -12010,12 +11945,12 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ __webpack_exports__["default"] = (function (element, tools, coords) {
   var interactionType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'mouse';
-  var proximity = interactionType === 'mouse' ? _index_js__WEBPACK_IMPORTED_MODULE_0__["state"].clickProximity : _index_js__WEBPACK_IMPORTED_MODULE_0__["state"].touchProximity;
   return tools.filter(function (tool) {
-    var toolState = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_1__["getToolState"])(element, tool.name);
+    var distanceThreshold = Object(_util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_2__["default"])(interactionType, tool.name);
+    var toolState = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_0__["getToolState"])(element, tool.name);
 
     for (var i = 0; i < toolState.data.length; i++) {
-      if (Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, toolState.data[i].handles, coords, proximity) !== undefined) {
+      if (Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__["default"])(element, toolState.data[i].handles, coords, distanceThreshold) !== undefined) {
         return true;
       }
     }
@@ -12069,9 +12004,15 @@ var state = {
   handleRadius: 6,
   deleteIfHandleOutsideImage: true,
   preventHandleOutsideImage: false,
+  preventTextBoxOutsideDisplayedArea: false,
+  // Average pixel width of index finger is 45-57 pixels
+  // https://www.smashingmagazine.com/2012/02/finger-friendly-design-ideal-mobile-touchscreen-target-sizes/
+  handleTouchOffset: {
+    x: 0,
+    y: -57
+  },
   // Cursor
-  svgCursorUrl: null //
-
+  svgCursorUrl: null
 };
 var getters = {
   mouseTools: function mouseTools() {
@@ -13089,7 +13030,7 @@ function getColorForSegmentIndexColorLUT(labelmap3DOrColorLUTIndex, segmentIndex
  *
  * @param {Object|number} labelmap3DOrColorLUTIndex Either a `Labelmap3D` object (who's referenced colorLUT will be changed), or a colorLUTIndex.
  * @param {number} segmentIndex The segmentIndex color to change.
- * @param {[number,number,number,number]} colorArray The color values in RGBA array format.
+ * @param {number[]} colorArray The color values in RGBA array format (required length 4).
  */
 
 function setColorForSegmentIndexOfColorLUT(labelmap3DOrColorLUTIndex, segmentIndex, colorArray) {
@@ -14166,26 +14107,16 @@ function getSegmentOfActiveLabelmapAtEvent(evt) {
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getSegmentsOnPixelData; });
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
+
+
 /**
  * Returns an array of the segment indicies present on the `pixelData`.
  * @param  {UInt16Array|Float32Array} pixelData The pixel data array.
  */
 function getSegmentsOnPixelData(pixelData) {
-  var segmentSet = new Set(pixelData);
-  var iterator = segmentSet.values();
-  var segmentsOnLabelmap = [];
-  var done = false;
-
-  while (!done) {
-    var next = iterator.next();
-    done = next.done;
-
-    if (!done) {
-      segmentsOnLabelmap.push(next.value);
-    }
-  }
-
-  return segmentsOnLabelmap;
+  return _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(new Set(pixelData));
 }
 
 /***/ }),
@@ -17157,7 +17088,7 @@ var CrosshairsTool = /*#__PURE__*/function (_BaseTool) {
       svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_13__["crosshairsCursor"]
     };
     _this = _super.call(this, props, defaultProps);
-    _this.mouseDownCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
+    _this.preMouseDownCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
     _this.mouseDragCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
     _this.touchDragCallback = _this._chooseLocation.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
     return _this;
@@ -19528,8 +19459,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @babel/runtime/helpers/getPrototypeOf */ "../node_modules/@babel/runtime/helpers/getPrototypeOf.js");
 /* harmony import */ var _babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
-/* harmony import */ var _base_BaseTool_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./base/BaseTool.js */ "./tools/base/BaseTool.js");
+/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../store/index */ "./store/index.js");
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
+/* harmony import */ var _base_BaseTool_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./base/BaseTool.js */ "./tools/base/BaseTool.js");
 
 
 
@@ -19542,6 +19474,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
+
+var globalConfiguration = _store_index__WEBPACK_IMPORTED_MODULE_5__["modules"].globalConfiguration;
 /**
  *
  * http://dicom.nema.org/dicom/2013/output/chtml/part03/sect_C.9.html
@@ -19550,7 +19484,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
  * @class Overlay
  * @memberof Tools
  *
- * @classdesc Tool for displaying a scale overlay on the image.
+ * @classdesc Tool for displaying a scale overlay on the image.  Uses viewport.overlayColor to set the default colour.
  * @extends Tools.Base.BaseTool
  */
 
@@ -19590,11 +19524,34 @@ var OverlayTool = /*#__PURE__*/function (_BaseTool) {
   }, {
     key: "forceImageUpdate",
     value: function forceImageUpdate(element) {
-      var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.getEnabledElement(element);
+      var enabledElement = _externalModules_js__WEBPACK_IMPORTED_MODULE_6__["default"].cornerstone.getEnabledElement(element);
 
       if (enabledElement.image) {
-        _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.updateImage(element);
+        _externalModules_js__WEBPACK_IMPORTED_MODULE_6__["default"].cornerstone.updateImage(element);
       }
+    }
+  }, {
+    key: "setupRender",
+    value: function setupRender(image) {
+      if (!image) return;
+      var overlayPlaneMetadata = _externalModules_js__WEBPACK_IMPORTED_MODULE_6__["default"].cornerstone.metaData.get('overlayPlaneModule', image.imageId);
+
+      if (!overlayPlaneMetadata || !overlayPlaneMetadata.overlays || !overlayPlaneMetadata.overlays.length) {
+        return;
+      }
+
+      return overlayPlaneMetadata;
+    }
+  }, {
+    key: "setupViewport",
+    value: function setupViewport(viewport) {
+      if (viewport.overlayColor === undefined) {
+        viewport.overlayColor = globalConfiguration.configuration.overlayColor || 'white';
+      } // Allow turning off overlays by setting overlayColor to false
+
+
+      if (viewport.overlayColor === false) return;
+      return true;
     }
   }, {
     key: "renderToolData",
@@ -19604,23 +19561,15 @@ var OverlayTool = /*#__PURE__*/function (_BaseTool) {
           image = eventData.image,
           viewport = eventData.viewport,
           canvasContext = eventData.canvasContext;
+      var overlayPlaneMetadata = this.setupRender(image);
 
-      if (!eventData || !enabledElement || !image) {
+      if (!eventData || !enabledElement || !overlayPlaneMetadata) {
         return;
       }
 
-      var overlayPlaneMetadata = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.metaData.get('overlayPlaneModule', image.imageId);
-
-      if (!overlayPlaneMetadata || !overlayPlaneMetadata.overlays || !overlayPlaneMetadata.overlays.length) {
-        return;
-      }
-
-      var viewportPixelSpacing = {
-        column: viewport.displayedArea.columnPixelSpacing || 1,
-        row: viewport.displayedArea.rowPixelSpacing || 1
-      };
-      var imageWidth = Math.abs(viewport.displayedArea.brhc.x - viewport.displayedArea.tlhc.x) * viewportPixelSpacing.column;
-      var imageHeight = Math.abs(viewport.displayedArea.brhc.y - viewport.displayedArea.tlhc.y) * viewportPixelSpacing.row;
+      if (!this.setupViewport(viewport)) return;
+      var imageWidth = image.columns;
+      var imageHeight = image.rows;
       overlayPlaneMetadata.overlays.forEach(function (overlay) {
         if (overlay.visible === false) {
           return;
@@ -19630,7 +19579,7 @@ var OverlayTool = /*#__PURE__*/function (_BaseTool) {
         layerCanvas.width = imageWidth;
         layerCanvas.height = imageHeight;
         var layerContext = layerCanvas.getContext('2d');
-        layerContext.fillStyle = overlay.fillStyle || 'white';
+        layerContext.fillStyle = overlay.fillStyle || viewport.overlayColor;
 
         if (overlay.type === 'R') {
           layerContext.fillRect(0, 0, layerCanvas.width, layerCanvas.height);
@@ -19657,7 +19606,7 @@ var OverlayTool = /*#__PURE__*/function (_BaseTool) {
   }]);
 
   return OverlayTool;
-}(_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_6__["default"]);
+}(_base_BaseTool_js__WEBPACK_IMPORTED_MODULE_7__["default"]);
 
 
 
@@ -20207,7 +20156,7 @@ function defaultStrategy(evt) {
       viewport = _evt$detail.viewport,
       startPoints = _evt$detail.startPoints,
       currentPoints = _evt$detail.currentPoints;
-  var initialRotation = viewport.initialRotation; // Calculate the center of the image
+  var initialRotation = viewport.initialRotation ? viewport.initialRotation : viewport.rotation; // Calculate the center of the image
 
   var rect = element.getBoundingClientRect(element);
   var width = element.clientWidth,
@@ -23462,7 +23411,9 @@ var CobbAngleTool = /*#__PURE__*/function (_BaseAnnotationTool) {
         return false;
       }
 
-      return Object(_util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_15__["default"])(element, data.handles.start, data.handles.end, coords) < 25 || Object(_util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_15__["default"])(element, data.handles.start2, data.handles.end2, coords) < 25;
+      var seg1Near = Object(_util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_15__["default"])(element, data.handles.start, data.handles.end, coords) < 25;
+      var seg2Near = Object(_util_lineSegDistance_js__WEBPACK_IMPORTED_MODULE_15__["default"])(element, data.handles.start2, data.handles.end2, coords) < 25;
+      return seg1Near || seg2Near;
     }
   }, {
     key: "updateCachedStats",
@@ -23503,12 +23454,22 @@ var CobbAngleTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       var lineWidth = _stateManagement_toolStyle_js__WEBPACK_IMPORTED_MODULE_9__["default"].getToolWidth();
       var lineDash = Object(_store_index__WEBPACK_IMPORTED_MODULE_22__["getModule"])('globalConfiguration').configuration.lineDash;
       var font = _stateManagement_textStyle_js__WEBPACK_IMPORTED_MODULE_7__["default"].getFont();
+      var element = evt.detail.element;
+      var image = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.getEnabledElement(element).image;
+
+      var _getPixelSpacing2 = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_21__["default"])(image),
+          rowPixelSpacing = _getPixelSpacing2.rowPixelSpacing,
+          colPixelSpacing = _getPixelSpacing2.colPixelSpacing;
 
       var _loop = function _loop(i) {
         var data = toolData.data[i];
 
         if (data.visible === false) {
           return "continue";
+        }
+
+        if (!data.value) {
+          data.value = _this2.textBoxText(data, rowPixelSpacing, colPixelSpacing);
         }
 
         Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_12__["draw"])(context, function (context) {
@@ -23598,6 +23559,16 @@ var CobbAngleTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_8__["removeToolState"])(element, _this3.name, measurementData);
           return;
         }
+
+        var eventType = _events_js__WEBPACK_IMPORTED_MODULE_17__["default"].MEASUREMENT_COMPLETED;
+        var eventData = {
+          toolName: _this3.name,
+          toolType: _this3.name,
+          // Deprecation notice: toolType will be replaced by toolName
+          element: element,
+          measurementData: measurementData
+        };
+        Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_19__["default"])(element, eventType, eventData);
       }; // Search for incomplete measurements
 
 
@@ -23657,9 +23628,9 @@ var CobbAngleTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       var element = ev.detail.element;
       var image = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.getEnabledElement(element).image;
 
-      var _getPixelSpacing2 = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_21__["default"])(image),
-          rowPixelSpacing = _getPixelSpacing2.rowPixelSpacing,
-          colPixelSpacing = _getPixelSpacing2.colPixelSpacing;
+      var _getPixelSpacing3 = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_21__["default"])(image),
+          rowPixelSpacing = _getPixelSpacing3.rowPixelSpacing,
+          colPixelSpacing = _getPixelSpacing3.colPixelSpacing;
 
       if (ev.detail.toolName !== this.name) {
         return;
@@ -23675,19 +23646,23 @@ var CobbAngleTool = /*#__PURE__*/function (_BaseAnnotationTool) {
         }
       }
 
-      var rAngle = data.rAngle;
-      data.value = '';
+      data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
+    }
+  }, {
+    key: "textBoxText",
+    value: function textBoxText(_ref2, rowPixelSpacing, colPixelSpacing) {
+      var rAngle = _ref2.rAngle;
 
-      if (!Number.isNaN(rAngle)) {
-        data.value = textBoxText(rAngle, rowPixelSpacing, colPixelSpacing);
+      if (rAngle === undefined) {
+        return '';
       }
 
-      function textBoxText(rAngle, rowPixelSpacing, colPixelSpacing) {
-        var suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
-        var str = '00B0'; // Degrees symbol
-
-        return rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix;
+      if (Number.isNaN(rAngle)) {
+        return '';
       }
+
+      var suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
+      return "".concat(rAngle, "\xB0").concat(suffix);
     }
   }, {
     key: "activeCallback",
@@ -24236,15 +24211,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ../../util/pointInsideBoundingBox.js */ "./util/pointInsideBoundingBox.js");
 /* harmony import */ var _util_calculateSUV_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ../../util/calculateSUV.js */ "./util/calculateSUV.js");
 /* harmony import */ var _util_numbersWithCommas_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ../../util/numbersWithCommas.js */ "./util/numbersWithCommas.js");
-/* harmony import */ var _drawing_index_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../drawing/index.js */ "./drawing/index.js");
-/* harmony import */ var _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../drawing/drawLinkedTextBox.js */ "./drawing/drawLinkedTextBox.js");
-/* harmony import */ var _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../drawing/drawHandles.js */ "./drawing/drawHandles.js");
-/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../util/clip.js */ "./util/clip.js");
-/* harmony import */ var _store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../store/setToolCursor.js */ "./store/setToolCursor.js");
-/* harmony import */ var _cursors_index_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../cursors/index.js */ "./tools/cursors/index.js");
-/* harmony import */ var _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../../util/freehand/index.js */ "./util/freehand/index.js");
-/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../../util/logger.js */ "./util/logger.js");
-/* harmony import */ var _util_throttle__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../../util/throttle */ "./util/throttle.js");
+/* harmony import */ var _util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ../../util/getPixelSpacing */ "./util/getPixelSpacing.js");
+/* harmony import */ var _drawing_index_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ../../drawing/index.js */ "./drawing/index.js");
+/* harmony import */ var _drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ../../drawing/drawLinkedTextBox.js */ "./drawing/drawLinkedTextBox.js");
+/* harmony import */ var _drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ../../drawing/drawHandles.js */ "./drawing/drawHandles.js");
+/* harmony import */ var _util_clip_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../../util/clip.js */ "./util/clip.js");
+/* harmony import */ var _store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ../../store/setToolCursor.js */ "./store/setToolCursor.js");
+/* harmony import */ var _cursors_index_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../cursors/index.js */ "./tools/cursors/index.js");
+/* harmony import */ var _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ../../util/freehand/index.js */ "./util/freehand/index.js");
+/* harmony import */ var _util_logger_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ../../util/logger.js */ "./util/logger.js");
+/* harmony import */ var _util_throttle__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ../../util/throttle */ "./util/throttle.js");
 
 
 
@@ -24270,6 +24246,7 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
+
  // Drawing
 
 
@@ -24282,12 +24259,12 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 
 
 
-var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_25__["getLogger"])('tools:annotation:FreehandRoiTool');
-var insertOrDelete = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__["default"].insertOrDelete,
-    freehandArea = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__["default"].freehandArea,
-    calculateFreehandStatistics = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__["default"].calculateFreehandStatistics,
-    freehandIntersect = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__["default"].freehandIntersect,
-    FreehandHandleData = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_24__["default"].FreehandHandleData;
+var logger = Object(_util_logger_js__WEBPACK_IMPORTED_MODULE_26__["getLogger"])('tools:annotation:FreehandRoiTool');
+var insertOrDelete = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__["default"].insertOrDelete,
+    freehandArea = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__["default"].freehandArea,
+    calculateFreehandStatistics = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__["default"].calculateFreehandStatistics,
+    freehandIntersect = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__["default"].freehandIntersect,
+    FreehandHandleData = _util_freehand_index_js__WEBPACK_IMPORTED_MODULE_25__["default"].FreehandHandleData;
 /**
  * @public
  * @class FreehandRoiTool
@@ -24313,7 +24290,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       name: 'FreehandRoi',
       supportedInteractionTypes: ['Mouse', 'Touch'],
       configuration: defaultFreehandConfiguration(),
-      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_23__["freehandRoiCursor"]
+      svgCursor: _cursors_index_js__WEBPACK_IMPORTED_MODULE_24__["freehandRoiCursor"]
     };
     _this = _super.call(this, props, defaultProps);
     _this.isMultiPartTool = true;
@@ -24332,7 +24309,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
     _this._drawingTouchDragCallback = _this._drawingTouchDragCallback.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
     _this._drawingDoubleTapClickCallback = _this._drawingDoubleTapClickCallback.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
     _this._editTouchDragCallback = _this._editTouchDragCallback.bind(_babel_runtime_helpers_assertThisInitialized__WEBPACK_IMPORTED_MODULE_2___default()(_this));
-    _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_26__["default"])(_this.updateCachedStats, 110);
+    _this.throttledUpdateCachedStats = Object(_util_throttle__WEBPACK_IMPORTED_MODULE_27__["default"])(_this.updateCachedStats, 110);
     return _this;
   }
 
@@ -24529,9 +24506,11 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       // Real non-zero values, set them to 1
 
 
-      var columnPixelSpacing = image.columnPixelSpacing || 1;
-      var rowPixelSpacing = image.rowPixelSpacing || 1;
-      var scaling = columnPixelSpacing * rowPixelSpacing;
+      var _getPixelSpacing = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_18__["default"])(image),
+          colPixelSpacing = _getPixelSpacing.colPixelSpacing,
+          rowPixelSpacing = _getPixelSpacing.rowPixelSpacing;
+
+      var scaling = (colPixelSpacing || 1) * (rowPixelSpacing || 1);
       var area = freehandArea(data.handles.points, scaling); // If the area value is sane, store it for later retrieval
 
       if (!isNaN(area)) {
@@ -24567,7 +24546,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       var seriesModule = _externalModules_js__WEBPACK_IMPORTED_MODULE_7__["default"].cornerstone.metaData.get('generalSeriesModule', image.imageId);
       var modality = seriesModule ? seriesModule.modality : null; // We have tool data for this element - iterate over each one and draw it
 
-      var context = Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_18__["getNewContext"])(eventData.canvasContext.canvas);
+      var context = Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_19__["getNewContext"])(eventData.canvasContext.canvas);
       var lineWidth = _stateManagement_toolStyle_js__WEBPACK_IMPORTED_MODULE_10__["default"].getToolWidth();
       var renderDashed = config.renderDashed;
       var lineDash = Object(_store_index_js__WEBPACK_IMPORTED_MODULE_12__["getModule"])('globalConfiguration').configuration.lineDash;
@@ -24579,7 +24558,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           return "continue";
         }
 
-        Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_18__["draw"])(context, function (context) {
+        Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_19__["draw"])(context, function (context) {
           var color = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_11__["default"].getColorIfActive(data);
           var fillColor;
 
@@ -24605,12 +24584,12 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
 
           if (data.handles.points.length) {
             var points = data.handles.points;
-            Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_18__["drawJoinedLines"])(context, element, points[0], points, options);
+            Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_19__["drawJoinedLines"])(context, element, points[0], points, options);
 
             if (data.polyBoundingBox) {
-              Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_18__["drawJoinedLines"])(context, element, points[points.length - 1], [points[0]], options);
+              Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_19__["drawJoinedLines"])(context, element, points[points.length - 1], [points[0]], options);
             } else {
-              Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_18__["drawJoinedLines"])(context, element, points[points.length - 1], [config.mouseLocation.handles.start], options);
+              Object(_drawing_index_js__WEBPACK_IMPORTED_MODULE_19__["drawJoinedLines"])(context, element, points[points.length - 1], [config.mouseLocation.handles.start], options);
             }
           } // Draw handles
 
@@ -24625,7 +24604,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
             options.handleRadius = config.activeHandleRadius;
 
             if (_this2.configuration.drawHandles) {
-              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_20__["default"])(context, eventData, data.handles.points, options);
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, data.handles.points, options);
             }
           }
 
@@ -24635,7 +24614,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
             var handle = data.handles.points[0];
 
             if (_this2.configuration.drawHandles) {
-              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_20__["default"])(context, eventData, [handle], options);
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [handle], options);
             }
           }
 
@@ -24644,13 +24623,13 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
             options.handleRadius = config.activeHandleRadius;
 
             if (_this2.configuration.drawHandles) {
-              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_20__["default"])(context, eventData, config.mouseLocation.handles, options);
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, config.mouseLocation.handles, options);
             }
 
             var firstHandle = data.handles.points[0];
 
             if (_this2.configuration.drawHandles) {
-              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_20__["default"])(context, eventData, [firstHandle], options);
+              Object(_drawing_drawHandles_js__WEBPACK_IMPORTED_MODULE_21__["default"])(context, eventData, [firstHandle], options);
             }
           } // Update textbox stats
 
@@ -24677,7 +24656,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
             var text = textBoxText.call(_this2, data);
 
             if (_this2.configuration.drawStatistics) {
-              Object(_drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_19__["default"])(context, element, data.handles.textBox, text, data.handles.points, textBoxAnchorPoints, color, lineWidth, 0, true);
+              Object(_drawing_drawLinkedTextBox_js__WEBPACK_IMPORTED_MODULE_20__["default"])(context, element, data.handles.textBox, text, data.handles.points, textBoxAnchorPoints, color, lineWidth, 0, true);
             }
           }
         });
@@ -24728,7 +24707,11 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           // This uses Char code 178 for a superscript 2
           var suffix = " mm".concat(String.fromCharCode(178));
 
-          if (!image.rowPixelSpacing || !image.columnPixelSpacing) {
+          var _getPixelSpacing2 = Object(_util_getPixelSpacing__WEBPACK_IMPORTED_MODULE_18__["default"])(image),
+              rowPixelSpacing = _getPixelSpacing2.rowPixelSpacing,
+              colPixelSpacing = _getPixelSpacing2.colPixelSpacing;
+
+          if (!rowPixelSpacing || !colPixelSpacing) {
             suffix = " pixels".concat(String.fromCharCode(178));
           } // Create a line of text to display the area and its units
 
@@ -25445,7 +25428,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       var config = this.configuration;
       config.mouseLocation.handles.start.x = currentPoints.image.x;
       config.mouseLocation.handles.start.y = currentPoints.image.y;
-      Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_21__["clipToBox"])(config.mouseLocation.handles.start, image);
+      Object(_util_clip_js__WEBPACK_IMPORTED_MODULE_22__["clipToBox"])(config.mouseLocation.handles.start, image);
     }
     /**
      * Returns true if the proposed location of a new handle is invalid.
@@ -25661,7 +25644,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       this._drawing = true;
       this._drawingInteractionType = interactionType;
       _store_index_js__WEBPACK_IMPORTED_MODULE_12__["state"].isMultiPartToolActive = true;
-      Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_22__["hideToolCursor"])(this.element); // Polygonal Mode
+      Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_23__["hideToolCursor"])(this.element); // Polygonal Mode
 
       element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_6__["default"].MOUSE_DOWN, this._drawingMouseDownCallback);
       element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_6__["default"].MOUSE_MOVE, this._drawingMouseMoveCallback);
@@ -25693,7 +25676,7 @@ var FreehandRoiTool = /*#__PURE__*/function (_BaseAnnotationTool) {
       _store_index_js__WEBPACK_IMPORTED_MODULE_12__["state"].isMultiPartToolActive = false;
       this._activeDrawingToolReference = null;
       this._drawingInteractionType = null;
-      Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_22__["setToolCursor"])(this.element, this.svgCursor);
+      Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_23__["setToolCursor"])(this.element, this.svgCursor);
       element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_6__["default"].MOUSE_DOWN, this._drawingMouseDownCallback);
       element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_6__["default"].MOUSE_MOVE, this._drawingMouseMoveCallback);
       element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_6__["default"].MOUSE_DOUBLE_CLICK, this._drawingMouseDoubleClickCallback);
@@ -26069,7 +26052,8 @@ var LengthTool = /*#__PURE__*/function (_BaseAnnotationTool) {
         drawHandles: true,
         drawHandlesOnHover: false,
         hideHandlesIfMoving: false,
-        renderDashed: false
+        renderDashed: false,
+        digits: 2
       }
     };
     _this = _super.call(this, props, defaultProps);
@@ -26171,7 +26155,8 @@ var LengthTool = /*#__PURE__*/function (_BaseAnnotationTool) {
           handleRadius = _this$configuration.handleRadius,
           drawHandlesOnHover = _this$configuration.drawHandlesOnHover,
           hideHandlesIfMoving = _this$configuration.hideHandlesIfMoving,
-          renderDashed = _this$configuration.renderDashed;
+          renderDashed = _this$configuration.renderDashed,
+          digits = _this$configuration.digits;
       var toolData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_6__["getToolState"])(evt.currentTarget, this.name);
 
       if (!toolData) {
@@ -26274,7 +26259,7 @@ var LengthTool = /*#__PURE__*/function (_BaseAnnotationTool) {
 
 
       function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
-        var measuredValue = _sanitizeMeasuredValue(annotation.length); // measured value is not defined, return empty string
+        var measuredValue = _sanitizeMeasuredValue(annotation.length); // Measured value is not defined, return empty string
 
 
         if (!measuredValue) {
@@ -26289,7 +26274,7 @@ var LengthTool = /*#__PURE__*/function (_BaseAnnotationTool) {
         }
 
         annotation.unit = suffix;
-        return "".concat(measuredValue.toFixed(2), " ").concat(suffix);
+        return "".concat(measuredValue.toFixed(digits), " ").concat(suffix);
       }
 
       function textBoxAnchorPoints(handles) {
@@ -26579,9 +26564,14 @@ var ProbeTool = /*#__PURE__*/function (_BaseAnnotationTool) {
               x: data.handles.end.x + 3,
               y: data.handles.end.y - 3
             };
-            var textCoords = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.pixelToCanvas(eventData.element, coords);
-            Object(_drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, str, textCoords.x, textCoords.y + fontHeight + 5, color);
-            Object(_drawing_drawTextBox_js__WEBPACK_IMPORTED_MODULE_11__["default"])(context, text, textCoords.x, textCoords.y, color);
+            var textCoords = _externalModules_js__WEBPACK_IMPORTED_MODULE_5__["default"].cornerstone.pixelToCanvas(eventData.element, coords); // drawTextBox(
+            //   context,
+            //   str,
+            //   textCoords.x,
+            //   textCoords.y + fontHeight + 5,
+            //   color
+            // );
+            // drawTextBox(context, text, textCoords.x, textCoords.y, color);
           }
         });
       };
@@ -26936,8 +26926,10 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
 
   var area = roiCoordinates.width * (pixelSpacing.colPixelSpacing || 1) * (roiCoordinates.height * (pixelSpacing.rowPixelSpacing || 1));
+  var perimeter = roiCoordinates.width * 2 * (pixelSpacing.colPixelSpacing || 1) + roiCoordinates.height * 2 * (pixelSpacing.rowPixelSpacing || 1);
   return {
     area: area || 0,
+    perimeter: perimeter,
     count: roiMeanStdDev.count || 0,
     mean: roiMeanStdDev.mean || 0,
     variance: roiMeanStdDev.variance || 0,
@@ -27609,15 +27601,15 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/typeof */ "../node_modules/@babel/runtime/helpers/typeof.js");
 /* harmony import */ var _babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_typeof__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../externalModules.js */ "./externalModules.js");
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../store/index.js */ "./store/index.js");
-/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../../events.js */ "./events.js");
-/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _manipulators_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../../manipulators/anyHandlesOutsideImage.js */ "./manipulators/anyHandlesOutsideImage.js");
-/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../../../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
-/* harmony import */ var _manipulators_index_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./../../../manipulators/index.js */ "./manipulators/index.js");
-/* harmony import */ var _moveHandle_moveHandle_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./moveHandle/moveHandle.js */ "./tools/annotation/bidirectionalTool/moveHandle/moveHandle.js");
-/* harmony import */ var _invertHandles_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./invertHandles.js */ "./tools/annotation/bidirectionalTool/invertHandles.js");
-/* harmony import */ var _store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../store/setToolCursor.js */ "./store/setToolCursor.js");
+/* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../../events.js */ "./events.js");
+/* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../../../stateManagement/toolState.js */ "./stateManagement/toolState.js");
+/* harmony import */ var _manipulators_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./../../../manipulators/anyHandlesOutsideImage.js */ "./manipulators/anyHandlesOutsideImage.js");
+/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./../../../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
+/* harmony import */ var _manipulators_index_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./../../../manipulators/index.js */ "./manipulators/index.js");
+/* harmony import */ var _moveHandle_moveHandle_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./moveHandle/moveHandle.js */ "./tools/annotation/bidirectionalTool/moveHandle/moveHandle.js");
+/* harmony import */ var _invertHandles_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./invertHandles.js */ "./tools/annotation/bidirectionalTool/invertHandles.js");
+/* harmony import */ var _store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ../../../store/setToolCursor.js */ "./store/setToolCursor.js");
+/* harmony import */ var _util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ../../../util/getProximityThreshold.js */ "./util/getProximityThreshold.js");
 
 
 /* jshint -W083 */
@@ -27637,14 +27629,14 @@ __webpack_require__.r(__webpack_exports__);
   var eventData = evt.detail;
   var element = eventData.element;
   var data;
-  var distanceThreshold = _store_index_js__WEBPACK_IMPORTED_MODULE_2__["state"].clickProximity;
+  var distanceThreshold = Object(_util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_10__["default"])('mouse', this.name);
 
   var handleDoneMove = function handleDoneMove(handle) {
     data.invalidated = true;
 
-    if (Object(_manipulators_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_5__["default"])(eventData, data.handles)) {
+    if (Object(_manipulators_anyHandlesOutsideImage_js__WEBPACK_IMPORTED_MODULE_4__["default"])(eventData, data.handles)) {
       // Delete the measurement
-      Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__["removeToolState"])(element, _this.name, data);
+      Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["removeToolState"])(element, _this.name, data);
     } // Update the handles to keep selected state
 
 
@@ -27653,14 +27645,14 @@ __webpack_require__.r(__webpack_exports__);
       handle.selected = true;
     }
 
-    Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_10__["setToolCursor"])(_this.element, _this.svgCursor);
+    Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_9__["setToolCursor"])(_this.element, _this.svgCursor);
     _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.updateImage(element);
-    element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].MOUSE_MOVE, _this._moveCallback);
-    element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].TOUCH_START, _this._moveCallback);
+    element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].MOUSE_MOVE, _this._moveCallback);
+    element.addEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].TOUCH_START, _this._moveCallback);
   };
 
   var coords = eventData.startPoints.canvas;
-  var toolData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_4__["getToolState"])(evt.currentTarget, this.name);
+  var toolData = Object(_stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_3__["getToolState"])(evt.currentTarget, this.name);
 
   if (!toolData) {
     return;
@@ -27670,25 +27662,25 @@ __webpack_require__.r(__webpack_exports__);
   var _loop = function _loop(i) {
     data = toolData.data[i];
     var handleParams = [element, data.handles, coords, distanceThreshold];
-    var handle = _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_6__["default"].apply(void 0, handleParams);
+    var handle = _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_5__["default"].apply(void 0, handleParams);
 
     if (handle) {
-      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].MOUSE_MOVE, _this._moveCallback);
-      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].TOUCH_START, _this._moveCallback);
+      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].MOUSE_MOVE, _this._moveCallback);
+      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].TOUCH_START, _this._moveCallback);
       data.active = true;
       unselectAllHandles(data.handles);
       handle.moving = true; // Invert handles if needed
 
-      handle = Object(_invertHandles_js__WEBPACK_IMPORTED_MODULE_9__["default"])(eventData, data, handle);
+      handle = Object(_invertHandles_js__WEBPACK_IMPORTED_MODULE_8__["default"])(eventData, data, handle);
       /* Hide the cursor to improve precision while resizing the line or set to move
          if dragging text box
       */
 
       if (!handle.hasBoundingBox) {
-        Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_10__["hideToolCursor"])(_this.element);
+        Object(_store_setToolCursor_js__WEBPACK_IMPORTED_MODULE_9__["hideToolCursor"])(_this.element);
       }
 
-      Object(_moveHandle_moveHandle_js__WEBPACK_IMPORTED_MODULE_8__["default"])(eventData, _this.name, data, handle, function () {
+      Object(_moveHandle_moveHandle_js__WEBPACK_IMPORTED_MODULE_7__["default"])(eventData, _this.name, data, handle, function () {
         return handleDoneMove(handle);
       });
       preventPropagation(evt);
@@ -27715,13 +27707,13 @@ __webpack_require__.r(__webpack_exports__);
     data = toolData.data[_i];
 
     if (this.pointNearTool(element, data, coords, 'mouse')) {
-      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].MOUSE_MOVE, this._moveCallback);
-      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_3__["default"].TOUCH_START, this._moveCallback);
+      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].MOUSE_MOVE, this._moveCallback);
+      element.removeEventListener(_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].TOUCH_START, this._moveCallback);
       data.active = true;
       unselectAllHandles(data.handles);
       setHandlesMovingState(data.handles, true);
       var doneMovingCallback = getDoneMovingCallback(data.handles);
-      Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_7__["moveAllHandles"])(eventData, this.name, data, null, {
+      Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_6__["moveAllHandles"])(eventData, this.name, data, null, {
         deleteIfHandleOutsideImage: true,
         preventHandleOutsideImage: false
       }, 'mouse', doneMovingCallback);
@@ -28902,7 +28894,7 @@ var touchEndEvents = [_events_js__WEBPACK_IMPORTED_MODULE_2__["default"].TOUCH_E
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../store/index.js */ "./store/index.js");
+/* harmony import */ var _util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../util/getProximityThreshold.js */ "./util/getProximityThreshold.js");
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./../../../externalModules.js */ "./externalModules.js");
 /* harmony import */ var _util_pointInsideBoundingBox_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../../../util/pointInsideBoundingBox.js */ "./util/pointInsideBoundingBox.js");
 
@@ -28935,7 +28927,7 @@ var pointNearPerpendicular = function pointNearPerpendicular(element, handles, c
     return true;
   }
 
-  var distanceThreshold = interactionType === 'mouse' ? _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].clickProximity : _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].touchProximity;
+  var distanceThreshold = Object(_util_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_0__["default"])(interactionType, 'Bidirectional');
 
   if (pointNearPerpendicular(element, handles, coords, distanceThreshold)) {
     return true;
@@ -30526,7 +30518,7 @@ var MouseCursor = /*#__PURE__*/function () {
       return this._generateIconWithPointerSVGString(options);
     }
     /**
-     * Returns the mousePoint as a space seperated string.
+     * Returns the mousePoint as a space separated string.
      *
      * @returns {string} The mousePoint.
      */
@@ -31949,7 +31941,7 @@ var logger = Object(_util_logger__WEBPACK_IMPORTED_MODULE_5__["getLogger"])('uti
  * - Stroke in-out-in: Section is added.
  *
  * @param  {Object} evt The cornerstone event.
- * @param  {} operationData An object containing the `pixelData` to
+ * @param  {Object} operationData An object containing the `pixelData` to
  *                          modify, the `segmentIndex` and the `points` array.
  *
  * @returns {null}
@@ -32438,13 +32430,26 @@ function getNodesPerpendicularToPathPixel(pathPixel, nextPathPixel) {
   logger.error("Unable to find left and right paths for flood fill ", pathPixel, nextPathPixel, direction);
 }
 /**
- * Splits the path of nodes into seperate add/remove operations.
+ * @typedef {Object} Node
+ * @property {number} x - the X position
+ * @property {number} y - the Y position
+ * @property {number} segment - The segment index
+ */
+
+/**
+ * @typedef {Object} SegmentationOperations
+ * @property {boolean} additive - Whether the operation is additive or not
+ * @property {Node[]} nodes - The array of nodes
+ */
+
+/**
+ * Splits the path of nodes into separate add/remove operations.
  *
  * @param  {Object[]} nodes The array of nodes.
  * @param  {number} segmentIndex The label value to replace.
- * @returns {{additive: boolean, nodes: []}[]} An array of operations to perform,
- *                                             whether they are `additive` and the
- *                                             corresponding `nodes` of the operation.
+ * @returns {SegmentationOperations[]} An array of operations to perform,
+ *                       whether they are `additive` and the
+ *                       corresponding `nodes` of the operation.
  */
 
 
@@ -33211,13 +33216,19 @@ function fracToDec(fractionalValue) {
 /*!**********************!*\
   !*** ./util/clip.js ***!
   \**********************/
-/*! exports provided: clip, clipToBox, default */
+/*! exports provided: clip, clipToBox, clipBoxToDisplayedArea, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clip", function() { return clip; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clipToBox", function() { return clipToBox; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "clipBoxToDisplayedArea", function() { return clipBoxToDisplayedArea; });
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ "../node_modules/@babel/runtime/helpers/toConsumableArray.js");
+/* harmony import */ var _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
+
+
 /**
  * Clips a value to an upper and lower bound.
  * @export @public @method
@@ -33228,6 +33239,7 @@ __webpack_require__.r(__webpack_exports__);
  * @param  {number} high The upper bound.
  * @returns {number}      The clipped value.
  */
+
 function clip(val, low, high) {
   return Math.min(Math.max(low, val), high);
 }
@@ -33238,13 +33250,147 @@ function clip(val, low, high) {
  *
  * @param  {Object} point The point to clip
  * @param  {Object} box   The bounding box to clip to.
- * @returns {Object}       The clipped point.
+ * @returns {void}
  */
 
 function clipToBox(point, box) {
-  // Clip an {x, y} point to a box of size {width, height}
-  point.x = clip(point.x, 0, box.width);
-  point.y = clip(point.y, 0, box.height);
+  // Clip an {x, y} point to a box {top, left, width, height}
+  var left = box.left || 0;
+  var top = box.top || 0;
+  point.x = clip(point.x, left, left + box.width);
+  point.y = clip(point.y, top, top + box.height);
+}
+/**
+ * Returns a new bounding box of rotated text box, relative to the pixel
+ * coordinate system. It will get the coordinate of the 4 points of the rotated
+ * text box and calculate the AABB (axis-aligned bounding box - lower and upper
+ * boundaries for `x` and `y` axes).
+ *
+ * @param {HTMLElement} element The element to manipulate pixel positioning
+ * @param {Object} box - `{ left, top, width, height }` in canvas coordinates
+ * @returns {Object} - `{ minX, minY, maxX, maxY }` boundaries of the box
+ */
+
+var getBoxPixelBoundaries = function getBoxPixelBoundaries(element, box) {
+  var toPixel = function toPixel(point) {
+    return _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone.canvasToPixel(element, point);
+  };
+
+  var top = box.top,
+      left = box.left,
+      width = box.width,
+      height = box.height;
+  var topLeft = toPixel({
+    x: left,
+    y: top
+  });
+  var topRight = toPixel({
+    x: left + width,
+    y: top
+  });
+  var bottomLeft = toPixel({
+    x: left,
+    y: top + height
+  });
+  var bottomRight = toPixel({
+    x: left + width,
+    y: top + height
+  });
+  var points = [topLeft, topRight, bottomLeft, bottomRight];
+  var xArray = points.map(function (p) {
+    return p.x;
+  });
+  var yArray = points.map(function (p) {
+    return p.y;
+  });
+  return {
+    minX: Math.min.apply(Math, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(xArray)),
+    minY: Math.min.apply(Math, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(yArray)),
+    maxX: Math.max.apply(Math, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(xArray)),
+    maxY: Math.max.apply(Math, _babel_runtime_helpers_toConsumableArray__WEBPACK_IMPORTED_MODULE_0___default()(yArray))
+  };
+};
+/**
+ * Reposition a box point coordinates in the given axis' upper/lower limits
+ *
+ * @param {Object} point `{ x, y }` The coordinate point of the box
+ * @param {string} axis The axis to be manipulated: `x` or `y`
+ * @param {number} boxMin The box position's lower value on axis
+ * @param {number} boxMax The box position's upper value on axis
+ * @param {number} lowerLimit The lower limit of allowed box position on axis
+ * @param {number} upperLimit The upper limit of allowed box position on axis
+ * @returns {void}
+ */
+
+
+var clipBoxOnAxis = function clipBoxOnAxis(point, axis, boxMin, boxMax, lowerLimit, upperLimit) {
+  if (upperLimit - lowerLimit < boxMax - boxMin) {
+    // Box is bigger than allowed range, leaking both lower/upper boundaries
+    point[axis] += lowerLimit - boxMin; // Stick to the lower boundary
+
+    point[axis] += (upperLimit - lowerLimit) / 2; // Centralize in range
+
+    point[axis] -= (boxMax - boxMin) / 2; // Translate -1/2 of box's size
+  } else if (boxMin < lowerLimit) {
+    // Box leaked lower boundary
+    point[axis] += lowerLimit - boxMin; // Stick to the lower boundary
+  } else if (boxMax > upperLimit) {
+    // Box leaked upper boundary
+    point[axis] -= boxMax - upperLimit; // Stick to the upper boundary
+  }
+};
+/**
+ * Clips a box to the viewport's displayed area
+ * @export @public @method
+ * @name clipBoxToDisplayedArea
+ *
+ * @param {HTMLElement} element The element to manipulate pixel positioning
+ * @param {Object} box - `{ left, top, width, height }` in canvas coordinates
+ * @returns {void}
+ */
+
+
+function clipBoxToDisplayedArea(element, box) {
+  var _external$cornerstone = _externalModules_js__WEBPACK_IMPORTED_MODULE_1__["default"].cornerstone,
+      pixelToCanvas = _external$cornerstone.pixelToCanvas,
+      canvasToPixel = _external$cornerstone.canvasToPixel,
+      getViewport = _external$cornerstone.getViewport,
+      getEnabledElement = _external$cornerstone.getEnabledElement,
+      getDisplayedArea = _external$cornerstone.getDisplayedArea; // Transform the position of given box from canvas to pixel coordinates
+
+  var pixelPosition = canvasToPixel(element, {
+    x: box.left,
+    y: box.top
+  }); // Get the rotated corners' position for the box in pixel coordinate system
+
+  var _getBoxPixelBoundarie = getBoxPixelBoundaries(element, box),
+      minX = _getBoxPixelBoundarie.minX,
+      minY = _getBoxPixelBoundarie.minY,
+      maxX = _getBoxPixelBoundarie.maxX,
+      maxY = _getBoxPixelBoundarie.maxY; // Get the displayed area's top, left, bottom and right boundaries
+
+
+  var viewport = getViewport(element);
+  var enabledElement = getEnabledElement(element);
+  var defaultDisplayedArea = getDisplayedArea(enabledElement.image, viewport);
+
+  var _ref = viewport.displayedArea ? viewport.displayedArea : defaultDisplayedArea,
+      tlhc = _ref.tlhc,
+      brhc = _ref.brhc;
+
+  var top = tlhc.y - 1;
+  var left = tlhc.x - 1;
+  var bottom = brhc.y;
+  var right = brhc.x; // Clip the box on vertical axis
+
+  clipBoxOnAxis(pixelPosition, 'y', minY, maxY, top, bottom); // Clip the box on horizontal axis
+
+  clipBoxOnAxis(pixelPosition, 'x', minX, maxX, left, right); // Transform the box coordinate system back to canvas
+
+  var newCanvasPosition = pixelToCanvas(element, pixelPosition); // Update the box with the new coordinates
+
+  box.top = newCanvasPosition.y;
+  box.left = newCanvasPosition.x;
 }
 /* harmony default export */ __webpack_exports__["default"] = (clip);
 
@@ -34119,7 +34265,13 @@ var deepmerge = function deepmerge() {
     return Array.isArray(target) ? arrayMerge(target, source, optionsArgument) : cloneIfNecessary(source, optionsArgument);
   }
 
-  return mergeObject(target, source, optionsArgument);
+  var mergedObject = mergeObject(target, source, optionsArgument);
+
+  if (Object.getPrototypeOf(target) !== Object.prototype) {
+    Object.setPrototypeOf(mergedObject, Object.getPrototypeOf(target));
+  }
+
+  return mergedObject;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (deepmerge);
@@ -34289,9 +34441,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveHandleNearImagePoint", function() { return moveHandleNearImagePoint; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "findHandleDataNearImagePoint", function() { return findHandleDataNearImagePoint; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "moveAnnotation", function() { return moveAnnotation; });
-/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store/index.js */ "./store/index.js");
-/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
-/* harmony import */ var _manipulators_index_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./../manipulators/index.js */ "./manipulators/index.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "../node_modules/@babel/runtime/helpers/defineProperty.js");
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _store_index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../store/index.js */ "./store/index.js");
+/* harmony import */ var _manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../manipulators/getHandleNearImagePoint.js */ "./manipulators/getHandleNearImagePoint.js");
+/* harmony import */ var _manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./../manipulators/index.js */ "./manipulators/index.js");
+/* harmony import */ var _getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./getProximityThreshold.js */ "./util/getProximityThreshold.js");
+/* harmony import */ var _events__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../events */ "./events.js");
+/* harmony import */ var _triggerEvent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./triggerEvent */ "./util/triggerEvent.js");
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_0___default()(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+
+
+
 
 
  // TODO this should just be in manipulators? They are just manipulator wrappers anyway.
@@ -34312,8 +34478,24 @@ __webpack_require__.r(__webpack_exports__);
 
 var moveHandleNearImagePoint = function moveHandleNearImagePoint(evt, tool, toolData, handle, interactionType) {
   toolData.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].isToolLocked = true;
-  Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_2__["moveHandle"])(evt.detail, tool.name, toolData, handle, tool.options, interactionType);
+  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true;
+
+  var doneHandler = function doneHandler(success) {
+    var element = evt.detail.element;
+    var toolName = toolData.toolType || toolData.toolName;
+    var modifiedEventData = {
+      toolName: toolName,
+      toolType: toolName,
+      // Deprecation notice: toolType will be replaced by toolName
+      element: element,
+      measurementData: _objectSpread(_objectSpread({}, toolData), {}, {
+        active: false
+      })
+    };
+    Object(_triggerEvent__WEBPACK_IMPORTED_MODULE_6__["default"])(element, _events__WEBPACK_IMPORTED_MODULE_5__["default"].MEASUREMENT_COMPLETED, modifiedEventData);
+  };
+
+  Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["moveHandle"])(evt.detail, tool.name, toolData, handle, tool.options, interactionType, doneHandler);
   evt.stopImmediatePropagation();
   evt.stopPropagation();
   evt.preventDefault();
@@ -34340,7 +34522,7 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 
   for (var i = 0; i < toolState.data.length; i++) {
     var data = toolState.data[i];
-    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_1__["default"])(element, data.handles, coords, interactionType === 'mouse' ? _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].clickProximity : _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].touchProximity);
+    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, data.handles, coords, Object(_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__["default"])(interactionType, toolName));
 
     if (handle) {
       return {
@@ -34372,10 +34554,10 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 var moveAnnotation = function moveAnnotation(evt, tool, annotation) {
   var interactionType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'mouse';
   annotation.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].isToolLocked = true;
-  Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_2__["moveAllHandles"])(evt.detail, tool.name, annotation, null, tool.options, interactionType, function () {
+  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true;
+  Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["moveAllHandles"])(evt.detail, tool.name, annotation, null, tool.options, interactionType, function () {
     annotation.active = false;
-    _store_index_js__WEBPACK_IMPORTED_MODULE_0__["state"].isToolLocked = false;
+    _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = false;
   });
   evt.stopImmediatePropagation();
   evt.stopPropagation();
@@ -35973,6 +36155,48 @@ function getPixelSpacing(image) {
 
 /***/ }),
 
+/***/ "./util/getProximityThreshold.js":
+/*!***************************************!*\
+  !*** ./util/getProximityThreshold.js ***!
+  \***************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return getProximityThreshold; });
+/* harmony import */ var _store__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../store */ "./store/index.js");
+
+/**
+ * Returns the proximity threshold for the given interaction type, looking first
+ * at the tool configuration and then at global configuration.
+ *
+ * @public
+ * @function getProximityThreshold
+ *
+ * @param {string} interactionType The interaction type (mouse or touch)
+ * @param {string} toolName The name of the tool
+ * @returns {Number} The proximity threshold based on the tool
+ */
+
+function getProximityThreshold(interactionType, toolName) {
+  var clickProximity = _store__WEBPACK_IMPORTED_MODULE_0__["state"].clickProximity,
+      touchProximity = _store__WEBPACK_IMPORTED_MODULE_0__["state"].touchProximity;
+  var tool = _store__WEBPACK_IMPORTED_MODULE_0__["state"].tools.find(function (_ref) {
+    var name = _ref.name;
+    return name === toolName;
+  });
+
+  if (tool && tool.configuration) {
+    clickProximity = tool.configuration.clickProximity || clickProximity;
+    touchProximity = tool.configuration.touchProximity || touchProximity;
+  }
+
+  return interactionType === 'mouse' ? clickProximity : touchProximity;
+}
+
+/***/ }),
+
 /***/ "./util/getRGBPixels.js":
 /*!******************************!*\
   !*** ./util/getRGBPixels.js ***!
@@ -36785,10 +37009,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _events_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../events.js */ "./events.js");
 /* harmony import */ var _externalModules_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../externalModules.js */ "./externalModules.js");
 /* harmony import */ var _stateManagement_toolState_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../stateManagement/toolState.js */ "./stateManagement/toolState.js");
-/* harmony import */ var _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../requestPool/requestPoolManager.js */ "./requestPool/requestPoolManager.js");
-/* harmony import */ var _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../stateManagement/loadHandlerManager.js */ "./stateManagement/loadHandlerManager.js");
-/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
-
+/* harmony import */ var _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../stateManagement/loadHandlerManager.js */ "./stateManagement/loadHandlerManager.js");
+/* harmony import */ var _util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../util/triggerEvent.js */ "./util/triggerEvent.js");
 
 
 
@@ -36829,9 +37051,9 @@ __webpack_require__.r(__webpack_exports__);
     newImageIdIndex += stackData.imageIds.length;
   }
 
-  var startLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_4__["default"].getStartLoadHandler(element);
-  var endLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_4__["default"].getEndLoadHandler(element);
-  var errorLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_4__["default"].getErrorLoadingHandler(element);
+  var startLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].getStartLoadHandler(element);
+  var endLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].getEndLoadHandler(element);
+  var errorLoadingHandler = _stateManagement_loadHandlerManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].getErrorLoadingHandler(element);
 
   function doneCallback(image) {
     if (stackData.currentImageIdIndex !== newImageIdIndex) {
@@ -36902,10 +37124,8 @@ __webpack_require__.r(__webpack_exports__);
     imagePromise = cornerstone.loadAndCacheImage(newImageId);
   }
 
-  imagePromise.then(doneCallback, failCallback); // Make sure we kick off any changed download request pools
-
-  _requestPool_requestPoolManager_js__WEBPACK_IMPORTED_MODULE_3__["default"].startGrabbing();
-  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_5__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_0__["default"].STACK_SCROLL, eventData);
+  imagePromise.then(doneCallback, failCallback);
+  Object(_util_triggerEvent_js__WEBPACK_IMPORTED_MODULE_4__["default"])(element, _events_js__WEBPACK_IMPORTED_MODULE_0__["default"].STACK_SCROLL, eventData);
 });
 
 /***/ }),
@@ -38224,8 +38444,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return uuidv4; });
 function uuidv4() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0,
-        v = c == 'x' ? r : r & 0x3 | 0x8;
+    var r = Math.random() * 16 | 0; // eslint-disable-line no-bitwise
+
+    var v = c === 'x' ? r : r & 0x3 | 0x8; // eslint-disable-line no-bitwise
+
     return v.toString(16);
   });
 }
@@ -38409,7 +38631,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('5.1.4-b');
+/* harmony default export */ __webpack_exports__["default"] = ('6.0.6-a');
 
 /***/ })
 

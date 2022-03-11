@@ -206,14 +206,14 @@ export default class ProbeTool extends BaseAnnotationTool {
             coords
           );
 
-          drawTextBox(
-            context,
-            str,
-            textCoords.x,
-            textCoords.y + fontHeight + 5,
-            color
-          );
-          drawTextBox(context, text, textCoords.x, textCoords.y, color);
+          // drawTextBox(
+          //   context,
+          //   str,
+          //   textCoords.x,
+          //   textCoords.y + fontHeight + 5,
+          //   color
+          // );
+          // drawTextBox(context, text, textCoords.x, textCoords.y, color);
         }
       });
     }
