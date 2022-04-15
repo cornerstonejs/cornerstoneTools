@@ -304,7 +304,25 @@ function mouseMove(e) {
     startPoints.image
   );
 
-  let lastPoints = copyPoints(startPoints);
+ let lastPoints = {
+    page: { x: e.pageX - e.movementX, y: e.pageY - e.movementY },
+    image: external.cornerstone.pageToPixel(
+      element,
+      e.pageX - e.movementX,
+      e.pageY - e.movementY
+    ),
+    client: {
+      x: e.clientX - e.movementX,
+      y: e.clientY - e.movementY,
+    },
+  };
+
+  lastPoints.canvas = external.cornerstone.pixelToCanvas(
+    element,
+    lastPoints.image
+  );
+
+
 
   // Calculate our current points in page and image coordinates
   const currentPoints = {
