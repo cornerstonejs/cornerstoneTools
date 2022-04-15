@@ -1,5 +1,6 @@
 import AngleTool from './AngleTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
+import { draw, setShadow } from './../../drawing/index.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
@@ -14,8 +15,20 @@ jest.mock('./../../externalModules.js', () => ({
     metaData: {
       get: jest.fn(),
     },
+    pixelToCanvas: jest.fn(),
   },
 }));
+
+jest.mock('./../../drawing/index.js', () => ({
+  getNewContext: jest.fn(),
+  draw: jest.fn((context, fn) => {
+    fn(context);
+  }),
+  setShadow: jest.fn(),
+  drawJoinedLines: jest.fn(),
+}));
+
+jest.mock('./../../drawing/drawHandles.js', () => jest.fn());
 
 const goodMouseEventData = {
   currentPoints: {
@@ -155,19 +168,55 @@ describe('AngleTool.js', () => {
   });
 
   describe('renderToolData', () => {
-    it('returns undefined when no toolData exists for the tool', () => {
-      const instantiatedTool = new AngleTool('AngleTool');
-      const mockEvent = {
-        detail: {
-          enabledElement: undefined,
-        },
-      };
+    describe('without toolData for the tool', () => {
+      it('returns undefined', () => {
+        const instantiatedTool = new AngleTool('AngleTool');
+        const mockEvent = {
+          detail: {
+            enabledElement: undefined,
+          },
+        };
 
-      getToolState.mockReturnValueOnce(undefined);
+        getToolState.mockReturnValueOnce(undefined);
 
-      const renderResult = instantiatedTool.renderToolData(mockEvent);
+        const renderResult = instantiatedTool.renderToolData(mockEvent);
 
-      expect(renderResult).toBe(undefined);
+        expect(renderResult).toBe(undefined);
+      });
+    });
+
+    describe('with toolData for the tool', () => {
+      let instantiatedTool;
+      let mockEvent;
+      beforeEach(() => {
+        instantiatedTool = new AngleTool('AngleTool');
+        mockEvent = {
+          detail: {
+            canvasContext: {},
+            image: image,
+          },
+        };
+
+        getToolState.mockReturnValueOnce({
+          data: [
+            {
+              handles: {},
+            },
+          ],
+        });
+        draw.mockClear();
+        setShadow.mockClear();
+      });
+      it('calls draw function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(draw.mock.calls.length).toBe(1);
+      });
+      it('calls setShadow function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(setShadow.mock.calls.length).toBe(1);
+      });
     });
   });
 });

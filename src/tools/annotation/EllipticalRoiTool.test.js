@@ -1,6 +1,7 @@
 import EllipticalRoiTool from './EllipticalRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import { draw, setShadow } from '../../drawing/index.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
@@ -20,6 +21,17 @@ jest.mock('./../../externalModules.js', () => ({
     getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
     /* eslint-enable prettier/prettier */
   },
+}));
+
+jest.mock('./../../drawing/index.js', () => ({
+  getNewContext: jest.fn(),
+  draw: jest.fn((context, fn) => {
+    fn(context);
+  }),
+  setShadow: jest.fn(),
+  drawEllipse: jest.fn(),
+  drawHandles: jest.fn(),
+  drawLinkedTextBox: jest.fn(),
 }));
 
 const badMouseEventData = 'hello world';
@@ -215,18 +227,63 @@ describe('EllipticalRoiTool.js', () => {
   });
 
   describe('renderToolData', () => {
-    it('returns undefined when no toolData exists for the tool', () => {
-      const instantiatedTool = new EllipticalRoiTool();
-      const mockEvent = {
-        detail: undefined,
-        currentTarget: undefined,
-      };
+    describe('without toolData for the tool', () => {
+      it('returns undefined when no toolData exists for the tool', () => {
+        const instantiatedTool = new EllipticalRoiTool();
+        const mockEvent = {
+          detail: undefined,
+          currentTarget: undefined,
+        };
 
-      getToolState.mockReturnValueOnce(undefined);
+        getToolState.mockReturnValueOnce(undefined);
 
-      const renderResult = instantiatedTool.renderToolData(mockEvent);
+        const renderResult = instantiatedTool.renderToolData(mockEvent);
 
-      expect(renderResult).toBe(undefined);
+        expect(renderResult).toBe(undefined);
+      });
+    });
+
+    describe('with toolData for the tool', () => {
+      let instantiatedTool;
+      let mockEvent;
+      beforeEach(() => {
+        instantiatedTool = new EllipticalRoiTool();
+        mockEvent = {
+          detail: {
+            canvasContext: {},
+            image: image,
+          },
+        };
+
+        getToolState.mockReturnValueOnce({
+          data: [
+            {
+              handles: {
+                textBox: {
+                  hasMoved: true,
+                },
+              },
+              cachedStats: {
+                mean: 1,
+                stdDev: 1,
+                area: 1,
+              },
+            },
+          ],
+        });
+        draw.mockClear();
+        setShadow.mockClear();
+      });
+      it('calls draw function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(draw.mock.calls.length).toBe(1);
+      });
+      it('calls setShadow function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(setShadow.mock.calls.length).toBe(1);
+      });
     });
   });
 });

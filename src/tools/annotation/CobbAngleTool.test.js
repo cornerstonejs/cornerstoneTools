@@ -1,12 +1,25 @@
 import Tool from './CobbAngleTool.js';
 import { getToolState } from '../../stateManagement/toolState.js';
+import { draw, getNewContext, setShadow } from './../../drawing/index.js';
+
+import external from '../../externalModules.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
 jest.mock('./../../externalModules.js');
-import external from '../../externalModules.js';
+
+jest.mock('./../../drawing/index.js', () => ({
+  getNewContext: jest.fn(),
+  draw: jest.fn(),
+  setShadow: jest.fn(),
+  drawLine: jest.fn(),
+}));
+
+jest.mock('./../../drawing/drawHandles.js', () => jest.fn());
+
+jest.mock('./../../drawing/drawLinkedTextBox.js', () => jest.fn());
 
 const goodMouseEventData = {
   currentPoints: {
@@ -123,6 +136,7 @@ describe('CobbAngleTool.js', () => {
 
     it('returns false when measurement data is incomplete', () => {
       const instantiatedTool = new Tool('AngleTool');
+
       instantiatedTool.hasIncomplete = true;
       const measurementData = {
         visible: true,
@@ -152,9 +166,7 @@ describe('CobbAngleTool.js', () => {
         },
       };
 
-      external.cornerstone.pixelToCanvas.mockImplementation((el, pt) => {
-        return pt;
-      });
+      external.cornerstone.pixelToCanvas.mockImplementation((el, pt) => pt);
 
       expect(
         instantiatedTool.pointNearTool(element, measurementData, {
@@ -219,19 +231,65 @@ describe('CobbAngleTool.js', () => {
   });
 
   describe('renderToolData', () => {
-    it('returns undefined when no toolData exists for the tool', () => {
-      const instantiatedTool = new Tool('AngleTool');
-      const mockEvent = {
-        detail: {
-          enabledElement: undefined,
-        },
-      };
+    describe('without toolData for the tool', () => {
+      it('returns undefined', () => {
+        const instantiatedTool = new Tool('AngleTool');
+        const mockEvent = {
+          detail: {
+            enabledElement: undefined,
+          },
+        };
 
-      getToolState.mockReturnValueOnce(undefined);
+        getToolState.mockReturnValueOnce(undefined);
 
-      const renderResult = instantiatedTool.renderToolData(mockEvent);
+        const renderResult = instantiatedTool.renderToolData(mockEvent);
 
-      expect(renderResult).toBe(undefined);
+        expect(renderResult).toBe(undefined);
+      });
+    });
+
+    describe('with toolData for the tool', () => {
+      let instantiatedTool;
+      let mockEvent;
+      beforeEach(() => {
+        instantiatedTool = new Tool('AngleTool');
+        mockEvent = {
+          detail: {
+            canvasContext: {},
+          },
+        };
+
+        getToolState.mockReturnValueOnce({
+          data: [
+            {
+              handles: {
+                textBox: {
+                  hasMoved: true,
+                },
+              },
+            },
+          ],
+        });
+        external.cornerstone.getEnabledElement.mockReturnValueOnce({
+          image: image,
+        });
+        getNewContext.mockReturnValueOnce({});
+        draw.mockClear();
+        setShadow.mockClear();
+        draw.mockImplementation((context, fn) => {
+          fn(context);
+        });
+      });
+      it('calls draw function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(draw.mock.calls.length).toBe(1);
+      });
+      it('calls setShadow function once', () => {
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(setShadow.mock.calls.length).toBe(1);
+      });
     });
   });
 });
