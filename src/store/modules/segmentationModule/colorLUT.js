@@ -15,7 +15,7 @@ export default function setColorLUT(colorLUTIndex, colorLUT = []) {
   const { configuration } = getModule('segmentation');
   const segmentsPerLabelmap = configuration.segmentsPerLabelmap;
 
-  if (colorLUT) {
+  if (colorLUT.length > 0) {
     _checkColorLUTLength(colorLUT, segmentsPerLabelmap);
 
     if (colorLUT.length < segmentsPerLabelmap) {
@@ -26,7 +26,7 @@ export default function setColorLUT(colorLUTIndex, colorLUT = []) {
     }
   } else {
     // Autogenerate colorLUT.
-    colorLUT = colorLUT || _generateNewColorLUT(segmentsPerLabelmap);
+    colorLUT = _generateNewColorLUT(segmentsPerLabelmap);
   }
 
   // Apppend the "zero" (no label) color to the front of the LUT.
