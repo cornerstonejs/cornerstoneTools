@@ -1,6 +1,6 @@
 {
   "name": "@dedalusdiit/cornerstone-tools",
-  "version": "6.0.6-ded1",
+  "version": "6.0.6-ded2",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
@@ -97,7 +97,7 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "0.1.9"
+    "cornerstone-math": "0.1.8"
   },
   "files": [
     "dist/cornerstoneTools.js",
