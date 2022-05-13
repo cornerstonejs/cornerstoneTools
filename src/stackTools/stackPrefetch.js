@@ -45,6 +45,7 @@ function nearestIndex(arr, x) {
   // http://stackoverflow.com/questions/25854212/return-index-of-nearest-values-in-an-array
   let low = 0;
   let high = arr.length - 1;
+
   arr.forEach((v, idx) => {
     if (v < x) {
       low = Math.max(idx, low);
