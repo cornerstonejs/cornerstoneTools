@@ -20,6 +20,7 @@ function removeActiveManipulatorForElement(element) {
 function cancelActiveManipulatorsForElement(element) {
   const enabledElement = external.cornerstone.getEnabledElement(element);
   const enabledElementUUID = enabledElement.uuid;
+
   _cancelActiveManipulatorsForElementUUID(enabledElementUUID);
 }
 
@@ -65,11 +66,11 @@ function enabledElementCallback(element) {
 
 export default {
   setters: {
-    // add/remove
+    // Add/remove
     addActiveManipulatorForElement,
     removeActiveManipulatorForElement,
 
-    // cancel
+    // Cancel
     cancelActiveManipulatorsForElement,
     cancelActiveManipulators,
   },

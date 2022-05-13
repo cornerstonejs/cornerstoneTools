@@ -108,7 +108,7 @@ function newImageIdSpecificToolStateManager() {
   function setImageIdToolState(imageId, toolName, data) {
     const imageIdToolState = toolState[imageId];
 
-    // set the toolState
+    // Set the toolState
     imageIdToolState[toolName] = data;
   }
 

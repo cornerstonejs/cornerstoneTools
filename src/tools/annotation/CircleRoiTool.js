@@ -503,7 +503,8 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     };
   }
 
-  const radius = circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1);
+  const radius =
+    (circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2;
   const perimeter = 2 * Math.PI * radius;
   const area =
     Math.PI *
