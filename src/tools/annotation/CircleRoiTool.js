@@ -504,12 +504,18 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
   }
 
   const radius =
-    (circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2;
+    (circleCoordinates.width *
+      ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
+    2;
   const perimeter = 2 * Math.PI * radius;
   const area =
     Math.PI *
-    ((circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2) *
-    ((circleCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
+    ((circleCoordinates.width *
+      ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
+      2) *
+    ((circleCoordinates.height *
+      ((pixelSpacing && pixelSpacing.rowPixelSpacing) || 1)) /
+      2);
 
   return {
     area: area || 0,
