@@ -122,6 +122,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
 
     let lineDash;
+
     if (renderDashed) {
       lineDash = getModule('globalConfiguration').configuration.lineDash;
     }
