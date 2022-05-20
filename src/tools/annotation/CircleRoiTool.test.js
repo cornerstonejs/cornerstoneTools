@@ -375,6 +375,7 @@ describe('CircleRoiTool.js', () => {
     describe('with toolData for the tool', () => {
       let instantiatedTool;
       let mockEvent;
+
       beforeEach(() => {
         instantiatedTool = new Tool();
         mockEvent = {
@@ -390,6 +391,8 @@ describe('CircleRoiTool.js', () => {
                 textBox: {
                   hasMoved: true,
                 },
+                start: {},
+                end: {},
               },
               cachedStats: {
                 mean: 1,
