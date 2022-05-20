@@ -33,6 +33,20 @@ jest.mock('../../drawing/getNewContext', () => ({
   __esModule: true,
   default: jest.fn(),
 }));
+jest.mock('../../drawing/drawCircle', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/setShadow', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/draw', () => ({
+  __esModule: true,
+  default: jest.fn((context, fn) => {
+    fn(context);
+  }),
+}));
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
@@ -56,17 +70,6 @@ jest.mock('../../externalModules.js', () => ({
   cornerstone: {
     pixelToCanvas: jest.fn(),
   },
-}));
-
-jest.mock('./../../drawing/index.js', () => ({
-  getNewContext: jest.fn(),
-  draw: jest.fn((context, fn) => {
-    fn(context);
-  }),
-  setShadow: jest.fn(),
-  drawCircle: jest.fn(),
-  drawHandles: jest.fn(),
-  drawLinkedTextBox: jest.fn(),
 }));
 
 const badMouseEventData = 'hello world';
@@ -354,6 +357,9 @@ describe('CircleRoiTool.js', () => {
         restore: jest.fn(),
       });
       external.cornerstone.pixelToCanvas.mockImplementation((comp, val) => val);
+    });
+    beforeEach(() => {
+      drawLinkedMocked.mockClear();
     });
 
     describe('without toolData for the tool', () => {
