@@ -28,8 +28,9 @@ cornerstoneTools.init(
 cornerstone.enable(element);
 const toolName = '{{ page.toolName }}';
 const imageIds = [
-  `wadouri:${baseUrl}assets/dicom/exotic/1.dcm`,
-  `wadouri:${baseUrl}assets/dicom/exotic/2.dcm`,
+  // `wadouri:${baseUrl}assets/dicom/exotic/1.dcm`,
+  // `wadouri:${baseUrl}assets/dicom/exotic/2.dcm`,
+  `wadouri:${baseUrl}assets/dicom/us/usvolume_4D.dcm`,
 ];
 
 const stack = {

@@ -34,6 +34,8 @@ export default function(context, eventData, targetElement, referenceElement) {
     referenceImage.imageId
   );
 
+  console.log(referenceImage);
+
   // Make sure the target and reference actually have image plane metadata
   if (
     !targetImagePlane ||
