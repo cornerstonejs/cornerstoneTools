@@ -10,6 +10,7 @@ Per VideaHealth specifications, a few changes are made to support:
 
 1. Adding a configuration setting for hiding metrics as freehand and rectangular annotations are drawn,
 2. Disabling the mobile drawing offset.
+3. Update `src/util/findAndMoveHelpers.js` with a custom property `isEditable`. This allows us to add a `isEditable` annotation state and disable editing of a already created annotation. Since cornerstone does not have annotation specific read only properties.
 3. Coming soon: Decreasing the radius around boxes that is treated as editing a particular box. This is to allow for annotating boxes more closely together.
 
 <h3>Videa Deployment Steps</h3>
