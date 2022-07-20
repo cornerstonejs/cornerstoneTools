@@ -89,6 +89,11 @@ const findHandleDataNearImagePoint = function(
       getProximityThreshold(interactionType, toolName)
     );
 
+    // custom property which will not allow for moving this annotation
+    if (data && data.isEditable === false) {
+      continue;
+    }
+
     if (handle) {
       return {
         handle,
