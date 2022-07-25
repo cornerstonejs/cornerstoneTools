@@ -32,6 +32,8 @@ export default function(evt, tool) {
       ? moveHandle
       : moveNewHandle;
 
+  const timestamp = new Date().getTime();
+
   handleMover(
     eventData,
     tool.name,
@@ -44,7 +46,9 @@ export default function(evt, tool) {
         return;
       }
 
-      if (success) {
+      const isTooFast = new Date().getTime() - timestamp < 150;
+
+      if (success && isTooFast === false) {
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
         const eventData = {
           toolName: tool.name,
