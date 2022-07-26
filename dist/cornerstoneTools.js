@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 6.0.6-b - 2022-07-20 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 6.0.6-c - 2022-07-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "305eebe04f4766977df0";
+/******/ 	var hotCurrentHash = "c2fd7b6337a75908e11d";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -34271,7 +34271,7 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 
   for (var i = 0; i < toolState.data.length; i++) {
     var data = toolState.data[i];
-    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, data.handles, coords, Object(_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__["default"])(interactionType, toolName)); // custom property which will not allow for moving this annotation
+    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, data.handles, coords, Object(_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__["default"])(interactionType, toolName)); // Custom property which will not allow for moving this annotation
 
     if (data && data.isEditable === false) {
       continue;
@@ -34307,7 +34307,14 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 var moveAnnotation = function moveAnnotation(evt, tool, annotation) {
   var interactionType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'mouse';
   annotation.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true;
+  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true; // Prevents annotation from being moved
+
+  if (annotation && annotation.isEditable === false) {
+    annotation.active = false;
+    _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = false;
+    return;
+  }
+
   Object(_manipulators_index_js__WEBPACK_IMPORTED_MODULE_3__["moveAllHandles"])(evt.detail, tool.name, annotation, null, tool.options, interactionType, function () {
     annotation.active = false;
     _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = false;
@@ -38386,7 +38393,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ('6.0.6-b');
+/* harmony default export */ __webpack_exports__["default"] = ('6.0.6-c');
 
 /***/ })
 
