@@ -46,10 +46,16 @@ export default function(evt, tool) {
         return;
       }
 
-      const isTooFast =
-        tool.configuration && tool.configuration.ignoreFastEvents === true
-          ? new Date().getTime() - timestamp < 150
-          : false;
+      const hasThreshold =
+        tool.configuration &&
+        Object(tool.configuration).hasOwnProperty(
+          'measurementCreationThreshold'
+        );
+
+      const isTooFast = hasThreshold
+        ? new Date().getTime() - timestamp <
+          tool.configuration.measurementCreationThreshold
+        : false;
 
       if (success && isTooFast === false) {
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
