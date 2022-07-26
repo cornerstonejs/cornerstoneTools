@@ -46,7 +46,10 @@ export default function(evt, tool) {
         return;
       }
 
-      const isTooFast = new Date().getTime() - timestamp < 150;
+      const isTooFast =
+        tool.configuration && tool.configuration.ignoreFastEvents === true
+          ? new Date().getTime() - timestamp < 150
+          : false;
 
       if (success && isTooFast === false) {
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
