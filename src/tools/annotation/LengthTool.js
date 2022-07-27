@@ -197,6 +197,7 @@ export default class LengthTool extends BaseAnnotationTool {
           handleRadius,
           drawHandlesIfActive: drawHandlesOnHover,
           hideHandlesIfMoving,
+          filledHandle: data.filledHandle,
         };
 
         if (this.configuration.drawHandles) {
@@ -235,7 +236,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
         const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
-        // drawLinkedTextBox(
+        // DrawLinkedTextBox(
         //   context,
         //   element,
         //   data.handles.textBox,

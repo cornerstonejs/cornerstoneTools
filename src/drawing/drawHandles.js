@@ -26,6 +26,20 @@ export default function(context, evtDetail, handles, options = {}) {
 
   context.strokeStyle = options.color || defaultColor;
 
+  if (options.filledHandle) {
+    let fillColor = options.color;
+    // Increase opacity since filling seems to reduce it
+
+    if (fillColor && fillColor.substring(0, 4) === 'rgba') {
+      const splitFillColor = fillColor.split(',');
+
+      fillColor = `${splitFillColor[0]},${splitFillColor[1]},${
+        splitFillColor[2]
+      },0.7)`;
+    }
+    context.fillStyle = fillColor || defaultColor;
+  }
+
   const handleKeys = Object.keys(handles);
 
   for (let i = 0; i < handleKeys.length; i++) {
@@ -67,10 +81,14 @@ export default function(context, evtDetail, handles, options = {}) {
       context.arc(
         handleCanvasCoords.x,
         handleCanvasCoords.y,
-        handleRadius,
+        options.filledHandle ? handleRadius / 2 : handleRadius,
         0,
         2 * Math.PI
       );
+
+      if (options.filledHandle) {
+        context.fill();
+      }
     });
   }
 }

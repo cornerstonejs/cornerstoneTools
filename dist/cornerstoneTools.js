@@ -1,4 +1,4 @@
-/*! cornerstone-tools - 6.0.6-c - 2022-07-26 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
+/*! cornerstone-tools - 6.0.6-c - 2022-07-27 | (c) 2017 Chris Hafey | https://github.com/cornerstonejs/cornerstoneTools */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -74,7 +74,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/ 	var hotApplyOnUpdate = true;
 /******/ 	// eslint-disable-next-line no-unused-vars
-/******/ 	var hotCurrentHash = "c2fd7b6337a75908e11d";
+/******/ 	var hotCurrentHash = "914a7dceab33154993fe";
 /******/ 	var hotRequestTimeout = 10000;
 /******/ 	var hotCurrentModuleData = {};
 /******/ 	var hotCurrentChildModule;
@@ -2634,6 +2634,18 @@ __webpack_require__.r(__webpack_exports__);
   var element = evtDetail.element;
   var defaultColor = _stateManagement_toolColors_js__WEBPACK_IMPORTED_MODULE_2__["default"].getToolColor();
   context.strokeStyle = options.color || defaultColor;
+
+  if (options.filledHandle) {
+    var fillColor = options.color; // Increase opacity since filling seems to reduce it
+
+    if (fillColor && fillColor.substring(0, 4) === 'rgba') {
+      var splitFillColor = fillColor.split(',');
+      fillColor = "".concat(splitFillColor[0], ",").concat(splitFillColor[1], ",").concat(splitFillColor[2], ",0.7)");
+    }
+
+    context.fillStyle = fillColor || defaultColor;
+  }
+
   var handleKeys = Object.keys(handles);
 
   var _loop = function _loop(i) {
@@ -2667,7 +2679,11 @@ __webpack_require__.r(__webpack_exports__);
       var handleCanvasCoords = _externalModules_js__WEBPACK_IMPORTED_MODULE_0__["default"].cornerstone.pixelToCanvas(element, handle); // Handle's radisu, then tool's radius, then default radius
 
       var handleRadius = handle.radius || options.handleRadius || _store_index_js__WEBPACK_IMPORTED_MODULE_4__["state"].handleRadius;
-      context.arc(handleCanvasCoords.x, handleCanvasCoords.y, handleRadius, 0, 2 * Math.PI);
+      context.arc(handleCanvasCoords.x, handleCanvasCoords.y, options.filledHandle ? handleRadius / 2 : handleRadius, 0, 2 * Math.PI);
+
+      if (options.filledHandle) {
+        context.fill();
+      }
     });
   };
 
@@ -26001,7 +26017,8 @@ function (_BaseAnnotationTool) {
             color: color,
             handleRadius: handleRadius,
             drawHandlesIfActive: drawHandlesOnHover,
-            hideHandlesIfMoving: hideHandlesIfMoving
+            hideHandlesIfMoving: hideHandlesIfMoving,
+            filledHandle: data.filledHandle
           };
 
           if (_this2.configuration.drawHandles) {
@@ -26036,7 +26053,7 @@ function (_BaseAnnotationTool) {
             }
           }
 
-          var text = textBoxText(data, rowPixelSpacing, colPixelSpacing); // drawLinkedTextBox(
+          var text = textBoxText(data, rowPixelSpacing, colPixelSpacing); // DrawLinkedTextBox(
           //   context,
           //   element,
           //   data.handles.textBox,
@@ -34271,7 +34288,7 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 
   for (var i = 0; i < toolState.data.length; i++) {
     var data = toolState.data[i];
-    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, data.handles, coords, Object(_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__["default"])(interactionType, toolName)); // Custom property which will not allow for moving this annotation
+    var handle = Object(_manipulators_getHandleNearImagePoint_js__WEBPACK_IMPORTED_MODULE_2__["default"])(element, data.handles, coords, Object(_getProximityThreshold_js__WEBPACK_IMPORTED_MODULE_4__["default"])(interactionType, toolName)); // Custom property which will not allow for resizing
 
     if (data && data.isEditable === false) {
       continue;
@@ -34307,7 +34324,7 @@ var findHandleDataNearImagePoint = function findHandleDataNearImagePoint(element
 var moveAnnotation = function moveAnnotation(evt, tool, annotation) {
   var interactionType = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'mouse';
   annotation.active = true;
-  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true; // Prevents annotation from being moved
+  _store_index_js__WEBPACK_IMPORTED_MODULE_1__["state"].isToolLocked = true; // Prevents annotation from being moved, ie dragged
 
   if (annotation && annotation.isEditable === false) {
     annotation.active = false;
