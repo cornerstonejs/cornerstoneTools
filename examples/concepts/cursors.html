@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <script>
+    window.ENVIRONMENT = 'production';
+  </script>
+
+  <title>
+    Cursors
+  </title>
+
+  <!-- support for mobile touch devices -->
+  <meta
+    name="viewport"
+    content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1"
+  />
+
+  <!-- FAVICON -->
+  <!-- Generated using: https://realfavicongenerator.net/ -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+  <meta name="msapplication-TileColor" content="#da532c" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link rel="stylesheet" href="/examples/assets/monokai.css" />
+  <link rel="stylesheet" href="/examples/assets/bulma.min.css" />
+  <link rel="stylesheet" href="/examples/assets/styles.css" />
+
+  <!-- include the hammer.js library for touch gestures-->
+  <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+  <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.min.js"></script>
+
+  <!-- include the cornerstone library -->
+  <script src="https://unpkg.com/cornerstone-core"></script>
+  <script src="https://unpkg.com/cornerstone-math"></script>
+  <script src="https://unpkg.com/cornerstone-wado-image-loader"></script>
+
+  <!-- Why we're all here ;) -->
+  <script src="https://unpkg.com/cornerstone-tools@%5E4"></script>
+</head>
+<body><header role="banner">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/examples/">
+        <img src="/horizontal-logo.png" height="28">
+      </a>
+
+      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">
+          Docs
+        </a>
+
+        <a class="navbar-item" href="/api">
+          API
+        </a>
+
+        <a class="navbar-item" href="/examples/">
+          Examples
+        </a>
+
+        <a class="navbar-item" href="https://github.com/cornerstonejs/cornerstoneTools">
+          GitHub
+        </a>
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+// Get all "navbar-burger" elements
+const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+// Check if there are any navbar burgers
+if ($navbarBurgers.length > 0) {
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+}
+
+});
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <style>
+  .content figure {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+  }
+</style>
+
+<section class="section">
+  <div class="container content">
+    <h1 class="title is-1">Cursors</h1>
+
+    <div class="cornerstone-element-wrapper">
+      <div
+        class="cornerstone-element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+    </div>
+
+    <style>
+  .cursor-list,
+  .cursor-list-with-pointer {
+    display: flex;
+    padding: 15px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: black;
+  }
+
+  .cursor-list img {
+    padding: 5px;
+    flex-basis: 32px;
+  }
+</style>
+
+<p>
+  By default, cursors are disabled. To enable them, set the `showSVGCursors`
+  option to `true` when initializing `cornerstoneTools`.
+</p>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="nx">cornerstoneTools</span><span class="p">.</span><span class="nx">init</span><span class="p">({</span>
+  <span class="na">showSVGCursors</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+<span class="p">});</span></code></pre></figure>
+
+<h3 class="title is-3">Access Cursor Images</h3>
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="c1">// Grab a cursor</span>
+<span class="kd">const</span> <span class="nx">cursors</span> <span class="o">=</span> <span class="nx">cornerstoneTools</span><span class="p">.</span><span class="k">import</span><span class="p">(</span><span class="s1">'tools/cursors'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">cursor</span> <span class="o">=</span> <span class="nx">cursors</span><span class="p">.</span><span class="nx">arrowAnnotateCursor</span><span class="p">;</span> <span class="c1">// `MouseCursor` class</span>
+
+<span class="c1">// Create and display cursor image</span>
+<span class="kd">const</span> <span class="nx">cursorImg</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'img'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">cursorImgUrl</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">cursor</span><span class="p">.</span><span class="nx">iconSVG</span><span class="p">);</span>
+
+<span class="nx">cursorImg</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">cursorImgUrl</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'body'</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">cursorImg</span><span class="p">);</span>
+
+<span class="c1">// Create and display cursor image w/ pointer</span>
+<span class="kd">const</span> <span class="nx">cursorImgPointer</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">'img'</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">cursorImgPointerUrl</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">cursor</span><span class="p">.</span><span class="nx">blob</span><span class="p">);</span>
+
+<span class="nx">cursorImgPointer</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">cursorImgPointerUrl</span><span class="p">;</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">'body'</span><span class="p">).</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">cursorImgPointer</span><span class="p">);</span></code></pre></figure>
+
+<h4 class="title is-4">Cursors w/o Pointers</h4>
+
+<div class="cursor-list"></div>
+
+<h4 class="title is-4" style="margin-top: 1.5em;">Cursors w/ Pointers</h4>
+
+<div class="cursor-list-with-pointer"></div>
+
+<script>
+  // NOTE: We pull these in from packaged sources in our header,
+  // but here are the associated NPM packages that can be used instead
+
+  // Packages
+  // import Hammer from 'hammerjs';
+  // import dicomParser from 'dicom-parser';
+  // import * as cornerstone from 'cornerstone-core';
+  // import * as cornerstoneMath from 'cornerstone-math';
+  // import * as cornerstoneWADOImageLoader from 'cornerstone-wado-image-loader';
+  // import * as cornerstoneTools from '@cornerstonejs/tools';
+
+  const baseUrl =
+    window.ENVIRONMENT === 'development'
+      ? 'http://127.0.0.1:4000/'
+      : 'https://tools.cornerstonejs.org/examples/';
+
+  _initCornerstone();
+  _initInterface();
+
+  const element = document.querySelector('.cornerstone-element');
+
+  // Init CornerstoneTools
+  cornerstoneTools.init({
+    showSVGCursors: true,
+  });
+  cornerstone.enable(element);
+  const imageIds = [
+    `wadouri:${baseUrl}assets/dicom/exotic/1.dcm`,
+    `wadouri:${baseUrl}assets/dicom/exotic/2.dcm`,
+  ];
+
+  element.tabIndex = 0;
+  element.focus();
+
+  cornerstone.loadImage(imageIds[0]).then(function(image) {
+    cornerstone.displayImage(element, image);
+  });
+
+  // Add the tool
+  const RectangleRoiTool = cornerstoneTools.RectangleRoiTool;
+  cornerstoneTools.addTool(RectangleRoiTool);
+  cornerstoneTools.setToolActive('RectangleRoi', { mouseButtonMask: 1 });
+
+  // Grab all SVGs
+  const MouseCursor = cornerstoneTools.import('tools/cursors/MouseCursor');
+  const cursors = cornerstoneTools.import('tools/cursors');
+  const $cursorList = document.querySelector('.cursor-list');
+  const $cursorListWithPointer = document.querySelector(
+    '.cursor-list-with-pointer'
+  );
+
+  Object.keys(cursors).forEach(cursorName => {
+    const cursor = cursors[cursorName];
+
+    // Create cursor image from blob
+    const imageUrl = window.URL.createObjectURL(cursor.iconSVG);
+    const img = document.createElement('img');
+
+    img.src = imageUrl;
+    img.alt = cursorName;
+    $cursorList.appendChild(img);
+
+    // Create cursor + pointer image from blob
+    const imageUrl2 = window.URL.createObjectURL(cursor.blob);
+    const img2 = document.createElement('img');
+
+    img2.src = imageUrl2;
+    img2.alt = cursorName;
+    $cursorListWithPointer.appendChild(img2);
+
+    // window.URL.revokeObjectURL(imageUrl);
+  });
+
+  /***************************************************************************
+   * UI & Boilerplate setup code
+   **************************************************************************/
+
+  /***
+   *
+   *
+   */
+  function _initCornerstone() {
+    // Externals
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+    cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+    cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+    cornerstoneTools.external.cornerstone = cornerstone;
+    cornerstoneTools.external.Hammer = Hammer;
+
+    // Image Loader
+    const config = {
+      webWorkerPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderWebWorker.js`,
+      taskConfiguration: {
+        decodeTask: {
+          codecsPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderCodecs.js`,
+        },
+      },
+    };
+    cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
+  }
+
+  /***
+   *
+   *
+   */
+  function _initInterface() {}
+</script>
+
+  </div>
+</section>
+
+      </div>
+    </main><footer class="footer">
+  <div class="content container">
+    <p>CornerstoneTools.js is a light-weight solution for building Tools on top of Cornerstone.js. It&#39;s only dependencies are libraries within the Cornerstone family. Instead of trying to &quot;do everything&quot; it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using cornerstone-tools can be easily shared, allowing for the creation of a broader ecosystem.</p>
+
+    <p style="text-align: center;">
+      <strong>CornerstoneTools.js</strong> is licensed
+      <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+    </p>
+  </div>
+</footer>
+</body>
+
+</html>

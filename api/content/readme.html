@@ -1,0 +1,260 @@
+
+<html><head></head><body><p>&lt;div align="center"&gt;
+&lt;h1&gt;cornerstone-tools&lt;/h1&gt;
+
+</p>
+<p>&lt;p&gt;Provides a simple, extensible framework for creating tools on top of &lt;a href="https://github.com/cornerstonejs/cornerstone/"&gt;Cornerstone.js&lt;/a&gt;. Includes common tool implementations, and leverages DICOM metadata (when available) for advanced functionality.&lt;/p&gt;
+
+</p>
+<p><a href="https://tools.cornerstonejs.org/"><strong>Read The Docs</strong></a> | <a href="https://github.com/cornerstonejs/cornerstoneTools/edit/master/docs/">Edit the docs</a></p>
+<p>&lt;/div&gt;
+
+</p>
+<p>&lt;hr /&gt;
+
+</p>
+<p>&lt;!-- prettier-ignore-start --&gt;
+</p>
+<p><a href="https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master"><img src="https://circleci.com/gh/cornerstonejs/cornerstoneTools/tree/master.svg?style=svg" alt="Build Status" style="max-width: 100%;"></a>
+<a href="https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master"><img src="https://codecov.io/gh/cornerstonejs/cornerstoneTools/branch/master/graphs/badge.svg" alt="Coverage Status" style="max-width: 100%;"></a>
+<a href="#contributors"><img src="https://img.shields.io/badge/all_contributors-37-orange.svg?style=flat-square" alt="All Contributors" style="max-width: 100%;"></a></p>
+<p><a href="https://npmjs.org/package/cornerstone-tools"><img src="http://img.shields.io/npm/v/cornerstone-tools.svg?style=flat" alt="NPM version" style="max-width: 100%;"></a>
+<a href="https://npmjs.org/package/cornerstone-tools"><img src="http://img.shields.io/npm/dm/cornerstone-tools.svg?style=flat" alt="NPM downloads" style="max-width: 100%;"></a>
+<a href="LICENSE"><img src="http://img.shields.io/badge/license-MIT-blue.svg?style=flat" alt="MIT License" style="max-width: 100%;"></a></p>
+<p>&lt;!-- prettier-ignore-end --&gt;
+
+</p>
+<h2 id="index">Index</h2>
+<hr />
+<h3 id="the-fun-stuff">The Fun Stuff</h3>
+<ul>
+<li><a href="https://tools.cornerstonejs.org/examples/">TOOL EXAMPLES</a><ul>
+<li><a href="https://github.com/cornerstonejs/cornerstoneTools/tree/master/examples">Create or Update an Example</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="everything-else">Everything Else</h3>
+<ul>
+<li><a href="#installation">Installing</a></li>
+<li><a href="#examples--docs">Examples &amp; Docs</a></li>
+<li><a href="https://github.com/cornerstonejs/cornerstoneTools/blob/master/CONTRIBUTING.md">Contributing</a></li>
+</ul>
+<h2 id="the-problem">The problem</h2>
+<hr />
+<p>Building one or two tools on top of <a href="https://github.com/cornerstonejs/cornerstone/">Cornerstone.js</a> is not that difficult. However, as the number of tools grow, you begin to encounter difficult problems:</p>
+<ul>
+<li>Tools should behave and be configurable in a consistant way</li>
+<li>Managing tools across multiple cornerstone <code>enabled element</code>s</li>
+<li>Tools that need knowledge of a fellow tool's state</li>
+<li>The ability to "drop-in" others' tools, and they "just work"</li>
+<li>and many others</li>
+</ul>
+<p>This library solves these problems in a highly pluggable and extensible way.</p>
+<h2 id="this-solution">This solution</h2>
+<hr />
+<p><code>cornerstone-tools</code> is a light-weight solution for building Tools on top of Cornerstone.js. It's only dependencies are libraries within the Cornerstone family. Instead of trying to "do everything" it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using <code>cornerstone-tools</code> can be easily shared, allowing for the creation of a broader ecosystem.</p>
+<h2 id="example">Example</h2>
+<hr />
+<p>Below is a simplified example of creating a tool by extending <code>cornerstone-tool</code>'s <code>BaseTool</code> class.</p>
+<pre><code class="javascript">import cornerstone from 'cornerstone-core';
+import { BaseTool } from 'cornerstone-tools';
+import basicLevelingStrategy from '...';
+
+export default class WwwcTool extends BaseTool {
+  constructor(configuration = {}) {
+    const defaultConfig = {
+      name: 'Wwwc',
+      strategies: { basicLevelingStrategy },
+      supportedInteractionTypes: ['Mouse', 'Touch'],
+      configuration: {
+        orientation: 0,
+      },
+    };
+    const initialConfiguration = Object.assign(defaultConfig, configuration);
+
+    super(initialConfiguration);
+  }
+
+  mouseDragCallback(evt) {
+    this.applyActiveStrategy(evt);
+
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+
+  touchDragCallback(evt) {
+    evt.stopImmediatePropagation();
+    this.applyActiveStrategy(evt);
+
+    cornerstone.setViewport(evt.detail.element, evt.detail.viewport);
+  }
+}</code></pre>
+<h2 id="installation">Installation</h2>
+<hr />
+<p>This module is distributed via <a href="https://npmjs.org/package/cornerstone-tools">npm</a> which is bundled with <a href="https://nodejs.org">node</a> and
+should be installed as one of your project's <code>dependencies</code>:</p>
+<pre><code class="js">// To install the newest version
+npm install --save cornerstone-tools
+
+// To install the legacy version (2.4.x branch)
+npm install --save cornerstone-tools@2</code></pre>
+<p>This library has <code>peerDependencies</code> listings for:</p>
+<ul>
+<li><code>hammerjs</code> - Better touch support</li>
+<li><code>cornerstone-core</code></li>
+<li><code>cornerstone-math</code> - Simplifies and provides shared complex tool math logic</li>
+<li>Any Cornerstone "Image Loader"<ul>
+<li><code>cornerstone-web-image-loader</code> - JPEG/PNG images</li>
+<li><code>cornerstone-wado-image-loader</code> - DICOM images; also parses tags for tool use</li>
+</ul>
+</li>
+</ul>
+<p>If you need to support the <code>IE11</code> Browser, you will need to provide polyfills as needed. Our BrowserList target:</p>
+<pre><code class="json">  "browserslist": [
+    "&gt; 1%",
+    "IE 11",
+    "not dead",
+    "not IE &lt; 11",
+    "not op_mini all"
+  ]</code></pre>
+<p><strong>Setting up and configuring <code>cornerstone-tools</code>'s depency can be the biggest hurdle to getting started. Be sure to check out our docs for assistance.</strong></p>
+<blockquote>
+<p><a href="https://tools.cornerstonejs.org/installation.html"><strong>Docs</strong></a></p>
+</blockquote>
+<h2 id="examples---docs">Examples &amp; Docs</h2>
+<hr />
+<blockquote>
+<p>The latest major version has just been published. We are still flushing out our examples. If you have anything you would like to see documented, or you want a specific example from <a href="https://github.com/cornerstonejs/cornerstoneTools/tree/v2.4.x">version 2</a> ported, either create an issue or make a pull request ^_^</p>
+</blockquote>
+<ul>
+<li><a href="https://tools.cornerstonejs.org">Documentation</a></li>
+<li><a href="https://tools.cornerstonejs.org/examples">Examples</a></li>
+<li><a href="https://tools.cornerstonejs.org/api">API</a></li>
+</ul>
+<h3 id="tools">Tools</h3>
+<h4 id="annotation-tools">Annotation Tools</h4>
+<ul>
+<li><a href="https://tools.cornerstonejs.org/examples/tools/angle.html">Angle</a></li>
+<li><a href="https://tools.cornerstonejs.org/examples/tools/elliptical-roi.html">Elliptical ROI</a></li>
+<li><a href="https://tools.cornerstonejs.org/examples/tools/length.html">Length</a></li>
+<li><a href="https://tools.cornerstonejs.org/examples/tools/rectangle-roi.html">Rectangle ROI</a></li>
+</ul>
+<h4 id="3rd-party-tool-plugins">3rd Party Tool Plugins</h4>
+<ul>
+<li>Image Statistics: <a href="https://github.com/QSolutionsLLC/cornerstone-tool-image-statistics">Source</a> | <a href="https://qsolutionsllc.github.io/cornerstone-tool-image-statistics/">Demo</a></li>
+<li>Rotated Elliptical ROI Tool: <a href="https://github.com/sisobus/cornerstoneTools-RotatedEllipticalRoiTool">Source</a> | <a href="https://examples.sisobus.com/rotated-elliptical-roi/">Demo</a></li>
+</ul>
+<p>A huge thanks to tool authors, like @sisobus, for sharing their work with the community!</p>
+<h2 id="other-solutions">Other Solutions</h2>
+<hr />
+<ul>
+<li>OHIF Viewer: <a href="https://github.com/OHIF/Viewers">Source</a> | <a href="https://viewer.ohif.org/demo-signin">Demo</a></li>
+</ul>
+<h2 id="contributors">Contributors</h2>
+<hr />
+<p>Thanks goes to these people (<a href="https://github.com/kentcdodds/all-contributors#emoji-key">emoji key</a>):</p>
+<p>&lt;!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section --&gt;
+</p>
+<p>&lt;!-- prettier-ignore --&gt;
+</p>
+<table>
+<thead>
+<tr>
+<th align="center"><a href="https://www.linkedin.com/in/chafey">&lt;img src="https://avatars2.githubusercontent.com/u/1268698?v=4" width="100px;" alt="Chris Hafey"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Chris Hafey&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=chafey" title="Documentation">📖</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=chafey" title="Code">💻</a> <a href="#blog-chafey" title="Blogposts">📝</a> <a href="#talk-chafey" title="Talks">📢</a></th>
+<th align="center"><a href="https://github.com/swederik">&lt;img src="https://avatars3.githubusercontent.com/u/607793?v=4" width="100px;" alt="Erik Ziegler"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Erik Ziegler&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=swederik" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=swederik" title="Documentation">📖</a> <a href="#review-swederik" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-swederik" title="Maintenance">🚧</a> <a href="#infra-swederik" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#question-swederik" title="Answering Questions">💬</a></th>
+<th align="center"><a href="http://dannyrb.com/">&lt;img src="https://avatars1.githubusercontent.com/u/5797588?v=4" width="100px;" alt="Danny Brown"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Danny Brown&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=dannyrb" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=dannyrb" title="Documentation">📖</a> <a href="#review-dannyrb" title="Reviewed Pull Requests">👀</a> <a href="#maintenance-dannyrb" title="Maintenance">🚧</a> <a href="#infra-dannyrb" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#plugin-dannyrb" title="Plugin/utility libraries">🔌</a> <a href="#question-dannyrb" title="Answering Questions">💬</a></th>
+<th align="center"><a href="https://github.com/JamesAPetts">&lt;img src="https://avatars0.githubusercontent.com/u/25818497?v=4" width="100px;" alt="James Petts"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;James Petts&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=JamesAPetts" title="Code">💻</a> <a href="#review-JamesAPetts" title="Reviewed Pull Requests">👀</a> <a href="#plugin-JamesAPetts" title="Plugin/utility libraries">🔌</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=JamesAPetts" title="Documentation">📖</a> <a href="#question-JamesAPetts" title="Answering Questions">💬</a></th>
+<th align="center"><a href="http://www.isomics.com">&lt;img src="https://avatars0.githubusercontent.com/u/126077?v=4" width="100px;" alt="Steve Pieper"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Steve Pieper&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#question-pieper" title="Answering Questions">💬</a> <a href="#tool-pieper" title="Tools">🔧</a></th>
+<th align="center"><a href="https://rodrigoea.com/">&lt;img src="https://avatars3.githubusercontent.com/u/1905961?v=4" width="100px;" alt="Rodrigo Antinarelli"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Rodrigo Antinarelli&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=rodrigolabs" title="Code">💻</a></th>
+<th align="center"><a href="http://blog.zaidsafadi.com/">&lt;img src="https://avatars2.githubusercontent.com/u/10813109?v=4" width="100px;" alt="Zaid Safadi"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Zaid Safadi&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#question-Zaid-Safadi" title="Answering Questions">💬</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Zaid-Safadi" title="Code">💻</a></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><a href="https://github.com/galelis">&lt;img src="https://avatars3.githubusercontent.com/u/2378326?v=4" width="100px;" alt="Gustavo André Lelis"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Gustavo André Lelis&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=galelis" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/kofifus">&lt;img src="https://avatars1.githubusercontent.com/u/3926071?v=4" width="100px;" alt="Kofifus"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Kofifus&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=kofifus" title="Code">💻</a> <a href="#tool-kofifus" title="Tools">🔧</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3Akofifus" title="Bug reports">🐛</a></td>
+<td align="center"><a href="http://www.linkedin.com/in/alois-dreyfus/">&lt;img src="https://avatars2.githubusercontent.com/u/25580127?v=4" width="100px;" alt="Aloïs Dreyfus"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Aloïs Dreyfus&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=adreyfus" title="Code">💻</a></td>
+<td align="center"><a href="http://www.timl.id.au">&lt;img src="https://avatars0.githubusercontent.com/u/616382?v=4" width="100px;" alt="Tim Leslie"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Tim Leslie&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=timleslie" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/diego0020">&lt;img src="https://avatars3.githubusercontent.com/u/7297450?v=4" width="100px;" alt="diego0020"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;diego0020&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=diego0020" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/evren217">&lt;img src="https://avatars1.githubusercontent.com/u/4920551?v=4" width="100px;" alt="Evren Ozkan"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Evren Ozkan&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=evren217" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/daniel2101">&lt;img src="https://avatars2.githubusercontent.com/u/7647745?v=4" width="100px;" alt="Salvador Daniel Pelayo"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Salvador Daniel Pelayo&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=daniel2101" title="Code">💻</a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://github.com/jdnarvaez">&lt;img src="https://avatars3.githubusercontent.com/u/3358381?v=4" width="100px;" alt="Juan Narvaez"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Juan Narvaez&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=jdnarvaez" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/mikehazell">&lt;img src="https://avatars0.githubusercontent.com/u/814227?v=4" width="100px;" alt="Mike"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Mike&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=mikehazell" title="Documentation">📖</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=mikehazell" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=mikehazell" title="Tests">⚠️</a></td>
+<td align="center"><a href="http://sisobus.com">&lt;img src="https://avatars2.githubusercontent.com/u/3329885?v=4" width="100px;" alt="Sangkeun Kim"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Sangkeun Kim&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=sisobus" title="Code">💻</a> <a href="#question-sisobus" title="Answering Questions">💬</a></td>
+<td align="center"><a href="https://github.com/vsaase">&lt;img src="https://avatars3.githubusercontent.com/u/378021?v=4" width="100px;" alt="Victor Saase"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Victor Saase&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#ideas-vsaase" title="Ideas, Planning, &amp; Feedback">🤔</a></td>
+<td align="center"><a href="http://www.mikewasser.com">&lt;img src="https://avatars2.githubusercontent.com/u/120943?v=4" width="100px;" alt="Michael Wasser"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Michael Wasser&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=untoldone" title="Documentation">📖</a></td>
+<td align="center"><a href="https://github.com/singhArmani">&lt;img src="https://avatars2.githubusercontent.com/u/11068601?v=4" width="100px;" alt="Amandeep Singh"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Amandeep Singh&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#content-singhArmani" title="Content">🖋</a></td>
+<td align="center"><a href="http://mix3dstudios.com">&lt;img src="https://avatars0.githubusercontent.com/u/1474137?v=4" width="100px;" alt="Madison Dickson"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Madison Dickson&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=mix3d" title="Documentation">📖</a></td>
+</tr>
+<tr>
+<td align="center"><a href="https://github.com/kevinleedrum">&lt;img src="https://avatars1.githubusercontent.com/u/3342530?v=4" width="100px;" alt="Kevin Lee Drum"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Kevin Lee Drum&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=kevinleedrum" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/mmbauskar">&lt;img src="https://avatars3.githubusercontent.com/u/11224291?v=4" width="100px;" alt="Makarand Bauskar"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Makarand Bauskar&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=mbauskar" title="Code">💻</a></td>
+<td align="center"><a href="http://www.biharck.com.br">&lt;img src="https://avatars0.githubusercontent.com/u/1713255?v=4" width="100px;" alt="Biharck Araujo"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Biharck Araujo&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#example-biharck" title="Examples">💡</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=biharck" title="Documentation">📖</a></td>
+<td align="center"><a href="https://www.linkedin.com/in/devonbernard">&lt;img src="https://avatars3.githubusercontent.com/u/5349517?v=4" width="100px;" alt="Devon Bernard"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Devon Bernard&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=DevonBernard" title="Documentation">📖</a></td>
+<td align="center"><a href="https://github.com/Karl-Heinrich">&lt;img src="https://avatars2.githubusercontent.com/u/38315992?v=4" width="100px;" alt="Karl-Heinrich"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Karl-Heinrich&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3AKarl-Heinrich" title="Bug reports">🐛</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Karl-Heinrich" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Karl-Heinrich" title="Tests">⚠️</a></td>
+<td align="center"><a href="https://blog.xingbofeng.com/">&lt;img src="https://avatars0.githubusercontent.com/u/15172026?v=4" width="100px;" alt="counterxing"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;counterxing&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3Axingbofeng" title="Bug reports">🐛</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=xingbofeng" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/jlopes90">&lt;img src="https://avatars0.githubusercontent.com/u/50026015?v=4" width="100px;" alt="Jorge Lopes"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Jorge Lopes&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="#question-jlopes90" title="Answering Questions">💬</a></td>
+</tr>
+<tr>
+<td align="center"><a href="http://garrido.io">&lt;img src="https://avatars2.githubusercontent.com/u/5546851?v=4" width="100px;" alt="Gabriel Garrido"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Gabriel Garrido&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=Ggpsv" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/ASVBPREAUBV">&lt;img src="https://avatars0.githubusercontent.com/u/4126256?v=4" width="100px;" alt="ASVBPREAUBV"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;ASVBPREAUBV&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=ASVBPREAUBV" title="Documentation">📖</a></td>
+<td align="center"><a href="https://github.com/frolic06">&lt;img src="https://avatars0.githubusercontent.com/u/50960211?v=4" width="100px;" alt="frolic06"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;frolic06&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=frolic06" title="Code">💻</a></td>
+<td align="center"><a href="https://github.com/codepage949">&lt;img src="https://avatars2.githubusercontent.com/u/26968918?v=4" width="100px;" alt="codepage949"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;codepage949&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=codepage949" title="Code">💻</a></td>
+<td align="center"><a href="https://kivikakk.ee">&lt;img src="https://avatars.githubusercontent.com/u/1915?v=4" width="100px;" alt="Asherah Connor"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Asherah Connor&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=kivikakk" title="Code">💻</a></td>
+<td align="center"><a href="https://bandism.net/">&lt;img src="https://avatars.githubusercontent.com/u/22633385?v=4" width="100px;" alt="Ikko Ashimine"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Ikko Ashimine&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3Aeltociear" title="Bug reports">🐛</a></td>
+<td align="center"><a href="https://github.com/wayfarer3130">&lt;img src="https://avatars.githubusercontent.com/u/27778909?v=4" width="100px;" alt="Bill Wallace"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Bill Wallace&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=wayfarer3130" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=wayfarer3130" title="Documentation">📖</a></td>
+</tr>
+<tr>
+<td align="center"><a href="http://radicalimaging.com/">&lt;img src="https://avatars.githubusercontent.com/u/3341923?v=4" width="100px;" alt="Bruno Alves de Faria"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Bruno Alves de Faria&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=author%3Abrunoalvesdefaria" title="Bug reports">🐛</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=brunoalvesdefaria" title="Code">💻</a> <a href="#content-brunoalvesdefaria" title="Content">🖋</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=brunoalvesdefaria" title="Documentation">📖</a> <a href="#plugin-brunoalvesdefaria" title="Plugin/utility libraries">🔌</a> <a href="#review-brunoalvesdefaria" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=brunoalvesdefaria" title="Tests">⚠️</a> <a href="#tool-brunoalvesdefaria" title="Tools">🔧</a> <a href="#userTesting-brunoalvesdefaria" title="User Testing">📓</a></td>
+<td align="center"><a href="http://igoroctaviano.com">&lt;img src="https://avatars.githubusercontent.com/u/13886933?v=4" width="100px;" alt="Igor Octaviano"/&gt;&lt;br /&gt;&lt;sub&gt;&lt;b&gt;Igor Octaviano&lt;/b&gt;&lt;/sub&gt;</a>&lt;br /&gt;<a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=igoroctaviano" title="Code">💻</a> <a href="https://github.com/cornerstonejs/cornerstoneTools/commits?author=igoroctaviano" title="Documentation">📖</a> <a href="#maintenance-igoroctaviano" title="Maintenance">🚧</a> <a href="#review-igoroctaviano" title="Reviewed Pull Requests">👀</a> <a href="#userTesting-igoroctaviano" title="User Testing">📓</a></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+<tr>
+<td align="center">&lt;!-- ALL-CONTRIBUTORS-LIST:END --&gt;</td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center"></td>
+</tr>
+</tbody></table>
+<p>This project follows the <a href="https://github.com/kentcdodds/all-contributors">all-contributors</a> specification.
+Contributions of any kind welcome!</p>
+<h2 id="issues">Issues</h2>
+<hr />
+<p><em>Looking to contribute? Look for the <a href="https://github.com/cornerstonejs/cornerstoneTools/issues?utf8=%E2%9C%93&amp;q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc+label%3A%22%F0%9F%A5%87+Good+First+Issue%22">Good First Issue</a>
+label.</em></p>
+<h3 id="---bugs">🐛 Bugs</h3>
+<p>Please file an issue for bugs, missing documentation, or unexpected behavior.</p>
+<p><a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+is%3Aopen+label%3A%22%F0%9F%90%9B+Bug%3A+Verified%22+sort%3Acreated-desc"><strong>See Bugs</strong></a></p>
+<h3 id="---feature-requests">💡 Feature Requests</h3>
+<p>Please file an issue to suggest new features. Vote on feature requests by adding
+a 👍. This helps maintainers prioritize what to work on.</p>
+<ul>
+<li><a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A%22%F0%9F%92%BB+Change%3A+Feature%22+is%3Aopen"><strong>See Feature Requests</strong></a></li>
+<li><a href="https://github.com/cornerstonejs/cornerstoneTools/issues?q=is%3Aissue+sort%3Areactions-%2B1-desc+label%3A%22%F0%9F%92%BB+Change%3A+Implementation%22+is%3Aopen"><strong>See Internal Change Requests</strong></a></li>
+</ul>
+<h3 id="--questions">❓ Questions</h3>
+<p>For questions related to using the library, please visit our support community,
+or file an issue on GitHub.</p>
+<ul>
+<li><a href="https://groups.google.com/forum/#!forum/cornerstone-platform">Google Group</a></li>
+</ul>
+<h2 id="license">LICENSE</h2>
+<hr />
+<p>MIT</p>
+<p>&lt;!--
+Links:
+--&gt;
+
+</p>
+<p>&lt;!-- prettier-ignore-start --&gt;
+</p>
+<p>&lt;!-- prettier-ignore-end --&gt;
+</p>
+</body></html>

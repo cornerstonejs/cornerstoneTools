@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <script>
+    window.ENVIRONMENT = 'production';
+  </script>
+
+  <title>
+    Pan MultiTouch Tool
+  </title>
+
+  <!-- support for mobile touch devices -->
+  <meta
+    name="viewport"
+    content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1"
+  />
+
+  <!-- FAVICON -->
+  <!-- Generated using: https://realfavicongenerator.net/ -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+  <meta name="msapplication-TileColor" content="#da532c" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link rel="stylesheet" href="/examples/assets/monokai.css" />
+  <link rel="stylesheet" href="/examples/assets/bulma.min.css" />
+  <link rel="stylesheet" href="/examples/assets/styles.css" />
+
+  <!-- include the hammer.js library for touch gestures-->
+  <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+  <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.min.js"></script>
+
+  <!-- include the cornerstone library -->
+  <script src="https://unpkg.com/cornerstone-core"></script>
+  <script src="https://unpkg.com/cornerstone-math"></script>
+  <script src="https://unpkg.com/cornerstone-wado-image-loader"></script>
+
+  <!-- Why we're all here ;) -->
+  <script src="https://unpkg.com/cornerstone-tools@%5E4"></script>
+</head>
+<body><header role="banner">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/examples/">
+        <img src="/horizontal-logo.png" height="28">
+      </a>
+
+      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">
+          Docs
+        </a>
+
+        <a class="navbar-item" href="/api">
+          API
+        </a>
+
+        <a class="navbar-item" href="/examples/">
+          Examples
+        </a>
+
+        <a class="navbar-item" href="https://github.com/cornerstonejs/cornerstoneTools">
+          GitHub
+        </a>
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+// Get all "navbar-burger" elements
+const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+// Check if there are any navbar burgers
+if ($navbarBurgers.length > 0) {
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+}
+
+});
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <section class="section">
+  <div class="container">
+    <div class="notification is-warning">
+      <strong>🚧 Under Construction 🚧</strong><br />
+      <br />
+      This example is not yet complete. Please feel free to submit a pull
+      request to add this example to our docs! If you need help getting started,
+      reach out in our GitHub Issues.
+    </div>
+
+    <h1 class="title is-1">Pan MultiTouch Tool</h1>
+
+    
+
+  </div>
+</section>
+
+      </div>
+    </main><footer class="footer">
+  <div class="content container">
+    <p>CornerstoneTools.js is a light-weight solution for building Tools on top of Cornerstone.js. It&#39;s only dependencies are libraries within the Cornerstone family. Instead of trying to &quot;do everything&quot; it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using cornerstone-tools can be easily shared, allowing for the creation of a broader ecosystem.</p>
+
+    <p style="text-align: center;">
+      <strong>CornerstoneTools.js</strong> is licensed
+      <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+    </p>
+  </div>
+</footer>
+</body>
+
+</html>

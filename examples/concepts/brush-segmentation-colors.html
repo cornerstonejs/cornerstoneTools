@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <script>
+    window.ENVIRONMENT = 'production';
+  </script>
+
+  <title>
+    Custom Segmentation Colors
+  </title>
+
+  <!-- support for mobile touch devices -->
+  <meta
+    name="viewport"
+    content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1"
+  />
+
+  <!-- FAVICON -->
+  <!-- Generated using: https://realfavicongenerator.net/ -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+  <meta name="msapplication-TileColor" content="#da532c" />
+  <meta name="theme-color" content="#ffffff" />
+
+  <link rel="stylesheet" href="/examples/assets/monokai.css" />
+  <link rel="stylesheet" href="/examples/assets/bulma.min.css" />
+  <link rel="stylesheet" href="/examples/assets/styles.css" />
+
+  <!-- include the hammer.js library for touch gestures-->
+  <script src="https://unpkg.com/hammerjs@2.0.8/hammer.js"></script>
+  <script src="https://unpkg.com/dicom-parser@1.8.3/dist/dicomParser.min.js"></script>
+
+  <!-- include the cornerstone library -->
+  <script src="https://unpkg.com/cornerstone-core"></script>
+  <script src="https://unpkg.com/cornerstone-math"></script>
+  <script src="https://unpkg.com/cornerstone-wado-image-loader"></script>
+
+  <!-- Why we're all here ;) -->
+  <script src="https://unpkg.com/cornerstone-tools@%5E4"></script>
+</head>
+<body><header role="banner">
+  <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/examples/">
+        <img src="/horizontal-logo.png" height="28">
+      </a>
+
+      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </a>
+    </div>
+
+    <div id="navbarBasicExample" class="navbar-menu">
+      <div class="navbar-start">
+        <a class="navbar-item" href="/">
+          Docs
+        </a>
+
+        <a class="navbar-item" href="/api">
+          API
+        </a>
+
+        <a class="navbar-item" href="/examples/">
+          Examples
+        </a>
+
+        <a class="navbar-item" href="https://github.com/cornerstonejs/cornerstoneTools">
+          GitHub
+        </a>
+      </div>
+
+    </div>
+  </nav>
+</header>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+// Get all "navbar-burger" elements
+const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+// Check if there are any navbar burgers
+if ($navbarBurgers.length > 0) {
+
+  // Add a click event on each of them
+  $navbarBurgers.forEach( el => {
+    el.addEventListener('click', () => {
+
+      // Get the target from the "data-target" attribute
+      const target = el.dataset.target;
+      const $target = document.getElementById(target);
+
+      // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+      el.classList.toggle('is-active');
+      $target.classList.toggle('is-active');
+
+    });
+  });
+}
+
+});
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <section class="section">
+  <div class="container">
+    <h1 class="title is-1">Custom Segmentation Colors</h1>
+
+    <div class="buttons">
+      <button class="button set-tool-mode is-primary" data-action="Active">
+        Active
+      </button>
+      <button class="button set-tool-mode" data-action="Passive">
+        Passive
+      </button>
+      <button class="button set-tool-mode" data-action="Enabled">Enable</button>
+      <button class="button set-tool-mode" data-action="Disabled">
+        Disable
+      </button>
+    </div>
+
+    <div class="cornerstone-element-wrapper">
+      <div
+        id="cornerstone-element"
+        class="cornerstone-element"
+        data-index="0"
+        oncontextmenu="return false"
+      ></div>
+    </div>
+
+    <div class="buttons">
+  <button id="next-seg" class="button">
+    Next Segmentation
+  </button>
+  <button id="previous-seg" class="button">
+    Previous Segmentation
+  </button>
+</div>
+
+<h3 class="title is-3">Setup</h3>
+
+<!-- prettier-ignore-start -->
+
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">const</span> <span class="nx">colorMapId</span> <span class="o">=</span> <span class="s1">'HelloWorld'</span><span class="p">;</span>
+<span class="kd">const</span> <span class="nx">colormap</span> <span class="o">=</span> <span class="nx">cornerstone</span><span class="p">.</span><span class="nx">colors</span><span class="p">.</span><span class="nx">getColormap</span><span class="p">(</span><span class="nx">colorMapId</span><span class="p">);</span>
+<span class="kd">const</span> <span class="nx">distinctColors</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">60</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">255</span><span class="p">,</span> <span class="mi">225</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+  <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="mi">255</span><span class="p">],</span>
+<span class="p">];</span>
+
+<span class="nx">colormap</span><span class="p">.</span><span class="nx">setNumberOfColors</span><span class="p">(</span><span class="nx">distinctColors</span><span class="p">.</span><span class="nx">length</span><span class="p">);</span>
+
+<span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">distinctColors</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">colormap</span><span class="p">.</span><span class="nx">setColor</span><span class="p">(</span><span class="nx">i</span><span class="p">,</span> <span class="nx">distinctColors</span><span class="p">[</span><span class="nx">i</span><span class="p">]);</span>
+<span class="p">}</span>
+
+<span class="nx">cornerstoneTools</span><span class="p">.</span><span class="nx">store</span><span class="p">.</span><span class="nx">modules</span><span class="p">.</span><span class="nx">brush</span><span class="p">.</span><span class="nx">state</span><span class="p">.</span><span class="nx">colorMapId</span> <span class="o">=</span> <span class="nx">colorMapId</span><span class="p">;</span></code></pre></figure>
+
+<!-- prettier-ignore-end -->
+
+<script>
+function initCustomColorMap(){
+  const colorMapId = 'HelloWorld';
+  const colormap = cornerstone.colors.getColormap(colorMapId);
+  const distinctColors = [
+    [255, 255, 255, 255],
+    [60, 180, 175, 255],
+    [255, 225, 25, 255],
+    [0, 130, 200, 255],
+  ];
+
+  colormap.setNumberOfColors(distinctColors.length);
+
+  for (let i = 0; i < distinctColors.length; i++) {
+    colormap.setColor(i, distinctColors[i]);
+  }
+
+  cornerstoneTools.store.modules.brush.state.colorMapId = colorMapId;
+}
+
+// UI Setup
+document.getElementById('next-seg').addEventListener('click', function(){
+  cornerstoneTools.store.state.tools[0].nextSegmentation();
+});
+
+document.getElementById('previous-seg').addEventListener('click', function(){
+  cornerstoneTools.store.state.tools[0].previousSegmentation();
+});
+
+
+// Logic to fire after first image load
+const handleImageRendered = (evt) => {
+  evt.detail.element.removeEventListener('cornerstoneimagerendered', handleImageRendered)
+  initCustomColorMap();
+}
+
+const myElement = document.getElementById('cornerstone-element');
+myElement.addEventListener('cornerstoneimagerendered', handleImageRendered)
+</script>
+
+
+  </div>
+</section>
+
+<script>
+  const baseUrl =
+    window.ENVIRONMENT === 'development'
+      ? 'http://127.0.0.1:4000/'
+      : 'https://tools.cornerstonejs.org/examples/';
+
+  _initCornerstone();
+  _initInterface();
+
+  const element = document.querySelector('.cornerstone-element');
+
+  // Init CornerstoneTools
+  cornerstoneTools.init();
+  cornerstone.enable(element);
+  const toolName = 'Brush';
+  const imageIds = [];
+
+  for (let i = 1; i < 38; i++) {
+    imageIds.push(
+      'wadouri:' + baseUrl + 'assets/dicom/bellona/chest_lung/' + i + '.dcm'
+    );
+  }
+
+  const stack = {
+    currentImageIdIndex: 0,
+    imageIds: imageIds,
+  };
+
+  element.tabIndex = 0;
+  element.focus();
+
+  cornerstone.loadImage(imageIds[0]).then(function(image) {
+    cornerstone.displayImage(element, image);
+    cornerstoneTools.addStackStateManager(element, ['stack']);
+    cornerstoneTools.addToolState(element, 'stack', stack);
+  });
+
+  // Add the tool
+  const apiTool = cornerstoneTools[`${toolName}Tool`];
+  cornerstoneTools.addTool(apiTool);
+  cornerstoneTools.setToolActive(toolName, { mouseButtonMask: 1 });
+
+  /***************************************************************************
+   * UI & Boilerplate setup code
+   **************************************************************************/
+
+  /***
+   *
+   *
+   */
+  function _initCornerstone() {
+    // Externals
+    cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+    cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+    cornerstoneTools.external.cornerstoneMath = cornerstoneMath;
+    cornerstoneTools.external.cornerstone = cornerstone;
+    cornerstoneTools.external.Hammer = Hammer;
+
+    // Image Loader
+    const config = {
+      webWorkerPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderWebWorker.js`,
+      taskConfiguration: {
+        decodeTask: {
+          codecsPath: `${baseUrl}assets/image-loader/cornerstoneWADOImageLoaderCodecs.js`,
+        },
+      },
+    };
+    cornerstoneWADOImageLoader.webWorkerManager.initialize(config);
+  }
+
+  /***
+   *
+   *
+   */
+  function _initInterface() {
+    const handleClick = function(evt) {
+      const action = this.dataset.action;
+      const options = {
+        mouseButtonMask:
+          evt.buttons || convertMouseEventWhichToButtons(evt.which),
+      };
+
+      cornerstoneTools[`setTool${action}`](toolName, options);
+
+      // Remove active style from all buttons
+      const buttons = document.querySelectorAll('.set-tool-mode');
+      buttons.forEach(btn => {
+        btn.classList.remove('is-primary');
+      });
+
+      // Add active style to this button
+      this.classList.add('is-primary');
+
+      evt.preventDefault();
+      evt.stopPropagation();
+      evt.stopImmediatePropagation();
+      return false;
+    };
+
+    const buttons = document.querySelectorAll('.set-tool-mode');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('contextmenu', handleClick);
+      btn.addEventListener('auxclick', handleClick);
+      btn.addEventListener('click', handleClick);
+    });
+  }
+
+  const convertMouseEventWhichToButtons = which => {
+    switch (which) {
+      // no button
+      case 0:
+        return 0;
+      // left
+      case 1:
+        return 1;
+      // middle
+      case 2:
+        return 4;
+      // right
+      case 3:
+        return 2;
+    }
+    return 0;
+  };
+</script>
+
+      </div>
+    </main><footer class="footer">
+  <div class="content container">
+    <p>CornerstoneTools.js is a light-weight solution for building Tools on top of Cornerstone.js. It&#39;s only dependencies are libraries within the Cornerstone family. Instead of trying to &quot;do everything&quot; it aims to be extensible and pluggable to aid in the rapid development of new tools. Ideally, tools created using cornerstone-tools can be easily shared, allowing for the creation of a broader ecosystem.</p>
+
+    <p style="text-align: center;">
+      <strong>CornerstoneTools.js</strong> is licensed
+      <a href="http://opensource.org/licenses/mit-license.php">MIT</a>.
+    </p>
+  </div>
+</footer>
+</body>
+
+</html>
