@@ -383,6 +383,16 @@
         "review",
         "userTesting"
       ]
+    },
+    {
+      "login": "lecion",
+      "name": "lecion",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5362944?v=4",
+      "profile": "https://github.com/lecion",
+      "contributions": [
+        "code",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7
