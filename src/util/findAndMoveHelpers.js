@@ -31,7 +31,7 @@ const moveHandleNearImagePoint = function(
   state.isToolLocked = true;
   const doneHandler = success => {
     const { element } = evt.detail;
-    const toolName = toolData.toolType || toolData.toolName;
+    const toolName = tool.toolType || tool.toolName;
     const modifiedEventData = {
       toolName,
       toolType: toolName, // Deprecation notice: toolType will be replaced by toolName
