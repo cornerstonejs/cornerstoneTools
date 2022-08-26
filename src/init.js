@@ -37,7 +37,7 @@ export default function(defaultConfiguration = {}) {
       }
     });
   } else {
-    // defaultConfiguration is an object, default to assigning it to globalConfiguration.
+    // DefaultConfiguration is an object, default to assigning it to globalConfiguration.
     globalConfigurationModule.configuration = Object.assign(
       {},
       globalConfigurationModule.configuration,

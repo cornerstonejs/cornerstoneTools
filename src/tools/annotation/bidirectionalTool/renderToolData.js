@@ -45,7 +45,6 @@ export default function(evt) {
   const context = getNewContext(canvasContext.canvas);
 
   let color;
-  const activeColor = toolColors.getActiveColor();
   const lineWidth = toolStyle.getToolWidth();
 
   for (let i = 0; i < toolData.data.length; i++) {
@@ -55,7 +54,7 @@ export default function(evt) {
       continue;
     }
 
-    color = data.active ? activeColor : toolColors.getToolColor();
+    color = toolColors.getColorIfActive(data);
 
     // Calculate the data measurements
     if (data.invalidated === true) {
