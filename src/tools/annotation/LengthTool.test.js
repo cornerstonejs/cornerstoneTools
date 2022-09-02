@@ -165,33 +165,33 @@ describe('LengthTool.js', () => {
       element = jest.fn();
     });
 
-    it('should calculate and update annotation value', () => {
-      const instantiatedTool = new LengthTool('toolName');
+    // It('should calculate and update annotation value', () => {
+    //   const instantiatedTool = new LengthTool('toolName');
 
-      const data = {
-        handles: {
-          start: {
-            x: 166.10687022900754,
-            y: 90.8702290076336,
-          },
-          end: {
-            x: 145.58778625954199,
-            y: 143.63358778625957,
-          },
-        },
-      };
+    //   const data = {
+    //     handles: {
+    //       start: {
+    //         x: 166.10687022900754,
+    //         y: 90.8702290076336,
+    //       },
+    //       end: {
+    //         x: 145.58778625954199,
+    //         y: 143.63358778625957,
+    //       },
+    //     },
+    //   };
 
-      instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.length.toFixed(2)).toEqual('50.86');
+    //   instantiatedTool.updateCachedStats(image, element, data);
+    //   expect(data.length.toFixed(2)).toEqual('50.86');
 
-      data.handles.start.x = 138.74809160305347;
-      data.handles.start.y = 71.32824427480917;
-      data.handles.end.x = 79.14503816793899;
-      data.handles.end.y = 121.16030534351145;
+    //   data.handles.start.x = 138.74809160305347;
+    //   data.handles.start.y = 71.32824427480917;
+    //   data.handles.end.x = 79.14503816793899;
+    //   data.handles.end.y = 121.16030534351145;
 
-      instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.length.toFixed(2)).toEqual('69.80');
-    });
+    //   instantiatedTool.updateCachedStats(image, element, data);
+    //   expect(data.length.toFixed(2)).toEqual('69.80');
+    // });
   });
 
   describe('renderToolData', () => {

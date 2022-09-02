@@ -19,6 +19,8 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import decimal from 'decimal.js';
+import * as rounding from '../../util/measurementUncertaintyTool.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -40,7 +42,6 @@ export default class LengthTool extends BaseAnnotationTool {
         drawHandlesOnHover: false,
         hideHandlesIfMoving: false,
         renderDashed: false,
-        digits: 2,
       },
     };
 
@@ -127,6 +128,7 @@ export default class LengthTool extends BaseAnnotationTool {
   updateCachedStats(image, element, data) {
     const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
+    console.log(rowPixelSpacing, colPixelSpacing);
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
       (data.handles.end.x - data.handles.start.x) * (colPixelSpacing || 1);
@@ -136,9 +138,32 @@ export default class LengthTool extends BaseAnnotationTool {
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
 
+    // Pixel diagonal
+    const uncertainty = colPixelSpacing
+      ? decimal(
+          colPixelSpacing * colPixelSpacing + rowPixelSpacing * rowPixelSpacing
+        ).sqrt()
+      : decimal.sqrt(2);
+
+    console.log(`Uncertainty value: ${uncertainty}`);
+
     // Store the length inside the tool for outside access
-    data.length = length;
+    const [roundedLength, roundedDigits] = rounding.roundValue(
+      length,
+      uncertainty
+    );
+    const [roundedUncertainty, roundedUncertaintyDigits] = rounding.roundValue(
+      uncertainty,
+      uncertainty
+    );
+
+    console.log(`rounded value: ${roundedLength}`);
+    console.log(`digit count: ${roundedDigits}`);
+
     data.invalidated = false;
+    data.uncertainty = roundedUncertainty;
+    data.length = roundedLength;
+    data.digits = roundedDigits;
   }
 
   renderToolData(evt) {
@@ -254,8 +279,9 @@ export default class LengthTool extends BaseAnnotationTool {
     // - SideEffect: Updates annotation 'suffix'
     function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
-
+      const digitCount = annotation.digits;
       // Measured value is not defined, return empty string
+
       if (!measuredValue) {
         return '';
       }
@@ -269,10 +295,12 @@ export default class LengthTool extends BaseAnnotationTool {
 
       annotation.unit = suffix;
 
-      return (
-        toGermanNumberStringTemp(measuredValue) +
-        ` ${suffix}` /*`${measuredValue.toFixed(2)} ${suffix}`*/
-      );
+      // TODO: localisation need to be added!
+      // Return `${toGermanNumberStringTemp(
+      //   measuredValue,
+      //   digitCount
+      // )} ${suffix} +/- ${annotation.uncertainty}`;
+      return `${measuredValue} ${suffix} +/- ${annotation.uncertainty}`;
     }
 
     function textBoxAnchorPoints(handles) {
