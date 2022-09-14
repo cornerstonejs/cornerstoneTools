@@ -9,6 +9,7 @@ import LengthTool from './LengthTool.js';
 import ProbeTool from './ProbeTool.js';
 import RectangleRoiTool from './RectangleRoiTool.js';
 import TextMarkerTool from './TextMarkerTool.js';
+import HeightTool from './HeightTool.js';
 
 // Named Exports
 export { default as AngleTool } from './AngleTool.js';
@@ -22,6 +23,7 @@ export { default as LengthTool } from './LengthTool.js';
 export { default as ProbeTool } from './ProbeTool.js';
 export { default as RectangleRoiTool } from './RectangleRoiTool.js';
 export { default as TextMarkerTool } from './TextMarkerTool.js';
+export { default as HeightTool } from './HeightTool.js';
 
 // Namespace, default export
 export default {
@@ -36,4 +38,5 @@ export default {
   ProbeTool,
   RectangleRoiTool,
   TextMarkerTool,
+  HeightTool,
 };
