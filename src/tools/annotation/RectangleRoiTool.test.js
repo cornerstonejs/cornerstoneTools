@@ -1,6 +1,7 @@
 import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import Decimal from 'decimal.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
@@ -200,10 +201,10 @@ describe('RectangleRoiTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
-      expect(data.cachedStats.perimeter.toFixed(2)).toEqual('10.78');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
+      expect(data.cachedStats.area).toEqual(new Decimal(7));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(14));
+      expect(data.cachedStats.mean).toEqual(57.6);
+      expect(data.cachedStats.stdDev).toEqual(47.5);
 
       data.handles.start.x = 0;
       data.handles.start.y = 0;
@@ -211,9 +212,54 @@ describe('RectangleRoiTool.js', () => {
       data.handles.end.y = 2;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('4.84');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('68.17');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
+      expect(data.cachedStats.area).toEqual(new Decimal(5));
+      expect(data.cachedStats.mean).toEqual(68.2);
+      expect(data.cachedStats.stdDev).toEqual(45);
+    });
+
+    it('should calculate the area and uncertainty based on updated pixelspacing values', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      image.columnPixelSpacing = 0.1234;
+      image.rowPixelSpacing = 1.123;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area).toEqual(new Decimal(0.1));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(2.8));
+    });
+
+    it('should return the average and standard deviation based on generic rounding', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 1,
+            y: 1,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.mean).toEqual(57.6);
+      expect(data.cachedStats.stdDev).toEqual(47.5);
     });
   });
 

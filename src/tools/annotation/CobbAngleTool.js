@@ -28,7 +28,6 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
 
 /**
  * @public
@@ -151,16 +150,19 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
       (rowPixelSpacing || 1);
 
-    let angle = Math.acos(
+    let alphaAngle = Math.acos(
       Math.abs(
         (dx1 * dx2 + dy1 * dy2) /
           (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))
       )
     );
 
-    angle *= 180 / Math.PI;
+    alphaAngle *= 180 / Math.PI;
+    const betaAngle = 180 - alphaAngle;
 
-    data.rAngle = roundToDecimal(angle, 2);
+    data.alphaAngle = roundToDecimal(alphaAngle, 1);
+    data.betaAngle = roundToDecimal(betaAngle, 1);
+
     data.invalidated = false;
   }
 
@@ -385,7 +387,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     // Update textbox stats
     if (data.invalidated === true) {
-      if (data.rAngle) {
+      if (data.alphaAngle) {
         this.throttledUpdateCachedStats(image, element, data);
       } else {
         this.updateCachedStats(image, element, data);
@@ -395,17 +397,17 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
   }
 
-  textBoxText({ rAngle }, rowPixelSpacing, colPixelSpacing) {
-    if (rAngle === undefined) {
+  textBoxText({ alphaAngle, betaAngle }, rowPixelSpacing, colPixelSpacing) {
+    if (alphaAngle === undefined) {
       return '';
     }
-    if (Number.isNaN(rAngle)) {
+    if (Number.isNaN(alphaAngle)) {
       return '';
     }
 
     const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
 
-    return `${toGermanNumberStringTemp(rAngle)}\u00B0${suffix}`;
+    return `${alphaAngle}\u00B0${suffix} , ${betaAngle}\u00B0${suffix}`;
   }
 
   activeCallback(element) {

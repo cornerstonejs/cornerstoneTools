@@ -1,6 +1,7 @@
 import CircleRoiTool from './CircleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import Decimal from 'decimal.js';
 
 /* ~ Setup
  * To mock properly, Jest needs jest.mock('moduleName') to be in the
@@ -293,9 +294,12 @@ describe('CircleRoiTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('5.07');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('4.50');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('1.12');
+      expect(data.cachedStats.area).toEqual(new Decimal(5));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(10));
+      expect(data.cachedStats.radius.toFixed(2)).toEqual('1.27');
+      expect(data.cachedStats.diameter).toEqual(new Decimal(2.5));
+      expect(data.cachedStats.mean).toEqual(4.5);
+      expect(data.cachedStats.stdDev).toEqual(1.118);
 
       data.handles.start.x = 3;
       data.handles.start.y = 3;
@@ -303,9 +307,61 @@ describe('CircleRoiTool.js', () => {
       data.handles.end.y = 5;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('20.29');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('47.86');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.60');
+      expect(data.cachedStats.area).toEqual(new Decimal(20));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(20));
+      expect(data.cachedStats.mean).toEqual(47.9);
+      expect(data.cachedStats.stdDev).toEqual(47.6);
+    });
+
+    it('should calculate the area, perimeter and uncertainty based on updated pixelspacing values', () => {
+      const instantiatedTool = new CircleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      image.columnPixelSpacing = 0.1234;
+      image.rowPixelSpacing = 1.123;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area).toEqual(new Decimal(0.9));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(1.2));
+      expect(data.cachedStats.radius.toFixed(2)).toEqual('0.17');
+      expect(data.cachedStats.diameter).toEqual(new Decimal(0.3));
+    });
+
+    it('should calculate average and standard deviation based on general rounding', () => {
+      const instantiatedTool = new CircleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      image.columnPixelSpacing = 0.1234;
+      image.rowPixelSpacing = 1.123;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+
+      expect(data.cachedStats.mean).toEqual(4.5);
+      expect(data.cachedStats.stdDev).toEqual(1.118);
     });
   });
 

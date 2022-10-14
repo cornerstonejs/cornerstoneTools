@@ -18,7 +18,9 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import roundToDecimal from '../../util/roundToDecimal.js';
+import Decimal from 'decimal.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -136,8 +138,25 @@ export default class LengthTool extends BaseAnnotationTool {
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
 
+    const uncertainty = measurementUncertainty.getPixelDiagonal(
+      colPixelSpacing,
+      rowPixelSpacing
+    );
+
+    const roundedLength = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(length, uncertainty)
+      : roundToDecimal(length, 1);
+
+    const roundedUncertainty = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(
+          uncertainty,
+          uncertainty
+        )
+      : roundToDecimal(uncertainty, 1);
+
     // Store the length inside the tool for outside access
-    data.length = length;
+    data.length = new Decimal(roundedLength);
+    data.uncertainty = new Decimal(roundedUncertainty);
     data.invalidated = false;
   }
 
@@ -269,10 +288,7 @@ export default class LengthTool extends BaseAnnotationTool {
 
       annotation.unit = suffix;
 
-      return (
-        toGermanNumberStringTemp(measuredValue) +
-        ` ${suffix}` /*`${measuredValue.toFixed(2)} ${suffix}`*/
-      );
+      return `${measuredValue} ${suffix} +/- ${annotation.uncertainty} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
