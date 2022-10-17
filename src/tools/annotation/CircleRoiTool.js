@@ -21,6 +21,7 @@ import {
 import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
+import * as localization from '../../util/localization/localization.utils';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
@@ -368,8 +369,16 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = mean ? `avg: ${mean} ${unit}` : `avg: - ${unit}`;
-    const stdDevString = stdDev ? `sd: ${stdDev} ${unit}` : `sd: - ${unit}`;
+    let meanString = mean
+      ? `${localization.translate('average')}: ${localization.localizeNumber(
+          mean
+        )} ${unit}`
+      : `${localization.translate('average')}: - ${unit}`;
+    const stdDevString = stdDev
+      ? `${localization.translate(
+          'standardDeviation'
+        )}: ${localization.localizeNumber(stdDev)} ${unit}`
+      : `${localization.translate('standardDeviation')}: - ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -436,9 +445,11 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
+    : ` pix${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix} +/- ${uncertainty} ${suffix}`;
+  return `${localization.translate('area')}: ${localization.localizeNumber(
+    area
+  )} ${suffix} +/- ${uncertainty} ${suffix}`;
 }
 
 function _formatDiameter(value, name, hasPixelSpacing, uncertainty) {

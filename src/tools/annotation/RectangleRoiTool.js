@@ -26,6 +26,7 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
 
@@ -473,9 +474,11 @@ function _formatArea(area, hasPixelSpacing, uncertainty) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
+    : ` pix${String.fromCharCode(178)}`;
 
-  return `A: ${area} ${suffix} +/- ${uncertainty} ${suffix}`;
+  return `${localization.translate('area')}: ${localization.localizeNumber(
+    area
+  )} ${suffix} +/- ${uncertainty} ${suffix}`;
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
@@ -514,8 +517,16 @@ function _createTextBoxContent(
       meanStdDevSUV.mean !== undefined;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = mean ? `avg: ${mean} ${unit}` : `avg: - ${unit}`;
-    const stdDevString = stdDev ? `sd: ${stdDev} ${unit}` : `sd: - ${unit}`;
+    let meanString = mean
+      ? `${localization.translate('average')}: ${localization.localizeNumber(
+          mean
+        )} ${unit}`
+      : `${localization.translate('average')}: - ${unit}`;
+    const stdDevString = stdDev
+      ? `${localization.translate(
+          'standardDeviation'
+        )}: ${localization.localizeNumber(stdDev)} ${unit}`
+      : `${localization.translate('standardDeviation')}: - ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {

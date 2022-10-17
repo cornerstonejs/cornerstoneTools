@@ -21,6 +21,7 @@ import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import roundToDecimal from '../../util/roundToDecimal.js';
 import Decimal from 'decimal.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -283,12 +284,14 @@ export default class LengthTool extends BaseAnnotationTool {
       let suffix = 'mm';
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
+        suffix = 'pix';
       }
 
       annotation.unit = suffix;
 
-      return `${measuredValue} ${suffix} +/- ${annotation.uncertainty} ${suffix}`;
+      return `${localization.localizeNumber(measuredValue)} ${suffix} +/- ${
+        annotation.uncertainty
+      } ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {

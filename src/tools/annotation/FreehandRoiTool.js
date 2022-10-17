@@ -30,7 +30,7 @@ import freehandUtils from '../../util/freehand/index.js';
 import { getLogger } from '../../util/logger.js';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:FreehandRoiTool');
 
@@ -521,13 +521,13 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
 
         // Create a line of text to display the mean and any units that were specified (i.e. HU)
 
-        let meanText = `avg: ${toGermanNumberStringTemp(
-          meanStdDev.mean
-        )} ${moSuffix}`; //`Mean: ${numbersWithCommas(meanStdDev.mean.toFixed(2))} ${moSuffix}`;
+        let meanText = `${localization.translate(
+          'average'
+        )}: ${localization.localizeNumber(meanStdDev.mean)} ${moSuffix}`;
         // Create a line of text to display the standard deviation and any units that were specified (i.e. HU)
-        let stdDevText = `sd: ${toGermanNumberStringTemp(
-          meanStdDev.stdDev
-        )} ${moSuffix}`; //`StdDev: ${numbersWithCommas(meanStdDev.stdDev.toFixed(2))} ${moSuffix}`;
+        let stdDevText = `${localization.translate(
+          'standardDeviation'
+        )}: ${localization.localizeNumber(meanStdDev.stdDev)} ${moSuffix}`;
 
         // If this image has SUV values to display, concatenate them to the text line
         if (meanStdDevSUV && meanStdDevSUV.mean !== undefined) {
@@ -554,13 +554,15 @@ export default class FreehandRoiTool extends BaseAnnotationTool {
         const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
         if (!rowPixelSpacing || !colPixelSpacing) {
-          suffix = ` pixels${String.fromCharCode(178)}`;
+          suffix = ` pix${String.fromCharCode(178)}`;
         }
 
         // Create a line of text to display the area and its units
-        const areaText = `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
-
+        const areaText = `${localization.translate(
+          'area'
+        )}: ${localization.localizeNumber(area)} ${suffix}`;
         // Add this text line to the array to be displayed in the textbox
+
         textLines.push(areaText);
       }
 
