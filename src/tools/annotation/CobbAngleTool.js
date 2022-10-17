@@ -394,10 +394,10 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       }
     }
 
-    data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
+    data.value = this.textBoxText(data);
   }
 
-  textBoxText({ alphaAngle, betaAngle }, rowPixelSpacing, colPixelSpacing) {
+  textBoxText({ alphaAngle, betaAngle }) {
     if (alphaAngle === undefined) {
       return '';
     }
@@ -405,9 +405,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       return '';
     }
 
-    const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
-
-    return `${alphaAngle}\u00B0${suffix} , ${betaAngle}\u00B0${suffix}`;
+    return `${alphaAngle}\u00B0 , ${betaAngle}\u00B0`;
   }
 
   activeCallback(element) {
