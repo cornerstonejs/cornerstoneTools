@@ -22,6 +22,7 @@ import * as measurementUncertainty from '../../util/measurementUncertaintyTool.j
 import roundToDecimal from '../../util/roundToDecimal.js';
 import { formatLenght } from '../../util/formatMeasurment';
 import Decimal from 'decimal.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:LengthTool');
 

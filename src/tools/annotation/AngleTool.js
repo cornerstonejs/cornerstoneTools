@@ -28,7 +28,7 @@ import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 /**
  * @public
@@ -271,14 +271,16 @@ export default class AngleTool extends BaseAnnotationTool {
     }
 
     function textBoxText(data, rowPixelSpacing, colPixelSpacing) {
-      const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
+      const suffix =
+        !rowPixelSpacing || !colPixelSpacing
+          ? ` (${localization.translate('isotropic')})`
+          : '';
       const str = '00B0'; // Degrees symbol
 
       return (
-        toGermanNumberStringTemp(data.rAngle) +
+        localization.localizeNumber(data.rAngle) +
         String.fromCharCode(parseInt(str, 16)) +
         suffix
-        // data.rAngle.toString() + String.fromCharCode(parseInt(str, 16)) + suffix
       );
     }
 
