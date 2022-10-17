@@ -5,6 +5,12 @@ import Decimal from 'decimal.js';
 import { formatArea } from '../../util/formatMeasurment.js';
 import getNewContextMocked from '../../drawing/getNewContext.js';
 
+jest.mock('../../util/localization/localization.utils', () => ({
+  __esModule: true,
+  translate: jest.fn(val => val),
+  localizeNumber: jest.fn(val => val),
+}));
+
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),

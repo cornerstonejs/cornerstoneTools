@@ -48,6 +48,12 @@ jest.mock('../../externalModules.js', () => ({
 
 jest.mock('../../util/formatMeasurment');
 
+jest.mock('../../util/localization/localization.utils', () => ({
+  __esModule: true,
+  translate: jest.fn(val => val),
+  localizeNumber: jest.fn(val => val),
+}));
+
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
   currentPoints: {

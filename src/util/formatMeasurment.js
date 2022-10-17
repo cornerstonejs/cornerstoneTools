@@ -1,4 +1,4 @@
-import { translate } from './localization/localization.utils';
+import { translate, localizeNumber } from './localization/localization.utils';
 
 /**
  *
@@ -19,14 +19,17 @@ function formatLenght(
     return '';
   }
 
+  const localizedLength = localizeNumber(lenght);
   const suffix = _getLinearMeasurementSuffix(hasPixelSpacing);
-  const lengthithSuffix = `${lenght} ${suffix}`;
+  const lengthithSuffix = `${localizedLength} ${suffix}`;
 
   if (!displayUncertainties) {
     return lengthithSuffix;
   }
 
-  return `${lengthithSuffix} +/- ${uncertainty} ${suffix}`;
+  const localizedUncertainty = localizeNumber(uncertainty);
+
+  return `${lengthithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
 /**
@@ -43,14 +46,20 @@ function formatArea(area, hasPixelSpacing, uncertainty, displayUncertainties) {
     return '';
   }
 
+  const localizedArea = localizeNumber(area);
+
   const suffix = _getAreaMeasurmentSuffix(hasPixelSpacing);
-  const measuredValueWithSuffix = `${translate('area')}: ${area} ${suffix}`;
+  const measuredValueWithSuffix = `${translate(
+    'area'
+  )}: ${localizedArea} ${suffix}`;
 
   if (!displayUncertainties) {
     return measuredValueWithSuffix;
   }
 
-  return `${measuredValueWithSuffix} +/- ${uncertainty} ${suffix}`;
+  const localizedUncertainty = localizeNumber(uncertainty);
+
+  return `${measuredValueWithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
 /**
@@ -72,16 +81,20 @@ function formatDiameter(
     return '';
   }
 
+  const localizedDiameter = localizeNumber(diameter);
+
   const suffix = _getLinearMeasurementSuffix(hasPixelSpacing);
   const measuredValueWithSuffix = `${translate(
     'diameter'
-  )}: ${diameter} ${suffix}`;
+  )}: ${localizedDiameter} ${suffix}`;
 
   if (!displayUncertainties) {
     return measuredValueWithSuffix;
   }
 
-  return `${measuredValueWithSuffix} +/- ${uncertainty} ${suffix}`;
+  const localizedUncertainty = localizeNumber(uncertainty);
+
+  return `${measuredValueWithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
 export { formatArea, formatLenght, formatDiameter };
