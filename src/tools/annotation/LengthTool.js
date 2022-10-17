@@ -18,7 +18,7 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -264,15 +264,12 @@ export default class LengthTool extends BaseAnnotationTool {
       let suffix = 'mm';
 
       if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
+        suffix = 'pix';
       }
 
       annotation.unit = suffix;
 
-      return (
-        toGermanNumberStringTemp(measuredValue) +
-        ` ${suffix}` /*`${measuredValue.toFixed(2)} ${suffix}`*/
-      );
+      return `${localization.localizeNumber(measuredValue)} ${suffix}`;
     }
 
     function textBoxAnchorPoints(handles) {
