@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -26,6 +26,7 @@ import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
+import { formatArea } from '../../util/formatMeasurement.js';
 import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:RectangleRoiTool');
@@ -36,9 +37,9 @@ const logger = getLogger('tools:annotation:RectangleRoiTool');
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing rectangular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends Tools.Base.BaseAnnotationTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class RectangleRoiTool extends BaseAnnotationTool {
+export default class RectangleRoiTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'RectangleRoi',
@@ -50,6 +51,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
         renderDashed: false,
         // showMinMax: false,
         // showHounsfieldUnits: true
+        displayUncertainties: false,
       },
       svgCursor: rectangleRoiCursor,
     };
@@ -188,7 +190,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
+    const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
     draw(context, context => {
       // If we have tool data for this element - iterate over each set and draw it
@@ -258,6 +260,7 @@ export default class RectangleRoiTool extends BaseAnnotationTool {
           data.cachedStats,
           modality,
           hasPixelSpacing,
+          this.displayUncertainties,
           this.configuration
         );
 
@@ -462,29 +465,6 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
   ];
 }
 
-/**
- *
- *
- * @param {*} area
- * @param {*} hasPixelSpacing
- * @param {*} uncertainty
- * @returns {string} The formatted label for showing area
- */
-function _formatArea(area, hasPixelSpacing, uncertainty) {
-  if (!area) {
-    return '';
-  }
-
-  // This uses Char code 178 for a superscript 2
-  const suffix = hasPixelSpacing
-    ? ` mm${String.fromCharCode(178)}`
-    : ` pix${String.fromCharCode(178)}`;
-
-  return `${localization.translate('area')}: ${localization.localizeNumber(
-    area
-  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
-}
-
 function _getUnit(modality, showHounsfieldUnits) {
   return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : 'SI';
 }
@@ -507,6 +487,7 @@ function _createTextBoxContent(
   { area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV },
   modality,
   hasPixelSpacing,
+  displayUncertainties,
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
@@ -569,7 +550,9 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing, areaUncertainty));
+  textLines.push(
+    formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
+  );
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;

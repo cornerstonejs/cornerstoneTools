@@ -1,4 +1,4 @@
-import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
@@ -20,8 +20,8 @@ import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import roundToDecimal from '../../util/roundToDecimal.js';
+import { formatLenght } from '../../util/formatMeasurement';
 import Decimal from 'decimal.js';
-import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -30,9 +30,9 @@ const logger = getLogger('tools:annotation:LengthTool');
  * @class LengthTool
  * @memberof Tools.Annotation
  * @classdesc Tool for measuring distances.
- * @extends Tools.Base.BaseAnnotationTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class LengthTool extends BaseAnnotationTool {
+export default class LengthTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'Length',
@@ -254,7 +254,12 @@ export default class LengthTool extends BaseAnnotationTool {
           }
         }
 
-        const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+        const text = textBoxText(
+          data,
+          rowPixelSpacing,
+          colPixelSpacing,
+          this.displayUncertainties
+        );
 
         drawLinkedTextBox(
           context,
@@ -272,28 +277,22 @@ export default class LengthTool extends BaseAnnotationTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
+    function textBoxText(
+      annotation,
+      rowPixelSpacing,
+      colPixelSpacing,
+      displayUncertainties
+    ) {
       const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
-      // Measured value is not defined, return empty string
-      if (!measuredValue) {
-        return '';
-      }
+      const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
-      // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = 'mm';
-
-      if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pix';
-      }
-
-      annotation.unit = suffix;
-
-      return `${localization.localizeNumber(
-        measuredValue
-      )} ${suffix} +/- ${localization.localizeNumber(
-        annotation.uncertainty
-      )} ${suffix}`;
+      return formatLenght(
+        measuredValue,
+        hasPixelSpacing,
+        annotation.uncertainty,
+        displayUncertainties
+      );
     }
 
     function textBoxAnchorPoints(handles) {

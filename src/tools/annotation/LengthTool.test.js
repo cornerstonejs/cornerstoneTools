@@ -2,6 +2,8 @@ import LengthTool from './LengthTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
+import getPixelSpacing from '../../util/getPixelSpacing.js';
+import { formatLenght } from '../../util/formatMeasurement.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
@@ -19,6 +21,17 @@ jest.mock('./../../externalModules.js', () => ({
     },
   },
 }));
+jest.mock('./../../drawing/index.js', () => ({
+  getNewContext: jest.fn(),
+  draw: (c, f) => f(c),
+  drawLine: jest.fn(),
+  setShadow: jest.fn(),
+}));
+
+jest.mock('./../../drawing/drawLinkedTextBox.js');
+jest.mock('../../util/getPixelSpacing.js');
+jest.mock('./../../drawing/drawHandles.js');
+jest.mock('../../util/formatMeasurement');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -182,6 +195,11 @@ describe('LengthTool.js', () => {
         },
       };
 
+      getPixelSpacing.mockReturnValue({
+        colPixelSpacing: image.columnPixelSpacing,
+        rowPixelSpacing: image.rowPixelSpacing,
+      });
+
       instantiatedTool.updateCachedStats(image, element, data);
       expect(data.length).toEqual(new Decimal(50.9));
       expect(data.uncertainty).toEqual(new Decimal(1.3));
@@ -212,8 +230,10 @@ describe('LengthTool.js', () => {
         },
       };
 
-      image.columnPixelSpacing = null;
-      image.rowPixelSpacing = null;
+      getPixelSpacing.mockReturnValue({
+        colPixelSpacing: null,
+        rowPixelSpacing: null,
+      });
 
       instantiatedTool.updateCachedStats(image, element, data);
 
@@ -235,6 +255,52 @@ describe('LengthTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+
+    describe('should display uncertainties', () => {
+      it.each([
+        { displayUncertainties: false },
+        { displayUncertainties: true },
+      ])('should render the right text when %o', ({ displayUncertainties }) => {
+        const instantiatedTool = new LengthTool({
+          configuration: { displayUncertainties },
+        });
+
+        getPixelSpacing.mockReturnValue({
+          rowPixelSpacing: 0,
+          colPixelSpacing: 0,
+        });
+
+        const mockEvent = {
+          detail: { canvasContext: { canvas: {} } },
+          currentTarget: undefined,
+        };
+
+        const length = 17.3;
+        const uncertainty = 0.4;
+
+        getToolState.mockReturnValueOnce({
+          data: [
+            {
+              visible: true,
+              handles: {
+                textBox: { hasMoved: true },
+              },
+              length,
+              uncertainty,
+            },
+          ],
+        });
+
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(formatLenght).toHaveBeenCalledWith(
+          length,
+          false,
+          uncertainty,
+          displayUncertainties
+        );
+      });
     });
   });
 });

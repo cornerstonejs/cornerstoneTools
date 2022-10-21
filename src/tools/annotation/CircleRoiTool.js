@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -29,6 +29,7 @@ import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
+import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -38,9 +39,9 @@ const logger = getLogger('tools:annotation:CircleRoiTool');
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing circular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends Tools.Base.BaseAnnotationTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class CircleRoiTool extends BaseAnnotationTool {
+export default class CircleRoiTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'CircleRoi',
@@ -49,6 +50,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       configuration: {
         renderDashed: false,
         hideHandlesIfMoving: false,
+        displayUncertainties: false,
       },
     };
 
@@ -188,7 +190,8 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
+    const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
+    const displayUncertainties = this.displayUncertainties;
 
     draw(newContext, context => {
       // If we have tool data for this element, iterate over each set and draw it
@@ -269,7 +272,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           data.cachedStats,
           modality,
           hasPixelSpacing,
-          this.configuration
+          displayUncertainties
         );
 
         data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
@@ -357,6 +360,7 @@ function _createTextBoxContent(
   } = {},
   modality,
   hasPixelSpacing,
+  displayUncertainties,
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
@@ -417,50 +421,24 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing, areaUncertainty));
+  textLines.push(
+    formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
+  );
 
   if (diameter) {
     textLines.push(
-      _formatDiameter(diameter, hasPixelSpacing, diameterUncertainty)
+      formatDiameter(
+        diameter,
+        hasPixelSpacing,
+        diameterUncertainty,
+        displayUncertainties
+      )
     );
   }
 
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
-}
-
-/**
- *
- *
- * @param {*} area
- * @param {*} hasPixelSpacing
- * @param {*} uncertainty
- * @returns {string} The formatted label for showing area
- */
-function _formatArea(area, hasPixelSpacing, uncertainty) {
-  if (!area) {
-    return '';
-  }
-  // This uses Char code 178 for a superscript 2
-  const suffix = hasPixelSpacing
-    ? ` mm${String.fromCharCode(178)}`
-    : ` pix${String.fromCharCode(178)}`;
-
-  return `${localization.translate('area')}: ${localization.localizeNumber(
-    area
-  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
-}
-
-function _formatDiameter(diameter, hasPixelSpacing, uncertainty) {
-  if (!diameter) {
-    return '';
-  }
-  const suffix = hasPixelSpacing ? ' mm' : ' pix';
-
-  return `${localization.translate('diameter')}: ${localization.localizeNumber(
-    diameter
-  )} ${suffix} +/- ${localization.localizeNumber(uncertainty)} ${suffix}`;
 }
 
 /**

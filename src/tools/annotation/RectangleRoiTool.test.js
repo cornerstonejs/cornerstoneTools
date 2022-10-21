@@ -2,6 +2,14 @@ import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
+import { formatArea } from '../../util/formatMeasurement.js';
+import getNewContextMocked from '../../drawing/getNewContext.js';
+
+jest.mock('../../util/localization/localization.utils', () => ({
+  __esModule: true,
+  translate: jest.fn(val => val),
+  localizeNumber: jest.fn(val => val),
+}));
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
@@ -14,14 +22,36 @@ jest.mock('./../../importInternal.js', () => ({
 
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
+    pixelToCanvas: jest.fn(),
     metaData: {
       get: jest.fn(),
     },
+    getViewport: jest.fn(),
     /* eslint-enable prettier/prettier */
     getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
     /* eslint-enable prettier/prettier */
   },
 }));
+
+jest.mock('../../drawing/getNewContext', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('../../drawing/drawRect', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawHandles', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawLinkedTextBox', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('../../util/formatMeasurement');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -276,6 +306,68 @@ describe('RectangleRoiTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+
+    describe('should display uncertainties', () => {
+      const toolState = {
+        data: [
+          {
+            invalidated: true,
+            visible: true,
+            active: false,
+            handles: {
+              start: {
+                x: 1,
+                y: 1,
+              },
+              end: {
+                x: 4,
+                y: 4,
+              },
+              textBox: {}, // Not used
+            },
+          },
+        ],
+      };
+
+      beforeAll(() => {
+        getNewContextMocked.mockReturnValue({
+          save: jest.fn(),
+          restore: jest.fn(),
+        });
+      });
+
+      it.each([
+        { displayUncertainties: false },
+        { displayUncertainties: true },
+      ])('should render the right text when %o', ({ displayUncertainties }) => {
+        const mockEvent = {
+          detail: {
+            element: {},
+            canvasContext: {
+              canvas: {},
+            },
+            image: {},
+            viewport: {},
+          },
+        };
+        const instantiatedTool = new RectangleRoiTool({
+          configuration: {
+            displayUncertainties,
+          },
+        });
+
+        getToolState.mockReturnValueOnce(toolState);
+
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(formatArea).toHaveBeenCalledWith(
+          new Decimal(9),
+          false,
+          new Decimal(17),
+          displayUncertainties
+        );
+      });
     });
   });
 });
