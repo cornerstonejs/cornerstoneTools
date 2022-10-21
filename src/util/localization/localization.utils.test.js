@@ -20,11 +20,11 @@ describe('localization utils', () => {
     });
 
     it('should localize adding 0s to complete decimal part', () => {
-      expect(localization.localizeNumber(num2)).toBe('1 000 000,90');
+      expect(localization.localizeNumber(num2)).toBe('1 000 000,9');
     });
 
     it('should localize adding previously inexisting decimal part', () => {
-      expect(localization.localizeNumber(num3)).toBe('1 000 000,00');
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
     });
 
     it('should localize decimal numbers', () => {
@@ -40,12 +40,8 @@ describe('localization utils', () => {
       expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
     });
 
-    it('should localize adding 0s to complete decimal part', () => {
-      expect(localization.localizeNumber(num2)).toBe('1 000 000,90');
-    });
-
-    it('should localize adding previously inexisting decimal part', () => {
-      expect(localization.localizeNumber(num3)).toBe('1 000 000,00');
+    it('should localize no minumum decimal part', () => {
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
     });
 
     it('should localize decimal numbers', () => {
@@ -61,12 +57,8 @@ describe('localization utils', () => {
       expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
     });
 
-    it('should localize adding 0s to complete decimal part', () => {
-      expect(localization.localizeNumber(num2)).toBe('1 000 000,90');
-    });
-
-    it('should localize adding previously inexisting decimal part', () => {
-      expect(localization.localizeNumber(num3)).toBe('1 000 000,00');
+    it('should localize no minumum decimal part', () => {
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
     });
 
     it('should localize decimal numbers', () => {
@@ -82,12 +74,8 @@ describe('localization utils', () => {
       expect(localization.localizeNumber(num1)).toBe('1 000 000,09');
     });
 
-    it('should localize adding 0s to complete decimal part', () => {
-      expect(localization.localizeNumber(num2)).toBe('1 000 000,90');
-    });
-
-    it('should localize adding previously inexisting decimal part', () => {
-      expect(localization.localizeNumber(num3)).toBe('1 000 000,00');
+    it('should localize no minumum decimal part', () => {
+      expect(localization.localizeNumber(num3)).toBe('1 000 000');
     });
 
     it('should localize decimal numbers', () => {

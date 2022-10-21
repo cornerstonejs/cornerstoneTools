@@ -1,12 +1,13 @@
 import Tool from './CobbAngleTool.js';
 import { getToolState } from '../../stateManagement/toolState.js';
+import Decimal from 'decimal.js';
+import external from '../../externalModules.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
 jest.mock('./../../externalModules.js');
-import external from '../../externalModules.js';
 
 const goodMouseEventData = {
   currentPoints: {
@@ -123,6 +124,7 @@ describe('CobbAngleTool.js', () => {
 
     it('returns false when measurement data is incomplete', () => {
       const instantiatedTool = new Tool('AngleTool');
+
       instantiatedTool.hasIncomplete = true;
       const measurementData = {
         visible: true,
@@ -152,9 +154,7 @@ describe('CobbAngleTool.js', () => {
         },
       };
 
-      external.cornerstone.pixelToCanvas.mockImplementation((el, pt) => {
-        return pt;
-      });
+      external.cornerstone.pixelToCanvas.mockImplementation((el, pt) => pt);
 
       expect(
         instantiatedTool.pointNearTool(element, measurementData, {
@@ -213,7 +213,8 @@ describe('CobbAngleTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.rAngle).toBe(76.76);
+      expect(data.alphaAngle).toBe(76.8);
+      expect(data.betaAngle).toBe(103.2);
       expect(data.invalidated).toBe(false);
     });
   });

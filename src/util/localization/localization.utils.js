@@ -71,7 +71,7 @@ export const localizeNumber = value => {
   const localizedNumber =
     i18next.t('intlNumber', {
       val: value,
-      formatParams: { val: { minimumFractionDigits: 2 } },
+      formatParams: { val: { minimumFractionDigits: 0 } },
     }) || '';
 
   return localizedNumber

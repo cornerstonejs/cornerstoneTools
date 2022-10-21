@@ -17,3 +17,7 @@ junit.xml
 .DS_Store
 
 ~/.npm
+
+# Yalc
+/.yalc
+yalc.lock
