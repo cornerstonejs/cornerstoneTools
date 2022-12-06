@@ -87,7 +87,7 @@ export default class MagnifyTool extends BaseTool {
       this._createMagnificationCanvas(element);
     }
 
-    if (this.zoomCanvas === undefined) {
+    if (this.zoomCanvas === undefined || !evt.detail.currentPoints) {
       return;
     }
 
@@ -98,7 +98,7 @@ export default class MagnifyTool extends BaseTool {
 
     // Calculate the on-canvas location of the mouse pointer / touch
     const canvasLocation = external.cornerstone.pixelToCanvas(
-      evt.detail.element,
+      element,
       evt.detail.currentPoints.image
     );
 
