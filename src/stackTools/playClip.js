@@ -139,7 +139,7 @@ function playClip(element, framesPerSecond) {
     playClipData = {
       intervalId: undefined,
       framesPerSecond: 30,
-      lastFrameTimeStamp: undefined,
+      lastFrameTimeStamp: new Date().getTime(),
       frameRate: 0,
       frameTimeVector: undefined,
       ignoreFrameTimeVector: false,
@@ -182,15 +182,19 @@ function playClip(element, framesPerSecond) {
       startLoadingHandler,
       endLoadingHandler,
       errorLoadingHandler,
+      newlastFrameTimeStamp = new Date().getTime(),
+      deltatime = newlastFrameTimeStamp - playClipData.lastFrameTimeStamp,
+      frames = Math.round((playClipData.framesPerSecond / 1000) * deltatime),
       newImageIdIndex = stackData.currentImageIdIndex;
 
     const imageCount = stackData.imageIds.length;
 
     if (playClipData.reverse) {
-      newImageIdIndex--;
+      newImageIdIndex -= frames;
     } else {
-      newImageIdIndex++;
+      newImageIdIndex += frames;
     }
+    playClipData.lastFrameTimeStamp = newlastFrameTimeStamp;
 
     if (
       !playClipData.loop &&
