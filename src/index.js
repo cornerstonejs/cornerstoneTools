@@ -139,6 +139,7 @@ import {
   setToolOptions,
   setToolOptionsForElement,
 } from './store/setToolOptions.js';
+
 import {
   setToolActive,
   setToolActiveForElement,
@@ -208,6 +209,7 @@ import { default as EVENTS } from './events.js';
 import { default as version } from './version.js';
 
 import importInternal from './importInternal.js';
+import {clearToolOptionsByElement} from "./toolOptions";
 
 const cornerstoneTools = {
   // ~~~ TOOLS
@@ -373,6 +375,7 @@ export {
   addToolForElement,
   removeTool,
   removeToolForElement,
+  clearToolOptionsByElement,
   setToolOptions,
   setToolOptionsForElement,
   isToolActiveForElement,
