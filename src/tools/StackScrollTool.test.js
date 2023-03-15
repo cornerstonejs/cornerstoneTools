@@ -43,6 +43,12 @@ describe('StachScroll.js', () => {
 
       expect(instantiatedTool.configuration.allowSkipping).toEqual(true);
     });
+
+    it('should have default configuration invert as false', () => {
+      const instantiatedTool = new StackScrollTool();
+
+      expect(instantiatedTool.configuration.invert).toEqual(false);
+    });
   });
 
   describe('_dragCallback', () => {
@@ -73,6 +79,54 @@ describe('StachScroll.js', () => {
       instantiatedTool._dragCallback(mockEvent);
 
       expect(scroll).not.toHaveBeenCalled();
+    });
+
+    it('should call scroll with positive index when DeltaY is positive and invert is set to false', () => {
+      instantiatedTool._getDeltaY.mockReturnValue(600);
+      instantiatedTool._getPixelPerImage.mockReturnValue(100);
+
+      instantiatedTool._dragCallback(mockEvent);
+
+      expect(scroll).toHaveBeenCalledWith({}, 6, false, true);
+    });
+
+    it('should call scroll with negative index when DeltaY is negative and invert is set to false', () => {
+      instantiatedTool._getDeltaY.mockReturnValue(-600);
+      instantiatedTool._getPixelPerImage.mockReturnValue(100);
+
+      instantiatedTool._dragCallback(mockEvent);
+
+      expect(scroll).toHaveBeenCalledWith({}, -6, false, true);
+    });
+
+    it('should call scroll with negative index when DeltaY is positive and invert is set to true', () => {
+      instantiatedTool = new StackScrollTool({
+        configuration: { invert: true },
+      });
+      instantiatedTool._getDeltaY = jest.fn();
+      instantiatedTool._getPixelPerImage = jest.fn();
+      scroll.mockClear();
+
+      instantiatedTool._getDeltaY.mockReturnValue(600);
+      instantiatedTool._getPixelPerImage.mockReturnValue(100);
+      instantiatedTool._dragCallback(mockEvent);
+
+      expect(scroll).toHaveBeenCalledWith({}, -6, false, true);
+    });
+
+    it('should call scroll with positive index when DeltaY is negative and invert is set to true', () => {
+      instantiatedTool = new StackScrollTool({
+        configuration: { invert: true },
+      });
+      instantiatedTool._getDeltaY = jest.fn();
+      instantiatedTool._getPixelPerImage = jest.fn();
+      scroll.mockClear();
+
+      instantiatedTool._getDeltaY.mockReturnValue(-600);
+      instantiatedTool._getPixelPerImage.mockReturnValue(100);
+      instantiatedTool._dragCallback(mockEvent);
+
+      expect(scroll).toHaveBeenCalledWith({}, 6, false, true);
     });
   });
 });
