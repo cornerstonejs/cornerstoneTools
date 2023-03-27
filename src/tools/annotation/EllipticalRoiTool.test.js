@@ -1,10 +1,26 @@
 import EllipticalRoiTool from './EllipticalRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import getNewContext from '../../drawing/getNewContext.js';
+import drawEllipse from '../../drawing/drawEllipse.js';
+
+/* ~ Setup
+ * To mock properly, Jest needs jest.mock('moduleName') to be in the
+ * same scope as the require/import statement.
+ */
+import external from '../../externalModules.js';
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
+}));
+jest.mock('../../drawing/drawEllipse', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/getNewContext', () => ({
+  __esModule: true,
+  default: jest.fn(),
 }));
 
 jest.mock('./../../importInternal.js', () => ({
@@ -19,6 +35,7 @@ jest.mock('./../../externalModules.js', () => ({
     /* eslint-disable prettier/prettier */
     getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
     /* eslint-enable prettier/prettier */
+    pixelToCanvas: jest.fn(),
   },
 }));
 
@@ -215,6 +232,20 @@ describe('EllipticalRoiTool.js', () => {
   });
 
   describe('renderToolData', () => {
+    beforeAll(() => {
+      getNewContext.mockReturnValue({
+        save: jest.fn(),
+        restore: jest.fn(),
+        beginPath: jest.fn(),
+        arc: jest.fn(),
+        stroke: jest.fn(),
+        fillRect: jest.fn(),
+        fillText: jest.fn(),
+        measureText: jest.fn(() => ({ width: 1 })),
+      });
+      external.cornerstone.pixelToCanvas.mockImplementation((comp, val) => val);
+    });
+
     it('returns undefined when no toolData exists for the tool', () => {
       const instantiatedTool = new EllipticalRoiTool();
       const mockEvent = {
@@ -227,6 +258,56 @@ describe('EllipticalRoiTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+
+    describe('draw ellipse with color', () => {
+      const defaulColor = 'white';
+      const mockEvent = {
+        detail: {
+          element: {},
+          canvasContext: {
+            canvas: {},
+          },
+          image: {},
+          viewport: {},
+        },
+      };
+      const instantiatedTool = new EllipticalRoiTool({
+        configuration: {},
+      });
+
+      const toolState = {
+        data: [
+          {
+            visible: true,
+            active: false,
+            handles: {
+              start: {
+                x: 0,
+                y: 0,
+              },
+              end: {
+                x: 3,
+                y: 3,
+              },
+              textBox: {},
+            },
+          },
+        ],
+      };
+
+      const expectDraw = color => {
+        expect(drawEllipse.mock.calls.length).toBe(1);
+      };
+
+      it('should draw an ellipse with the inactive color', () => {
+        toolState.data[0].active = false;
+        getToolState.mockReturnValue(toolState);
+
+        instantiatedTool.renderToolData(mockEvent);
+
+        expectDraw(defaulColor);
+      });
     });
   });
 });
