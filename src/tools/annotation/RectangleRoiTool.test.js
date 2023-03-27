@@ -23,10 +23,6 @@ jest.mock('../../drawing/getNewContext', () => ({
   default: jest.fn(),
 }));
 
-jest.mock('./../../importInternal.js', () => ({
-  default: jest.fn(),
-}));
-
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
     metaData: {
