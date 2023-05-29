@@ -58,6 +58,14 @@ export default function(evt, tool) {
         : false;
 
       if (success && isTooFast === false) {
+        const enabledElement = external.cornerstone.getEnabledElement(element);
+        const { scaledImageFactor } = enabledElement.image.imageFrame;
+
+        if (measurementData.handles.end !== undefined) {
+          measurementData.handles.end.x *= scaledImageFactor;
+          measurementData.handles.end.y *= scaledImageFactor;
+        }
+
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
         const eventData = {
           toolName: tool.name,

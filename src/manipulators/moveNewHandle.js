@@ -172,6 +172,14 @@ function _moveHandler(
     activeTool.updateCachedStats(image, element, annotation);
   }
 
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+  const { scaledImageFactor } = enabledElement.image.imageFrame;
+
+  if (annotation.handles.end !== undefined) {
+    annotation.handles.end.x *= scaledImageFactor;
+    annotation.handles.end.y *= scaledImageFactor;
+  }
+
   const eventType = EVENTS.MEASUREMENT_MODIFIED;
   const modifiedEventData = {
     toolName,

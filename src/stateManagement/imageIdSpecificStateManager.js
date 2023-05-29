@@ -73,12 +73,16 @@ function newImageIdSpecificToolStateManager() {
       return;
     }
 
-    return getImageIdToolState(enabledElement.image.imageId, toolName);
+    return getImageIdToolState(
+      enabledElement.image.imageId,
+      toolName,
+      enabledElement.image.imageFrame.scaledImageFactor
+    );
   }
 
   // Here you can get state - used by tools as well as modules
   // That save state persistently
-  function getImageIdToolState(imageId, toolName) {
+  function getImageIdToolState(imageId, toolName, scaledImageFactor) {
     // If we don't have any tool state for this imageId, return undefined
     if (toolState.hasOwnProperty(imageId) === false) {
       return;
@@ -91,7 +95,27 @@ function newImageIdSpecificToolStateManager() {
       return;
     }
 
-    return imageIdToolState[toolName];
+    const data = JSON.parse(JSON.stringify(imageIdToolState[toolName]));
+
+    if (data.data !== undefined) {
+      data.data = data.data.map(item => {
+        if (item.handles !== undefined) {
+          for (const key of Object.keys(item.handles)) {
+            if (item.handles[key].x !== undefined) {
+              item.handles[key].x /= scaledImageFactor;
+            }
+
+            if (item.handles[key].y !== undefined) {
+              item.handles[key].y /= scaledImageFactor;
+            }
+          }
+        }
+
+        return item;
+      });
+    }
+
+    return data;
   }
 
   // Replaces the given tool's state using the provided element's imageId
