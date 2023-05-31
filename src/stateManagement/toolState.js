@@ -43,14 +43,12 @@ function addToolState(element, toolName, measurementData) {
     const { scaledImageFactor } = enabledElement.image.imageFrame;
 
     for (const key of Object.keys(measurementData.handles)) {
-      console.log(measurementData.handles[key]);
       if (measurementData.handles[key].x !== undefined) {
         measurementData.handles[key].x *= scaledImageFactor;
         measurementData.handles[key].y *= scaledImageFactor;
       }
     }
   }
-  console.log(measurementData);
 
   measurementData.uuid = measurementData.uuid || uuidv4();
   toolStateManager.add(element, toolName, measurementData);

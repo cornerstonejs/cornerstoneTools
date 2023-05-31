@@ -24,9 +24,17 @@ export default function(eventData, interactionType) {
     offsetY = handleTouchOffset.y;
   }
 
-  return external.cornerstone.pageToPixel(
+  const enabledElement = external.cornerstone.getEnabledElement(element);
+  const { scaledImageFactor } = enabledElement.image.imageFrame;
+
+  const localPosition = external.cornerstone.pageToPixel(
     element,
     page.x + offsetX,
     page.y + offsetY
   );
+
+  return {
+    x: localPosition.x * scaledImageFactor,
+    y: localPosition.y * scaledImageFactor,
+  };
 }

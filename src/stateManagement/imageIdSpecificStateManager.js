@@ -96,7 +96,6 @@ function newImageIdSpecificToolStateManager() {
     }
 
     const data = JSON.parse(JSON.stringify(imageIdToolState[toolName]));
-
     if (data.data !== undefined) {
       data.data = data.data.map(item => {
         if (item.handles !== undefined) {
