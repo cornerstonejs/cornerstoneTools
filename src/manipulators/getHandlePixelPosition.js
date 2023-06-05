@@ -25,8 +25,7 @@ export default function(eventData, interactionType) {
   }
 
   const enabledElement = external.cornerstone.getEnabledElement(element);
-  const { scaledImageFactor } = enabledElement.image.imageFrame;
-
+  const { scaledImageFactor = 1 } = enabledElement.image.imageFrame;
   const localPosition = external.cornerstone.pageToPixel(
     element,
     page.x + offsetX,
@@ -34,6 +33,7 @@ export default function(eventData, interactionType) {
   );
 
   return {
+    ...localPosition,
     x: localPosition.x * scaledImageFactor,
     y: localPosition.y * scaledImageFactor,
   };

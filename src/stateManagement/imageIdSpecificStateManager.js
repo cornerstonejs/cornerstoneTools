@@ -87,6 +87,8 @@ function newImageIdSpecificToolStateManager() {
     if (toolState.hasOwnProperty(imageId) === false) {
       return;
     }
+    //
+    // console.log(toolState);
 
     const imageIdToolState = toolState[imageId];
 
@@ -95,26 +97,36 @@ function newImageIdSpecificToolStateManager() {
       return;
     }
 
-    const data = JSON.parse(JSON.stringify(imageIdToolState[toolName]));
-    if (data.data !== undefined) {
-      data.data = data.data.map(item => {
-        if (item.handles !== undefined) {
-          for (const key of Object.keys(item.handles)) {
-            if (item.handles[key].x !== undefined) {
-              item.handles[key].x /= scaledImageFactor;
-            }
+    for (const tool of imageIdToolState[toolName].data) {
+      if (tool.handles === undefined || scaledImageFactor === undefined) {
+        continue;
+      }
 
-            if (item.handles[key].y !== undefined) {
-              item.handles[key].y /= scaledImageFactor;
-            }
-          }
+      for (const key of Object.keys(tool.handles)) {
+        if (
+          tool.handles[key].originalX === undefined ||
+          tool.handles[key].moving
+        ) {
+          tool.handles[key].originalX = tool.handles[key].x;
         }
 
-        return item;
-      });
+        if (
+          tool.handles[key].originalY === undefined ||
+          tool.handles[key].moving
+        ) {
+          tool.handles[key].originalY = tool.handles[key].y;
+        }
+
+        tool.handles[key].x =
+          (tool.handles[key].originalX || tool.handles[key].x) /
+          scaledImageFactor;
+        tool.handles[key].y =
+          (tool.handles[key].originalY || tool.handles[key].y) /
+          scaledImageFactor;
+      }
     }
 
-    return data;
+    return imageIdToolState[toolName];
   }
 
   // Replaces the given tool's state using the provided element's imageId

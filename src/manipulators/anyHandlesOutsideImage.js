@@ -12,11 +12,12 @@ import external from '../externalModules.js';
  */
 export default function(renderData, handles) {
   const image = renderData.image;
+  const { scaledImageFactor } = image.imageFrame;
   const imageRect = {
     left: 0,
     top: 0,
-    width: image.width,
-    height: image.height,
+    width: image.width * scaledImageFactor,
+    height: image.height * scaledImageFactor,
   };
 
   let handleOutsideImage = false;
