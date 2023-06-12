@@ -292,6 +292,54 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       }
     });
   }
+
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // cachedStats: { Area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV, diameter, diameterUncertainty, radius }
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const {
+      area,
+      areaUncertainty,
+      mean,
+      stdDev,
+      min,
+      max,
+      meanStdDevSUV,
+      diameter,
+      diameterUncertainty,
+      radius,
+    } = toolState.cachedStats;
+
+    return _createTextBoxContent(
+      context,
+      isColorImage,
+      {
+        area,
+        areaUncertainty,
+        mean,
+        stdDev,
+        min,
+        max,
+        meanStdDevSUV,
+        diameter,
+        diameterUncertainty,
+        radius,
+      },
+      modality,
+      hasPixelSpacing,
+      displayUncertainties,
+      options
+    ).join('\n');
+  }
 }
 
 /**

@@ -122,6 +122,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     const lineWidth = toolStyle.getToolWidth();
 
     let lineDash;
+
     if (renderDashed) {
       lineDash = getModule('globalConfiguration').configuration.lineDash;
     }
@@ -304,6 +305,21 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
         external.cornerstone.updateImage(element);
       }
     );
+  }
+
+  /**
+   * Returns an empty string since the arrow does not draw any text
+   */
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState,
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    return '';
   }
 
   doubleClickCallback(evt) {
