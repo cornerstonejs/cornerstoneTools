@@ -169,7 +169,10 @@ function _moveHandler(
   const activeTool = getActiveTool(element, buttons, interactionType);
 
   if (activeTool instanceof BaseAnnotationTool) {
-    activeTool.updateCachedStats(image, element, annotation);
+    const scaledAnnotation = JSON.parse(JSON.stringify(annotation));
+
+    activeTool.updateCachedStats(image, element, scaledAnnotation);
+    // activeTool.updateCachedStats(image, element, annotation);
   }
 
   const eventType = EVENTS.MEASUREMENT_MODIFIED;

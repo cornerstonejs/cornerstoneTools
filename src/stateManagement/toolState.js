@@ -38,6 +38,18 @@ function getElementToolStateManager(element) {
 function addToolState(element, toolName, measurementData) {
   const toolStateManager = getElementToolStateManager(element);
 
+  if (measurementData.handles !== undefined) {
+    const enabledElement = external.cornerstone.getEnabledElement(element);
+    const { scaledImageFactor } = enabledElement.image.imageFrame;
+
+    for (const key of Object.keys(measurementData.handles)) {
+      if (measurementData.handles[key].x !== undefined) {
+        measurementData.handles[key].x *= scaledImageFactor;
+        measurementData.handles[key].y *= scaledImageFactor;
+      }
+    }
+  }
+
   measurementData.uuid = measurementData.uuid || uuidv4();
   toolStateManager.add(element, toolName, measurementData);
 
