@@ -318,6 +318,9 @@ function onTouch(e) {
       break;
 
     case 'panmove':
+      if (!lastDelta || !startPoints) {
+        return false;
+      }
       // Using the delta-value of HammerJS, because it takes all pointers into account
       // This is very important when using panning in combination with pinch-zooming
       // But HammerJS' delta is relative to the start of the pan event
@@ -437,8 +440,9 @@ function onTouch(e) {
       clearTimeout(pressTimeout);
 
       // If lastPoints is not yet set, it means panend fired without panstart or pan,
-      // So we can ignore this event
-      if (!lastPoints) {
+      // same with startPoints and touchstart/touchend
+      // So we can ignore these events
+      if (!lastPoints || !startPoints) {
         return false;
       }
 
