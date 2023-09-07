@@ -35,6 +35,7 @@ import {
   fillOutsideRect,
   fillBox,
   fillTextLines,
+  drawHeight,
 } from './drawing/index.js';
 import { clip, clipToBox, clipBoxToDisplayedArea } from './util/clip.js';
 import debounce from './util/debounce';
@@ -131,6 +132,7 @@ export const lib = {
   'drawing/drawLinkedTextBox': drawLinkedTextBox,
   'drawing/drawHandles': drawHandles,
   'drawing/textBoxWidth': textBoxWidth,
+  'drawing/drawHeight': drawHeight,
 
   'util/getActiveTool': getActiveTool,
   'util/getLuminance': getLuminance,

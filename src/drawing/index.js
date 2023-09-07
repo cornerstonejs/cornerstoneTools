@@ -33,6 +33,7 @@ import path from './path.js';
 import setShadow from './setShadow.js';
 import transformCanvasContext from './transformCanvasContext.js';
 import resetCanvasContextTransform from './resetCanvasContextTransform.js';
+import drawHeight from './drawHeight.js';
 
 // Named exports
 export {
@@ -56,4 +57,5 @@ export {
   setShadow,
   transformCanvasContext,
   resetCanvasContextTransform,
+  drawHeight,
 };

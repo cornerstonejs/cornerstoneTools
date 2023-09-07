@@ -383,6 +383,18 @@
         "review",
         "userTesting"
       ]
+    },
+    {
+      "login": "ArturRod",
+      "name": "Arturo Rodrigo",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86238895?v=4",
+      "profile": "https://github.com/ArturRod",
+      "contributions": [
+        "code",
+        "content",
+        "example",
+        "tool"
+      ]
     }
   ],
   "contributorsPerLine": 7
