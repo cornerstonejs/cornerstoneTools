@@ -29,6 +29,56 @@ export default class OverlayTool extends BaseTool {
     this.initialConfiguration = initialConfiguration;
   }
 
+  unpackOverlay(arrayBuffer) {
+    const bitArray = new Uint8Array(arrayBuffer);
+    const byteArray = new Uint8Array(8 * bitArray.length);
+    let nonZero = false;
+
+    for (let byteIndex = 0; byteIndex < byteArray.length; byteIndex++) {
+      const bitIndex = byteIndex % 8;
+      const bitByteIndex = Math.floor(byteIndex / 8);
+      byteArray[byteIndex] =
+        1 * ((bitArray[bitByteIndex] & (1 << bitIndex)) >> bitIndex);
+      if (byteArray[byteIndex]) nonZero = true;
+    }
+
+    return byteArray;
+  }
+
+  /** Gets a byte array of overlay data.
+   * Defaults to returning pixelData if it is a Uint8Array, otherwise tries generating a Uint8Array from:
+   * 1. pixelData.InlineBinary, if it is Base64 encoded, then decodes to Value as a Uint8Array
+   * 2. pixelData.Value, if it is a Uint8Array, assumes it is a packed array
+   * 3. pixelData.retrieveBulkData.then(enabledElement.refresh), assuming it needs to fetch it.
+   * This method does depend on some of the JSON DICOM representations, but those don't have to come from
+   * JSON, it falls back to the original Uint8Array representation, which can come from anywhere.
+   */
+  getOverlayData(pixelData, element) {
+    if (pixelData.length) {
+      return pixelData;
+    }
+    if (pixelData.PixelData) {
+      return pixelData.PixelData;
+    }
+    if (pixelData.InlineBinary && !pixelData.Value) {
+      pixelData.Value = Uint8Array.from(atob(pixelData.InlineBinary), c =>
+        c.charCodeAt(0)
+      );
+    }
+    if (ArrayBuffer.isView(pixelData.Value)) {
+      pixelData.PixelData = this.unpackOverlay(pixelData.Value);
+      return pixelData.PixelData;
+    }
+    if (pixelData.retrieveBulkData) {
+      pixelData.retrieveBulkData().then(val => {
+        pixelData.Value = val || pixelData.Value;
+        this.forceImageUpdate(element.element || element);
+      });
+    } else {
+      console.warn('pixel data for', pixelData, 'not found');
+    }
+  }
+
   enabledCallback(element) {
     this.forceImageUpdate(element);
   }
@@ -112,11 +162,16 @@ export default class OverlayTool extends BaseTool {
         layerContext.globalCompositeOperation = 'xor';
       }
 
-      let i = 0;
+      const pixelData = this.getOverlayData(overlay.pixelData, enabledElement);
+      if (!pixelData) {
+        // Overlay data not yet available - try again later
+        return;
+      }
 
+      let i = 0;
       for (let y = 0; y < overlay.rows; y++) {
         for (let x = 0; x < overlay.columns; x++) {
-          if (overlay.pixelData[i++] > 0) {
+          if (pixelData[i++] > 0) {
             layerContext.fillRect(x, y, 1, 1);
           }
         }
