@@ -22,7 +22,9 @@ export const state = {
   clickProximity: 6,
   touchProximity: 10,
   handleRadius: 6,
+  deleteIfHandleOutsideDisplayedArea: false,
   deleteIfHandleOutsideImage: true,
+  preventHandleOutsideDisplayedArea: false,
   preventHandleOutsideImage: false,
   preventTextBoxOutsideDisplayedArea: false,
   // Average pixel width of index finger is 45-57 pixels

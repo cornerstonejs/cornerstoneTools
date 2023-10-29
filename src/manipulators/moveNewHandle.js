@@ -1,15 +1,15 @@
 import EVENTS from '../events.js';
 import external from '../externalModules.js';
-import anyHandlesOutsideImage from './anyHandlesOutsideImage.js';
+import deleteIfHandleOutsideLimits from './deleteIfHandleOutsideLimits.js';
 import getHandlePixelPosition from './getHandlePixelPosition.js';
-import { removeToolState } from '../stateManagement/toolState.js';
 import triggerEvent from '../util/triggerEvent.js';
-import { clipToBox } from '../util/clip.js';
+import clipHandle from './clipHandle.js';
 import { state } from './../store/index.js';
 import getActiveTool from '../util/getActiveTool';
 import BaseAnnotationTool from '../tools/base/BaseAnnotationTool';
 import { getLogger } from '../util/logger.js';
 import { getModule } from '../store/';
+import getHandleMovingOptions from './getHandleMovingOptions.js';
 
 const logger = getLogger('manipulators:moveNewHandle');
 
@@ -36,9 +36,11 @@ const _moveEndEvents = {
  * @param {*} toolName
  * @param {*} annotation
  * @param {*} handle
- * @param {*} [options={}]
- * @param {Boolean}  [options.deleteIfHandleOutsideImage]
- * @param {Boolean}  [options.preventHandleOutsideImage]
+ * @param {?Object} [options]
+ * @param {Boolean} [options.deleteIfHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.deleteIfHandleOutsideImage]
+ * @param {Boolean} [options.preventHandleOutsideDisplayedArea]
+ * @param {Boolean} [options.preventHandleOutsideImage]
  * @param {string} [interactionType=mouse]
  * @param {function} [doneMovingCallback]
  * @returns {void}
@@ -52,16 +54,9 @@ export default function(
   interactionType = 'mouse',
   doneMovingCallback
 ) {
-  // Use global defaults, unless overidden by provided options
-  options = Object.assign(
-    {
-      deleteIfHandleOutsideImage: state.deleteIfHandleOutsideImage,
-      preventHandleOutsideImage: state.preventHandleOutsideImage,
-    },
-    options
-  );
+  const internalOptions = getHandleMovingOptions(options);
 
-  options.hasMoved = false;
+  internalOptions.hasMoved = false;
 
   const { element } = eventData;
 
@@ -72,7 +67,14 @@ export default function(
   state.isToolLocked = true;
 
   function moveHandler(evt) {
-    _moveHandler(toolName, annotation, handle, options, interactionType, evt);
+    _moveHandler(
+      toolName,
+      annotation,
+      handle,
+      internalOptions,
+      interactionType,
+      evt
+    );
   }
   // So we don't need to inline the entire `moveEndEventHandler` function
   function moveEndHandler(evt) {
@@ -80,7 +82,7 @@ export default function(
       toolName,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         moveHandler,
@@ -117,7 +119,7 @@ export default function(
       null,
       annotation,
       handle,
-      options,
+      internalOptions,
       interactionType,
       {
         moveHandler,
@@ -160,9 +162,7 @@ function _moveHandler(
   handle.x = targetLocation.x;
   handle.y = targetLocation.y;
 
-  if (options && options.preventHandleOutsideImage) {
-    clipToBox(handle, image);
-  }
+  clipHandle(evt.detail, handle, options);
 
   external.cornerstone.updateImage(element);
 
@@ -268,19 +268,13 @@ function _moveEndHandler(
   //   return;
   // }
 
-  if (options.preventHandleOutsideImage) {
-    clipToBox(handle, evt.detail.image);
-  }
-
-  // If any handle is outside the image, delete the tool data
-  if (
-    options.deleteIfHandleOutsideImage &&
-    anyHandlesOutsideImage(evt.detail, annotation.handles)
-  ) {
-    annotation.cancelled = true;
-    moveNewHandleSuccessful = false;
-    removeToolState(element, toolName, annotation);
-  }
+  clipHandle(eventData, handle, options);
+  moveNewHandleSuccessful = !deleteIfHandleOutsideLimits(
+    eventData,
+    toolName,
+    annotation,
+    options
+  );
 
   _endHandler(
     interactionType,

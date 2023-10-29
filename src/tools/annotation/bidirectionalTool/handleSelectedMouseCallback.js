@@ -1,13 +1,13 @@
 /* jshint -W083 */
 import external from './../../../externalModules.js';
 import EVENTS from './../../../events.js';
+import { getToolState } from './../../../stateManagement/toolState.js';
 import {
-  removeToolState,
-  getToolState,
-} from './../../../stateManagement/toolState.js';
-import anyHandlesOutsideImage from './../../../manipulators/anyHandlesOutsideImage.js';
-import getHandleNearImagePoint from './../../../manipulators/getHandleNearImagePoint.js';
-import { moveAllHandles } from './../../../manipulators/index.js';
+  deleteIfHandleOutsideLimits,
+  moveAllHandles,
+  getHandleNearImagePoint,
+  getHandleMovingOptions,
+} from './../../../manipulators/index.js';
 import moveHandle from './moveHandle/moveHandle.js';
 import invertHandles from './invertHandles.js';
 import { setToolCursor, hideToolCursor } from '../../../store/setToolCursor.js';
@@ -22,11 +22,11 @@ export default function(evt) {
   const distanceThreshold = getProximityThreshold('mouse', this.name);
 
   const handleDoneMove = handle => {
+    const options = getHandleMovingOptions(this.options);
+
     data.invalidated = true;
-    if (anyHandlesOutsideImage(eventData, data.handles)) {
-      // Delete the measurement
-      removeToolState(element, this.name, data);
-    }
+
+    deleteIfHandleOutsideLimits(eventData, this.name, data, options);
 
     // Update the handles to keep selected state
     if (handle) {
