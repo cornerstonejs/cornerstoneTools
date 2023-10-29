@@ -383,6 +383,15 @@
         "review",
         "userTesting"
       ]
+    },
+    {
+      "login": "ziqiangxu",
+      "name": "Daryl.Xu",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18530271?v=4",
+      "profile": "https://ziqiangxu.github.io/blog/",
+      "contributions": [
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7

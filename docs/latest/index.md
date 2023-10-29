@@ -179,12 +179,12 @@ When a Tool is added, its default [mode](anatomy-of-a-tool/index.md#modes) is `D
 
 ```js
 // Activate the tool for ALL currently Enabled elements
-cornerstoneTools.setToolActive(LengthTool.name, { mouseButtonMask: 1 });
+cornerstoneTools.setToolActive('Length', { mouseButtonMask: 1 });
 
 // OR activate the tool for a specific Enabled element
 cornerstoneTools.setToolActiveForElement(
   enabledElement,
-  LengthTool.name,
+  'Length',
   {
     mouseButtonMask: 1,
   },
