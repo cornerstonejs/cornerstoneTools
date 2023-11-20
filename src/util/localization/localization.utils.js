@@ -4,6 +4,8 @@ import de from '../../../locale/de.json';
 import en from '../../../locale/en.json';
 import fr from '../../../locale/fr.json';
 import pt from '../../../locale/pt.json';
+import es from '../../../locale/es.json';
+import it from '../../../locale/it.json';
 
 const resources = {
   de: {
@@ -17,6 +19,12 @@ const resources = {
   },
   pt: {
     translation: pt,
+  },
+  es: {
+    translation: es,
+  },
+  it: {
+    translation: it,
   },
 };
 
@@ -38,7 +46,6 @@ const charsToEscape = [
   '|',
 ];
 
-let _numberGroupCharRegExp = null;
 let _decimalMark = null;
 
 /**
@@ -47,7 +54,6 @@ let _decimalMark = null;
  * @returns {Promise<TFunction>}
  */
 export const initializeLocalization = (lng = 'en') => {
-  _numberGroupCharRegExp = null;
   _decimalMark = null;
 
   return i18next.init({
@@ -68,16 +74,37 @@ export const localizeNumber = value => {
     );
   }
 
-  const localizedNumber =
-    i18next.t('intlNumber', {
-      val: value,
-      formatParams: { val: { minimumFractionDigits: 0 } },
-    }) || '';
+  const [integer, decimal] = value.toString().split('.');
+  const integerPartFormatted = formatAsEN12435(integer);
 
-  return localizedNumber
-    .replace(_getNumberGroupCharRegExp(), ' ')
-    .replace(_getDecimalMark(), ',');
+  if (decimal) {
+    const localizedNumber =
+      i18next.t('intlNumber', {
+        val: value,
+        formatParams: { val: { minimumFractionDigits: 0 } },
+      }) || '';
+
+    return `${integerPartFormatted},${
+      localizedNumber.split(_getDecimalMark())[1]
+    }`;
+  }
+
+  return `${integerPartFormatted}`;
 };
+
+// Adds a space every 3 characthers from right to left
+function formatAsEN12435(str) {
+  let result = '';
+
+  for (let i = str.length - 1; i >= 0; i--) {
+    result = str[i] + result;
+    if (i > 0 && (str.length - i) % 3 === 0) {
+      result = ` ${result}`;
+    }
+  }
+
+  return result;
+}
 
 /**
  * Translates text values
@@ -85,31 +112,6 @@ export const localizeNumber = value => {
  * @returns {string} Translated key
  */
 export const translate = key => i18next.t(key);
-
-const _escapeCharacter = character => {
-  let result = character;
-
-  if (charsToEscape.includes(character)) {
-    result = `\\${character}`;
-  }
-
-  return result;
-};
-
-const _getGroupingCharacter = () => {
-  const num = i18next.t('intlNumber', { val: 1000 });
-  const groupChar = num.charAt(1);
-
-  return _escapeCharacter(groupChar);
-};
-
-const _getNumberGroupCharRegExp = () => {
-  if (_numberGroupCharRegExp === null) {
-    _numberGroupCharRegExp = new RegExp(_getGroupingCharacter(), 'g');
-  }
-
-  return _numberGroupCharRegExp;
-};
 
 const _getDecimalMark = () => {
   if (_decimalMark === null) {

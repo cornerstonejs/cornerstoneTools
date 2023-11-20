@@ -257,11 +257,11 @@ export default class LengthTool extends BaseMeasurementTool {
           image,
           data
         );
+        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
         const text = textBoxText(
           data,
-          rowPixelSpacing,
-          colPixelSpacing,
+          hasPixelSpacing,
           this.displayUncertainties
         );
 
@@ -281,20 +281,10 @@ export default class LengthTool extends BaseMeasurementTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(
-      annotation,
-      rowPixelSpacing,
-      colPixelSpacing,
-      displayUncertainties
-    ) {
-      const measuredValue = _sanitizeMeasuredValue(annotation.length);
-
-      const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
-
-      return formatLenght(
-        measuredValue,
+    function textBoxText(annotation, hasPixelSpacing, displayUncertainties) {
+      return _createTextBoxContent(
+        annotation,
         hasPixelSpacing,
-        annotation.uncertainty,
         displayUncertainties
       );
     }
@@ -307,6 +297,26 @@ export default class LengthTool extends BaseMeasurementTool {
 
       return [handles.start, midpoint, handles.end];
     }
+  }
+
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // Length
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    return _createTextBoxContent(
+      toolState,
+      hasPixelSpacing,
+      displayUncertainties
+    );
   }
 }
 
@@ -322,4 +332,19 @@ function _sanitizeMeasuredValue(value) {
   const isNumber = !isNaN(parsedValue);
 
   return isNumber ? parsedValue : undefined;
+}
+
+function _createTextBoxContent(
+  annotation,
+  hasPixelSpacing,
+  displayUncertainties
+) {
+  const measuredValue = _sanitizeMeasuredValue(annotation.length);
+
+  return formatLenght(
+    measuredValue,
+    hasPixelSpacing,
+    annotation.uncertainty,
+    displayUncertainties
+  );
 }

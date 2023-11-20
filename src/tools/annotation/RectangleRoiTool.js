@@ -258,6 +258,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
 
         const textBoxAnchorPoints = handles =>
           _findTextBoxAnchorPoints(handles.start, handles.end);
+
         const textBoxContent = _createTextBoxContent(
           context,
           image.color,
@@ -284,6 +285,40 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
         );
       }
     });
+  }
+
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // cachedStats: { Area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV }
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const {
+      area,
+      areaUncertainty,
+      mean,
+      stdDev,
+      min,
+      max,
+      meanStdDevSUV,
+    } = toolState.cachedStats;
+
+    return _createTextBoxContent(
+      context,
+      isColorImage,
+      { area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV },
+      modality,
+      hasPixelSpacing,
+      displayUncertainties,
+      options
+    ).join('\n');
   }
 }
 

@@ -303,4 +303,33 @@ describe('LengthTool.js', () => {
       });
     });
   });
+
+  describe('getToolTextFromToolState', () => {
+    it('should return the formatted text', () => {
+      // Arrange
+      formatLenght.mockReturnValue('10 mm');
+
+      const context = {};
+      const isColorImage = false;
+      const toolState = {
+        length: 10,
+      };
+      const modality = 'CT';
+      const hasPixelSpacing = true;
+      const displayUncertainties = true;
+
+      // Act
+      const text = LengthTool.getToolTextFromToolState(
+        context,
+        isColorImage,
+        toolState,
+        modality,
+        hasPixelSpacing,
+        displayUncertainties
+      );
+
+      // Assert
+      expect(text).toBe('10 mm');
+    });
+  });
 });

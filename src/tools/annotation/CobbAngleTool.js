@@ -397,17 +397,26 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     data.value = this.textBoxText(data);
   }
 
-  textBoxText({ alphaAngle, betaAngle }) {
-    if (alphaAngle === undefined) {
-      return '';
-    }
-    if (Number.isNaN(alphaAngle)) {
-      return '';
-    }
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // AlphaAngle, betaAngle
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const { alphaAngle, betaAngle } = toolState;
 
-    return `${localization.localizeNumber(
-      alphaAngle
-    )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
+    return _createTextBoxContent({ alphaAngle, betaAngle });
+  }
+
+  textBoxText({ alphaAngle, betaAngle }) {
+    return _createTextBoxContent({ alphaAngle, betaAngle });
   }
 
   activeCallback(element) {
@@ -439,4 +448,17 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.onMeasureModified
     );
   }
+}
+
+function _createTextBoxContent({ alphaAngle, betaAngle }) {
+  if (alphaAngle === undefined) {
+    return '';
+  }
+  if (Number.isNaN(alphaAngle)) {
+    return '';
+  }
+
+  return `${localization.localizeNumber(
+    alphaAngle
+  )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
 }

@@ -475,4 +475,49 @@ describe('CircleRoiTool.js', () => {
       });
     });
   });
+
+  describe('getToolTextFromToolState', () => {
+    it('should return the formatted text', () => {
+      // Arrange
+      formatArea.mockReturnValue('A: 1 mm2');
+      formatDiameter.mockReturnValue('d: 8 mm');
+
+      const context = {
+        measureText: jest.fn().mockReturnValue({ width: 100 }),
+      };
+      const isColorImage = false;
+      const toolState = {
+        cachedStats: {
+          area: 1,
+          areaUncertainty: 2,
+          mean: 3,
+          stdDev: 4,
+          min: 5,
+          max: 6,
+          meanStdDevSUV: undefined,
+          diameter: 8,
+          diameterUncertainty: 9,
+          radius: 10,
+        },
+      };
+      const modality = 'CT';
+      const hasPixelSpacing = true;
+      const displayUncertainties = true;
+
+      // Act
+      const text = CircleRoiTool.getToolTextFromToolState(
+        context,
+        isColorImage,
+        toolState,
+        modality,
+        hasPixelSpacing,
+        displayUncertainties
+      );
+
+      // Assert
+      expect(text).toBe(
+        'A: 1 mm2\nd: 8 mm\naverage: 3 HU\nstandardDeviation: 4 HU'
+      );
+    });
+  });
 });
