@@ -148,7 +148,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
     const modality = seriesModule.modality;
-    const pixelSpacing = getPixelSpacing(image);
+    const pixelSpacing = getPixelSpacing(image, data);
 
     const stats = _calculateStats(
       image,
@@ -180,7 +180,6 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       renderDashed,
     } = this.configuration;
     const newContext = getNewContext(canvasContext.canvas);
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     // Meta
@@ -190,7 +189,6 @@ export default class CircleRoiTool extends BaseMeasurementTool {
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
     const displayUncertainties = this.displayUncertainties;
 
     draw(newContext, context => {
@@ -201,6 +199,12 @@ export default class CircleRoiTool extends BaseMeasurementTool {
         if (data.visible === false) {
           continue;
         }
+
+        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
+          image,
+          data
+        );
+        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
         // Configure
         const color = toolColors.getColorIfActive(data);

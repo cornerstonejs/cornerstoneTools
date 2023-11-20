@@ -128,7 +128,7 @@ export default class LengthTool extends BaseMeasurementTool {
   }
 
   updateCachedStats(image, element, data) {
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image, data);
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
@@ -179,7 +179,6 @@ export default class LengthTool extends BaseMeasurementTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
@@ -253,6 +252,11 @@ export default class LengthTool extends BaseMeasurementTool {
             this.updateCachedStats(image, element, data);
           }
         }
+
+        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
+          image,
+          data
+        );
 
         const text = textBoxText(
           data,

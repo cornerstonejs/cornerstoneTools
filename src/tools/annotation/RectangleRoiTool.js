@@ -149,7 +149,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
     const modality = seriesModule.modality;
-    const pixelSpacing = getPixelSpacing(image);
+    const pixelSpacing = getPixelSpacing(image, data);
 
     const stats = _calculateStats(
       image,
@@ -181,7 +181,6 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       renderDashed,
     } = this.configuration;
     const context = getNewContext(eventData.canvasContext.canvas);
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     // Meta
     const seriesModule =
@@ -190,7 +189,6 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
     draw(context, context => {
       // If we have tool data for this element - iterate over each set and draw it
@@ -200,6 +198,12 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
         if (data.visible === false) {
           continue;
         }
+
+        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
+          image,
+          data
+        );
+        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
         // Configure
         const color = toolColors.getColorIfActive(data);
