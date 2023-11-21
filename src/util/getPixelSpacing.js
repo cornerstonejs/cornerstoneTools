@@ -21,7 +21,7 @@ export default function getPixelSpacing(image, measurementData) {
     const ultrasoundRegionSequence = sopCommonModule.ultrasoundRegionSequence;
 
     ultrasoundRegionSequence.forEach(region => {
-      if (isRegionInMm(region)) {
+      if (isRegionValid(region)) {
         const minX0 = region.regionLocationMinX0;
         const minY0 = region.regionLocationMinY0;
         const maxX1 = region.regionLocationMaxX1;
@@ -62,19 +62,14 @@ export default function getPixelSpacing(image, measurementData) {
   };
 }
 
-const isRegionInMm = region => {
-  const physicalUnitsXDirection = region.physicalUnitsXDirection;
-  const physicalUnitsYDirection = region.physicalUnitsYDirection;
-  const physicalDeltaX = region.physicalDeltaX;
-  const physicalDeltaY = region.physicalDeltaY;
+const isRegionValid = region => {
+  const isRegionInMm =
+    region.physicalUnitsXDirection === 3 &&
+    region.physicalUnitsYDirection === 3;
+  const pixelSizeX = region.physicalDeltaX * 10;
+  const pixelSizeY = region.physicalDeltaY * 10;
 
-  return (
-    physicalUnitsXDirection === 3 &&
-    physicalUnitsYDirection === 3 &&
-    physicalDeltaX !== 0 &&
-    physicalDeltaY !== 0 &&
-    physicalDeltaX === physicalDeltaY
-  );
+  return isRegionInMm && areValuesValid(pixelSizeX, pixelSizeY);
 };
 
 const areMeasurementHandlesInBounds = (measurementData, bounds) => {
@@ -91,3 +86,12 @@ const areMeasurementHandlesInBounds = (measurementData, bounds) => {
     handles.end.y <= bounds.bottom
   );
 };
+
+const EPSILON = 1e-6;
+
+const isAlmostZero = value => -EPSILON < value && value < EPSILON;
+
+const isValid = value => !isNaN(value) && !isAlmostZero(value);
+
+const areValuesValid = (pixelSizeX, pixelSizeY) =>
+  isValid(pixelSizeX) && isValid(pixelSizeY);

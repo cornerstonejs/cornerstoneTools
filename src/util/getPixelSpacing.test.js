@@ -82,7 +82,71 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return rowPixelSpacing and colPixelSpacing as undefined if physicalDeltaX and physicalDeltaX are 0', () => {
+  it('should return undefined pixel spacings for values almost zero', () => {
+    const image = { imageId: 'imageId' };
+    const measurementData = {
+      handles: {
+        start: { x: 1, y: 2 },
+        end: { x: 3, y: 4 },
+      },
+    };
+
+    external.cornerstone.metaData.get.mockReturnValue({
+      ultrasoundRegionSequence: [
+        {
+          physicalUnitsXDirection: 3,
+          physicalUnitsYDirection: 3,
+          physicalDeltaX: 1e-8, // Almost zero
+          physicalDeltaY: 1e-8, // Almost zero
+          regionLocationMinX0: 0,
+          regionLocationMinY0: 0,
+          regionLocationMaxX1: 4,
+          regionLocationMaxY1: 4,
+        },
+      ],
+    });
+
+    const result = getPixelSpacing(image, measurementData);
+
+    expect(result).toEqual({
+      rowPixelSpacing: undefined,
+      colPixelSpacing: undefined,
+    });
+  });
+
+  it('should return undefined pixel spacings for NaN values', () => {
+    const image = { imageId: 'imageId' };
+    const measurementData = {
+      handles: {
+        start: { x: 1, y: 2 },
+        end: { x: 3, y: 4 },
+      },
+    };
+
+    external.cornerstone.metaData.get.mockReturnValue({
+      ultrasoundRegionSequence: [
+        {
+          physicalUnitsXDirection: 3,
+          physicalUnitsYDirection: 3,
+          physicalDeltaX: NaN,
+          physicalDeltaY: NaN,
+          regionLocationMinX0: 0,
+          regionLocationMinY0: 0,
+          regionLocationMaxX1: 4,
+          regionLocationMaxY1: 4,
+        },
+      ],
+    });
+
+    const result = getPixelSpacing(image, measurementData);
+
+    expect(result).toEqual({
+      rowPixelSpacing: undefined,
+      colPixelSpacing: undefined,
+    });
+  });
+
+  it('should return rowPixelSpacing and colPixelSpacing as undefined if physicalDeltaX and physicalDeltaY are 0', () => {
     const image = {
       imageId: 'imageId',
     };
@@ -102,42 +166,6 @@ describe('getPixelSpacing', () => {
           physicalUnitsYDirection: 3,
           physicalDeltaX: 0,
           physicalDeltaY: 0,
-          regionLocationMinX0: 0,
-          regionLocationMinY0: 0,
-          regionLocationMaxX1: 4,
-          regionLocationMaxY1: 4,
-        },
-      ],
-    });
-
-    const result = getPixelSpacing(image, measurementData);
-
-    expect(result).toEqual({
-      rowPixelSpacing: undefined,
-      colPixelSpacing: undefined,
-    });
-  });
-
-  it('should return rowPixelSpacing and colPixelSpacing as undefined if physicalDeltaX and physicalDeltaX are not equal', () => {
-    const image = {
-      imageId: 'imageId',
-    };
-
-    const measurementData = {
-      handles: {
-        start: { x: 1, y: 2 },
-        end: { x: 3, y: 4 },
-      },
-    };
-
-    external.cornerstone.metaData.get = jest.fn();
-    external.cornerstone.metaData.get.mockReturnValue({
-      ultrasoundRegionSequence: [
-        {
-          physicalUnitsXDirection: 3,
-          physicalUnitsYDirection: 3,
-          physicalDeltaX: 1,
-          physicalDeltaY: 2,
           regionLocationMinX0: 0,
           regionLocationMinY0: 0,
           regionLocationMaxX1: 4,
