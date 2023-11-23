@@ -14,7 +14,8 @@ export default function getPixelSpacing(image, measurementData) {
   if (
     measurementData &&
     sopCommonModule &&
-    sopCommonModule.ultrasoundRegionSequence
+    sopCommonModule.ultrasoundRegionSequence &&
+    sopCommonModule.ultrasoundRegionSequence.length > 0
   ) {
     let rowPixelSpacing;
     let colPixelSpacing;

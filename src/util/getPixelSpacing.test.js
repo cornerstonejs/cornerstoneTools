@@ -82,7 +82,7 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return undefined pixel spacings for values almost zero', () => {
+  it('should return undefined pixel spacings if physicalDeltaX and physicalDeltaY are almost zero', () => {
     const image = { imageId: 'imageId' };
     const measurementData = {
       handles: {
@@ -114,7 +114,7 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return undefined pixel spacings for NaN values', () => {
+  it('should return undefined pixel spacings if physicalDeltaX and physicalDeltaY are NaN', () => {
     const image = { imageId: 'imageId' };
     const measurementData = {
       handles: {
@@ -182,7 +182,7 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return rowPixelSpacing and colPixelSpacing from imagePlane', () => {
+  it('should return rowPixelSpacing and colPixelSpacing from imagePlane if module is present', () => {
     const image = {
       imageId: 'imageId',
       rowPixelSpacing: 2,
@@ -203,7 +203,7 @@ describe('getPixelSpacing', () => {
     });
   });
 
-  it('should return rowPixelSpacing and colPixelSpacing from image', () => {
+  it('should return rowPixelSpacing and colPixelSpacing from image when both imagePlane and sopCommon modules are not present', () => {
     const image = {
       imageId: 'imageId',
       rowPixelSpacing: 5,
