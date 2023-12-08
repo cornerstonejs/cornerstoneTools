@@ -41,7 +41,11 @@ export default class RotateTool extends BaseTool {
   mouseDragCallback(evt) {
     this.dragCallback(evt);
   }
-
+  
+  postTouchStartCallback(evt) {
+    this.initialRotation = evt.detail.viewport.rotation;
+  }
+  
   postMouseDownCallback(evt) {
     this.initialRotation = evt.detail.viewport.rotation;
   }
