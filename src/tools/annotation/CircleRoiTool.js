@@ -521,14 +521,14 @@ function _createTextBoxContent(
   return textLines;
 }
 
-function _formatLength(value, name, hasPixelSpacing) {
-  if (!value) {
-    return '';
-  }
-  const suffix = hasPixelSpacing ? ' mm' : ' px';
+// Function _formatLength(value, name, hasPixelSpacing) {
+//   if (!value) {
+//     return '';
+//   }
+//   const suffix = hasPixelSpacing ? ' mm' : ' px';
 
-  return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
-}
+//   return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
+// }
 
 /**
  *

@@ -1,1 +1,1 @@
-export default '6.0.6-ded8';
+export default '6.0.10-ded8-rc1';
