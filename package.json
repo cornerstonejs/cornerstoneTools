@@ -67,7 +67,7 @@
     "all-contributors-cli": "5.11.0",
     "babel-jest": "^25.1.0",
     "babel-loader": "^8.0.4",
-    "canvas": "2.6.1",
+    "canvas": "^2.9.1",
     "commitizen": "^4.0.3",
     "coveralls": "3.0.2",
     "cz-conventional-changelog": "2.1.0",
@@ -97,7 +97,7 @@
   },
   "dependencies": {
     "@babel/runtime": "7.1.2",
-    "cornerstone-math": "0.1.8",
+    "cornerstone-math": "0.1.10",
     "decimal.js": "^10.4.2",
     "i18next": "21.9.2"
   },

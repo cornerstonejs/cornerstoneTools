@@ -32,6 +32,8 @@ export default function(evt, tool) {
       ? moveHandle
       : moveNewHandle;
 
+  const timestamp = new Date().getTime();
+
   handleMover(
     eventData,
     tool.name,
@@ -44,7 +46,18 @@ export default function(evt, tool) {
         return;
       }
 
-      if (success) {
+      const hasThreshold =
+        tool.configuration &&
+        Object(tool.configuration).hasOwnProperty(
+          'measurementCreationThreshold'
+        );
+
+      const isTooFast = hasThreshold
+        ? new Date().getTime() - timestamp <
+          tool.configuration.measurementCreationThreshold
+        : false;
+
+      if (success && isTooFast === false) {
         const eventType = EVENTS.MEASUREMENT_COMPLETED;
         const eventData = {
           toolName: tool.name,

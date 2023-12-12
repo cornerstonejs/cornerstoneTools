@@ -1,9 +1,5 @@
 import { getModule } from '../../store/index.js';
-import {
-  getNewContext,
-  resetCanvasContextTransform,
-  transformCanvasContext,
-} from '../../drawing/index.js';
+import { getNewContext, transformCanvasContext } from '../../drawing/index.js';
 import external from '../../externalModules';
 
 const segmentationModule = getModule('segmentation');
@@ -80,25 +76,25 @@ export function getLabelmapCanvas(evt, labelmap3D, labelmap2D) {
 export function renderFill(evt, labelmapCanvas, isActiveLabelMap) {
   const { configuration } = segmentationModule;
   const eventData = evt.detail;
-  const context = getNewContext(eventData.canvasContext.canvas);
+  const { canvasContext, element, image, viewport } = eventData;
 
-  const canvasTopLeft = external.cornerstone.pixelToCanvas(eventData.element, {
+  const previousTransform = canvasContext.getTransform();
+  const context = getNewContext(canvasContext.canvas);
+
+  const canvasTopLeft = external.cornerstone.pixelToCanvas(element, {
     x: 0,
     y: 0,
   });
 
-  const canvasTopRight = external.cornerstone.pixelToCanvas(eventData.element, {
-    x: eventData.image.width,
+  const canvasTopRight = external.cornerstone.pixelToCanvas(element, {
+    x: image.width,
     y: 0,
   });
 
-  const canvasBottomRight = external.cornerstone.pixelToCanvas(
-    eventData.element,
-    {
-      x: eventData.image.width,
-      y: eventData.image.height,
-    }
-  );
+  const canvasBottomRight = external.cornerstone.pixelToCanvas(element, {
+    x: image.width,
+    y: image.height,
+  });
 
   const cornerstoneCanvasWidth = external.cornerstoneMath.point.distance(
     canvasTopLeft,
@@ -109,8 +105,7 @@ export function renderFill(evt, labelmapCanvas, isActiveLabelMap) {
     canvasBottomRight
   );
 
-  const canvas = eventData.canvasContext.canvas;
-  const viewport = eventData.viewport;
+  const canvas = canvasContext.canvas;
 
   const previousImageSmoothingEnabled = context.imageSmoothingEnabled;
   const previousGlobalAlpha = context.globalAlpha;
@@ -137,7 +132,7 @@ export function renderFill(evt, labelmapCanvas, isActiveLabelMap) {
   context.globalAlpha = previousGlobalAlpha;
   context.imageSmoothingEnabled = previousImageSmoothingEnabled;
 
-  resetCanvasContextTransform(context);
+  context.setTransform(previousTransform);
 }
 
 /**

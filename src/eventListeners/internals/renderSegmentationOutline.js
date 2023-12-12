@@ -44,6 +44,7 @@ export function renderOutline(
 
   const lineWidth = configuration.outlineWidth || 1;
 
+  const previousTransform = canvasContext.getTransform();
   const context = getNewContext(canvasContext.canvas);
   const colorLutTable = state.colorLutTables[colorLUTIndex];
 
@@ -74,6 +75,7 @@ export function renderOutline(
   });
 
   context.globalAlpha = previousAlpha;
+  context.setTransform(previousTransform);
 }
 
 /**

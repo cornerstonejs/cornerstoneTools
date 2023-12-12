@@ -48,6 +48,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       supportedInteractionTypes: ['Mouse', 'Touch'],
       svgCursor: circleRoiCursor,
       configuration: {
+        centerPointRadius: 0,
         renderDashed: false,
         hideHandlesIfMoving: false,
         displayUncertainties: false,
@@ -178,6 +179,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       drawHandlesOnHover,
       hideHandlesIfMoving,
       renderDashed,
+      centerPointRadius,
     } = this.configuration;
     const newContext = getNewContext(canvasContext.canvas);
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
@@ -245,6 +247,22 @@ export default class CircleRoiTool extends BaseMeasurementTool {
           circleOptions,
           'pixel'
         );
+
+        if (centerPointRadius && radius > 3 * centerPointRadius) {
+          drawCircle(
+            context,
+            element,
+            data.handles.start,
+            centerPointRadius,
+            circleOptions,
+            'pixel'
+          );
+        }
+
+        if (data.handles) {
+          data.handles.start.drawnIndependently = true;
+          data.handles.end.drawnIndependently = true;
+        }
 
         drawHandles(context, eventData, data.handles, handleOptions);
 
@@ -399,16 +417,17 @@ function _createTextBoxContent(
   context,
   isColorImage,
   {
-    area,
+    area = 0,
     areaUncertainty,
-    mean,
-    stdDev,
-    min,
-    max,
-    meanStdDevSUV,
+    radius = 0,
+    perimeter = 0,
+    mean = 0,
+    stdDev = 0,
+    min = 0,
+    max = 0,
+    meanStdDevSUV = 0,
     diameter,
     diameterUncertainty,
-    radius,
   } = {},
   modality,
   hasPixelSpacing,
@@ -477,6 +496,15 @@ function _createTextBoxContent(
     formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
   );
 
+  // TextLines.push(_formatArea(area, hasPixelSpacing));
+  // if (radius) {
+  //   textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
+  // }
+  // if (perimeter) {
+  //   textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
+  // }
+  // otherLines.forEach(x => textLines.push(x));
+
   if (diameter) {
     textLines.push(
       formatDiameter(
@@ -491,6 +519,15 @@ function _createTextBoxContent(
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
+}
+
+function _formatLength(value, name, hasPixelSpacing) {
+  if (!value) {
+    return '';
+  }
+  const suffix = hasPixelSpacing ? ' mm' : ' px';
+
+  return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
 }
 
 /**
@@ -557,18 +594,22 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   const area =
     Math.PI *
-    ((circleCoordinates.width * (pixelSpacing.colPixelSpacing || 1)) / 2) *
-    ((circleCoordinates.height * (pixelSpacing.rowPixelSpacing || 1)) / 2);
+    ((circleCoordinates.width *
+      ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
+      2) *
+    ((circleCoordinates.height *
+      ((pixelSpacing && pixelSpacing.rowPixelSpacing) || 1)) /
+      2);
 
   return {
-    area: measurementUncertainty.roundArea(area, areaUncertainty),
+    area: measurementUncertainty.roundArea(area, areaUncertainty) || 0,
     areaUncertainty: measurementUncertainty.roundUncertainty(areaUncertainty),
     radius: radius || 0,
     diameter: measurementUncertainty.roundArea(diameter, diameterUncertainty),
     diameterUncertainty: measurementUncertainty.roundUncertainty(
       diameterUncertainty
     ),
-    perimeter,
+    perimeter: perimeter || 0,
     count: ellipseMeanStdDev.count || 0,
     mean:
       measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean) || 0,

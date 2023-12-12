@@ -523,7 +523,15 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV },
+  {
+    area = 0,
+    areaUncertainty,
+    mean = 0,
+    stdDev = 0,
+    min = 0,
+    max = 0,
+    meanStdDevSUV = 0,
+  } = {},
   modality,
   hasPixelSpacing,
   displayUncertainties,

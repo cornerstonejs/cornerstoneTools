@@ -1,4 +1,8 @@
-import CircleRoiTool from './CircleRoiTool.js';
+import { getToolState as getToolStateMocked } from '../../stateManagement/toolState';
+import drawLinkedMocked from '../../drawing/drawCircle';
+import getNewContextMocked from '../../drawing/getNewContext.js';
+
+import Tool from './CircleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import getNewContextMocked from '../../drawing/getNewContext.js';
 
@@ -12,6 +16,26 @@ import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
  */
 import external from '../../externalModules.js';
 
+jest.mock('./../../stateManagement/toolState', () => ({
+  __esModule: true,
+  getToolState: jest.fn(),
+}));
+jest.mock('../../drawing/drawLinkedTextBox', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawHandles', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawCircle', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/getNewContext', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
@@ -76,14 +100,14 @@ describe('CircleRoiTool.js', () => {
   describe('default values', () => {
     it('has a default name of "CircleRoi"', () => {
       const defaultName = 'CircleRoi';
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       expect(instantiatedTool.name).toEqual(defaultName);
     });
 
     it('can be created with a custom tool name', () => {
       const customToolName = { name: 'customToolName' };
-      const instantiatedTool = new CircleRoiTool(customToolName);
+      const instantiatedTool = new Tool(customToolName);
 
       expect(instantiatedTool.name).toEqual(customToolName.name);
     });
@@ -91,7 +115,7 @@ describe('CircleRoiTool.js', () => {
 
   describe('createNewMeasurement', () => {
     it('emits console error if required eventData is not provided', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const logger = getLogger();
 
       instantiatedTool.createNewMeasurement(badMouseEventData);
@@ -104,7 +128,7 @@ describe('CircleRoiTool.js', () => {
 
     // Todo: create a more formal definition of a tool measurement object
     it('returns a tool measurement object', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -114,7 +138,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it("returns a measurement with a start and end handle at the eventData's x and y", () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -135,7 +159,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns a measurement with a initial rotation', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -147,7 +171,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns a measurement with a textBox handle', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
@@ -167,7 +191,7 @@ describe('CircleRoiTool.js', () => {
 
     // Todo: Not sure we want all of our methods to check for valid params.
     it('emits a console warning when measurementData without start/end handles are supplied', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const noHandlesMeasurementData = {
         handles: {},
       };
@@ -180,7 +204,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns false when measurement data is null or undefined', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const nullMeasurementData = null;
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -193,7 +217,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns false when measurement data is not visible', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const nullMeasurementData = null;
 
       const isPointNearTool = instantiatedTool.pointNearTool(
@@ -206,7 +230,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns false when point is not in the hit area region', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
       );
@@ -239,7 +263,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns true when point is within hit area region', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const toolMeasurement = instantiatedTool.createNewMeasurement(
         goodMouseEventData
       );
@@ -298,7 +322,7 @@ describe('CircleRoiTool.js', () => {
     ];
 
     it('should calculate and update annotation values', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
 
       const data = {
         handles: {
@@ -399,7 +423,7 @@ describe('CircleRoiTool.js', () => {
     });
 
     it('returns undefined when no toolData exists for the tool', () => {
-      const instantiatedTool = new CircleRoiTool();
+      const instantiatedTool = new Tool();
       const mockEvent = {
         detail: undefined,
         currentTarget: undefined,
@@ -518,6 +542,19 @@ describe('CircleRoiTool.js', () => {
       expect(text).toBe(
         'A: 1 mm2\nd: 8 mm\naverage: 3 HU\nstandardDeviation: 4 HU'
       );
+    });
+
+    const expectDrawWithCenter = color => {
+      expect(drawLinkedMocked.mock.calls.length).toBe(2);
+    };
+
+    it('should draw two circles with the inactive color', () => {
+      toolState.data[0].active = false;
+      getToolStateMocked.mockReturnValue(toolState);
+
+      instantiatedTool.renderToolData(mockEvent);
+
+      expectDrawWithCenter(defaulColor);
     });
   });
 });
