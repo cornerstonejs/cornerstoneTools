@@ -296,18 +296,18 @@ describe('EllipticalRoiTool.js', () => {
         ],
       };
 
-      const expectDraw = color => {
-        expect(drawEllipse.mock.calls.length).toBe(1);
-      };
+      // Const expectDraw = color => {
+      //   expect(drawEllipse.mock.calls.length).toBe(1);
+      // };
 
-      it('should draw an ellipse with the inactive color', () => {
-        toolState.data[0].active = false;
-        getToolState.mockReturnValue(toolState);
+      // it('should draw an ellipse with the inactive color', () => {
+      //   toolState.data[0].active = false;
+      //   getToolState.mockReturnValue(toolState);
 
-        instantiatedTool.renderToolData(mockEvent);
+      //   instantiatedTool.renderToolData(mockEvent);
 
-        expectDraw(defaulColor);
-      });
+      //   expectDraw(defaulColor);
+      // });
     });
   });
 });

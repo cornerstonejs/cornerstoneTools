@@ -3,7 +3,6 @@ import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
 import { formatArea } from '../../util/formatMeasurement.js';
-import getNewContextMocked from '../../drawing/getNewContext.js';
 import getNewContext from '../../drawing/getNewContext.js';
 import drawRect from '../../drawing/drawRect.js';
 
@@ -358,7 +357,7 @@ describe('RectangleRoiTool.js', () => {
       };
 
       beforeAll(() => {
-        getNewContextMocked.mockReturnValue({
+        getNewContext.mockReturnValue({
           save: jest.fn(),
           restore: jest.fn(),
         });
