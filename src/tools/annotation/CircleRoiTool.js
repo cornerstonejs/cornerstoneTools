@@ -31,6 +31,8 @@ import * as measurementUncertainty from '../../util/measurementUncertaintyTool.j
 import Decimal from 'decimal.js';
 import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
 
+import numbersWithCommas from './../../util/numbersWithCommas.js';
+
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
 /**
@@ -259,10 +261,11 @@ export default class CircleRoiTool extends BaseMeasurementTool {
           );
         }
 
-        if (data.handles) {
-          data.handles.start.drawnIndependently = true;
-          data.handles.end.drawnIndependently = true;
-        }
+        // NOTE: uncommenting this block leads to not having a small circle on the edge needed for editing
+        // If (data.handles) {
+        //   data.handles.start.drawnIndependently = true;
+        //   data.handles.end.drawnIndependently = true;
+        // }
 
         drawHandles(context, eventData, data.handles, handleOptions);
 
@@ -331,6 +334,8 @@ export default class CircleRoiTool extends BaseMeasurementTool {
     const {
       area,
       areaUncertainty,
+      radius,
+      perimeter,
       mean,
       stdDev,
       min,
@@ -338,7 +343,6 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       meanStdDevSUV,
       diameter,
       diameterUncertainty,
-      radius,
     } = toolState.cachedStats;
 
     return _createTextBoxContent(
@@ -347,6 +351,8 @@ export default class CircleRoiTool extends BaseMeasurementTool {
       {
         area,
         areaUncertainty,
+        radius,
+        perimeter,
         mean,
         stdDev,
         min,
@@ -354,7 +360,6 @@ export default class CircleRoiTool extends BaseMeasurementTool {
         meanStdDevSUV,
         diameter,
         diameterUncertainty,
-        radius,
       },
       modality,
       hasPixelSpacing,
@@ -496,7 +501,7 @@ function _createTextBoxContent(
     formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
   );
 
-  // TextLines.push(_formatArea(area, hasPixelSpacing));
+  // NOTE: this block prints radius and perimeter values in the text-box, which are not required by DUV
   // if (radius) {
   //   textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
   // }
@@ -521,14 +526,14 @@ function _createTextBoxContent(
   return textLines;
 }
 
-// Function _formatLength(value, name, hasPixelSpacing) {
-//   if (!value) {
-//     return '';
-//   }
-//   const suffix = hasPixelSpacing ? ' mm' : ' px';
+function _formatLength(value, name, hasPixelSpacing) {
+  if (!value) {
+    return '';
+  }
+  const suffix = hasPixelSpacing ? ' mm' : ' px';
 
-//   return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
-// }
+  return `${name}: ${numbersWithCommas(value.toFixed(1))}${suffix}`;
+}
 
 /**
  *
@@ -605,11 +610,11 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     area: measurementUncertainty.roundArea(area, areaUncertainty) || 0,
     areaUncertainty: measurementUncertainty.roundUncertainty(areaUncertainty),
     radius: radius || 0,
+    perimeter: perimeter || 0,
     diameter: measurementUncertainty.roundArea(diameter, diameterUncertainty),
     diameterUncertainty: measurementUncertainty.roundUncertainty(
       diameterUncertainty
     ),
-    perimeter: perimeter || 0,
     count: ellipseMeanStdDev.count || 0,
     mean:
       measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean) || 0,
