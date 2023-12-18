@@ -1,12 +1,19 @@
 import Tool from './CobbAngleTool.js';
 import { getToolState } from '../../stateManagement/toolState.js';
 import external from '../../externalModules.js';
+import { localizeNumber } from '../../util/localization/localization.utils.js';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
 
 jest.mock('./../../externalModules.js');
+
+jest.mock('../../util/localization/localization.utils', () => ({
+  __esModule: true,
+  translate: jest.fn(val => val),
+  localizeNumber: jest.fn(val => val),
+}));
 
 const goodMouseEventData = {
   currentPoints: {
@@ -212,7 +219,8 @@ describe('CobbAngleTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.rAngle).toBe(76.76);
+      expect(data.alphaAngle).toBe(76.8);
+      expect(data.betaAngle).toBe(103.2);
       expect(data.invalidated).toBe(false);
     });
   });
@@ -231,6 +239,36 @@ describe('CobbAngleTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+  });
+
+  describe('getToolTextFromToolState', () => {
+    it('should return the formatted text', () => {
+      // Arrange
+      localizeNumber.mockReturnValueOnce('10');
+      localizeNumber.mockReturnValueOnce('60');
+      const context = {};
+      const isColorImage = false;
+      const toolState = {
+        alphaAngle: 10,
+        betaAngle: 60,
+      };
+      const modality = 'CT';
+      const hasPixelSpacing = true;
+      const displayUncertainties = true;
+
+      // Act
+      const text = Tool.getToolTextFromToolState(
+        context,
+        isColorImage,
+        toolState,
+        modality,
+        hasPixelSpacing,
+        displayUncertainties
+      );
+
+      // Assert
+      expect(text).toBe('10°, 60°');
     });
   });
 });

@@ -28,7 +28,7 @@ import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 /**
  * @public
@@ -151,16 +151,19 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       (Math.ceil(data.handles.start2.y) - Math.ceil(data.handles.end2.y)) *
       (rowPixelSpacing || 1);
 
-    let angle = Math.acos(
+    let alphaAngle = Math.acos(
       Math.abs(
         (dx1 * dx2 + dy1 * dy2) /
           (Math.sqrt(dx1 * dx1 + dy1 * dy1) * Math.sqrt(dx2 * dx2 + dy2 * dy2))
       )
     );
 
-    angle *= 180 / Math.PI;
+    alphaAngle *= 180 / Math.PI;
+    const betaAngle = 180 - alphaAngle;
 
-    data.rAngle = roundToDecimal(angle, 2);
+    data.alphaAngle = roundToDecimal(alphaAngle, 1);
+    data.betaAngle = roundToDecimal(betaAngle, 1);
+
     data.invalidated = false;
   }
 
@@ -376,7 +379,6 @@ export default class CobbAngleTool extends BaseAnnotationTool {
   onMeasureModified(ev) {
     const { element } = ev.detail;
     const image = external.cornerstone.getEnabledElement(element).image;
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     if (ev.detail.toolName !== this.name) {
       return;
@@ -385,27 +387,36 @@ export default class CobbAngleTool extends BaseAnnotationTool {
 
     // Update textbox stats
     if (data.invalidated === true) {
-      if (data.rAngle) {
+      if (data.alphaAngle) {
         this.throttledUpdateCachedStats(image, element, data);
       } else {
         this.updateCachedStats(image, element, data);
       }
     }
 
-    data.value = this.textBoxText(data, rowPixelSpacing, colPixelSpacing);
+    data.value = this.textBoxText(data);
   }
 
-  textBoxText({ rAngle }, rowPixelSpacing, colPixelSpacing) {
-    if (rAngle === undefined) {
-      return '';
-    }
-    if (Number.isNaN(rAngle)) {
-      return '';
-    }
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // AlphaAngle, betaAngle
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const { alphaAngle, betaAngle } = toolState;
 
-    const suffix = !rowPixelSpacing || !colPixelSpacing ? ' (isotropic)' : '';
+    return _createTextBoxContent({ alphaAngle, betaAngle });
+  }
 
-    return `${toGermanNumberStringTemp(rAngle)}\u00B0${suffix}`;
+  textBoxText({ alphaAngle, betaAngle }) {
+    return _createTextBoxContent({ alphaAngle, betaAngle });
   }
 
   activeCallback(element) {
@@ -437,4 +448,17 @@ export default class CobbAngleTool extends BaseAnnotationTool {
       this.onMeasureModified
     );
   }
+}
+
+function _createTextBoxContent({ alphaAngle, betaAngle }) {
+  if (alphaAngle === undefined) {
+    return '';
+  }
+  if (Number.isNaN(alphaAngle)) {
+    return '';
+  }
+
+  return `${localization.localizeNumber(
+    alphaAngle
+  )}\u00B0, ${localization.localizeNumber(betaAngle)}\u00B0`;
 }

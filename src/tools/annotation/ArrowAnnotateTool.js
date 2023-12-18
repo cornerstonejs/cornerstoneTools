@@ -307,6 +307,21 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     );
   }
 
+  /**
+   * Returns an empty string since the arrow does not draw any text
+   */
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState,
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    return '';
+  }
+
   doubleClickCallback(evt) {
     return this._updateTextForNearbyAnnotation(evt);
   }

@@ -1,26 +1,69 @@
 import RectangleRoiTool from './RectangleRoiTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
+import Decimal from 'decimal.js';
+import { formatArea } from '../../util/formatMeasurement.js';
+import getNewContext from '../../drawing/getNewContext.js';
+import drawRect from '../../drawing/drawRect.js';
+
+/* ~ Setup
+ * To mock properly, Jest needs jest.mock('moduleName') to be in the
+ * same scope as the require/import statement.
+ */
+import external from '../../externalModules.js';
+
+jest.mock('../../util/localization/localization.utils', () => ({
+  __esModule: true,
+  translate: jest.fn(val => val),
+  localizeNumber: jest.fn(val => val),
+}));
 
 jest.mock('../../util/logger.js');
 jest.mock('./../../stateManagement/toolState.js', () => ({
   getToolState: jest.fn(),
 }));
-
-jest.mock('./../../importInternal.js', () => ({
+jest.mock('../../drawing/drawRect', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/getNewContext', () => ({
+  __esModule: true,
   default: jest.fn(),
 }));
 
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
+    pixelToCanvas: jest.fn(),
     metaData: {
       get: jest.fn(),
     },
+    getViewport: jest.fn(),
     /* eslint-enable prettier/prettier */
     getPixels: () => [100, 100, 100, 100, 4, 5, 100, 3, 6],
     /* eslint-enable prettier/prettier */
+    pixelToCanvas: jest.fn(),
   },
 }));
+
+jest.mock('../../drawing/getNewContext', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('../../drawing/drawRect', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawHandles', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+jest.mock('../../drawing/drawLinkedTextBox', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
+jest.mock('../../util/formatMeasurement');
 
 const badMouseEventData = 'hello world';
 const goodMouseEventData = {
@@ -200,10 +243,10 @@ describe('RectangleRoiTool.js', () => {
       };
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('7.26');
-      expect(data.cachedStats.perimeter.toFixed(2)).toEqual('10.78');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('57.56');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('47.46');
+      expect(data.cachedStats.area).toEqual(new Decimal(7));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(14));
+      expect(data.cachedStats.mean).toEqual(57.6);
+      expect(data.cachedStats.stdDev).toEqual(47.5);
 
       data.handles.start.x = 0;
       data.handles.start.y = 0;
@@ -211,13 +254,72 @@ describe('RectangleRoiTool.js', () => {
       data.handles.end.y = 2;
 
       instantiatedTool.updateCachedStats(image, element, data);
-      expect(data.cachedStats.area.toFixed(2)).toEqual('4.84');
-      expect(data.cachedStats.mean.toFixed(2)).toEqual('68.17');
-      expect(data.cachedStats.stdDev.toFixed(2)).toEqual('45.02');
+      expect(data.cachedStats.area).toEqual(new Decimal(5));
+      expect(data.cachedStats.mean).toEqual(68.2);
+      expect(data.cachedStats.stdDev).toEqual(45);
+    });
+
+    it('should calculate the area and uncertainty based on updated pixelspacing values', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 3,
+            y: 3,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      image.columnPixelSpacing = 0.1234;
+      image.rowPixelSpacing = 1.123;
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.area).toEqual(new Decimal(0.1));
+      expect(data.cachedStats.areaUncertainty).toEqual(new Decimal(2.8));
+    });
+
+    it('should return the average and standard deviation based on generic rounding', () => {
+      const instantiatedTool = new RectangleRoiTool();
+
+      const data = {
+        handles: {
+          start: {
+            x: 1,
+            y: 1,
+          },
+          end: {
+            x: 4,
+            y: 4,
+          },
+        },
+      };
+
+      instantiatedTool.updateCachedStats(image, element, data);
+      expect(data.cachedStats.mean).toEqual(57.6);
+      expect(data.cachedStats.stdDev).toEqual(47.5);
     });
   });
 
   describe('renderToolData', () => {
+    beforeAll(() => {
+      getNewContext.mockReturnValue({
+        save: jest.fn(),
+        restore: jest.fn(),
+        beginPath: jest.fn(),
+        arc: jest.fn(),
+        stroke: jest.fn(),
+        fillRect: jest.fn(),
+        fillText: jest.fn(),
+        measureText: jest.fn(() => ({ width: 1 })),
+      });
+      external.cornerstone.pixelToCanvas.mockImplementation((comp, val) => val);
+    });
+
     it('returns undefined when no toolData exists for the tool', () => {
       const instantiatedTool = new RectangleRoiTool();
       const mockEvent = {
@@ -230,6 +332,107 @@ describe('RectangleRoiTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+
+    describe('should display uncertainties', () => {
+      const toolState = {
+        data: [
+          {
+            invalidated: true,
+            visible: true,
+            active: false,
+            handles: {
+              start: {
+                x: 1,
+                y: 1,
+              },
+              end: {
+                x: 4,
+                y: 4,
+              },
+              textBox: {}, // Not used
+            },
+          },
+        ],
+      };
+
+      beforeAll(() => {
+        getNewContext.mockReturnValue({
+          save: jest.fn(),
+          restore: jest.fn(),
+        });
+      });
+
+      it.each([
+        { displayUncertainties: false },
+        { displayUncertainties: true },
+      ])('should render the right text when %o', ({ displayUncertainties }) => {
+        const mockEvent = {
+          detail: {
+            element: {},
+            canvasContext: {
+              canvas: {},
+            },
+            image: {},
+            viewport: {},
+          },
+        };
+        const instantiatedTool = new RectangleRoiTool({
+          configuration: {
+            displayUncertainties,
+          },
+        });
+
+        getToolState.mockReturnValueOnce(toolState);
+
+        instantiatedTool.renderToolData(mockEvent);
+
+        expect(formatArea).toHaveBeenCalledWith(
+          new Decimal(9),
+          false,
+          new Decimal(17),
+          displayUncertainties
+        );
+      });
+    });
+  });
+
+  describe('getToolTextFromToolState', () => {
+    it('should return the formatted text', () => {
+      // Arrange
+      formatArea.mockReturnValue('A: 1 mm2');
+
+      const context = {
+        measureText: jest.fn().mockReturnValue({ width: 100 }),
+      };
+      const isColorImage = false;
+      const toolState = {
+        cachedStats: {
+          area: 1,
+          areaUncertainty: 2,
+          mean: 3,
+          stdDev: 4,
+          min: 5,
+          max: 6,
+          meanStdDevSUV: undefined,
+        },
+      };
+      const modality = 'CT';
+      const hasPixelSpacing = true;
+      const displayUncertainties = true;
+
+      // Act
+      const text = RectangleRoiTool.getToolTextFromToolState(
+        context,
+        isColorImage,
+        toolState,
+        modality,
+        hasPixelSpacing,
+        displayUncertainties
+      );
+
+      // Assert
+      expect(text).toBe('A: 1 mm2\naverage: 3 HU\nstandardDeviation: 4 HU');
     });
   });
 });

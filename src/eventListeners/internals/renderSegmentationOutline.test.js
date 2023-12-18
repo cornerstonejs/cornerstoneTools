@@ -5,16 +5,21 @@ import * as drawing from '../../drawing/index.js';
 
 const { state } = getModule('segmentation');
 
-jest.mock('../../drawing/index.js', () => ({
-  getNewContext: () => ({
+jest.mock('../../drawing/index.js', () => {
+  const getNewContextMock = {
     globalAlpha: 1.0,
-  }),
-  draw: (context, callback) => {
-    callback(context);
-  },
-  drawLines: jest.fn(),
-  drawJoinedLines: jest.fn(),
-}));
+    setTransform: jest.fn(),
+  };
+
+  return {
+    getNewContext: jest.fn(() => getNewContextMock),
+    draw: (context, callback) => {
+      callback(context);
+    },
+    drawLines: jest.fn(),
+    drawJoinedLines: jest.fn(),
+  };
+});
 
 jest.mock('../../externalModules', () => ({
   cornerstone: {
@@ -132,6 +137,15 @@ function resetEvents() {
 
   lineWidth = 1;
 
+  const canvasTransformState = {
+    a: 0.078,
+    b: 0,
+    c: 0,
+    d: 0.078,
+    e: 52.9,
+    f: 0,
+  };
+
   eventData = {
     element: null,
     image: {
@@ -154,6 +168,7 @@ function resetEvents() {
         width: canvasScale * width,
         height: canvasScale * width,
       },
+      getTransform: jest.fn(() => canvasTransformState),
     },
   };
 
@@ -224,8 +239,14 @@ function setCanvasTransform(options = {}) {
 }
 
 describe('renderSegmentationOutline.js', () => {
+  let getNewContext;
+
   beforeEach(() => {
     resetEvents();
+
+    getNewContext = drawing.getNewContext;
+
+    jest.clearAllMocks();
   });
 
   describe('Initialization', () => {
@@ -365,6 +386,31 @@ describe('renderSegmentationOutline.js', () => {
   });
 
   describe('renderOutline', () => {
+    it('should preserve the canvas transform matrix', () => {
+      const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
+
+      // Fake colormap to stop renderOutline breaking.
+      state.colorLutTables[0] = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+
+      const beforeCallTransformMatrix = evt.detail.canvasContext.getTransform();
+      const newContextSetTransform = getNewContext().setTransform;
+
+      evt.detail.canvasContext.getTransform.mockClear();
+      getNewContext.mockClear();
+
+      renderOutline(evt, outline, 0, true);
+
+      expect(evt.detail.canvasContext.getTransform).toHaveBeenCalledTimes(1);
+      expect(getNewContext).toHaveBeenCalledTimes(1);
+      expect(getNewContext).toHaveBeenCalledWith(
+        evt.detail.canvasContext.canvas
+      );
+      expect(newContextSetTransform).toHaveBeenCalledTimes(1);
+      expect(newContextSetTransform).toHaveBeenCalledWith(
+        beforeCallTransformMatrix
+      );
+    });
+
     it('Should call drawLines twice', () => {
       const outline = getOutline(evt, labelmap3D, labelmap2D, lineWidth);
 

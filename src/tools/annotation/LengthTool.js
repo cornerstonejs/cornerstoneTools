@@ -1,4 +1,4 @@
-import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
 import toolStyle from './../../stateManagement/toolStyle.js';
@@ -18,7 +18,10 @@ import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import roundToDecimal from '../../util/roundToDecimal.js';
+import { formatLenght } from '../../util/formatMeasurement';
+import Decimal from 'decimal.js';
 
 const logger = getLogger('tools:annotation:LengthTool');
 
@@ -27,9 +30,9 @@ const logger = getLogger('tools:annotation:LengthTool');
  * @class LengthTool
  * @memberof Tools.Annotation
  * @classdesc Tool for measuring distances.
- * @extends Tools.Base.BaseAnnotationTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class LengthTool extends BaseAnnotationTool {
+export default class LengthTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'Length',
@@ -125,7 +128,7 @@ export default class LengthTool extends BaseAnnotationTool {
   }
 
   updateCachedStats(image, element, data) {
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
+    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image, data);
 
     // Set rowPixelSpacing and columnPixelSpacing to 1 if they are undefined (or zero)
     const dx =
@@ -136,8 +139,25 @@ export default class LengthTool extends BaseAnnotationTool {
     // Calculate the length, and create the text variable with the millimeters or pixels suffix
     const length = Math.sqrt(dx * dx + dy * dy);
 
+    const uncertainty = measurementUncertainty.getPixelDiagonal(
+      colPixelSpacing,
+      rowPixelSpacing
+    );
+
+    const roundedLength = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(length, uncertainty)
+      : roundToDecimal(length, 1);
+
+    const roundedUncertainty = colPixelSpacing
+      ? measurementUncertainty.roundValueBasedOnUncertainty(
+          uncertainty,
+          uncertainty
+        )
+      : roundToDecimal(uncertainty, 1);
+
     // Store the length inside the tool for outside access
-    data.length = length;
+    data.length = new Decimal(roundedLength);
+    data.uncertainty = new Decimal(roundedUncertainty);
     data.invalidated = false;
   }
 
@@ -159,7 +179,6 @@ export default class LengthTool extends BaseAnnotationTool {
     // We have tool data for this element - iterate over each one and draw it
     const context = getNewContext(eventData.canvasContext.canvas);
     const { image, element } = eventData;
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
 
     const lineWidth = toolStyle.getToolWidth();
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
@@ -234,7 +253,17 @@ export default class LengthTool extends BaseAnnotationTool {
           }
         }
 
-        const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
+        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
+          image,
+          data
+        );
+        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
+
+        const text = textBoxText(
+          data,
+          hasPixelSpacing,
+          this.displayUncertainties
+        );
 
         drawLinkedTextBox(
           context,
@@ -252,26 +281,11 @@ export default class LengthTool extends BaseAnnotationTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(annotation, rowPixelSpacing, colPixelSpacing) {
-      const measuredValue = _sanitizeMeasuredValue(annotation.length);
-
-      // Measured value is not defined, return empty string
-      if (!measuredValue) {
-        return '';
-      }
-
-      // Set the length text suffix depending on whether or not pixelSpacing is available
-      let suffix = 'mm';
-
-      if (!rowPixelSpacing || !colPixelSpacing) {
-        suffix = 'pixels';
-      }
-
-      annotation.unit = suffix;
-
-      return (
-        toGermanNumberStringTemp(measuredValue) +
-        ` ${suffix}` /*`${measuredValue.toFixed(2)} ${suffix}`*/
+    function textBoxText(annotation, hasPixelSpacing, displayUncertainties) {
+      return _createTextBoxContent(
+        annotation,
+        hasPixelSpacing,
+        displayUncertainties
       );
     }
 
@@ -283,6 +297,26 @@ export default class LengthTool extends BaseAnnotationTool {
 
       return [handles.start, midpoint, handles.end];
     }
+  }
+
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // Length
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    return _createTextBoxContent(
+      toolState,
+      hasPixelSpacing,
+      displayUncertainties
+    );
   }
 }
 
@@ -298,4 +332,19 @@ function _sanitizeMeasuredValue(value) {
   const isNumber = !isNaN(parsedValue);
 
   return isNumber ? parsedValue : undefined;
+}
+
+function _createTextBoxContent(
+  annotation,
+  hasPixelSpacing,
+  displayUncertainties
+) {
+  const measuredValue = _sanitizeMeasuredValue(annotation.length);
+
+  return formatLenght(
+    measuredValue,
+    hasPixelSpacing,
+    annotation.uncertainty,
+    displayUncertainties
+  );
 }

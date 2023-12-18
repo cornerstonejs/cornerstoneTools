@@ -1,5 +1,5 @@
 import external from './../../externalModules.js';
-import BaseAnnotationTool from '../base/BaseAnnotationTool.js';
+import BaseMeasurementTool from '../base/BaseMeasurementTool.js';
 
 // State
 import { getToolState } from './../../stateManagement/toolState.js';
@@ -21,13 +21,17 @@ import {
 import calculateSUV from './../../util/calculateSUV.js';
 import { calculateEllipseStatistics } from './../../util/ellipse/index.js';
 import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
-import numbersWithCommas from './../../util/numbersWithCommas.js';
-import toGermanNumberStringTemp from './../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
+import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
+import Decimal from 'decimal.js';
+import { formatArea, formatDiameter } from '../../util/formatMeasurement.js';
+
+import numbersWithCommas from './../../util/numbersWithCommas.js';
 
 const logger = getLogger('tools:annotation:CircleRoiTool');
 
@@ -37,9 +41,9 @@ const logger = getLogger('tools:annotation:CircleRoiTool');
  * @memberof Tools.Annotation
  * @classdesc Tool for drawing circular regions of interest, and measuring
  * the statistics of the enclosed pixels.
- * @extends Tools.Base.BaseAnnotationTool
+ * @extends Tools.Base.BaseMeasurementTool
  */
-export default class CircleRoiTool extends BaseAnnotationTool {
+export default class CircleRoiTool extends BaseMeasurementTool {
   constructor(props = {}) {
     const defaultProps = {
       name: 'CircleRoi',
@@ -49,6 +53,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         centerPointRadius: 0,
         renderDashed: false,
         hideHandlesIfMoving: false,
+        displayUncertainties: false,
       },
     };
 
@@ -146,7 +151,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       external.cornerstone.metaData.get('generalSeriesModule', image.imageId) ||
       {};
     const modality = seriesModule.modality;
-    const pixelSpacing = getPixelSpacing(image);
+    const pixelSpacing = getPixelSpacing(image, data);
 
     const stats = _calculateStats(
       image,
@@ -179,7 +184,6 @@ export default class CircleRoiTool extends BaseAnnotationTool {
       centerPointRadius,
     } = this.configuration;
     const newContext = getNewContext(canvasContext.canvas);
-    const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(image);
     const lineDash = getModule('globalConfiguration').configuration.lineDash;
 
     // Meta
@@ -189,7 +193,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
 
     // Pixel Spacing
     const modality = seriesModule.modality;
-    const hasPixelSpacing = rowPixelSpacing && colPixelSpacing;
+    const displayUncertainties = this.displayUncertainties;
 
     draw(newContext, context => {
       // If we have tool data for this element, iterate over each set and draw it
@@ -199,6 +203,12 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         if (data.visible === false) {
           continue;
         }
+
+        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
+          image,
+          data
+        );
+        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
 
         // Configure
         const color = toolColors.getColorIfActive(data);
@@ -251,10 +261,11 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           );
         }
 
-        if (data.handles) {
-          data.handles.start.drawnIndependently = true;
-          data.handles.end.drawnIndependently = true;
-        }
+        // NOTE: uncommenting this block leads to not having a small circle on the edge needed for editing
+        // If (data.handles) {
+        //   data.handles.start.drawnIndependently = true;
+        //   data.handles.end.drawnIndependently = true;
+        // }
 
         drawHandles(context, eventData, data.handles, handleOptions);
 
@@ -286,7 +297,7 @@ export default class CircleRoiTool extends BaseAnnotationTool {
           data.cachedStats,
           modality,
           hasPixelSpacing,
-          this.configuration
+          displayUncertainties
         );
 
         data.unit = _getUnit(modality, this.configuration.showHounsfieldUnits);
@@ -305,6 +316,56 @@ export default class CircleRoiTool extends BaseAnnotationTool {
         );
       }
     });
+  }
+
+  /**
+   * Static method which returns based on the given parameters the formatted text.
+   * The text is in the same format as it is also drawn on the canvas in the end.
+   **/
+  static getToolTextFromToolState(
+    context,
+    isColorImage,
+    toolState, // cachedStats: { Area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV, diameter, diameterUncertainty, radius }
+    modality,
+    hasPixelSpacing,
+    displayUncertainties,
+    options = {}
+  ) {
+    const {
+      area,
+      areaUncertainty,
+      radius,
+      perimeter,
+      mean,
+      stdDev,
+      min,
+      max,
+      meanStdDevSUV,
+      diameter,
+      diameterUncertainty,
+    } = toolState.cachedStats;
+
+    return _createTextBoxContent(
+      context,
+      isColorImage,
+      {
+        area,
+        areaUncertainty,
+        radius,
+        perimeter,
+        mean,
+        stdDev,
+        min,
+        max,
+        meanStdDevSUV,
+        diameter,
+        diameterUncertainty,
+      },
+      modality,
+      hasPixelSpacing,
+      displayUncertainties,
+      options
+    ).join('\n');
   }
 }
 
@@ -343,7 +404,7 @@ function _findTextBoxAnchorPoints(startHandle, endHandle) {
 }
 
 function _getUnit(modality, showHounsfieldUnits) {
-  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : '';
+  return modality === 'CT' && showHounsfieldUnits !== false ? 'HU' : 'SI';
 }
 
 /**
@@ -351,7 +412,7 @@ function _getUnit(modality, showHounsfieldUnits) {
  *
  * @param {*} context
  * @param {*} isColorImage
- * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV }
+ * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV, diameterUncertainty, areaUncertainty }
  * @param {*} modality
  * @param {*} hasPixelSpacing
  * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
@@ -362,6 +423,7 @@ function _createTextBoxContent(
   isColorImage,
   {
     area = 0,
+    areaUncertainty,
     radius = 0,
     perimeter = 0,
     mean = 0,
@@ -369,9 +431,12 @@ function _createTextBoxContent(
     min = 0,
     max = 0,
     meanStdDevSUV = 0,
+    diameter,
+    diameterUncertainty,
   } = {},
   modality,
   hasPixelSpacing,
+  displayUncertainties,
   options = {}
 ) {
   const showMinMax = options.showMinMax || false;
@@ -384,19 +449,23 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; //`Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; //`Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
+    let meanString = mean
+      ? `${localization.translate('average')}: ${localization.localizeNumber(
+          mean
+        )} ${unit}`
+      : `${localization.translate('average')}: - ${unit}`;
+    const stdDevString = stdDev
+      ? `${localization.translate(
+          'standardDeviation'
+        )}: ${localization.localizeNumber(stdDev)} ${unit}`
+      : `${localization.translate('standardDeviation')}: - ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
       const SUVtext = ' SUV: ';
 
-      const meanSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.mean.toFixed(2)
-      )}`;
-      const stdDevSuvString = `${SUVtext}${numbersWithCommas(
-        meanStdDevSUV.stdDev.toFixed(2)
-      )}`;
+      const meanSuvString = `${SUVtext}${meanStdDevSUV.mean}`;
+      const stdDevSuvString = `${SUVtext}${meanStdDevSUV.stdDev}`;
 
       const targetStringLength = Math.floor(
         context.measureText(`${stdDevString}     `).width
@@ -409,7 +478,8 @@ function _createTextBoxContent(
       otherLines.push(`${meanString}${meanSuvString}`);
       otherLines.push(`${stdDevString}     ${stdDevSuvString}`);
     } else {
-      otherLines.push(`${meanString}     ${stdDevString}`);
+      otherLines.push(`${meanString}`);
+      otherLines.push(`${stdDevString}`);
     }
 
     if (showMinMax) {
@@ -427,32 +497,33 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(_formatArea(area, hasPixelSpacing));
-  if (radius) {
-    textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
+  textLines.push(
+    formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
+  );
+
+  // NOTE: this block prints radius and perimeter values in the text-box, which are not required by DUV
+  // if (radius) {
+  //   textLines.push(_formatLength(radius, 'Radius', hasPixelSpacing));
+  // }
+  // if (perimeter) {
+  //   textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
+  // }
+  // otherLines.forEach(x => textLines.push(x));
+
+  if (diameter) {
+    textLines.push(
+      formatDiameter(
+        diameter,
+        hasPixelSpacing,
+        diameterUncertainty,
+        displayUncertainties
+      )
+    );
   }
-  if (perimeter) {
-    textLines.push(_formatLength(perimeter, 'Perimeter', hasPixelSpacing));
-  }
+
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;
-}
-
-/**
- *
- *
- * @param {*} area
- * @param {*} hasPixelSpacing
- * @returns {string} The formatted label for showing area
- */
-function _formatArea(area, hasPixelSpacing) {
-  // This uses Char code 178 for a superscript 2
-  const suffix = hasPixelSpacing
-    ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
-
-  return `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
 }
 
 function _formatLength(value, name, hasPixelSpacing) {
@@ -497,8 +568,14 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
 
   if (modality === 'PT') {
     meanStdDevSUV = {
-      mean: calculateSUV(image, ellipseMeanStdDev.mean, true) || 0,
-      stdDev: calculateSUV(image, ellipseMeanStdDev.stdDev, true) || 0,
+      mean:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.mean, true)
+        ) || 0,
+      stdDev:
+        measurementUncertainty.getGenericRounding(
+          calculateSUV(image, ellipseMeanStdDev.stdDev, true)
+        ) || 0,
     };
   }
 
@@ -506,7 +583,20 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
     (circleCoordinates.width *
       ((pixelSpacing && pixelSpacing.colPixelSpacing) || 1)) /
     2;
-  const perimeter = 2 * Math.PI * radius;
+
+  const perimeter = new Decimal(2 * Math.PI * radius) || 0;
+
+  const diameter = radius * 2 || 0;
+
+  const pixelDiagonal = measurementUncertainty.getPixelDiagonal(
+    pixelSpacing.colPixelSpacing,
+    pixelSpacing.rowPixelSpacing
+  );
+
+  const areaUncertainty = perimeter * pixelDiagonal || 0;
+
+  const diameterUncertainty = new Decimal(pixelDiagonal * Decimal.sqrt(2)) || 0;
+
   const area =
     Math.PI *
     ((circleCoordinates.width *
@@ -517,13 +607,20 @@ function _calculateStats(image, element, handles, modality, pixelSpacing) {
       2);
 
   return {
-    area: area || 0,
+    area: measurementUncertainty.roundArea(area, areaUncertainty) || 0,
+    areaUncertainty: measurementUncertainty.roundUncertainty(areaUncertainty),
     radius: radius || 0,
     perimeter: perimeter || 0,
+    diameter: measurementUncertainty.roundArea(diameter, diameterUncertainty),
+    diameterUncertainty: measurementUncertainty.roundUncertainty(
+      diameterUncertainty
+    ),
     count: ellipseMeanStdDev.count || 0,
-    mean: ellipseMeanStdDev.mean || 0,
+    mean:
+      measurementUncertainty.getGenericRounding(ellipseMeanStdDev.mean) || 0,
     variance: ellipseMeanStdDev.variance || 0,
-    stdDev: ellipseMeanStdDev.stdDev || 0,
+    stdDev:
+      measurementUncertainty.getGenericRounding(ellipseMeanStdDev.stdDev) || 0,
     min: ellipseMeanStdDev.min || 0,
     max: ellipseMeanStdDev.max || 0,
     meanStdDevSUV,

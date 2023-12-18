@@ -30,7 +30,7 @@ import { ellipticalRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import { getModule } from '../../store/index';
-import toGermanNumberStringTemp from '../../util/toGermanNumberStringTemp.js';
+import * as localization from '../../util/localization/localization.utils';
 
 const logger = getLogger('tools:annotation:EllipticalRoiTool');
 
@@ -356,7 +356,7 @@ function _getUnit(modality, showHounsfieldUnits) {
 function _createTextBoxContent(
   context,
   isColorImage,
-  { area, mean, stdDev, min, max, meanStdDevSUV } = {},
+  { area = 0, mean = 0, stdDev = 0, min = 0, max = 0, meanStdDevSUV = 0 } = {},
   modality,
   hasPixelSpacing,
   options = {}
@@ -371,8 +371,12 @@ function _createTextBoxContent(
     const hasStandardUptakeValues = meanStdDevSUV && meanStdDevSUV.mean !== 0;
     const unit = _getUnit(modality, options.showHounsfieldUnits);
 
-    let meanString = `avg: ${toGermanNumberStringTemp(mean)} ${unit}`; // `Mean: ${numbersWithCommas(mean.toFixed(2))} ${unit}`;
-    const stdDevString = `sd: ${toGermanNumberStringTemp(stdDev)} ${unit}`; //`Std Dev: ${numbersWithCommas(stdDev.toFixed(2))} ${unit}`;
+    let meanString = `${localization.translate(
+      'average'
+    )}: ${localization.localizeNumber(mean)} ${unit}`;
+    const stdDevString = `${localization.translate(
+      'standardDeviation'
+    )}: ${localization.localizeNumber(stdDev)} ${unit}`;
 
     // If this image has SUV values to display, concatenate them to the text line
     if (hasStandardUptakeValues) {
@@ -432,9 +436,11 @@ function _formatArea(area, hasPixelSpacing) {
   // This uses Char code 178 for a superscript 2
   const suffix = hasPixelSpacing
     ? ` mm${String.fromCharCode(178)}`
-    : ` px${String.fromCharCode(178)}`;
+    : ` pix${String.fromCharCode(178)}`;
 
-  return `A: ${toGermanNumberStringTemp(area)} ${suffix}`; //`Area: ${numbersWithCommas(area.toFixed(2))}${suffix}`;
+  return `${localization.translate('area')}: ${localization.localizeNumber(
+    area
+  )} ${suffix}`;
 }
 
 /**

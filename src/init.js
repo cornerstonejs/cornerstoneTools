@@ -4,6 +4,8 @@ import addEnabledElement from './store/internals/addEnabledElement.js';
 import removeEnabledElement from './store/internals/removeEnabledElement.js';
 import windowResizeHandler from './eventListeners/windowResizeHandler.js';
 
+import * as localization from './util/localization/localization.utils';
+
 /**
  * Merges the provided configuration with default values and returns a
  * configured CornerstoneTools instance.
@@ -14,9 +16,10 @@ import windowResizeHandler from './eventListeners/windowResizeHandler.js';
  *
  * @param {Object|Object[]} [defaultConfiguration = {}] The configuration to apply. Assumed globalConfiguration
  * only one value, otherwise moduleName, configuration entires in an array.
- * @returns {Object} A configured CornerstoneTools instance with top level API members.
+ * @param {string} [language = 'en'] Language to use for localization
+ * @returns {Promise<TFunction>} A promise that resolves to a i18next TFunction.
  */
-export default function(defaultConfiguration = {}) {
+export default function(defaultConfiguration = {}, language = 'en') {
   _addCornerstoneEventListeners();
   _initModules();
 
@@ -48,6 +51,8 @@ export default function(defaultConfiguration = {}) {
   if (globalConfigurationModule.configuration.autoResizeViewports) {
     windowResizeHandler.enable();
   }
+
+  return localization.initializeLocalization(language);
 }
 
 /**
