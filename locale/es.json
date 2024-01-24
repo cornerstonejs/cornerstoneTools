@@ -5,5 +5,10 @@
   "circumference": "C",
   "diameter": "D",
   "isotropic": "isotrópico",
-  "standardDeviation": "SD"
+  "standardDeviation": "SD",
+  "pix": "pix",
+  "mm": "mm",
+  "mm_prj": "mm (prj)",
+  "mm_est": "mm (prj/est)",
+  "mm_approx": "mm (approx)"
 }

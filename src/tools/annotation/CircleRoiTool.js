@@ -24,7 +24,7 @@ import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import * as localization from '../../util/localization/localization.utils';
 import throttle from './../../util/throttle.js';
 import { getLogger } from '../../util/logger.js';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import { circleRoiCursor } from '../cursors/index.js';
 import getCircleCoords from '../../util/getCircleCoords';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
@@ -204,11 +204,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
           continue;
         }
 
-        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
-          image,
-          data
-        );
-        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
+        const { unit } = getPixelSpacing(image, data);
 
         // Configure
         const color = toolColors.getColorIfActive(data);
@@ -296,7 +292,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
           image.color,
           data.cachedStats,
           modality,
-          hasPixelSpacing,
+          unit,
           displayUncertainties
         );
 
@@ -327,7 +323,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
     isColorImage,
     toolState, // cachedStats: { Area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV, diameter, diameterUncertainty, radius }
     modality,
-    hasPixelSpacing,
+    unit,
     displayUncertainties,
     options = {}
   ) {
@@ -362,7 +358,7 @@ export default class CircleRoiTool extends BaseMeasurementTool {
         diameterUncertainty,
       },
       modality,
-      hasPixelSpacing,
+      unit,
       displayUncertainties,
       options
     ).join('\n');
@@ -414,7 +410,7 @@ function _getUnit(modality, showHounsfieldUnits) {
  * @param {*} isColorImage
  * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV, diameterUncertainty, areaUncertainty }
  * @param {*} modality
- * @param {*} hasPixelSpacing
+ * @param {*} unit
  * @param {*} [options={}] - { showMinMax, showHounsfieldUnits }
  * @returns {string[]}
  */
@@ -435,7 +431,7 @@ function _createTextBoxContent(
     diameterUncertainty,
   } = {},
   modality,
-  hasPixelSpacing,
+  unit,
   displayUncertainties,
   options = {}
 ) {
@@ -497,9 +493,7 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(
-    formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
-  );
+  textLines.push(formatArea(area, unit, areaUncertainty, displayUncertainties));
 
   // NOTE: this block prints radius and perimeter values in the text-box, which are not required by DUV
   // if (radius) {
@@ -512,12 +506,7 @@ function _createTextBoxContent(
 
   if (diameter) {
     textLines.push(
-      formatDiameter(
-        diameter,
-        hasPixelSpacing,
-        diameterUncertainty,
-        displayUncertainties
-      )
+      formatDiameter(diameter, unit, diameterUncertainty, displayUncertainties)
     );
   }
 

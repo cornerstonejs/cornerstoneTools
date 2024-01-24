@@ -26,7 +26,7 @@ import EVENTS from './../../events.js';
 import { cobbAngleCursor } from '../cursors/index.js';
 import triggerEvent from '../../util/triggerEvent.js';
 import throttle from '../../util/throttle';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as localization from '../../util/localization/localization.utils';
 
@@ -406,7 +406,7 @@ export default class CobbAngleTool extends BaseAnnotationTool {
     isColorImage,
     toolState, // AlphaAngle, betaAngle
     modality,
-    hasPixelSpacing,
+    unit,
     displayUncertainties,
     options = {}
   ) {

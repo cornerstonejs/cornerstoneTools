@@ -13,7 +13,7 @@ import {
   drawLine,
 } from './../../../drawing/index.js';
 import drawLinkedTextBox from './../../../drawing/drawLinkedTextBox.js';
-import getPixelSpacing from '../../../util/getPixelSpacing';
+import getPixelSpacing from '../../../util/pixelSpacing/getPixelSpacing';
 
 export default function(evt) {
   const eventData = evt.detail;

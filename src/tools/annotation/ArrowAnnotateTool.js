@@ -315,7 +315,7 @@ export default class ArrowAnnotateTool extends BaseAnnotationTool {
     isColorImage,
     toolState,
     modality,
-    hasPixelSpacing,
+    unit,
     displayUncertainties,
     options = {}
   ) {

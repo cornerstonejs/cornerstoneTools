@@ -17,7 +17,7 @@ import { moveHandleNearImagePoint } from '../../util/findAndMoveHelpers.js';
 import pointInsideBoundingBox from '../../util/pointInsideBoundingBox.js';
 import calculateSUV from '../../util/calculateSUV.js';
 import numbersWithCommas from '../../util/numbersWithCommas.js';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 
 // Drawing
 import { getNewContext, draw, drawJoinedLines } from '../../drawing/index.js';

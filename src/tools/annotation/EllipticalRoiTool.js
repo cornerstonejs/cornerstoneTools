@@ -28,7 +28,7 @@ import numbersWithCommas from './../../util/numbersWithCommas.js';
 import throttle from './../../util/throttle.js';
 import { ellipticalRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as localization from '../../util/localization/localization.utils';
 

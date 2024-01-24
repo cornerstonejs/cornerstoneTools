@@ -4,23 +4,18 @@ import { translate, localizeNumber } from './localization/localization.utils';
  *
  *
  * @param {*} lenght
- * @param {*} hasPixelSpacing
+ * @param {*} unit
  * @param {*} uncertainty
  * @param {*} displayUncertainties
  * @returns {string} The formatted label for showing a length
  */
-function formatLenght(
-  lenght,
-  hasPixelSpacing,
-  uncertainty,
-  displayUncertainties
-) {
+function formatLenght(lenght, unit, uncertainty, displayUncertainties) {
   if (!lenght) {
     return '';
   }
 
   const localizedLength = localizeNumber(lenght);
-  const suffix = _getLinearMeasurementSuffix(hasPixelSpacing);
+  const suffix = translate(unit);
   const lengthWithSuffix = `${localizedLength} ${suffix}`;
 
   if (!displayUncertainties) {
@@ -36,19 +31,19 @@ function formatLenght(
  *
  *
  * @param {*} area
- * @param {*} hasPixelSpacing
+ * @param {*} unit
  * @param {*} uncertainty
  * @param {*} displayUncertainties
  * @returns {string} The formatted label for showing an area
  */
-function formatArea(area, hasPixelSpacing, uncertainty, displayUncertainties) {
+function formatArea(area, unit, uncertainty, displayUncertainties) {
   if (!area) {
     return '';
   }
 
   const localizedArea = localizeNumber(area);
 
-  const suffix = _getAreaMeasurmentSuffix(hasPixelSpacing);
+  const suffix = _getAreaMeasurmentSuffix(unit);
   const measuredValueWithSuffix = `${translate(
     'area'
   )}: ${localizedArea} ${suffix}`;
@@ -66,24 +61,19 @@ function formatArea(area, hasPixelSpacing, uncertainty, displayUncertainties) {
  *
  *
  * @param {*} diameter
- * @param {*} hasPixelSpacing
+ * @param {*} unit
  * @param {*} uncertainty
  * @param {*} displayUncertainties
  * @returns {string} The formatted label for showing a diameter
  */
-function formatDiameter(
-  diameter,
-  hasPixelSpacing,
-  uncertainty,
-  displayUncertainties
-) {
+function formatDiameter(diameter, unit, uncertainty, displayUncertainties) {
   if (!diameter) {
     return '';
   }
 
   const localizedDiameter = localizeNumber(diameter);
 
-  const suffix = _getLinearMeasurementSuffix(hasPixelSpacing);
+  const suffix = translate(unit);
   const measuredValueWithSuffix = `${translate(
     'diameter'
   )}: ${localizedDiameter} ${suffix}`;
@@ -97,15 +87,11 @@ function formatDiameter(
   return `${measuredValueWithSuffix} +/- ${localizedUncertainty} ${suffix}`;
 }
 
-function _getAreaMeasurmentSuffix(hasPixelSpacing) {
+function _getAreaMeasurmentSuffix(unit) {
   const squareCharacter = String.fromCharCode(178);
-  const preffix = _getLinearMeasurementSuffix(hasPixelSpacing);
+  const preffix = translate(unit);
 
   return `${preffix}${squareCharacter}`;
-}
-
-function _getLinearMeasurementSuffix(hasPixelSpacing) {
-  return hasPixelSpacing ? 'mm' : 'pix';
 }
 
 export { formatArea, formatLenght, formatDiameter };
