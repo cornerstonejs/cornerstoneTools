@@ -269,6 +269,7 @@ describe('LengthTool.js', () => {
         getPixelSpacing.mockReturnValue({
           rowPixelSpacing: 0,
           colPixelSpacing: 0,
+          unit: 'mm',
         });
 
         const mockEvent = {
@@ -296,7 +297,7 @@ describe('LengthTool.js', () => {
 
         expect(formatLenght).toHaveBeenCalledWith(
           length,
-          false,
+          'mm',
           uncertainty,
           displayUncertainties
         );

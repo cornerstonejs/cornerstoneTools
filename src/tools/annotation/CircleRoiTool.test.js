@@ -483,14 +483,14 @@ describe('CircleRoiTool.js', () => {
 
         expect(formatArea).toHaveBeenCalledWith(
           new Decimal(1260),
-          false,
+          'pix',
           new Decimal(180),
           displayUncertainties
         );
 
         expect(formatDiameter).toHaveBeenCalledWith(
           new Decimal(40),
-          false,
+          'pix',
           new Decimal(2),
           displayUncertainties
         );

@@ -1,12 +1,21 @@
-export default function getProjectionRadiographicPixelSpacing(imagePlane) {
+/**
+ * The logic of this code is based on the DICOM standard part 3, section 10.7,
+ * see https://dicom.nema.org/dicom/2013/output/chtml/part03/sect_10.7.html
+ * especially section 10.7.1.1 Pixel Spacing.
+ * The determination of units is done the same way as in the Diagnost Client,
+ * see impaxee/com.agfa.pacs.impaxee/src/main/java/com/tiani/jvision/image/fithandler/SpacingDef.java
+ * @param {Object} imagePlane
+ * @returns {Object}
+ */
+export default function getProjectionRadiographPixelSpacing(imagePlane) {
   const imagerPixelSpacing = imagePlane.imagerPixelSpacing || [];
   const pixelSpacing = imagePlane.pixelSpacing || [];
 
   // ********************* CASE 1 *********************************
-  // this is a projection radiograph and we only have pixel spacing
-  // so we assume there is no calibration
-  // (we don't know whether the spacing is calibrated or not)
-  // unit is mm_prj (projective)
+  // Pixel Spacing is present, Imager Pixel Spacing is not
+  // meaning that it cannot be determined whether or not
+  // correction or calibration have been performed.
+  // Unit is mm_prj (projective)
   // **************************************************************
   if (pixelSpacing.length > 0 && imagerPixelSpacing.length === 0) {
     return {
@@ -16,9 +25,11 @@ export default function getProjectionRadiographicPixelSpacing(imagePlane) {
     };
   } else if (imagerPixelSpacing.length > 0 && pixelSpacing.length > 0) {
     // ********************* CASE 2 *********************************
-    // pixel spacing and imager pixel spacing are the same
-    // the measurements are at the detector plane
-    // unit is mm_prj (projective) or mm_est (estimated)
+    // Pixel Spacing and Imager Pixel Spacing are the same
+    // per standard this means that the image has not been calibrated
+    // to correct for the effects of geometric magnification
+    // the measurements are at the detector plane.
+    // Unit is mm_prj (projective) or mm_est (estimated)
     // **************************************************************
     if (
       areTheSame(imagerPixelSpacing, pixelSpacing) ||
@@ -28,9 +39,11 @@ export default function getProjectionRadiographicPixelSpacing(imagePlane) {
     }
 
     // ********************* CASE 3 *********************************
-    // pixel spacing and imager pixel spacing are different
-    // meaning they're calibrated
-    // unit is mm_approx (approximate)
+    // Pixel Spacing and Imager Pixel Spacing are different
+    // meaning the image has been corrected for known or assumed
+    // geometric magnification or calibrated with respect to some
+    // object of known size at known depth within the patient.
+    // Unit is mm_approx (approximate)
     // **************************************************************
     return {
       rowPixelSpacing: pixelSpacing[0],
@@ -39,8 +52,8 @@ export default function getProjectionRadiographicPixelSpacing(imagePlane) {
     };
   } else if (pixelSpacing.length === 0 && imagerPixelSpacing.length > 0) {
     // ********************* CASE 4 *********************************
-    // we only have imager pixel spacing
-    // if we have an estimated radiographic magnification factor
+    // Pixel Spacing is not present, Imager Pixel Spacing is present
+    // if there is the estimated radiographic magnification factor
     // we can estimate the pixel spacing and the unit is mm_est
     // otherwise the unit is mm_prj (projective)
     // **************************************************************

@@ -29,7 +29,7 @@ export default function getUltraSoundPixelSpacing(
   return {
     rowPixelSpacing,
     colPixelSpacing,
-    unit: 'mm',
+    unit: rowPixelSpacing && colPixelSpacing ? 'mm' : 'pix',
   };
 }
 
