@@ -8,7 +8,7 @@
   "standardDeviation": "sd",
   "pix": "pix",
   "mm": "mm",
-  "mm_prj": "mm (prj)",
-  "mm_est": "mm (prj/est)",
-  "mm_approx": "mm (approx)"
+  "mm_prj": "mm (proiettato)",
+  "mm_est": "mm (proiettato/stimato)",
+  "mm_approx": "mm (appros.)"
 }
