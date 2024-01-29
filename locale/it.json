@@ -5,5 +5,10 @@
   "circumference": "Crf",
   "diameter": "d",
   "isotropic": "isotropo",
-  "standardDeviation": "sd"
+  "standardDeviation": "sd",
+  "pix": "pix",
+  "mm": "mm",
+  "mm_prj": "mm (proiettato)",
+  "mm_est": "mm (proiettato/stimato)",
+  "mm_approx": "mm (appros.)"
 }

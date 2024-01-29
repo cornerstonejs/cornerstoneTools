@@ -10,7 +10,7 @@ import handleSelectedMouseCallback from './bidirectionalTool/handleSelectedMouse
 import handleSelectedTouchCallback from './bidirectionalTool/handleSelectedTouchCallback.js';
 import { bidirectionalCursor } from '../cursors/index.js';
 import throttle from '../../util/throttle';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import calculateLongestAndShortestDiameters from './bidirectionalTool/utils/calculateLongestAndShortestDiameters';
 
 const emptyLocationCallback = (measurementData, eventData, doneCallback) =>

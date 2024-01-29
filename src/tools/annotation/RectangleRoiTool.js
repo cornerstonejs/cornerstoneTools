@@ -22,7 +22,7 @@ import getROITextBoxCoords from '../../util/getROITextBoxCoords.js';
 import throttle from './../../util/throttle.js';
 import { rectangleRoiCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
 import Decimal from 'decimal.js';
@@ -199,11 +199,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
           continue;
         }
 
-        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
-          image,
-          data
-        );
-        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
+        const { unit } = getPixelSpacing(image, data);
 
         // Configure
         const color = toolColors.getColorIfActive(data);
@@ -264,7 +260,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
           image.color,
           data.cachedStats,
           modality,
-          hasPixelSpacing,
+          unit,
           this.displayUncertainties,
           this.configuration
         );
@@ -296,7 +292,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
     isColorImage,
     toolState, // cachedStats: { Area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV }
     modality,
-    hasPixelSpacing,
+    unit,
     displayUncertainties,
     options = {}
   ) {
@@ -315,7 +311,7 @@ export default class RectangleRoiTool extends BaseMeasurementTool {
       isColorImage,
       { area, areaUncertainty, mean, stdDev, min, max, meanStdDevSUV },
       modality,
-      hasPixelSpacing,
+      unit,
       displayUncertainties,
       options
     ).join('\n');
@@ -516,7 +512,7 @@ function _getUnit(modality, showHounsfieldUnits) {
  * @param {*} isColorImage
  * @param {*} { area, mean, stdDev, min, max, meanStdDevSUV }
  * @param {*} modality
- * @param {*} hasPixelSpacing
+ * @param {*} unit
  * @param {*} [options={}]
  * @returns {string[]}
  */
@@ -533,7 +529,7 @@ function _createTextBoxContent(
     meanStdDevSUV = 0,
   } = {},
   modality,
-  hasPixelSpacing,
+  unit,
   displayUncertainties,
   options = {}
 ) {
@@ -597,9 +593,7 @@ function _createTextBoxContent(
     }
   }
 
-  textLines.push(
-    formatArea(area, hasPixelSpacing, areaUncertainty, displayUncertainties)
-  );
+  textLines.push(formatArea(area, unit, areaUncertainty, displayUncertainties));
   otherLines.forEach(x => textLines.push(x));
 
   return textLines;

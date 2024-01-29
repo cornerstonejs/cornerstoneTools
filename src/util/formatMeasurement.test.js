@@ -17,31 +17,31 @@ describe('formatMeasurement', () => {
 
     it.each([
       {
-        hasPixelSpacing: true,
+        unit: 'mm',
         displayUncertainties: false,
         expected: '17,3 mm',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: true,
+        unit: 'mm',
         expected: '17,3 mm +/- 0,4 mm',
       },
       {
-        hasPixelSpacing: false,
+        unit: 'pix',
         displayUncertainties: false,
         expected: '17,3 pix',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: false,
+        unit: 'pix',
         expected: '17,3 pix +/- 0,4 pix',
       },
     ])(
       'should render the right text when %o',
-      ({ displayUncertainties, expected, hasPixelSpacing }) => {
+      ({ displayUncertainties, expected, unit }) => {
         const result = formatLenght(
           length,
-          hasPixelSpacing,
+          unit,
           uncertainty,
           displayUncertainties
         );
@@ -57,31 +57,31 @@ describe('formatMeasurement', () => {
 
     it.each([
       {
-        hasPixelSpacing: true,
+        unit: 'mm',
         displayUncertainties: false,
         expected: 'area: 1260 mm²',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: true,
+        unit: 'mm',
         expected: 'area: 1260 mm² +/- 180 mm²',
       },
       {
-        hasPixelSpacing: false,
+        unit: 'pix',
         displayUncertainties: false,
         expected: 'area: 1260 pix²',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: false,
+        unit: 'pix',
         expected: 'area: 1260 pix² +/- 180 pix²',
       },
     ])(
       'should render the right text when %o',
-      ({ displayUncertainties, expected, hasPixelSpacing }) => {
+      ({ displayUncertainties, expected, unit }) => {
         const result = formatArea(
           area,
-          hasPixelSpacing,
+          unit,
           uncertainty,
           displayUncertainties
         );
@@ -97,31 +97,31 @@ describe('formatMeasurement', () => {
 
     it.each([
       {
-        hasPixelSpacing: true,
+        unit: 'mm',
         displayUncertainties: false,
         expected: 'diameter: 125,7 mm',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: true,
+        unit: 'mm',
         expected: 'diameter: 125,7 mm +/- 2 mm',
       },
       {
-        hasPixelSpacing: false,
+        unit: 'pix',
         isplayUncertainties: false,
         expected: 'diameter: 125,7 pix',
       },
       {
         displayUncertainties: true,
-        hasPixelSpacing: false,
+        unit: 'pix',
         expected: 'diameter: 125,7 pix +/- 2 pix',
       },
     ])(
       'should render the right text when %o',
-      ({ displayUncertainties, expected, hasPixelSpacing }) => {
+      ({ displayUncertainties, expected, unit }) => {
         const result = formatDiameter(
           diameter,
-          hasPixelSpacing,
+          unit,
           uncertainty,
           displayUncertainties
         );

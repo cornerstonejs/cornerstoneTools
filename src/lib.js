@@ -40,7 +40,7 @@ import { clip, clipToBox, clipBoxToDisplayedArea } from './util/clip.js';
 import debounce from './util/debounce';
 import deepmerge from './util/deepmerge';
 import getDefault from './util/getDefault';
-import getPixelSpacing from './util/getPixelSpacing';
+import getPixelSpacing from './util/pixelSpacing/getPixelSpacing';
 import isEmptyObject from './util/isEmptyObject';
 import isObject from './util/isObject';
 import isPointInImage from './util/isPointInImage';

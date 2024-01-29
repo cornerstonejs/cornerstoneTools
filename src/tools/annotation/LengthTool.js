@@ -15,7 +15,7 @@ import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import { lengthCursor } from '../cursors/index.js';
 import { getLogger } from '../../util/logger.js';
-import getPixelSpacing from '../../util/getPixelSpacing';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
 import * as measurementUncertainty from '../../util/measurementUncertaintyTool.js';
@@ -253,17 +253,9 @@ export default class LengthTool extends BaseMeasurementTool {
           }
         }
 
-        const { rowPixelSpacing, colPixelSpacing } = getPixelSpacing(
-          image,
-          data
-        );
-        const hasPixelSpacing = Boolean(rowPixelSpacing && colPixelSpacing);
+        const { unit } = getPixelSpacing(image, data);
 
-        const text = textBoxText(
-          data,
-          hasPixelSpacing,
-          this.displayUncertainties
-        );
+        const text = textBoxText(data, unit, this.displayUncertainties);
 
         drawLinkedTextBox(
           context,
@@ -281,12 +273,8 @@ export default class LengthTool extends BaseMeasurementTool {
     }
 
     // - SideEffect: Updates annotation 'suffix'
-    function textBoxText(annotation, hasPixelSpacing, displayUncertainties) {
-      return _createTextBoxContent(
-        annotation,
-        hasPixelSpacing,
-        displayUncertainties
-      );
+    function textBoxText(annotation, unit, displayUncertainties) {
+      return _createTextBoxContent(annotation, unit, displayUncertainties);
     }
 
     function textBoxAnchorPoints(handles) {
@@ -308,15 +296,11 @@ export default class LengthTool extends BaseMeasurementTool {
     isColorImage,
     toolState, // Length
     modality,
-    hasPixelSpacing,
+    unit,
     displayUncertainties,
     options = {}
   ) {
-    return _createTextBoxContent(
-      toolState,
-      hasPixelSpacing,
-      displayUncertainties
-    );
+    return _createTextBoxContent(toolState, unit, displayUncertainties);
   }
 }
 
@@ -334,16 +318,12 @@ function _sanitizeMeasuredValue(value) {
   return isNumber ? parsedValue : undefined;
 }
 
-function _createTextBoxContent(
-  annotation,
-  hasPixelSpacing,
-  displayUncertainties
-) {
+function _createTextBoxContent(annotation, unit, displayUncertainties) {
   const measuredValue = _sanitizeMeasuredValue(annotation.length);
 
   return formatLenght(
     measuredValue,
-    hasPixelSpacing,
+    unit,
     annotation.uncertainty,
     displayUncertainties
   );

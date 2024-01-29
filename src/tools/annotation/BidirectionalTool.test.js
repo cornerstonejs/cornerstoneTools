@@ -15,7 +15,7 @@ jest.mock('../../drawing/getNewContext', () => ({
   __esModule: true,
   default: jest.fn(),
 }));
-jest.mock('../../util/getPixelSpacing', () => ({
+jest.mock('../../util/pixelSpacing/getPixelSpacing', () => ({
   __esModule: true,
   default: jest.fn(),
 }));
@@ -24,7 +24,7 @@ import { getToolState as getToolStateMocked } from '../../stateManagement/toolSt
 import drawLinkedTextBoxMocked from '../../drawing/drawLinkedTextBox';
 import drawLinkedMocked from '../../drawing/drawLine';
 import getNewContextMocked from '../../drawing/getNewContext.js';
-import getPixelSpacingMocked from '../../util/getPixelSpacing';
+import getPixelSpacingMocked from '../../util/pixelSpacing/getPixelSpacing';
 
 // eslint-disable-next-line import/first
 import Tool from './BidirectionalTool';

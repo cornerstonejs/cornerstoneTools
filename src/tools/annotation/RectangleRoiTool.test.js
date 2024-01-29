@@ -389,7 +389,7 @@ describe('RectangleRoiTool.js', () => {
 
         expect(formatArea).toHaveBeenCalledWith(
           new Decimal(9),
-          false,
+          'pix',
           new Decimal(17),
           displayUncertainties
         );

@@ -2,7 +2,7 @@ import LengthTool from './LengthTool.js';
 import { getToolState } from './../../stateManagement/toolState.js';
 import { getLogger } from '../../util/logger.js';
 import Decimal from 'decimal.js';
-import getPixelSpacing from '../../util/getPixelSpacing.js';
+import getPixelSpacing from '../../util/pixelSpacing/getPixelSpacing.js';
 import { formatLenght } from '../../util/formatMeasurement.js';
 
 jest.mock('../../util/logger.js');
@@ -29,7 +29,7 @@ jest.mock('./../../drawing/index.js', () => ({
 }));
 
 jest.mock('./../../drawing/drawLinkedTextBox.js');
-jest.mock('../../util/getPixelSpacing.js');
+jest.mock('../../util/pixelSpacing/getPixelSpacing.js');
 jest.mock('./../../drawing/drawHandles.js');
 jest.mock('../../util/formatMeasurement');
 
@@ -269,6 +269,7 @@ describe('LengthTool.js', () => {
         getPixelSpacing.mockReturnValue({
           rowPixelSpacing: 0,
           colPixelSpacing: 0,
+          unit: 'mm',
         });
 
         const mockEvent = {
@@ -296,7 +297,7 @@ describe('LengthTool.js', () => {
 
         expect(formatLenght).toHaveBeenCalledWith(
           length,
-          false,
+          'mm',
           uncertainty,
           displayUncertainties
         );
