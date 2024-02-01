@@ -89,9 +89,17 @@ function formatDiameter(diameter, unit, uncertainty, displayUncertainties) {
 
 function _getAreaMeasurmentSuffix(unit) {
   const squareCharacter = String.fromCharCode(178);
-  const preffix = translate(unit);
+  const translatedUnit = translate(unit);
 
-  return `${preffix}${squareCharacter}`;
+  // If there is a space in the unit, the square character needs to be placed inbetween
+  if (translatedUnit.includes(' ')) {
+    const prefix = translatedUnit.split(' ')[0];
+    const suffix = translatedUnit.split(' ')[1];
+
+    return `${prefix}${squareCharacter} ${suffix}`;
+  }
+
+  return `${translatedUnit}${squareCharacter}`;
 }
 
 export { formatArea, formatLenght, formatDiameter };
