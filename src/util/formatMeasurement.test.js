@@ -62,6 +62,11 @@ describe('formatMeasurement', () => {
         expected: 'area: 1260 mm²',
       },
       {
+        unit: 'mm (prj/est)',
+        displayUncertainties: false,
+        expected: 'area: 1260 mm² (prj/est)',
+      },
+      {
         displayUncertainties: true,
         unit: 'mm',
         expected: 'area: 1260 mm² +/- 180 mm²',
