@@ -528,10 +528,6 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
     args: [toolName, options],
   };
 
-  if (interactionTypes) {
-    historyEvent.push(interactionTypes);
-  }
-
   store.state.globalToolChangeHistory.set(toolName, historyEvent);
 
   const arbitraryChangeHistoryLimit = 50;
