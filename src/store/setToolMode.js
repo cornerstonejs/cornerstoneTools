@@ -528,18 +528,15 @@ function _trackGlobalToolModeChange(mode, toolName, options, interactionTypes) {
     args: [toolName, options],
   };
 
-  if (interactionTypes) {
-    historyEvent.push(interactionTypes);
-  }
-
-  store.state.globalToolChangeHistory.push(historyEvent);
+  store.state.globalToolChangeHistory.set(toolName, historyEvent);
 
   const arbitraryChangeHistoryLimit = 50;
 
-  if (
-    store.state.globalToolChangeHistory.length > arbitraryChangeHistoryLimit
-  ) {
-    store.state.globalToolChangeHistory.shift();
+  if (store.state.globalToolChangeHistory.size > arbitraryChangeHistoryLimit) {
+    const changedToolIterator = store.state.globalToolChangeHistory.keys();
+    const oldestTool = changedToolIterator.next().value;
+
+    store.state.globalToolChangeHistory.delete(oldestTool);
   }
 
   // Update ActiveBindings Array
@@ -696,4 +693,5 @@ export {
   setToolModeForElement,
   _getNormalizedOptions,
   _mergeMouseButtonMask,
+  _trackGlobalToolModeChange,
 };

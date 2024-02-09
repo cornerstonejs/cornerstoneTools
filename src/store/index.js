@@ -11,7 +11,7 @@ const logger = getLogger('store:modules:storeLogger');
 export const state = {
   // Global
   globalTools: {},
-  globalToolChangeHistory: [],
+  globalToolChangeHistory: new Map(),
   // Tracking
   enabledElements: [],
   tools: [],

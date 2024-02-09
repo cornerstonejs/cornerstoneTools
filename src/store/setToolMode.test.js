@@ -1,13 +1,24 @@
+import StackScrollMouseWheelTool from '../tools/StackScrollMouseWheelTool.js';
 import getToolForElement from './getToolForElement.js';
+import store from './index.js';
 import triggerEvent from './../util/triggerEvent.js';
 import {
   setToolModeForElement,
   _getNormalizedOptions,
   _mergeMouseButtonMask,
+  _trackGlobalToolModeChange,
 } from './setToolMode.js';
 
 jest.mock('./getToolForElement.js');
 jest.mock('./../util/triggerEvent.js');
+jest.mock('./index.js', () => ({
+  ...jest.requireActual('./index.js'),
+  getModule: jest.fn(() => ({
+    configuration: {
+      globalToolSyncEnabled: true,
+    },
+  })),
+}));
 
 describe('setToolModeForElement', () => {
   it('sets the tool.mode to enabled', () => {
@@ -200,5 +211,96 @@ describe('_getNormalizedOptions', () => {
     });
 
     expect(_getNormalizedOptions(options)).toEqual(expectedResult);
+  });
+});
+
+describe('_trackGlobalToolModeChange', () => {
+  beforeEach(() => {
+    store.state.globalTools = {};
+    store.state.globalToolChangeHistory = new Map();
+  });
+
+  it('should update Tool History and ActiveBindings Array when mode is set to active', () => {
+    const mode = 'active';
+    const toolName = 'MyTool';
+    const options = {};
+    const interactionTypes = ['MouseWheel'];
+
+    store.state.globalTools[toolName] = {
+      activeBindings: [],
+      tool: StackScrollMouseWheelTool,
+    };
+
+    _trackGlobalToolModeChange(mode, toolName, options, interactionTypes);
+
+    expect(store.state.globalToolChangeHistory.size).toBe(1);
+    expect(store.state.globalToolChangeHistory.get(toolName)).toEqual({
+      mode,
+      args: [toolName, options],
+    });
+
+    expect(store.state.globalTools[toolName].activeBindings).toEqual([
+      'MouseWheel',
+    ]);
+  });
+
+  it('should update Tool History and ActiveBindings Array when mode is set to disabled', () => {
+    const mode = 'disabled';
+    const toolName = 'MyTool';
+    const options = {};
+    const interactionTypes = ['MouseWheel'];
+
+    store.state.globalTools[toolName] = {};
+    _trackGlobalToolModeChange(mode, toolName, options, interactionTypes);
+
+    expect(store.state.globalToolChangeHistory.size).toBe(1);
+    expect(store.state.globalToolChangeHistory.get(toolName)).toEqual({
+      mode,
+      args: [toolName, options],
+    });
+
+    expect(store.state.globalTools[toolName].activeBindings).toEqual([]);
+  });
+
+  it('should not update Active Bindings if global tool is no found', () => {
+    const mode = 'active';
+    const toolName = 'MyTool';
+    const options = {};
+    const interactionTypes = ['MouseWheel'];
+
+    _trackGlobalToolModeChange(mode, toolName, options, interactionTypes);
+
+    expect(store.state.globalToolChangeHistory.size).toBe(1);
+    expect(store.state.globalToolChangeHistory.get(toolName)).toEqual({
+      mode,
+      args: [toolName, options],
+    });
+
+    expect(store.state.globalTools[toolName]).toBe(undefined);
+  });
+
+  it('should handle globalToolChangeHistory when its size is greater than 50', () => {
+    const mode = 'active';
+    const toolName = 'MyTool';
+    const options = {};
+    const interactionTypes = ['MouseWheel'];
+
+    expect(store.state.globalToolChangeHistory.size).toBe(0);
+
+    for (let i = 0; i < 50; i++) {
+      store.state.globalToolChangeHistory.set(i, {});
+    }
+
+    jest.spyOn(store.state.globalToolChangeHistory, 'delete');
+
+    _trackGlobalToolModeChange(mode, toolName, options, interactionTypes);
+
+    expect(store.state.globalToolChangeHistory.size).toBe(50);
+    expect(store.state.globalToolChangeHistory.get(toolName)).toEqual({
+      mode,
+      args: [toolName, options],
+    });
+    expect(store.state.globalToolChangeHistory.delete).toHaveBeenCalledWith(0);
+    expect(store.state.globalToolChangeHistory.get(0)).toBe(undefined);
   });
 });
