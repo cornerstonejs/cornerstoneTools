@@ -1,6 +1,6 @@
 {
   "name": "@dedalusdiit/cornerstone-tools",
-  "version": "6.0.10-ded10",
+  "version": "6.0.10-ded11-rc1",
   "description": "Medical imaging tools for the Cornerstone library",
   "main": "./dist/cornerstoneTools.js",
   "keywords": [
