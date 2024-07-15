@@ -12,14 +12,14 @@ import toolColors from './../../stateManagement/toolColors.js';
 import { moveNewHandle } from './../../manipulators/index.js';
 // Drawing
 import {
-  getNewContext,
   draw,
-  setShadow,
+  drawHandles,
   drawJoinedLines,
+  drawLinkedTextBox,
+  getNewContext,
+  setShadow,
 } from './../../drawing/index.js';
-import drawLinkedTextBox from './../../drawing/drawLinkedTextBox.js';
 import { textBoxWidth } from './../../drawing/drawTextBox.js';
-import drawHandles from './../../drawing/drawHandles.js';
 import lineSegDistance from './../../util/lineSegDistance.js';
 import roundToDecimal from './../../util/roundToDecimal.js';
 import { angleCursor } from '../cursors/index.js';
@@ -28,6 +28,9 @@ import EVENTS from '../../events.js';
 import getPixelSpacing from '../../util/getPixelSpacing';
 import throttle from '../../util/throttle';
 import { getModule } from '../../store/index';
+
+/** Private symbols */
+const _angleAnchorSet = Symbol('angleAnchorSet');
 
 /**
  * @public
@@ -95,6 +98,7 @@ export default class AngleTool extends BaseAnnotationTool {
           hasBoundingBox: true,
         },
       },
+      [_angleAnchorSet]: false,
     };
   }
 
@@ -162,9 +166,7 @@ export default class AngleTool extends BaseAnnotationTool {
 
     const lineWidth = toolStyle.getToolWidth();
 
-    for (let i = 0; i < toolData.data.length; i++) {
-      const data = toolData.data[i];
-
+    for (const data of toolData.data) {
       if (data.visible === false) {
         continue;
       }
@@ -219,7 +221,12 @@ export default class AngleTool extends BaseAnnotationTool {
           }
         }
 
-        if (data.rAngle) {
+        const shouldRenderTextBox =
+          data[_angleAnchorSet] &&
+          !Number.isNaN(data.rAngle) &&
+          typeof data.rAngle === 'number';
+
+        if (shouldRenderTextBox) {
           const text = textBoxText(data, rowPixelSpacing, colPixelSpacing);
 
           const distance = 15;
@@ -320,6 +327,7 @@ export default class AngleTool extends BaseAnnotationTool {
         }
 
         measurementData.handles.end.active = true;
+        measurementData[_angleAnchorSet] = true; // Middle (anchor) set.
 
         external.cornerstone.updateImage(element);
 

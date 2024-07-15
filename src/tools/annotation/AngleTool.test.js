@@ -1,8 +1,29 @@
 import AngleTool from './AngleTool.js';
-import { getToolState } from './../../stateManagement/toolState.js';
+import {
+  addToolState,
+  getToolState,
+} from './../../stateManagement/toolState.js';
+import { draw, drawLinkedTextBox } from './../../drawing/index.js';
+import { moveNewHandle } from './../../manipulators/index.js';
+import * as drawTextBoxModule from './../../drawing/drawTextBox.js';
+import * as getPixelSpacing from '../../util/getPixelSpacing';
 
 jest.mock('./../../stateManagement/toolState.js', () => ({
+  addToolState: jest.fn(),
   getToolState: jest.fn(),
+}));
+
+jest.mock('./../../drawing/index.js', () => ({
+  draw: jest.fn(),
+  drawHandles: jest.fn(),
+  drawJoinedLines: jest.fn(),
+  drawLinkedTextBox: jest.fn(),
+  getNewContext: jest.fn(() => ({})),
+  setShadow: jest.fn(),
+}));
+
+jest.mock('./../../manipulators/index.js', () => ({
+  moveNewHandle: jest.fn(),
 }));
 
 jest.mock('./../../importInternal.js', () => ({
@@ -11,9 +32,18 @@ jest.mock('./../../importInternal.js', () => ({
 
 jest.mock('./../../externalModules.js', () => ({
   cornerstone: {
+    invalidate: jest.fn(),
+    internal: {
+      getTransform: jest.fn(() => ({
+        invert: jest.fn(),
+        transformPoint: jest.fn((x, y) => ({ x, y })),
+      })),
+    },
     metaData: {
       get: jest.fn(),
     },
+    pixelToCanvas: () => ({ x: 100, y: 100 }),
+    updateImage: jest.fn(),
   },
 }));
 
@@ -32,6 +62,10 @@ const image = {
 };
 
 describe('AngleTool.js', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('default values', () => {
     it('has a default name of "Angle"', () => {
       const defaultName = 'Angle';
@@ -168,6 +202,94 @@ describe('AngleTool.js', () => {
       const renderResult = instantiatedTool.renderToolData(mockEvent);
 
       expect(renderResult).toBe(undefined);
+    });
+
+    it('should not render linked text box if angle anchor is unset', () => {
+      const instantiatedTool = new AngleTool('AngleTool');
+
+      jest
+        .spyOn(getPixelSpacing, 'default')
+        .mockReturnValue({ rowPixelSpacing: 1, columnPixelSpacing: 1 });
+
+      instantiatedTool.addNewMeasurement({
+        detail: goodMouseEventData,
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+      });
+
+      const addedMeasurementData = addToolState.mock.calls[0][2];
+
+      addedMeasurementData.rAngle = 0;
+      getToolState.mockReturnValueOnce({
+        data: [addedMeasurementData],
+      });
+
+      const mockEvent = {
+        currentTarget: {},
+        detail: {
+          enabledElement: undefined,
+          canvasContext: { canvas: { width: 100, height: 100 } },
+          element: {},
+        },
+      };
+
+      instantiatedTool.renderToolData(mockEvent);
+
+      const drawCallback = draw.mock.calls[0][1];
+
+      drawCallback({});
+
+      expect(drawLinkedTextBox).not.toHaveBeenCalled();
+    });
+
+    it('should render linked text box if angle anchor is set', () => {
+      const instantiatedTool = new AngleTool('AngleTool');
+
+      jest
+        .spyOn(getPixelSpacing, 'default')
+        .mockReturnValue({ rowPixelSpacing: 1, columnPixelSpacing: 1 });
+      jest.spyOn(drawTextBoxModule, 'textBoxWidth').mockReturnValue(100);
+
+      instantiatedTool.addNewMeasurement({
+        detail: goodMouseEventData,
+        preventDefault: jest.fn(),
+        stopPropagation: jest.fn(),
+      });
+
+      const moveNewHandleCallback = moveNewHandle.mock.calls[0][6];
+
+      moveNewHandleCallback(true);
+
+      const addedMeasurementData = addToolState.mock.calls[0][2];
+
+      // Sets mock angle value
+      addedMeasurementData.handles.start.x = 0;
+      addedMeasurementData.handles.start.y = 50;
+      addedMeasurementData.handles.middle.x = 0;
+      addedMeasurementData.handles.middle.y = 0;
+      addedMeasurementData.handles.end.x = 50;
+      addedMeasurementData.handles.end.y = 20;
+
+      getToolState.mockReturnValueOnce({
+        data: [addedMeasurementData],
+      });
+
+      const mockEvent = {
+        currentTarget: {},
+        detail: {
+          enabledElement: undefined,
+          canvasContext: { canvas: { width: 100, height: 100 } },
+          element: {},
+        },
+      };
+
+      instantiatedTool.renderToolData(mockEvent);
+
+      const drawCallback = draw.mock.calls[0][1];
+
+      drawCallback({});
+
+      expect(drawLinkedTextBox).toHaveBeenCalledTimes(1);
     });
   });
 });
